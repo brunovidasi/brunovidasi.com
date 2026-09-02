@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>bruno.dev — code theme concept</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --bg: #0a0a0d;
+    --panel: #131318;
+    --line: #23232b;
+    --text: #e8e6e3;
+    --muted: #75757f;
+    --tag: #ff4d5e;      /* red — tag color */
+    --tag-dim: #7a2c34;
+    --attr: #7fb8e0;     /* attribute name — cool blue, contrast to red */
+    --str: #e0a458;      /* attribute value / string — warm gold */
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--mono); }
+
+  .wrap{ max-width:760px; margin:0 auto; padding:60px 24px 100px; }
+
+  .logo{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--display);
+    font-weight:700; font-size:18px; color:var(--text); margin-bottom:60px;
+  }
+  .logo .brk{ color:var(--tag); }
+
+  /* ---- code block base ---- */
+  .code{ font-size:15px; line-height:2.1; }
+  .indent{ margin-left:26px; border-left:1px solid var(--line); padding-left:20px; }
+
+  .tag{ color:var(--tag); cursor:default; transition: text-shadow .15s, color .15s; }
+  .tag.match{ text-shadow: 0 0 10px var(--tag); }
+  .attr{ color:var(--attr); }
+  .str{ color:var(--str); }
+  .punc{ color:var(--muted); }
+
+  /* hero */
+  .hero{ margin-bottom:56px; }
+  .hero .content{
+    font-family:var(--display); font-size:26px; font-weight:500; color:var(--text);
+    padding: 10px 0 6px; line-height:1.5;
+  }
+  .hero .content .highlight{ color:var(--str); }
+  .caret{ display:inline-block; width:9px; height:1.2em; background:var(--tag); vertical-align:-2px; animation:blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* collapsible sections styled as tags */
+  .node{ margin:2px 0; }
+  .node-head{
+    display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+    padding:4px 6px; border-radius:5px;
+  }
+  .node-head:hover{ background:var(--panel); }
+  .caret-icon{
+    color:var(--muted); font-size:11px; transition: transform .2s;
+    width:10px; display:inline-block;
+  }
+  .node.open > .node-head .caret-icon{ transform:rotate(90deg); }
+  .node-body{
+    max-height:0; overflow:hidden; transition: max-height .35s ease;
+    margin-left:20px; border-left:1px solid var(--line); padding-left:20px;
+  }
+  .node.open > .node-body{ max-height:600px; }
+
+  .project{
+    padding:14px 0; border-bottom:1px dashed var(--line); font-family:var(--mono);
+  }
+  .project:last-child{ border-bottom:none; }
+  .project .name{ font-family:var(--display); font-size:15px; color:var(--text); margin-bottom:4px; }
+  .project .desc{ color:var(--muted); font-size:13px; font-family:'IBM Plex Mono', monospace; }
+
+  .contact-form{ display:flex; flex-direction:column; gap:10px; padding:14px 0; }
+  .contact-form input, .contact-form textarea{
+    background:var(--bg); border:1px solid var(--line); color:var(--text);
+    font-family:var(--mono); padding:9px 10px; border-radius:5px; font-size:13px;
+  }
+  .contact-form input:focus, .contact-form textarea:focus{ outline:1px solid var(--tag); border-color:var(--tag); }
+  .contact-form button{
+    align-self:flex-start; background:var(--tag); color:#1a0709; border:none;
+    padding:9px 18px; border-radius:5px; font-family:var(--display); font-weight:700;
+    cursor:pointer; font-size:13px;
+  }
+
+  .footer-tags{ margin-top:50px; color:var(--muted); font-size:13px; }
+
+  /* floating </> accents */
+  .float-mark{
+    position:fixed; color:var(--tag-dim); font-family:var(--mono); font-weight:600;
+    opacity:.5; pointer-events:none; animation: drift 14s linear infinite;
+  }
+  @keyframes drift{ 0%{ transform:translateY(0) rotate(0deg); } 100%{ transform:translateY(-40px) rotate(8deg); } }
+</style>
+</head>
+<body>
+
+<span class="float-mark" style="top:14%; left:4%; font-size:22px;">&lt;/&gt;</span>
+<span class="float-mark" style="top:70%; left:88%; font-size:30px; animation-delay:-6s;">{ }</span>
+<span class="float-mark" style="top:40%; left:92%; font-size:16px; animation-delay:-3s;">&lt;/&gt;</span>
+
+<div class="wrap">
+
+  <div class="logo"><span class="brk">&lt;</span>bruno<span class="brk">/&gt;</span></div>
+
+  <div class="code">
+    <span class="tag" data-pair="html">&lt;developer</span>
+    <span class="attr">name</span>=<span class="str">"Bruno"</span>
+    <span class="attr">role</span>=<span class="str">"Senior Developer"</span>
+    <span class="attr">based</span>=<span class="str">"Sydney, AU"</span><span class="tag" data-pair="html">&gt;</span>
+
+    <div class="hero">
+      <div class="content">
+        13 years turning <span class="highlight">"it should work"</span> into things that actually do — and look sharp doing it.<span class="caret"></span>
+      </div>
+    </div>
+
+    <div class="node" id="node-about">
+      <div class="node-head" onclick="toggle('about')">
+        <span class="caret-icon">▸</span>
+        <span class="tag">&lt;about</span><span class="punc"> /&gt;</span>
+      </div>
+      <div class="node-body">
+        <div class="project">
+          <div class="desc" style="font-size:14px; line-height:1.9; color:var(--text);">
+            Currently building complex HTML email campaigns for American Express at Dentsu.
+            Before that: Technical Lead / Front-End at General Pants Co, working across React
+            and Shopify theme customization. Holds Brazilian and Australian passports —
+            splits creative energy between client work and running <b style="color:var(--str)">FLOW</b>,
+            a Brazilian-themed party night for Sydney's LGBTQIA+ community.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node open" id="node-projects">
+      <div class="node-head" onclick="toggle('projects')">
+        <span class="caret-icon">▸</span>
+        <span class="tag">&lt;projects</span><span class="punc"> /&gt;</span>
+      </div>
+      <div class="node-body">
+        <div class="project">
+          <div class="name">&lt;project <span class="attr">name</span>=<span class="str">"FLOW"</span> /&gt;</div>
+          <div class="desc">Event brand + promo site for Brazilian-themed nights, Sydney</div>
+        </div>
+        <div class="project">
+          <div class="name">&lt;project <span class="attr">name</span>=<span class="str">"Amex eDM Pipeline"</span> /&gt;</div>
+          <div class="desc">Responsive HTML email build system for Amex campaigns @ Dentsu</div>
+        </div>
+        <div class="project">
+          <div class="name">&lt;project <span class="attr">name</span>=<span class="str">"General Pants"</span> /&gt;</div>
+          <div class="desc">React + Shopify theme overhaul, Technical Lead</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node" id="node-contact">
+      <div class="node-head" onclick="toggle('contact')">
+        <span class="caret-icon">▸</span>
+        <span class="tag">&lt;contact</span><span class="punc"> /&gt;</span>
+      </div>
+      <div class="node-body">
+        <div class="contact-form">
+          <input type="text" placeholder='name = ""'>
+          <input type="text" placeholder='email = ""'>
+          <textarea rows="3" placeholder='message = ""'></textarea>
+          <button>send()</button>
+        </div>
+      </div>
+    </div>
+
+    <span class="tag" data-pair="html">&lt;/developer&gt;</span>
+  </div>
+
+  <div class="footer-tags">
+    <span class="tag match-demo">&lt;/&gt;</span> hover any tag above — its matching pair lights up, just like bracket-matching in a real editor.
+  </div>
+</div>
+
+<script>
+function toggle(id){
+  document.getElementById('node-'+id).classList.toggle('open');
+}
+
+// bracket/tag matching highlight
+document.querySelectorAll('.tag[data-pair]').forEach(el=>{
+  el.addEventListener('mouseenter', ()=>{
+    document.querySelectorAll('.tag[data-pair="html"]').forEach(t=>t.classList.add('match'));
+  });
+  el.addEventListener('mouseleave', ()=>{
+    document.querySelectorAll('.tag[data-pair="html"]').forEach(t=>t.classList.remove('match'));
+  });
+});
+
+// gentle randomised drift positions for floating marks on load
+document.querySelectorAll('.float-mark').forEach(el=>{
+  el.style.animationDuration = (10 + Math.random()*10) + 's';
+});
+</script>
+
+</body>
+</html>

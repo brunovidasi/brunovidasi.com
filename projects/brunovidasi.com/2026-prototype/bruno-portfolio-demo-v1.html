@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>bruno.dev — portfolio concept</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --bg: #0b0e0c;
+    --panel: #121613;
+    --panel-2: #171c18;
+    --line: #23291f;
+    --text: #c8d1c4;
+    --muted: #6f7a68;
+    --accent: #ffb454;   /* warm amber, not the usual acid-green */
+    --accent-dim: #a67638;
+    --ok: #8fd19e;
+    --err: #ff8383;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); font-family:var(--mono); overflow-x:hidden; }
+
+  /* ---------- BOOT SEQUENCE ---------- */
+  #boot{
+    position:fixed; inset:0; background:#000; z-index:50;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); color:var(--ok); font-size:14px;
+    transition: opacity .6s ease;
+  }
+  #boot pre{ margin:0; white-space:pre-wrap; }
+  #boot.hide{ opacity:0; pointer-events:none; }
+  .cursor{ display:inline-block; width:8px; background:var(--ok); animation: blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  #rain{ position:fixed; inset:0; z-index:40; opacity:0; pointer-events:none; transition:opacity .4s; }
+  #rain.show{ opacity:.5; }
+
+  /* ---------- APP SHELL ---------- */
+  #app{ opacity:0; transition:opacity .8s ease; }
+  #app.show{ opacity:1; }
+
+  .titlebar{
+    height:34px; background:var(--panel-2); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:8px; padding:0 12px;
+    font-size:12px; color:var(--muted);
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+  .titlebar span.path{ margin-left:12px; }
+
+  .shell{ display:grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 34px - 26px); }
+
+  .explorer{ background:var(--panel); border-right:1px solid var(--line); padding:14px 10px; font-size:13px; }
+  .explorer .label{ color:var(--muted); font-size:11px; letter-spacing:.08em; margin:6px 6px 10px; }
+  .tree div{ padding:5px 8px; border-radius:4px; cursor:pointer; color:var(--muted); }
+  .tree div:hover{ background:var(--panel-2); color:var(--text); }
+  .tree .indent{ padding-left:22px; }
+  .tree .active{ background:var(--panel-2); color:var(--accent); }
+
+  .main{ display:flex; flex-direction:column; }
+  .tabs{ display:flex; background:var(--panel); border-bottom:1px solid var(--line); }
+  .tab{ padding:9px 16px; font-size:12.5px; color:var(--muted); border-right:1px solid var(--line); cursor:pointer; }
+  .tab.active{ color:var(--text); background:var(--panel-2); border-top:2px solid var(--accent); padding-top:7px; }
+
+  .editor{ padding:34px 40px; }
+  .lineno{ color:#3a4136; user-select:none; margin-right:18px; }
+  .kw{ color:var(--accent); } .str{ color:var(--ok); } .com{ color:var(--muted); font-style:italic; }
+  .fn{ color:#8ec9ff; }
+
+  h1.hero{
+    font-family:var(--sans); font-weight:600; font-size:38px; margin:26px 0 8px;
+    color:#eef1ea;
+  }
+  .tagline{ font-family:var(--sans); color:var(--muted); font-size:15px; margin-bottom:30px; }
+
+  code.block{ display:block; font-size:14.5px; line-height:1.9; }
+  .typed::after{ content:'▍'; color:var(--accent); animation: blink 1s steps(1) infinite; }
+
+  .projects{ margin-top:10px; }
+  .commit{
+    display:flex; gap:14px; padding:14px 6px; border-left:2px solid var(--line);
+    margin-left:6px; padding-left:20px; position:relative; cursor:pointer;
+  }
+  .commit::before{
+    content:''; position:absolute; left:-6px; top:18px; width:10px; height:10px;
+    border-radius:50%; background:var(--panel); border:2px solid var(--accent-dim);
+  }
+  .commit:hover::before{ background:var(--accent); }
+  .commit .hash{ color:var(--muted); font-size:12px; min-width:60px; }
+  .commit .msg{ font-family:var(--sans); font-size:14px; color:var(--text); }
+  .commit .meta{ font-family:var(--sans); font-size:12px; color:var(--muted); margin-top:3px; }
+
+  .statusbar{
+    height:26px; background:var(--accent-dim); color:#1a1408; font-family:var(--sans);
+    font-size:11.5px; display:flex; align-items:center; gap:18px; padding:0 14px;
+  }
+  .statusbar b{ font-weight:600; }
+</style>
+</head>
+<body>
+
+<div id="rain"></div>
+<div id="boot"><pre id="bootText"></pre></div>
+
+<div id="app">
+  <div class="titlebar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="path">bruno-dev — portfolio</span>
+  </div>
+
+  <div class="shell">
+    <div class="explorer">
+      <div class="label">EXPLORER</div>
+      <div class="tree">
+        <div class="active">📄 intro.js</div>
+        <div>📁 about/</div>
+        <div class="indent">📄 bio.md</div>
+        <div>📁 projects/</div>
+        <div class="indent">📄 flow-events.js</div>
+        <div class="indent">📄 amex-edm.js</div>
+        <div class="indent">📄 gen-pants.js</div>
+        <div>📄 contact.sh</div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="tabs">
+        <div class="tab active">intro.js</div>
+        <div class="tab">projects/</div>
+        <div class="tab">contact.sh</div>
+      </div>
+
+      <div class="editor">
+        <code class="block">
+<span class="lineno">1</span><span class="com">// loaded from Sydney, AU</span>
+<span class="lineno">2</span><span class="kw">const</span> bruno <span class="kw">=</span> {
+<span class="lineno">3</span>&nbsp;&nbsp;role: <span class="str">'Senior Developer'</span>,
+<span class="lineno">4</span>&nbsp;&nbsp;experience: <span class="str">'13 years'</span>,
+<span class="lineno">5</span>&nbsp;&nbsp;stack: [<span class="str">'React'</span>, <span class="str">'JS'</span>, <span class="str">'Shopify'</span>, <span class="str">'HTML Email'</span>],
+<span class="lineno">6</span>&nbsp;&nbsp;currently: <span class="str">'building eDMs @ Dentsu (Amex)'</span>,
+<span class="lineno">7</span>&nbsp;&nbsp;sideProject: <span class="str">'FLOW — Brazilian nights, Sydney'</span>
+<span class="lineno">8</span>};
+        </code>
+
+        <h1 class="hero" id="heroText"></h1>
+        <div class="tagline">console.run(bruno) → welcome to the site.</div>
+
+        <div class="projects">
+          <div class="commit">
+            <div class="hash">a1x02f</div>
+            <div>
+              <div class="msg">feat: rebuilt FLOW's ticketing + promo microsite</div>
+              <div class="meta">event ops · Sydney LGBTQIA+ Brazilian party brand</div>
+            </div>
+          </div>
+          <div class="commit">
+            <div class="hash">c88e1a</div>
+            <div>
+              <div class="msg">refactor: eDM build pipeline for American Express campaigns</div>
+              <div class="meta">Dentsu · complex responsive HTML email</div>
+            </div>
+          </div>
+          <div class="commit">
+            <div class="hash">7f30bd</div>
+            <div>
+              <div class="msg">feat: React + Shopify theme overhaul</div>
+              <div class="meta">General Pants Co · Technical Lead / Front-End</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <span>⎇ main</span>
+    <span><b>13 yrs</b> experience</span>
+    <span>Sydney, AU 🇦🇺 🇧🇷</span>
+    <span style="margin-left:auto;">Ln 8, Col 2 — UTF-8</span>
+  </div>
+</div>
+
+<script>
+// ---- boot sequence: terminal boot -> brief matrix flash -> resolve into IDE ----
+const bootLines = [
+  "$ initializing bruno.dev...",
+  "$ mounting /projects ... ok",
+  "$ loading 13 years of experience ... ok",
+  "$ compiling creativity.module ... ok",
+  "$ launching interface_"
+];
+const bootEl = document.getElementById('bootText');
+let li = 0;
+function typeBootLine(){
+  if(li >= bootLines.length){
+    setTimeout(showRain, 250);
+    return;
+  }
+  let line = bootLines[li];
+  let ci = 0;
+  const iv = setInterval(()=>{
+    bootEl.textContent = bootEl.textContent.replace(/▍$/,'') + line[ci];
+    ci++;
+    if(ci >= line.length){
+      clearInterval(iv);
+      bootEl.textContent += "\n";
+      li++;
+      setTimeout(typeBootLine, 120);
+    }
+  }, 18);
+}
+typeBootLine();
+
+function showRain(){
+  const rain = document.getElementById('rain');
+  const canvas = document.createElement('canvas');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  rain.appendChild(canvas);
+  rain.classList.add('show');
+  const ctx = canvas.getContext('2d');
+  const cols = Math.floor(canvas.width/16);
+  const drops = new Array(cols).fill(0);
+  const chars = "01{}<>/;=()bruno";
+  let frames = 0;
+  const rainIv = setInterval(()=>{
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#8fd19e';
+    ctx.font = '14px monospace';
+    drops.forEach((y,i)=>{
+      const ch = chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(ch, i*16, y*16);
+      drops[i] = (y*16 > canvas.height && Math.random() > 0.975) ? 0 : y+1;
+    });
+    frames++;
+    if(frames > 40){
+      clearInterval(rainIv);
+      document.getElementById('boot').classList.add('hide');
+      rain.classList.remove('show');
+      const app = document.getElementById('app');
+      app.classList.add('show');
+      typeHero();
+      setTimeout(()=>document.getElementById('boot').remove(), 700);
+    }
+  }, 45);
+}
+
+function typeHero(){
+  const el = document.getElementById('heroText');
+  const text = "Hi, I'm Bruno. I build things that work — and look good doing it.";
+  let i = 0;
+  el.classList.add('typed');
+  const iv = setInterval(()=>{
+    el.textContent = text.slice(0, i);
+    i++;
+    if(i > text.length){ clearInterval(iv); el.classList.remove('typed'); }
+  }, 22);
+}
+</script>
+
+</body>
+</html>

@@ -5,13 +5,19 @@
     "category": "site-history",
     "icon": "🌐",
     "year": 2026,
-    "description": "The current version — a VS Code-inspired portfolio with a file explorer, tabs, and data-driven project panels. The one you're looking at right now.",
+    "description": "The current version — a VS Code-inspired portfolio with a file explorer, tabs, and data-driven project panels. The one you're looking at right now. Also check out the 404 page — it's pretty cool.",
     "path": "projects/brunovidasi.com/2026/index.html",
     "github": "https://github.com/brunovidasi/brunovidasi.com",
     "live": "",
     "codepen": "",
     "featured": true,
-    "noView": true
+    "noView": true,
+    "prototypes": [
+      { "id": "site-2026-prototype-1", "label": "Prototype", "path": "projects/brunovidasi.com/2026-prototype/bruno-portfolio-demo-v1.html" },
+      { "id": "site-2026-prototype-2", "label": "Alternative 1", "path": "projects/brunovidasi.com/2026-prototype/bruno-portfolio-demo-v2.html" },
+      { "id": "site-2026-prototype-3", "label": "Alternative 2", "path": "projects/brunovidasi.com/2026-prototype/bruno-portfolio-demo-v3.html" },
+      { "id": "site-2026-prototype-4", "label": "404 Error", "path": "404.shtml" }
+    ]
   },
   {
     "id": "site-2025",

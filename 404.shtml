@@ -1,14 +1,385 @@
 <!DOCTYPE html>
-<html>
-   <head>
-       <meta charset="utf-8"/>
-       <meta http-equiv="refresh" content="0; url=http://brunovida.si">
-       <title></title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>404 — Not Found — Bruno Vieira</title>
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<style>
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
 
-   </head>
-   <body>
-   </body>
+:root{
+  --bg:#0b0e0c;
+  --panel:#121613;
+  --panel-2:#171c18;
+  --line:#23291f;
+  --text:#c8d1c4;
+  --muted:#6f7a68;
+  --accent:#ffb454;
+  --ok:#8fd19e;
+  --err:#ff8383;
+  --mono:'JetBrains Mono', monospace;
+}
+*{ box-sizing:border-box; }
+html,body{
+  margin:0; padding:0; min-height:100%;
+  background:var(--bg); color:var(--text);
+  font-family:var(--mono);
+}
+body{
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+canvas#rain{
+  position:fixed; inset:0; z-index:0;
+  opacity:.22;
+}
+
+.scanlines{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.12) 3px);
+  mix-blend-mode:multiply;
+}
+
+.win{
+  position:relative; z-index:2;
+  width:100%; max-width:640px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.titlebar{
+  display:flex; align-items:center; gap:8px;
+  padding:10px 12px;
+  background:var(--panel-2);
+  border-bottom:1px solid var(--line);
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; }
+.dot.y{ background:#febc2e; }
+.dot.g{ background:#28c840; }
+.titlebar .path{
+  margin-left:8px;
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+.term{
+  padding:20px 22px 24px;
+  font-size:13.5px;
+  line-height:1.65;
+}
+
+.term .prompt{ color:var(--ok); }
+.term .path-seg{ color:var(--accent); }
+.term pre{ margin:0; white-space:pre-wrap; word-break:break-word; }
+
+#typed{ min-height:6.6em; }
+.cursor{
+  display:inline-block; width:8px; height:1em; background:var(--ok);
+  vertical-align:text-bottom; margin-left:2px;
+  animation:blink 1s steps(1) infinite;
+}
+@keyframes blink{ 50%{ opacity:0; } }
+
+.glitch-wrap{ margin:18px 0 10px; transition:opacity .5s ease, transform .5s ease; }
+.glitch-wrap.pending{ opacity:0; transform:translateY(6px); }
+
+.glitch{
+  font-size:56px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--accent);
+  text-align:center;
+  position:relative;
+  line-height:1;
+}
+.glitch::before, .glitch::after{
+  content:'404';
+  position:absolute; left:0; top:0;
+  width:100%; overflow:hidden;
+  color:var(--accent);
+  opacity:.6;
+}
+.glitch::before{
+  animation:glitchTop 3.2s infinite linear alternate-reverse;
+  clip-path:inset(0 0 55% 0);
+}
+.glitch::after{
+  animation:glitchBottom 2.6s infinite linear alternate-reverse;
+  clip-path:inset(55% 0 0 0);
+}
+@keyframes glitchTop{
+  0%{ transform:translate(0,0); }
+  20%{ transform:translate(-2px,-1px); }
+  40%{ transform:translate(2px,1px); }
+  60%{ transform:translate(-1px,1px); }
+  80%{ transform:translate(1px,-1px); }
+  100%{ transform:translate(0,0); }
+}
+@keyframes glitchBottom{
+  0%{ transform:translate(0,0); }
+  25%{ transform:translate(2px,0); }
+  50%{ transform:translate(-2px,1px); }
+  75%{ transform:translate(1px,-1px); }
+  100%{ transform:translate(0,0); }
+}
+
+.tagline{ color:var(--muted); font-size:13px; margin:0 0 18px; }
+.tagline b{ color:var(--text); font-weight:600; }
+
+.hint{ color:var(--muted); font-size:12px; margin:0 0 6px; }
+.hint kbd{
+  font-family:var(--mono); background:var(--panel-2); border:1px solid var(--line);
+  border-radius:4px; padding:1px 5px; color:var(--text);
+}
+
+.history{ margin-bottom:2px; }
+.history .line{ white-space:pre-wrap; word-break:break-word; }
+.history .out{ color:var(--muted); }
+.history .out.err{ color:var(--err); }
+.history .out.ok{ color:var(--ok); }
+
+.cmdline{ display:flex; align-items:center; gap:6px; }
+.cmdline input{
+  flex:1; background:transparent; border:none; outline:none;
+  color:var(--text); font-family:var(--mono); font-size:13.5px; caret-color:var(--ok);
+}
+
+.links{
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-top:18px; padding-top:16px; border-top:1px solid var(--line);
+}
+.links a{
+  font-family:var(--mono); font-size:12px; text-decoration:none;
+  color:var(--text); background:var(--panel-2); border:1px solid var(--line);
+  border-radius:6px; padding:6px 10px;
+  transition:border-color .15s ease, color .15s ease;
+}
+.links a:hover{ border-color:var(--accent); color:var(--accent); }
+
+.footer-note{ margin-top:14px; font-size:11px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<canvas id="rain"></canvas>
+<div class="scanlines"></div>
+
+<div class="win">
+  <div class="titlebar">
+    <span class="dot r"></span>
+    <span class="dot y"></span>
+    <span class="dot g"></span>
+    <span class="path">bruno-vieira — 404</span>
+  </div>
+
+  <div class="term">
+    <div id="typed"><pre></pre></div>
+
+    <div class="glitch-wrap" id="reveal">
+      <div class="glitch" aria-label="404">404</div>
+      <p class="tagline">The route resolved to <b>nothing</b>. It's not you — the page just isn't here (or never was).</p>
+
+      <div id="history" class="history"></div>
+
+      <div class="cmdline">
+        <span class="prompt">guest@brunovida.si</span><span>:</span><span class="path-seg" id="cwd">~</span><span>$</span>
+        <input id="cmdInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command input">
+      </div>
+      <p class="hint">try <kbd>ls</kbd>, <kbd>cd home</kbd>, or <kbd>help</kbd></p>
+      <noscript><style>#typed,.cmdline,.hint,#rain{ display:none; }.glitch-wrap{ opacity:1; transform:none; }</style></noscript>
+
+      <div class="links">
+        <a href="/">cd home</a>
+        <a href="/about">cd about</a>
+        <a href="/experience">cd experience</a>
+        <a href="/contact">cd contact</a>
+      </div>
+
+      <p class="footer-note" id="footerNote">404 Not Found</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var REQ_URI = window.location.pathname + window.location.search;
+if(!REQ_URI || REQ_URI === '/') REQ_URI = '/that-page';
+document.getElementById('footerNote').textContent = 'requested: ' + REQ_URI + ' — 404 Not Found';
+
+var typedEl = document.querySelector('#typed pre');
+var revealEl = document.getElementById('reveal');
+revealEl.classList.add('pending');
+var lines = [
+  "$ cd " + REQ_URI,
+  "bash: cd: " + REQ_URI + ": No such file or directory",
+  "$ find / -iname \"*the-page-you-wanted*\" 2>/dev/null",
+  "(0 results)",
+  "$ echo $?"
+];
+
+var li = 0, ci = 0;
+function typeLine(){
+  if(li >= lines.length){
+    typedEl.innerHTML = typedEl.innerHTML + '<span class="cursor"></span>';
+    setTimeout(function(){
+      revealEl.classList.remove('pending');
+      focusInput();
+    }, 350);
+    return;
+  }
+  var line = lines[li];
+  if(ci === 0) typedEl.textContent += (li > 0 ? "\n" : "");
+  if(ci < line.length){
+    typedEl.textContent += line[ci];
+    ci++;
+    setTimeout(typeLine, 14 + Math.random()*10);
+  } else {
+    li++; ci = 0;
+    setTimeout(typeLine, 130);
+  }
+}
+setTimeout(typeLine, 250);
+
+// ---- faux terminal ----
+var historyEl = document.getElementById('history');
+var input = document.getElementById('cmdInput');
+var cwdEl = document.getElementById('cwd');
+
+var ROUTES = {
+  'home': '/', '~': '/', '/': '/',
+  'about': '/about',
+  'experience': '/experience',
+  'education': '/education',
+  'skills': '/skills',
+  'websites': '/websites',
+  'landing-pages': '/landing-pages',
+  'mini-tools': '/mini-tools',
+  'edm-tools': '/edm-tools',
+  'edm-work': '/edm-work',
+  'site-history': '/site-history',
+  'freelance': '/freelance',
+  'contact': '/contact',
+  'documents': '/documents'
+};
+
+function focusInput(){
+  if(window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+  input.focus();
+}
+
+function printLine(text, cls){
+  var div = document.createElement('div');
+  div.className = 'line' + (cls ? ' out ' + cls : '');
+  div.textContent = text;
+  historyEl.appendChild(div);
+}
+
+function printCmd(cmd){
+  var div = document.createElement('div');
+  div.className = 'line';
+  div.innerHTML = '<span class="prompt">guest@brunovida.si</span>:<span class="path-seg">' + cwdEl.textContent + '</span>$ ' + cmd.replace(/</g,'&lt;');
+  historyEl.appendChild(div);
+}
+
+function runCommand(raw){
+  var cmd = raw.trim();
+  if(!cmd) return;
+  printCmd(cmd);
+  var parts = cmd.split(/\s+/);
+  var verb = parts[0].toLowerCase();
+  var arg = (parts[1] || '').toLowerCase();
+
+  if(verb === 'help'){
+    printLine('available commands:', 'ok');
+    printLine('  ls              list available pages');
+    printLine('  cd <page>       navigate to a page (try: cd home, cd about, cd contact)');
+    printLine('  whoami          ...');
+    printLine('  clear           clear this terminal');
+  } else if(verb === 'ls'){
+    printLine(Object.keys(ROUTES).filter(function(k){ return k !== '~' && k !== '/'; }).join('  '), 'ok');
+  } else if(verb === 'cd'){
+    var target = arg || 'home';
+    if(ROUTES.hasOwnProperty(target)){
+      printLine('→ ' + ROUTES[target], 'ok');
+      setTimeout(function(){ window.location.href = ROUTES[target]; }, 350);
+    } else {
+      printLine('bash: cd: ' + target + ': No such file or directory', 'err');
+    }
+  } else if(verb === 'whoami'){
+    printLine('you: a curious visitor who followed a broken link.', 'ok');
+  } else if(verb === 'sudo'){
+    printLine('nice try. permission denied.', 'err');
+  } else if(verb === 'clear'){
+    historyEl.innerHTML = '';
+  } else if(verb === 'exit'){
+    printLine('there is no escape, only cd home.', 'err');
+  } else if(ROUTES.hasOwnProperty(verb)){
+    printLine('→ ' + ROUTES[verb], 'ok');
+    setTimeout(function(){ window.location.href = ROUTES[verb]; }, 350);
+  } else {
+    printLine('command not found: ' + verb + ' (try "help")', 'err');
+  }
+}
+
+input.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    runCommand(input.value);
+    input.value = '';
+  }
+});
+
+document.addEventListener('click', function(){
+  focusInput();
+});
+
+// ---- background matrix rain ----
+(function(){
+  var canvas = document.getElementById('rain');
+  var ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  var chars = "01";
+  var fontSize = 15;
+  var cols, drops;
+  function setup(){
+    cols = Math.floor(canvas.width / fontSize);
+    drops = new Array(cols).fill(0).map(function(){ return Math.random() * -50; });
+  }
+  setup();
+  window.addEventListener('resize', setup);
+  function draw(){
+    ctx.fillStyle = 'rgba(11,14,12,0.14)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#8fd19e';
+    ctx.font = fontSize + 'px monospace';
+    for(var i = 0; i < drops.length; i++){
+      var ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+      drops[i] = (drops[i] * fontSize > canvas.height && Math.random() > 0.975) ? 0 : drops[i] + 1;
+    }
+  }
+  setInterval(draw, 55);
+})();
+</script>
+
+</body>
 </html>
-<!-- 
-                                                                                                                                                                                                                                                                                                                                                                                                                 
---> 

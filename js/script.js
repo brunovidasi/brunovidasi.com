@@ -433,6 +433,13 @@ function renderToolCard(project){
       <div class="doc-embed" id="embed-${project.id}">
         <iframe data-src="${path}" title="${title}"></iframe>
       </div>`;
+  const prototypes = Array.isArray(project.prototypes) ? project.prototypes : [];
+  const prototypeGroup = `${project.id}-prototypes`;
+  const prototypeBtnsHtml = prototypes.map(p => `<button class="doc-btn" onclick="toggleExclusiveDoc('${p.id}','${prototypeGroup}')">${ICON_EYE_SVG}${escapeHtml(p.label)}</button>`).join('');
+  const prototypeEmbedsHtml = prototypes.map(p => `
+      <div class="doc-embed" id="embed-${p.id}" data-group="${prototypeGroup}">
+        <iframe data-src="${escapeHtml(p.path)}" title="${escapeHtml(p.label)}"></iframe>
+      </div>`).join('');
   return `
     <div class="doc-card tool-card${fullWidthClass}" id="project-${project.id}">
       <div class="tool-card-top">
@@ -448,8 +455,9 @@ function renderToolCard(project){
           ${liveHtml}
           ${githubHtml}
           ${codepenHtml}
+          ${prototypeBtnsHtml}
         </div>
-      </div>${embedHtml}
+      </div>${embedHtml}${prototypeEmbedsHtml}
     </div>`;
 }
 
@@ -732,6 +740,13 @@ function toggleDoc(id){
   const embed = document.getElementById('embed-'+id);
   const isOpen = embed.classList.toggle('open');
   if(isOpen) loadEmbedIframe(embed);
+}
+// ---- like toggleDoc, but closes sibling embeds sharing the same group first (e.g. prototype variants) ----
+function toggleExclusiveDoc(id, group){
+  document.querySelectorAll(`.doc-embed[data-group="${group}"]`).forEach(e => {
+    if(e.id !== 'embed-'+id) e.classList.remove('open');
+  });
+  toggleDoc(id);
 }
 function openInNewWindow(path){
   window.open(path, '_blank', 'noopener');
