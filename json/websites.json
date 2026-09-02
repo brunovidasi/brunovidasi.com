@@ -5,13 +5,14 @@
     "url": "darualab.com",
     "live": "https://www.darualab.com/",
     "status": "live",
-    "icon": "🧪",
+    "icon": "💃",
     "role": "Freelance — Front-End Design & Development",
     "description": "End-to-end front-end build for Darua Lab, taken from initial concept through to a deployed, responsive site.",
     "logo": "img/clients/darua-lab.png",
     "screenshot": "img/screenshots/darua-lab.jpg",
     "screenshotGif": "img/screenshots/darua-lab.gif",
-    "github": ""
+    "github": "",
+    "company": "Freelance"
   },
   {
     "id": "brazilianculturalcentre",
@@ -25,7 +26,8 @@
     "logo": "img/clients/brazilian-cultural-centre.png",
     "screenshot": "img/screenshots/brazilian-cultural-centre.jpg",
     "screenshotGif": "img/screenshots/brazilian-cultural-centre.gif",
-    "github": ""
+    "github": "",
+    "company": "Freelance"
   },
   {
     "id": "rheem",
@@ -39,7 +41,8 @@
     "logo": "img/clients/rheem.svg",
     "screenshot": "img/screenshots/rheem.jpg",
     "screenshotGif": "img/screenshots/rheem.gif",
-    "github": ""
+    "github": "",
+    "company": "The Hallway"
   },
   {
     "id": "westernsydneyairport",
@@ -54,7 +57,8 @@
     "logo": "img/clients/westernsydneyairport.png",
     "screenshot": "img/screenshots/westernsydneyairport.jpg",
     "screenshotGif": "img/screenshots/westernsydneyairport.gif",
-    "github": ""
+    "github": "",
+    "company": "The Hallway"
   },
   {
     "id": "generalpants",
@@ -68,6 +72,7 @@
     "logo": "img/clients/generalpants.png",
     "screenshot": "img/screenshots/generalpants.jpg",
     "screenshotGif": "img/screenshots/generalpants.gif",
-    "github": ""
+    "github": "",
+    "company": "General Pants Co."
   }
 ]

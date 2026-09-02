@@ -434,7 +434,7 @@ function renderToolCard(project){
         <iframe data-src="${path}" title="${title}"></iframe>
       </div>`;
   return `
-    <div class="doc-card tool-card${fullWidthClass}">
+    <div class="doc-card tool-card${fullWidthClass}" id="project-${project.id}">
       <div class="tool-card-top">
         <div class="doc-head">
           ${iconHtml}
@@ -510,7 +510,7 @@ function renderCaseCard(project){
     .join('');
   const githubHtml = project.github ? `<a class="doc-btn" href="${escapeHtml(project.github)}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
   return `
-    <div class="case-card">
+    <div class="case-card" id="project-${project.id}">
       ${mediaHtml}
       <div class="case-body">
         <div class="case-head">
@@ -555,7 +555,7 @@ function renderWebsiteCard(project){
   const clickAttr = cardClickable ? ` onclick="openInNewWindow('${visitTargetUrl}')"` : '';
 
   return `
-    <div class="website-card" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}${cardClickable ? ' tabindex="0"' : ''}${clickAttr}>
+    <div class="website-card" id="project-${project.id}" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}${cardClickable ? ' tabindex="0"' : ''}${clickAttr}>
       <div class="website-chrome">
         <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
         <div class="website-urlbar"><span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>${url}</div>
@@ -643,7 +643,56 @@ Promise.all(projectCategories.map(category =>
     el.textContent = (byCategory[category] || []).length;
   });
   setupWebsiteHoverGifs();
+  const allProjects = Object.entries(byCategory).flatMap(([category, items]) =>
+    (items || []).map(item => ({ ...item, category })));
+  renderExperienceProjects(allProjects);
+  renderFreelanceProjects(allProjects);
 });
+
+// ---- little clickable box that jumps to a project's card in its own tab ----
+function projectChipHtml(p){
+  return `
+    <button class="exp-project-chip" onclick="goToProject('${p.category}','${p.id}')">
+      ${p.icon ? `<span class="ic-emoji">${escapeHtml(p.icon)}</span>` : ''}<span>${escapeHtml(p.title)}</span>
+    </button>`;
+}
+
+// ---- experience: mini boxes on each role linking to that company's related projects ----
+function renderExperienceProjects(allProjects){
+  document.querySelectorAll('#panel-experience .commit[data-company]').forEach(commit => {
+    const matches = allProjects.filter(p => p.company === commit.dataset.company);
+    if(!matches.length) return;
+    const details = commit.querySelector('.details');
+    if(!details) return;
+    details.insertAdjacentHTML('beforeend', `
+      <div class="exp-projects">
+        <div class="skill-label">Related projects</div>
+        <div class="exp-projects-row">${matches.map(projectChipHtml).join('')}</div>
+      </div>`);
+  });
+}
+
+// ---- freelance tab: mini boxes for every project done outside full-time roles ----
+function renderFreelanceProjects(allProjects){
+  const row = document.getElementById('freelanceProjectsRow');
+  if(!row) return;
+  const matches = allProjects.filter(p => p.company === 'Freelance');
+  row.innerHTML = matches.map(projectChipHtml).join('');
+}
+
+// ---- jump from an experience mini box to the matching project card ----
+// (edm-kinetic-modules cards live nested inside the edm-work tab, not their own tab)
+const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-work' };
+function goToProject(category, id){
+  openFile(PROJECT_TAB_OVERRIDES[category] || category);
+  requestAnimationFrame(() => {
+    const el = document.getElementById('project-' + id);
+    if(!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('project-flash');
+    setTimeout(() => el.classList.remove('project-flash'), 1600);
+  });
+}
 
 // ---- swap a website thumbnail from its static screenshot to its live-motion GIF on hover ----
 function setupWebsiteHoverGifs(){

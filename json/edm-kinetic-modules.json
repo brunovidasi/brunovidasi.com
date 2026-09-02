@@ -6,6 +6,7 @@
     "icon": "🪗",
     "description": "3-panel click-to-expand accordion built entirely with HTML/CSS — no JavaScript, no AMP for Email. Falls back to all panels expanded in Outlook and other non-supporting clients.",
     "path": "projects/eDM-kinetic-modules/accordian-3-items/index.html",
+    "company": "Dentsu",
     "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
     "codepen": ""
   },
@@ -16,6 +17,7 @@
     "icon": "🎠",
     "description": "5-slide interactive carousel built entirely with HTML/CSS — no JavaScript, no AMP for Email. Checkbox-hack dot/arrow navigation, with a fully-visible stacked fallback for Outlook and other non-supporting clients.",
     "path": "projects/eDM-kinetic-modules/carousel-5-items/index.html",
+    "company": "Dentsu",
     "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
     "codepen": ""
   },
@@ -26,6 +28,7 @@
     "icon": "🗂️",
     "description": "4-tab interactive switcher built entirely with HTML/CSS — no JavaScript, no AMP for Email. Falls back to all panels stacked and visible in Outlook and other non-supporting clients.",
     "path": "projects/eDM-kinetic-modules/tabs-4-items/index.html",
+    "company": "Dentsu",
     "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
     "codepen": ""
   }

@@ -10,7 +10,21 @@
     "github": "https://github.com/brunovidasi/flowparty.com.au",
     "live": "",
     "codepen": "",
+    "company": "Freelance",
     "featured": true
+  },
+  {
+    "id": "pong-game",
+    "title": "Fearless Pong",
+    "category": "landing-pages",
+    "icon": "🏓",
+    "year": 2020,
+    "description": "Browser-based Pong built for a \"Fearless Play\" campaign, built while at The Hallway, with canvas gameplay, keyboard controls, and custom start, pause, win, and game-over screens styled around the campaign branding.",
+    "path": "projects/landing-pages/pong-game/index.html",
+    "github": "https://github.com/brunovidasi/Prototype-Pong-Game-Fearless-Play",
+    "live": "",
+    "codepen": "",
+    "company": "The Hallway"
   },
   {
     "id": "suicidehotline",
@@ -22,7 +36,8 @@
     "path": "projects/landing-pages/suicidehotline/index.html",
     "github": "https://github.com/brunovidasi/suicidehotline",
     "live": "https://suicidehotline.org",
-    "codepen": ""
+    "codepen": "",
+    "company": "Freelance"
   },
   {
     "id": "icloudy",
@@ -34,6 +49,7 @@
     "path": "projects/landing-pages/icloudy.com.br/index.html",
     "github": "https://github.com/brunovidasi/icloudy.com.br",
     "live": "",
-    "codepen": ""
+    "codepen": "",
+    "company": "Freelance"
   }
 ]

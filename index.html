@@ -67,7 +67,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="dot r" id="dotRed" title="Reload"></button>
     <button class="dot y" id="dotYellow" title="Minimize"></button>
     <button class="dot g" id="dotGreen" title="Toggle sidebar"></button>
-    <span class="path">bruno-vieira — portfolio</span>
+    <span class="path">bruno-vieira — dev-portfolio</span>
     <img class="titlebar-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
     <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu">
       <svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-menu"></use></svg>
@@ -199,7 +199,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <button class="doc-btn" onclick="openFile('documents')"><svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>View / download resume →</button>
           </div>
 
-          <div class="commit open">
+          <div class="commit open" data-company="Dentsu">
             <div class="commit-body">
               <div class="year">Aug 2023 – Present</div>
               <div class="msg">Senior Developer</div>
@@ -223,7 +223,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
-          <div class="commit">
+          <div class="commit" data-company="General Pants Co.">
             <div class="commit-body">
               <div class="year">Oct 2022 – Jul 2023 (10 mos)</div>
               <div class="msg">Technical Lead / Front-End Developer</div>
@@ -246,7 +246,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
-          <div class="commit">
+          <div class="commit" data-company="The Hallway">
             <div class="commit-body">
               <div class="year">Oct 2017 – Oct 2022 (5 yrs)</div>
               <div class="msg">Software Programmer</div>
@@ -270,7 +270,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
-          <div class="commit">
+          <div class="commit" data-company="SCE Sistemas">
             <div class="commit-body">
               <div class="year">Jun 2015 – Feb 2017 (1 yr 9 mos)</div>
               <div class="msg">Software Programmer</div>
@@ -292,7 +292,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
-          <div class="commit">
+          <div class="commit" data-company="AM4">
             <div class="commit-body">
               <div class="year">Aug 2014 – May 2015 (10 mos)</div>
               <div class="msg">Junior Software Programmer</div>
@@ -312,7 +312,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
-          <div class="commit">
+          <div class="commit" data-company="Imaginatto">
             <div class="commit-body">
               <div class="year">Jul 2013 – Jun 2014 (1 yr)</div>
               <div class="msg">Software Development Intern</div>
@@ -603,8 +603,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- EDM WORK -->
         <div class="panel" id="panel-edm-work">
           <h2 class="sect"><span class="brk">&lt;</span>eDM-work <span class="attr">type</span>=<span class="str">"case-studies"</span><span class="brk"> /&gt;</span></h2>
-          <div class="sect-intro">Kinetic email modules and campaign work from building eDMs for American Express and ANZ. Client campaign source isn't public (confidentiality), so those are shown as case studies instead — the challenge, the technique, and the outcome.</div>
-          <div class="case-list" id="toolsGrid-edm-work" data-category="edm-work"></div>
 
           <div class="skill-label mt-30">Kinetic Modules</div>
 
@@ -618,10 +616,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- FREELANCE -->
         <div class="panel" id="panel-freelance">
-          <h2 class="sect"><span class="brk">&lt;</span>freelance <span class="attr">status</span>=<span class="str">"open"</span><span class="brk"> /&gt;</span></h2>
+          <h2 class="sect"><span class="brk">&lt;</span>freelance <span class="attr">status</span>=<span class="str">"open-to-work"</span><span class="brk"> /&gt;</span></h2>
           <div class="bio-text">
             Outside my full-time role, I take on a limited number of freelance projects — mostly
-            front-end builds, Shopify stores, and HTML email production for campaigns.
+            front-end builds, Shopify stores, and HTML email production for campaigns. I also
+            handle ongoing website and systems maintenance.
           </div>
 
           <div class="skill-label mt-26">Services</div>
@@ -632,11 +631,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="skill-label">Good fit for</div>
-          <div class="bio-text">
-            Small business front-ends, Shopify store builds or theme customisation, and marketing
-            email templates that need to actually survive Outlook. Happy to jump on a quick call
-            first to see if it's a good match.
-          </div>
+          <ul class="bio-list">
+            <li>Building a new front-end from scratch, or improving an existing one</li>
+            <li>Setting up or customising a Shopify store or theme</li>
+            <li>Coding marketing emails that render correctly everywhere, Outlook included</li>
+            <li>Keeping an existing site healthy — bug fixes, content updates, ongoing maintenance</li>
+          </ul>
+          <div class="bio-text mt-16">Happy to jump on a quick call first, to scope the work and see if it's a good match.</div>
 
           <div class="skill-label mt-26">Some of my clients</div>
           <div class="client-logos">
@@ -648,8 +649,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </a>
           </div>
 
-          <div class="mt-26">
-            <button class="doc-btn" onclick="openFile('contact')">Get in touch →</button>
+          <div class="skill-label mt-26">Some of my projects</div>
+          <div class="exp-projects-row" id="freelanceProjectsRow"></div>
+
+          <div class="mt-52">
+            <button class="doc-btn doc-btn-lg" onclick="openFile('contact')">Get in touch →</button>
           </div>
         </div>
 
