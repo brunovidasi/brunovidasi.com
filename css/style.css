@@ -59,6 +59,11 @@ a {
   margin: 0;
   white-space: pre-wrap;
   padding: 0 20px;
+  min-width: 44ch;
+}
+
+.boot-cursor {
+  animation: blink 1s steps(1) infinite;
 }
 
 #boot.hide {
@@ -2318,6 +2323,11 @@ body.mobile-nav-locked {
   .about-header {
     justify-content: center;
     text-align: center;
+  }
+
+  .about-nav button {
+    font-size: 13px;
+    padding: 8px 14px;
   }
 
   .speech-bubble {

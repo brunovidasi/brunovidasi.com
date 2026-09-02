@@ -33,7 +33,7 @@ function folderIconHtml(open){
 // ---------------- file/folder model ----------------
 const files = {
   intro:            { label:'intro.js',            icon:'js',   folder:null },
-  bio:               { label:'README.md',           icon:'info', folder:'about' },
+  about:             { label:'README.md',           icon:'info', folder:'about' },
   experience:        { label:'experience.js',       icon:'js',   folder:'about' },
   education:         { label:'education.md',        icon:'md',   folder:'about' },
   skills:            { label:'skills.json',         icon:'json', folder:'about' },
@@ -48,7 +48,7 @@ const files = {
   documents:         { label:'documents.pdf',       icon:'pdf',  folder:null }
 };
 const folders = {
-  about:    { label:'about/', children:['bio','experience','education','skills'] },
+  about:    { label:'about/', children:['about','experience','education','skills'] },
   projects: { label:'projects/', children:['websites','landing-pages','mini-tools','edm-work','edm-tools','site-history'] }
 };
 const rootOrder = ['intro','about','projects','freelance','documents','contact'];
@@ -332,7 +332,7 @@ function openFile(id){
   if(files[id].folder) openFolders[files[id].folder] = true;
   if(!openTabs.includes(id)) openTabs.push(id);
   setActive(id);
-  if(id === 'bio') startBioTyping();
+  if(id === 'about') startBioTyping();
   if(id === 'contact') startEmailReveal();
   document.getElementById('shell').classList.remove('mobile-nav-open');
   setMobileNavLock(false);
@@ -369,7 +369,7 @@ function handleRouteChange(){
     renderTabs();
     renderExplorer();
     showActivePanel();
-    if(activeId === 'bio') startBioTyping();
+    if(activeId === 'about') startBioTyping();
     if(activeId === 'contact') startEmailReveal();
   }
 }
@@ -929,7 +929,11 @@ const bootLines = [
 const bootEl = document.getElementById('bootText');
 let li = 0;
 function typeBootLine(){
-  if(li >= bootLines.length){ setTimeout(showRain, 250); return; }
+  if(li >= bootLines.length){
+    bootEl.innerHTML = bootEl.innerHTML.replace(/_\n$/, '<span class="boot-cursor">_</span>\n');
+    setTimeout(showRain, 250);
+    return;
+  }
   let line = bootLines[li];
   let ci = 0;
   const iv = setInterval(()=>{
@@ -1066,7 +1070,7 @@ function startCyclingTagline(){
   });
 }
 
-if(activeId === 'bio') startBioTyping();
+if(activeId === 'about') startBioTyping();
 
 // ---- kick off the boot sequence (skipped in DEV mode, and on direct tab-link visits) ----
 if(isDevMode() || enteredViaDeepLink){

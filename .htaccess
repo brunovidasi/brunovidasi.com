@@ -16,8 +16,8 @@ RewriteCond %{HTTP_HOST} ^flowparty\.com\.au$ [OR]
 RewriteCond %{HTTP_HOST} ^www\.flowparty\.com\.au$
 RewriteRule ^/?$ "https\:\/\/flowparty\.com\.au\/sydney" [R=301,L]
 
-# brunovida.si tab deep-links (e.g. /bio, /experience): serve the SPA shell
+# brunovida.si tab deep-links (e.g. /about, /experience): serve the SPA shell
 # for a direct visit/refresh so client-side JS can render the right tab.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(bio|experience|education|skills|websites|landing-pages|mini-tools|edm-tools|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
+RewriteRule ^(about|experience|education|skills|websites|landing-pages|mini-tools|edm-tools|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
