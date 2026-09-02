@@ -54,7 +54,7 @@ const folders = {
 const rootOrder = ['intro','about','projects','freelance','documents','contact'];
 
 // default-open tabs, as requested
-let openTabs = ['intro','experience','education','skills','contact','documents'];
+let openTabs = ['intro', 'about', 'experience','education','skills','contact'];
 let activeId = 'intro';
 let openFolders = { about:true, projects:true };
 
