@@ -222,6 +222,7 @@ function openFile(id){
   setActive(id);
   if(id === 'bio') startBioTyping();
   document.getElementById('shell').classList.remove('mobile-nav-open');
+  setMobileNavLock(false);
 }
 
 function closeTab(id){
