@@ -2109,6 +2109,14 @@ h2.sect .brk {
   color: var(--accent);
 }
 
+body.mobile-nav-locked {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
 @media (max-width: 720px) {
   .mobile-menu-btn {
     display: inline-flex;

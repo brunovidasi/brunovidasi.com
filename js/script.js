@@ -633,10 +633,24 @@ document.getElementById('dotYellow').addEventListener('click', ()=>{
   app.classList.add('minimize-fx');
   setTimeout(()=> app.classList.remove('minimize-fx'), 350);
 });
+let lockedScrollY = 0;
+function setMobileNavLock(locked){
+  const body = document.body;
+  if(locked){
+    lockedScrollY = window.scrollY;
+    body.style.top = `-${lockedScrollY}px`;
+    body.classList.add('mobile-nav-locked');
+  } else {
+    body.classList.remove('mobile-nav-locked');
+    body.style.top = '';
+    window.scrollTo(0, lockedScrollY);
+  }
+}
 function toggleExplorer(){
   const shell = document.getElementById('shell');
   if(window.matchMedia('(max-width: 720px)').matches){
     shell.classList.toggle('mobile-nav-open');
+    setMobileNavLock(shell.classList.contains('mobile-nav-open'));
   } else {
     shell.classList.toggle('sidebar-hidden');
   }
@@ -647,6 +661,7 @@ document.getElementById('dotGreen').addEventListener('click', toggleExplorer);
 document.getElementById('mobileMenuBtn').addEventListener('click', toggleExplorer);
 document.getElementById('explorerClose').addEventListener('click', ()=>{
   document.getElementById('shell').classList.remove('mobile-nav-open');
+  setMobileNavLock(false);
 });
 
 // ---- explorer "..." menu ----
