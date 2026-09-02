@@ -502,6 +502,7 @@ a {
   margin-right: 18px;
   display: inline-block;
   width: 14px;
+  text-align: right;
 }
 
 .kw {
@@ -584,6 +585,11 @@ code.block {
   flex-shrink: 0;
 }
 
+.socials a {
+  width: 46px;
+  height: 46px;
+}
+
 .socials a:hover {
   transform: scale(1.12);
 }
@@ -595,6 +601,11 @@ code.block {
 .socials a svg, .icon-circle svg {
   width: 20px;
   height: 20px;
+}
+
+.socials a svg {
+  width: 24px;
+  height: 24px;
 }
 
 .soc-linkedin {
@@ -617,7 +628,7 @@ code.block {
   color: var(--muted);
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 h2.sect {
@@ -629,6 +640,10 @@ h2.sect {
 
 h2.sect .brk {
   color: var(--accent);
+}
+
+.sect-caret {
+  margin-left: 2px;
 }
 
 .commit {
@@ -1173,12 +1188,30 @@ h2.sect .brk {
   flex-wrap: wrap;
 }
 
+.doc-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.doc-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.icon-pdf {
+  color: #E5383B;
+}
+
 .doc-name {
   flex: 1;
   font-family: var(--sans);
   font-size: 14px;
   color: var(--text);
   min-width: 160px;
+}
+
+.doc-name-clickable {
+  cursor: pointer;
 }
 
 .doc-actions {
@@ -1632,6 +1665,10 @@ h2.sect .brk {
   background: var(--panel);
 }
 
+.case-card--compact {
+  max-width: 480px;
+}
+
 .case-media {
   width: 100%;
   aspect-ratio: 16/9;
@@ -1751,6 +1788,12 @@ h2.sect .brk {
   min-width: 160px;
 }
 
+.case-logo {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
 .case-badge {
   font-family: var(--sans);
   font-size: 10.5px;
@@ -1823,7 +1866,7 @@ h2.sect .brk {
 }
 
 .email-row {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
   font-family: var(--sans);
@@ -1833,12 +1876,57 @@ h2.sect .brk {
   border-radius: 8px;
   padding: 14px 16px;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
-.email-row .copy-fb {
+.email-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.email-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.email-text {
+  cursor: pointer;
+  font-family: var(--mono);
+  letter-spacing: .2px;
+  transition: color .15s;
+}
+
+.email-row:hover .email-text {
+  color: var(--accent);
+}
+
+.email-caret {
+  margin-left: -6px;
+}
+
+.email-copy-btn {
+  position: relative;
+}
+
+.email-copy-btn .icon-check {
   display: none;
   color: var(--ok);
-  font-size: 12px;
+}
+
+.email-copy-btn.copied {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.email-copy-btn.copied .icon-copy {
+  display: none;
+}
+
+.email-copy-btn.copied .icon-check {
+  display: inline-flex;
 }
 
 .composer {
@@ -2120,6 +2208,10 @@ body.mobile-nav-locked {
 @media (max-width: 720px) {
   .mobile-menu-btn {
     display: inline-flex;
+  }
+
+  .case-card--compact {
+    max-width: 100%;
   }
 
   .about-header {

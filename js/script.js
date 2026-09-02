@@ -196,13 +196,125 @@ function renderTabs(){
   if(activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 
+// ---- human-style typing effect for panel title tags (e.g. <work-experience role="..." years="..." />) ----
+// Types the tag out char-by-char like a real person: occasional typo, a brief pause,
+// a backspace, then the correct character. Once fully typed it never backspaces again —
+// only the cursor keeps blinking (via the existing .cursor-caret animation).
+const QWERTY_NEIGHBOURS = {
+  a:'sq', b:'vn', c:'xv', d:'sf', e:'wr', f:'dg', g:'fh', h:'gj', i:'uo', j:'hk',
+  k:'jl', l:'k', m:'n', n:'bm', o:'ip', p:'o', q:'wa', r:'et', s:'ad', t:'ry',
+  u:'yi', v:'cb', w:'qe', x:'zc', y:'tu', z:'x'
+};
+
+function typoFor(correct){
+  const lower = correct.toLowerCase();
+  const neighbours = QWERTY_NEIGHBOURS[lower];
+  let typo = neighbours ? neighbours[Math.floor(Math.random() * neighbours.length)] : String(Math.floor(Math.random() * 10));
+  if(correct !== lower) typo = typo.toUpperCase();
+  return typo;
+}
+
+function typingDelay(char){
+  let delay = 40 + Math.random() * 70;
+  if(char === ' ') delay += 60;
+  if('="/<>'.includes(char)) delay += 30;
+  return delay;
+}
+
+// Clones the container's children so the typing animation can rebuild the same
+// markup (and thus keep syntax-highlight colors) while revealing it char-by-char.
+// .tool-count holds async, live data (fetched separately) rather than static text —
+// its content is left untouched (so the async update code can still safely set it
+// whenever it resolves) but hidden until the typing sequence reaches its position,
+// then revealed in one go, so the count doesn't pop in ahead of the text before it.
+function buildTypingPlan(container){
+  const frag = document.createDocumentFragment();
+  Array.from(container.childNodes).forEach(node => frag.appendChild(node.cloneNode(true)));
+
+  const chars = [];
+  function walk(node){
+    if(node.nodeType === Node.TEXT_NODE){
+      const full = node.textContent;
+      node.textContent = '';
+      for(const ch of full) chars.push({ type:'char', node, char: ch });
+      return;
+    }
+    if(node.nodeType === Node.ELEMENT_NODE){
+      if(node.classList && node.classList.contains('tool-count')){
+        node.style.visibility = 'hidden';
+        chars.push({ type:'reveal', el: node });
+        return;
+      }
+      Array.from(node.childNodes).forEach(walk);
+    }
+  }
+  Array.from(frag.childNodes).forEach(walk);
+  return { frag, chars };
+}
+
+function humanTypeSect(container){
+  if(!container || container.dataset.typed) return;
+  container.dataset.typed = '1';
+
+  const { frag, chars } = buildTypingPlan(container);
+  container.innerHTML = '';
+  container.appendChild(frag);
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor-caret sect-caret';
+  cursor.textContent = '|';
+  container.appendChild(cursor);
+
+  let i = 0;
+  let mistakeCooldown = 0;
+
+  function typeNext(){
+    if(i >= chars.length) return;
+    const entry = chars[i];
+
+    if(entry.type === 'reveal'){
+      entry.el.style.visibility = '';
+      i++;
+      setTimeout(typeNext, 90 + Math.random() * 60);
+      return;
+    }
+
+    const { node, char } = entry;
+    const canMistake = mistakeCooldown <= 0 && i < chars.length - 1 && /[a-zA-Z0-9]/.test(char) && Math.random() < 0.07;
+
+    if(canMistake){
+      mistakeCooldown = 6;
+      node.textContent += typoFor(char);
+      setTimeout(()=>{
+        node.textContent = node.textContent.slice(0, -1);
+        setTimeout(()=>{
+          node.textContent += char;
+          i++;
+          setTimeout(typeNext, typingDelay(char));
+        }, 90 + Math.random() * 80);
+      }, 160 + Math.random() * 180);
+      return;
+    }
+
+    node.textContent += char;
+    i++;
+    if(mistakeCooldown > 0) mistakeCooldown--;
+    setTimeout(typeNext, typingDelay(char));
+  }
+
+  typeNext();
+}
+
 function showActivePanel(){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const empty = document.getElementById('emptyState');
   if(activeId && openTabs.includes(activeId)){
     empty.classList.remove('show');
     const el = document.getElementById('panel-'+activeId);
-    if(el) el.classList.add('active');
+    if(el){
+      el.classList.add('active');
+      const sect = el.querySelector('h2.sect');
+      if(sect) humanTypeSect(sect);
+    }
   } else {
     empty.classList.add('show');
   }
@@ -221,6 +333,7 @@ function openFile(id){
   if(!openTabs.includes(id)) openTabs.push(id);
   setActive(id);
   if(id === 'bio') startBioTyping();
+  if(id === 'contact') startEmailReveal();
   document.getElementById('shell').classList.remove('mobile-nav-open');
   setMobileNavLock(false);
 }
@@ -257,6 +370,7 @@ function handleRouteChange(){
     renderExplorer();
     showActivePanel();
     if(activeId === 'bio') startBioTyping();
+    if(activeId === 'contact') startEmailReveal();
   }
 }
 window.addEventListener('popstate', handleRouteChange);
@@ -285,6 +399,8 @@ showActivePanel();
 const ICON_GITHUB_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>';
 const ICON_CODEPEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.5 22 9v6l-10 6.5L2 15V9z"/><path d="M12 2.5v6.2M12 22v-6.2M2 9l10 6.2M22 9 12 15.2M2 15l10-6.2M22 15 12 8.8"/></svg>';
 const ICON_LIVE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
+const ICON_EYE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>';
+const ICON_EYE_OFF_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>';
 
 function escapeHtml(str){
   if(str == null) return '';
@@ -309,7 +425,9 @@ function renderToolCard(project){
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
   const codepenHtml = project.codepen ? `<a class="doc-btn" href="${codepen}" target="_blank" rel="noopener">${ICON_CODEPEN_SVG}CodePen</a>` : '';
   const fullWidthClass = project.featured ? ' tool-card-full' : '';
-  const viewHtml = project.noView ? '' : `<button class="doc-btn" onclick="toggleDoc('${project.id}')">👁 View</button>`;
+  const viewHtml = project.noView ? '' : `<button class="doc-btn" onclick="toggleDoc('${project.id}')">${ICON_EYE_SVG}View</button>`;
+  const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
+  const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
   const openWindowHtml = (project.noView || project.category !== 'site-history') ? '' : `<button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>`;
   const embedHtml = project.noView ? '' : `
       <div class="doc-embed" id="embed-${project.id}">
@@ -320,7 +438,7 @@ function renderToolCard(project){
       <div class="tool-card-top">
         <div class="doc-head">
           ${iconHtml}
-          <div class="doc-name">${title}</div>
+          <div class="${nameClass}"${nameClickAttr}>${title}</div>
           ${yearHtml}
         </div>
         ${descHtml}
@@ -557,7 +675,7 @@ function toggleAllDocs(category, btn){
     e.classList.toggle('open', shouldOpen);
     if(shouldOpen) loadEmbedIframe(e);
   });
-  if(btn) btn.innerHTML = shouldOpen ? '🙈 Collapse all' : '👁 View all';
+  if(btn) btn.innerHTML = shouldOpen ? `${ICON_EYE_OFF_SVG}Collapse all` : `${ICON_EYE_SVG}View all`;
 }
 
 // ---- contact page interactions ----
@@ -571,10 +689,55 @@ function openInNewWindow(path){
 }
 function copyEmail(){
   navigator.clipboard.writeText('contact@brunovidasi.com').then(()=>{
-    const fb = document.getElementById('copyFeedback');
-    fb.style.display = 'inline';
-    setTimeout(()=> fb.style.display = 'none', 1500);
+    const btn = document.getElementById('emailCopyBtn');
+    const label = btn.querySelector('.copy-btn-label');
+    btn.classList.add('copied');
+    label.textContent = 'Copied!';
+    clearTimeout(btn._copyResetTimer);
+    btn._copyResetTimer = setTimeout(()=>{
+      btn.classList.remove('copied');
+      label.textContent = 'Copy';
+    }, 1500);
   });
+}
+
+// ---- terminal-style "decrypt" reveal for the email address ----
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*+=?';
+let emailScrambleTimer = null;
+
+function scrambleReveal(el, stepMs = 28){
+  const target = el.dataset.email || el.textContent;
+  clearInterval(emailScrambleTimer);
+
+  let step = 0;
+  const totalSteps = target.length + 8;
+
+  emailScrambleTimer = setInterval(()=>{
+    step++;
+    const revealCount = Math.max(0, step - 8);
+    let out = '';
+    for(let i = 0; i < target.length; i++){
+      out += i < revealCount ? target[i] : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+    }
+    el.textContent = out;
+    if(step >= totalSteps){
+      clearInterval(emailScrambleTimer);
+      el.textContent = target;
+    }
+  }, stepMs);
+}
+
+const emailRowEl = document.getElementById('emailRow');
+const emailTextEl = document.getElementById('emailText');
+if(emailRowEl && emailTextEl){
+  emailRowEl.addEventListener('mouseenter', ()=> scrambleReveal(emailTextEl));
+}
+
+let emailRevealedOnce = false;
+function startEmailReveal(){
+  if(emailRevealedOnce || !emailTextEl) return;
+  emailRevealedOnce = true;
+  scrambleReveal(emailTextEl);
 }
 
 document.getElementById('contactForm').addEventListener('submit', function(e){
