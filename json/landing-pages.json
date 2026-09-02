@@ -1,0 +1,39 @@
+[
+  {
+    "id": "flowparty",
+    "title": "Flow Party Sydney",
+    "category": "landing-pages",
+    "icon": "🎉",
+    "year": 2023,
+    "description": "Single-page site for FLOW, Sydney's biggest Brazilian queer party — covering the brand's mission and community, a visual timeline of past editions, the team, and sponsors.",
+    "path": "projects/landing-pages/flowparty.com.au/index.html",
+    "github": "https://github.com/brunovidasi/flowparty.com.au",
+    "live": "",
+    "codepen": "",
+    "featured": true
+  },
+  {
+    "id": "suicidehotline",
+    "title": "Suicide Hotline",
+    "category": "landing-pages",
+    "icon": "🆘",
+    "year": 2019,
+    "description": "IP-geolocated redirect that surfaces the right local suicide-prevention hotline number for 89+ countries, with an emergency-services fallback link for when life is in immediate danger.",
+    "path": "projects/landing-pages/suicidehotline/index.html",
+    "github": "https://github.com/brunovidasi/suicidehotline",
+    "live": "https://suicidehotline.org",
+    "codepen": ""
+  },
+  {
+    "id": "icloudy",
+    "title": "iCloudy",
+    "category": "landing-pages",
+    "icon": "☁️",
+    "year": 2016,
+    "description": "Bilingual (PT/EN) corporate site for iCloudy, a Brazilian IT consultancy specializing in network infrastructure, information security, and technology innovation.",
+    "path": "projects/landing-pages/icloudy.com.br/index.html",
+    "github": "https://github.com/brunovidasi/icloudy.com.br",
+    "live": "",
+    "codepen": ""
+  }
+]

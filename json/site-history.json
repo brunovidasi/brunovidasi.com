@@ -1,0 +1,88 @@
+[
+  {
+    "id": "site-2026",
+    "title": "brunovidasi.com — 2026",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2026,
+    "description": "The current version — a VS Code-inspired portfolio with a file explorer, tabs, and data-driven project panels. The one you're looking at right now.",
+    "path": "projects/brunovidasi.com/2026/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com",
+    "live": "",
+    "codepen": "",
+    "featured": true,
+    "noView": true
+  },
+  {
+    "id": "site-2025",
+    "title": "brunovidasi.com — 2025",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2025,
+    "description": "In this version, I built on the previous one by adding more features, introducing dark mode, and making a few small CSS tweaks and improvements over the years.",
+    "path": "projects/brunovidasi.com/2025/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  },
+  {
+    "id": "site-2018",
+    "title": "brunovidasi.com — 2018",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2018,
+    "description": "This was my first attempt at turning my resume into a website — a redesign built so people could explore my skills, learn what I do, and see where I’ve worked.",
+    "path": "projects/brunovidasi.com/2018/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  },
+  {
+    "id": "site-2016",
+    "title": "brunovidasi.com — 2016",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2016,
+    "description": "For this version, I wanted to keep things simple: a place where people could find me online, get to know a little about what I do, and easily reach out.",
+    "path": "projects/brunovidasi.com/2016/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  },
+  {
+    "id": "site-2014",
+    "title": "brunovidasi.com — 2014",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2014,
+    "description": "My other attempt to create a website which was simple yet more personal in nature. It was developed using PHP.",
+    "path": "projects/brunovidasi.com/2014/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  },
+  {
+    "id": "site-2012-2",
+    "title": "brunovidasi.com — 2012.2",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2012,
+    "description": "I added some pages and features that were part of my first version of personal website, started using PHP for making the website more dynamic.",
+    "path": "projects/brunovidasi.com/2012.2/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  },
+  {
+    "id": "site-2012",
+    "title": "brunovidasi.com — 2012.1",
+    "category": "site-history",
+    "icon": "🌐",
+    "year": 2012,
+    "description": "My very first version of personal website when I was still learning Information Systems and just beginning my journey as a developer.",
+    "path": "projects/brunovidasi.com/2012/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  }
+]

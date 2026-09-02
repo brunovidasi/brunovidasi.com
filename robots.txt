@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /.claude/
+Disallow: /assets/
+Disallow: /css/
+Disallow: /img/
+Disallow: /js/
+Disallow: /json/
+Disallow: /projects/
+Disallow: 400.shtml
+Disallow: 401.shtml
+Disallow: 403.shtml
+Disallow: 404.shtml
+Disallow: 500.shtml
+Disallow: README.md
+Disallow: resume_es.pdf

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Validator</title>
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg:#eef3f7;
+  --panel:#f8fafc;
+  --panel-strong:#ffffff;
+  --header:#f6f8fb;
+  --gutter:#edf2f7;
+  --border:#dfe7f1;
+  --border-strong:#cbd6e3;
+  --text:#1f2d3d;
+  --muted:#66748a;
+  --accent:#2f5fd5;
+  --accent-soft:#eaf1ff;
+  --shadow:0 20px 45px rgba(15,23,42,.10);
+  --warn-error:#d9534f;
+  --warn-warn:#b8841d;
+  --warn-info:#3f7ad8;
+  --mono:'Consolas','Courier New',monospace;
+  --lh:19px;
+  --pad:8px;
+  --padx:12px;
+  --syn-tag:#0f766e;
+  --syn-attr:#2563eb;
+  --syn-val:#c25a2c;
+  --syn-comment:#4d7c0f;
+  --syn-doc:#7c3aed;
+  --syn-entity:#b45309;
+  --syn-bkt:#475569;
+  --syn-cat:#7c3aed;
+  --syn-csel:#b45309;
+  --syn-cprop:#1d4ed8;
+  --syn-cval:#c25a2c;
+  --syn-cnum:#0f766e;
+}
+
+body {
+  background:linear-gradient(180deg, var(--bg) 0%, #e9eef6 100%);
+  color:var(--text);
+  font-family:var(--mono);
+  font-size:13px;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  overflow:hidden;
+}
+
+header {
+  background:rgba(255,255,255,.75);
+  backdrop-filter: blur(8px);
+  border-bottom:1px solid var(--border);
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-shrink:0;
+  box-shadow:0 8px 20px rgba(15,23,42,.04);
+}
+
+header h1 {
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+
+#status {
+  font-size:11px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  color:var(--muted);
+  transition:background .2s,color .2s, border-color .2s;
+}
+
+#status.ok    { background:#eafaf0; border-color:#b9e7c6; color:#1e7d40; }
+#status.error { background:#feeceb; border-color:#f5c7c4; color:var(--warn-error); }
+#status.warn  { background:#fff6e7; border-color:#f2d79a; color:var(--warn-warn); }
+
+#chars {
+  margin-left:auto;
+  font-size:11px;
+  color:var(--muted);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:5px 10px;
+}
+
+main {
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  overflow:hidden;
+  padding:16px 16px 0;
+  gap:16px;
+}
+
+#editor-panel {
+  flex:1;
+  display:flex;
+  min-height:0;
+  border:1px solid var(--border);
+  border-radius:18px 18px 14px 14px;
+  overflow:hidden;
+  background:rgba(255,255,255,.82);
+  box-shadow:var(--shadow);
+}
+
+#gutter {
+  background:linear-gradient(180deg, #f5f8fc 0%, #eef3f8 100%);
+  color:#8190a2;
+  flex-shrink:0;
+  min-width:52px;
+  border-right:1px solid var(--border);
+  overflow:scroll;
+  font-size:12px;
+  line-height:var(--lh);
+  font-family:var(--mono);
+  padding:var(--pad) 8px var(--pad) 10px;
+  text-align:right;
+  white-space:pre;
+  user-select:none;
+}
+
+#gutter::-webkit-scrollbar { display:none; }
+#gutter { scrollbar-width:none; -ms-overflow-style:none; }
+
+#editor-wrap {
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(248,250,252,.96) 100%);
+}
+
+#hl, #ed, #ov {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  font-family:var(--mono);
+  font-size:12px;
+  line-height:var(--lh);
+  padding:var(--pad) var(--padx);
+  white-space:pre;
+  tab-size:2;
+}
+
+#hl {
+  overflow:scroll;
+  color:var(--text);
+  z-index:1;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-select:none;
+  word-break:normal;
+}
+
+#hl::-webkit-scrollbar { display:none; }
+#hl { scrollbar-width:none; -ms-overflow-style:none; }
+
+#ed {
+  overflow:auto;
+  background:transparent;
+  border:none;
+  outline:none;
+  resize:none;
+  z-index:2;
+  color:transparent;
+  caret-color:#334155;
+}
+
+#ed::selection { background:rgba(74,111,218,.22); }
+
+#ov {
+  overflow:scroll;
+  pointer-events:none;
+  color:transparent;
+  z-index:3;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+#ov::-webkit-scrollbar { display:none; }
+#ov { scrollbar-width:none; -ms-overflow-style:none; }
+
+#warn-panel {
+  flex-shrink:0;
+  height:200px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:rgba(255,255,255,.82);
+  box-shadow:0 12px 28px rgba(15,23,42,.05);
+}
+
+#warn-header {
+  background:linear-gradient(180deg, #f9fbff 0%, #f2f7fd 100%);
+  border-bottom:1px solid var(--border);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+
+#warn-header span {
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+
+.bc {
+  font-size:10px;
+  padding:4px 8px;
+  border-radius:999px;
+  font-weight:700;
+}
+
+#ec { background:#feeceb; color:var(--warn-error); }
+#wc { background:#fff6e7; color:var(--warn-warn); }
+#ic { background:#ebf3ff; color:var(--warn-info); }
+
+#filters {
+  margin-left:auto;
+  display:flex;
+  gap:6px;
+}
+
+.fb {
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:10px;
+  font-family:var(--mono);
+  padding:5px 9px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+
+.fb.on {
+  border-color:rgba(47,95,213,.35);
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+
+.fb:hover {
+  border-color:var(--border-strong);
+  color:var(--text);
+}
+
+#warn-list {
+  overflow-y:auto;
+  flex:1;
+  padding:6px 0;
+  background:linear-gradient(180deg, rgba(255,255,255,.4) 0%, rgba(244,248,252,.55) 100%);
+}
+
+.wi {
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:7px 12px;
+  cursor:pointer;
+  border-left:3px solid transparent;
+  line-height:1.4;
+}
+
+.wi:hover { background:rgba(148,163,184,.06); }
+.wi.on { background:rgba(148,163,184,.08); border-left-color:var(--accent); }
+.wi.e  { border-left-color:var(--warn-error); }
+.wi.w  { border-left-color:var(--warn-warn); }
+.wi.i  { border-left-color:var(--warn-info); }
+
+.wi-ic { font-size:10px; flex-shrink:0; margin-top:3px; }
+.wi-ic.e { color:var(--warn-error); }
+.wi-ic.w { color:var(--warn-warn); }
+.wi-ic.i { color:var(--warn-info); }
+
+.wi-ln {
+  flex-shrink:0;
+  min-width:56px;
+  color:var(--accent);
+  font-size:11px;
+  font-weight:700;
+}
+
+.wi-msg { color:var(--text); font-size:12px; }
+.wt { color:#0f766e; }
+.nw { padding:16px 12px; color:#74839a; font-size:12px; }
+.nw.ok { color:#1e7d40; }
+
+::-webkit-scrollbar { width:12px; height:12px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb {
+  background:rgba(148,163,184,.55);
+  border:3px solid transparent;
+  border-radius:999px;
+  background-clip:padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background:rgba(100,116,139,.7); background-clip:padding-box; }
+</style>
+</head>
+<body>
+<header>
+  <h1>HTML Validator</h1>
+  <span id="status">Ready</span>
+  <span id="chars"></span>
+</header>
+<main>
+  <div id="editor-panel">
+    <div id="gutter">1</div>
+    <div id="editor-wrap">
+      <div id="hl" aria-hidden="true"></div>
+      <div id="ov" aria-hidden="true"></div>
+      <textarea id="ed" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"
+        placeholder="Paste your HTML here — validation and highlighting run automatically..."></textarea>
+    </div>
+  </div>
+  <div id="warn-panel">
+    <div id="warn-header">
+      <span>Issues</span>
+      <span class="bc" id="ec">0 errors</span>
+      <span class="bc" id="wc">0 warnings</span>
+      <span class="bc" id="ic">0 info</span>
+      <div id="filters">
+        <button class="fb on" data-f="all">All</button>
+        <button class="fb" data-f="error">Errors</button>
+        <button class="fb" data-f="warning">Warnings</button>
+        <button class="fb" data-f="info">Info</button>
+      </div>
+    </div>
+    <div id="warn-list"><div class="nw">Paste HTML above to begin.</div></div>
+  </div>
+</main>
+<script>
+(function(){
+'use strict';
+
+// ── Constants ──────────────────────────────────────────────────────────────
+const VOID = new Set(['area','base','br','col','embed','hr','img','input',
+  'link','meta','param','source','track','wbr']);
+const KNOWN = new Set(['a','abbr','acronym','address','applet','article','aside',
+  'audio','b','bdi','bdo','big','blockquote','body','br','button','canvas','caption',
+  'center','cite','code','col','colgroup','data','datalist','dd','del','details','dfn',
+  'dialog','dir','div','dl','dt','em','embed','fieldset','figcaption','figure','font',
+  'footer','form','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html',
+  'i','iframe','img','input','ins','kbd','label','legend','li','link','main','map',
+  'mark','menu','menuitem','meta','meter','nav','noframes','noscript','object','ol',
+  'optgroup','option','output','p','param','picture','pre','progress','q','rp','rt',
+  'ruby','s','samp','script','section','select','small','source','span','strike',
+  'strong','style','sub','summary','sup','svg','table','tbody','td','template',
+  'textarea','tfoot','th','thead','time','title','tr','track','tt','u','ul','var',
+  'video','wbr','xml','o:p','v:rect','v:textbox','v:roundrect','v:shape','v:group',
+  'v:fill','v:stroke','w:sdt','w:sdtpr']);
+const OPT = new Set(['li','dt','dd','p','tr','td','th','option',
+  'colgroup','tbody','thead','tfoot','caption']);
+const TBL = new Set(['table','tbody','thead','tfoot','tr','td','th','caption','colgroup','col']);
+const INL = new Set(['a','b','i','u','s','em','strong','span','small','big','tt','abbr',
+  'acronym','cite','code','dfn','kbd','samp','var','bdo','bdi','mark','q','sub','sup',
+  'time','data','label']);
+function fam(t){ return TBL.has(t)?'T': INL.has(t)?'I':'B'; }
+
+// ── DOM refs ───────────────────────────────────────────────────────────────
+const ed      = document.getElementById('ed');
+const hl      = document.getElementById('hl');
+const ov      = document.getElementById('ov');
+const gutter  = document.getElementById('gutter');
+const warnList= document.getElementById('warn-list');
+const statusEl= document.getElementById('status');
+const charsEl = document.getElementById('chars');
+const ecEl    = document.getElementById('ec');
+const wcEl    = document.getElementById('wc');
+const icEl    = document.getElementById('ic');
+
+let issues=[], filter='all', vTimer=null, hTimer=null, mTimer=null;
+
+// ── Scroll sync ────────────────────────────────────────────────────────────
+// #ed is the scroll master. On its scroll event we mirror scrollTop/Left
+// to #hl and #ov (both overflow:scroll with hidden scrollbars, so
+// setting scrollTop actually works), and mirror scrollTop to #gutter.
+ed.addEventListener('scroll', sync, {passive:true});
+function sync(){
+  const t=ed.scrollTop, l=ed.scrollLeft;
+  gutter.scrollTop = t;   // gutter is overflow:scroll (scrollbar hidden)
+  hl.scrollTop     = t;   // hl is overflow:scroll (scrollbar hidden)
+  hl.scrollLeft    = l;
+  ov.scrollTop     = t;
+  ov.scrollLeft    = l;
+}
+
+// ── Escape ─────────────────────────────────────────────────────────────────
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ══════════════════════════════════════════════════════════════════════════
+//  SYNTAX HIGHLIGHTING — runs on full text so multiline tags work
+// ══════════════════════════════════════════════════════════════════════════
+function buildHL(text){
+  if(!text) return '';
+
+  // Pre-compute <style> block ranges for CSS colouring
+  const styleRanges=[];
+  const srx=/<style[^>]*>/gi; let sm;
+  while((sm=srx.exec(text))!==null){
+    const cs=sm.index+sm[0].length;
+    const ce=text.indexOf('</style>',cs);
+    if(ce!==-1) styleRanges.push({ts:sm.index,te:sm.index+sm[0].length,cs,ce});
+  }
+
+  let out='', i=0, n=text.length;
+  while(i<n){
+    // style block
+    const sr=styleRanges.find(r=>r.ts===i);
+    if(sr){
+      out+=hlTag(text.slice(i,sr.te));
+      out+=hlCSS(text.slice(sr.te,sr.ce));
+      out+=`<span style="color:var(--syn-bkt)">&lt;/</span><span style="color:var(--syn-tag)">style</span><span style="color:var(--syn-bkt)">&gt;</span>`;
+      i=sr.ce+8; continue;
+    }
+    // HTML comment
+    if(text.startsWith('<!--',i)){
+      const e=text.indexOf('-->',i+4); const s2=e<0?n:e+3;
+      out+=`<span style="color:var(--syn-comment)">${esc(text.slice(i,s2))}</span>`;
+      i=s2; continue;
+    }
+    // DOCTYPE/declaration
+    if(text.startsWith('<!',i)){
+      const e=text.indexOf('>',i); const s2=e<0?n:e+1;
+      out+=`<span style="color:var(--syn-doc)">${esc(text.slice(i,s2))}</span>`;
+      i=s2; continue;
+    }
+    // closing tag
+    if(text.startsWith('</',i)){
+      const e=text.indexOf('>',i); const s2=e<0?n:e+1;
+      const inner=text.slice(i+2,s2-1).trim();
+      out+=`<span style="color:var(--syn-bkt)">&lt;/</span><span style="color:var(--syn-tag)">${esc(inner)}</span><span style="color:var(--syn-bkt)">&gt;</span>`;
+      i=s2; continue;
+    }
+    // opening tag — quote-aware scan for >
+    if(text[i]==='<' && i+1<n && /[a-zA-Z]/.test(text[i+1])){
+      let j=i+1,iq=false,qc='';
+      while(j<n){
+        if(iq){if(text[j]===qc)iq=false;}
+        else if(text[j]==='"'||text[j]==="'"){iq=true;qc=text[j];}
+        else if(text[j]==='>') break;
+        j++;
+      }
+      out+=hlTag(text.slice(i,j<n?j+1:n));
+      i=j<n?j+1:n; continue;
+    }
+    // entity
+    if(text[i]==='&'){
+      const e=text.indexOf(';',i);
+      const s2=(e>0&&e-i<=12)?e+1:i+1;
+      out+=`<span style="color:var(--syn-entity)">${esc(text.slice(i,s2))}</span>`;
+      i=s2; continue;
+    }
+    // plain text
+    let j=i+1; while(j<n&&text[j]!=='<'&&text[j]!=='&') j++;
+    out+=esc(text.slice(i,j)); i=j;
+  }
+  return out;
+}
+
+function hlTag(src){
+  let out='',i=0;
+  out+=`<span style="color:var(--syn-bkt)">&lt;</span>`; i=1;
+  if(src[i]==='/'){out+=`<span style="color:var(--syn-bkt)">/</span>`;i++;}
+  let ne=i; while(ne<src.length&&!/[\s\/>]/.test(src[ne]))ne++;
+  out+=`<span style="color:var(--syn-tag)">${esc(src.slice(i,ne))}</span>`; i=ne;
+  while(i<src.length){
+    if(src[i]==='>'||(src[i]==='/'&&src[i+1]==='>')) break;
+    if(/\s/.test(src[i])){let ws=i;while(i<src.length&&/\s/.test(src[i]))i++;out+=esc(src.slice(ws,i));continue;}
+    let ns=i; while(i<src.length&&src[i]!=='='&&src[i]!=='>'&&!/\s/.test(src[i]))i++;
+    out+=`<span style="color:var(--syn-attr)">${esc(src.slice(ns,i))}</span>`;
+    if(src[i]!=='=') continue;
+    out+=`<span style="color:var(--syn-bkt)">=</span>`; i++;
+    if(src[i]==='"'||src[i]==="'"){
+      const q=src[i]; let vs=i; i++;
+      while(i<src.length&&src[i]!==q)i++; if(i<src.length)i++;
+      out+=`<span style="color:var(--syn-val)">${esc(src.slice(vs,i))}</span>`;
+    } else {
+      let vs=i; while(i<src.length&&!/[\s>]/.test(src[i]))i++;
+      out+=`<span style="color:var(--syn-val)">${esc(src.slice(vs,i))}</span>`;
+    }
+  }
+  if(src[i]==='/')out+=`<span style="color:var(--syn-bkt)">/</span>`;
+  if(i<src.length&&(src[i]==='>'||src[src.length-1]==='>'))
+    out+=`<span style="color:var(--syn-bkt)">&gt;</span>`;
+  return out;
+}
+
+function hlCSS(css){
+  let out='',i=0,n=css.length,inB=false;
+  while(i<n){
+    if(css[i]==='/'&&css[i+1]==='*'){
+      const e=css.indexOf('*/',i+2); const s2=e<0?n:e+2;
+      out+=`<span style="color:var(--syn-comment)">${esc(css.slice(i,s2))}</span>`; i=s2; continue;
+    }
+    if(css[i]==='{'){out+=`<span style="color:var(--syn-bkt)">{</span>`;inB=true;i++;continue;}
+    if(css[i]==='}'){out+=`<span style="color:var(--syn-bkt)">}</span>`;inB=false;i++;continue;}
+    if(css[i]===';'){out+=`<span style="color:var(--syn-bkt)">;</span>`;i++;continue;}
+    if(css[i]==='@'){
+      let j=i+1; while(j<n&&/[a-zA-Z-]/.test(css[j]))j++;
+      out+=`<span style="color:var(--syn-cat)">${esc(css.slice(i,j))}</span>`; i=j; continue;
+    }
+    if(/\s/.test(css[i])){out+=esc(css[i]);i++;continue;}
+    if(inB){
+      let ps=i; while(i<n&&css[i]!==':'&&css[i]!=='}'&&css[i]!==';')i++;
+      if(css[i]===':'&&i>ps){
+        out+=`<span style="color:var(--syn-cprop)">${esc(css.slice(ps,i))}</span>`;
+        out+=`<span style="color:var(--syn-bkt)">:</span>`; i++;
+        let vs=i; while(i<n&&css[i]!==';'&&css[i]!=='}')i++;
+        let v=css.slice(vs,i);
+        v=v.replace(/([\d.]+(?:px|em|rem|%|vw|vh|pt|s|ms|deg)?)/g,
+          x=>`<span style="color:var(--syn-cnum)">${esc(x)}</span>`);
+        v=v.replace(/(#[0-9a-fA-F]{3,8})/g,
+          x=>`<span style="color:var(--syn-cnum)">${x}</span>`);
+        out+=`<span style="color:var(--syn-cval)">${v}</span>`;
+      } else out+=esc(css.slice(ps,i));
+      continue;
+    }
+    let ss=i; while(i<n&&css[i]!=='{'&&css[i]!=='}')i++;
+    out+=`<span style="color:var(--syn-csel)">${esc(css.slice(ss,i))}</span>`;
+  }
+  return out;
+}
+
+// ── Line numbers ───────────────────────────────────────────────────────────
+function updateGutter(text){
+  const n=(text.match(/\n/g)||[]).length+1;
+  let s=''; for(let i=1;i<=n;i++) s+=i+'\n';
+  gutter.textContent=s;
+}
+
+// ── Pair highlight on click ────────────────────────────────────────────────
+ed.addEventListener('click', ()=>{clearTimeout(mTimer);mTimer=setTimeout(findPair,60);});
+ed.addEventListener('keyup', ()=>{clearTimeout(mTimer);mTimer=setTimeout(findPair,60);});
+
+function findPair(){
+  const pos=ed.selectionStart, text=ed.value;
+  if(!text){ov.innerHTML='';return;}
+  // walk left to find <
+  let ts=pos; while(ts>0&&text[ts]!=='<'&&text[ts]!=='>') ts--;
+  if(text[ts]!=='<'){ov.innerHTML='';return;}
+  // walk right to find > (quote-aware)
+  let te=ts+1,iq=false,qc='';
+  while(te<text.length){
+    if(iq){if(text[te]===qc)iq=false;}
+    else if(text[te]==='"'||text[te]==="'"){iq=true;qc=text[te];}
+    else if(text[te]==='>') break;
+    te++;
+  }
+  if(te>=text.length){ov.innerHTML='';return;}
+  te++;
+  const src=text.slice(ts,te);
+  const nm=src.match(/^<\/?([a-zA-Z][a-zA-Z0-9:-]*)/);
+  if(!nm||VOID.has(nm[1].toLowerCase())){ov.innerHTML='';return;}
+  const tag=nm[1].toLowerCase(), isClose=src[1]==='/';
+  let ps=-1,pe=-1;
+
+  if(isClose){
+    let depth=0, sc=ts-1;
+    while(sc>=0){
+      if(text[sc]==='>'){
+        let t2=sc-1; while(t2>=0&&text[t2]!=='<') t2--;
+        if(t2>=0){
+          const t=text.slice(t2,sc+1);
+          const n2=t.match(/^<\/?([a-zA-Z][a-zA-Z0-9:-]*)/);
+          if(n2&&n2[1].toLowerCase()===tag){
+            if(t[1]==='/') depth++;
+            else if(depth===0){ps=t2;pe=sc+1;break;}
+            else depth--;
+          }
+          sc=t2-1; continue;
+        }
+      }
+      sc--;
+    }
+  } else {
+    let depth=0, sc=te;
+    while(sc<text.length){
+      if(text[sc]==='<'){
+        let t2=sc+1,iq2=false,qc2='';
+        while(t2<text.length){
+          if(iq2){if(text[t2]===qc2)iq2=false;}
+          else if(text[t2]==='"'||text[t2]==="'"){iq2=true;qc2=text[t2];}
+          else if(text[t2]==='>') break;
+          t2++;
+        }
+        const t=text.slice(sc,t2+1);
+        const n2=t.match(/^<\/?([a-zA-Z][a-zA-Z0-9:-]*)/);
+        if(n2&&n2[1].toLowerCase()===tag){
+          if(t[1]!=='/'&&!t.endsWith('/>')) depth++;
+          else if(t[1]==='/'){if(depth===0){ps=sc;pe=t2+1;break;}else depth--;}
+        }
+        sc=t2+1; continue;
+      }
+      sc++;
+    }
+  }
+
+  if(ps<0){ov.innerHTML='';return;}
+  const ranges=[{s:ts,e:te},{s:ps,e:pe}].sort((a,b)=>a.s-b.s);
+  let html='',ci=0;
+  for(const r of ranges){
+    if(r.s>ci) html+=esc(text.slice(ci,r.s));
+    html+=`<span style="color:var(--syn-tag);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px">${esc(text.slice(r.s,r.e))}</span>`;
+    ci=r.e;
+  }
+  if(ci<text.length) html+=esc(text.slice(ci));
+  ov.innerHTML=html;
+  // sync overlay scroll
+  ov.scrollTop=ed.scrollTop; ov.scrollLeft=ed.scrollLeft;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  VALIDATOR
+// ══════════════════════════════════════════════════════════════════════════
+function stripAll(src){
+  // 1. Negated Outlook conditionals <!--[if !...]><!-- --> ... <!--<![endif]-->
+  //    Strip markers only, keep content between them.
+  src=src.replace(/<!--\[if\s*![^\]]*\]><!--\s*-->/gi, m=>' '.repeat(m.length));
+  src=src.replace(/<!--<!\[endif\]-->/gi,               m=>' '.repeat(m.length));
+  // 2. Positive Outlook conditionals <!--[if ...]> ... <![endif]--> — strip all
+  src=src.replace(/<!--\[if[^\]]*\]>[\s\S]*?<!\[endif\]-->/gi, m=>' '.repeat(m.length));
+  // 3. Remaining HTML comments
+  src=src.replace(/<!--[\s\S]*?-->/g, m=>' '.repeat(m.length));
+  // 4. DOCTYPE
+  src=src.replace(/<!DOCTYPE[^>]*>/gi, m=>' '.repeat(m.length));
+  // 5. Blank style/script content (keep tags)
+  src=src.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/gi,
+    (f,o,c,cl)=>o+' '.repeat(c.length)+cl);
+  src=src.replace(/(<script[^>]*>)([\s\S]*?)(<\/script>)/gi,
+    (f,o,c,cl)=>o+' '.repeat(c.length)+cl);
+  return src;
+}
+
+function validate(html){
+  const iss=[];
+  const lines=html.split('\n');
+  const ls=[]; let p=0;
+  for(const l of lines){ls.push(p);p+=l.length+1;}
+  function ptl(p2){let lo=0,hi=ls.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(ls[m]<=p2)lo=m;else hi=m-1;}return lo+1;}
+  function add(type,line,msg,tag,cp){iss.push({type,line,msg,tag:tag||'',cp:cp!=null?cp:-1});}
+  function eh(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  const stripped=stripAll(html);
+
+  // ── 1. Missing bracket check ─────────────────────────────────────────────
+  // Only check OPENING tags for missing >.
+  // Skip closing tags (</a with no >) — they just get reported by balance checker.
+  const malformed=[];
+  {
+    const s=stripped; let i=0;
+    while(i<s.length){
+      if(s[i]==='<'){
+        // Skip closing tags, comments, declarations entirely
+        if(s[i+1]==='/'||s[i+1]==='!'||s[i+1]==='?'){i++;continue;}
+        if(!/[a-zA-Z]/.test(s[i+1]||'')){i++;continue;}
+        // Opening tag — find > quote-aware
+        let j=i+1,iq=false,qc='',nl=0,found=false;
+        while(j<s.length){
+          if(iq){if(s[j]===qc)iq=false;}
+          else if(s[j]==='"'||s[j]==="'"){iq=true;qc=s[j];}
+          else if(s[j]==='>'){found=true;break;}
+          else if(s[j]==='<') break; // next tag — this one had no >
+          if(s[j]==='\n'){nl++;if(nl>8)break;}
+          j++;
+        }
+        if(!found){
+          const snip=s.slice(i+1,Math.min(i+30,j)).split(/[\s>]/)[0];
+          if(snip&&/^[a-zA-Z][a-zA-Z0-9:-]*$/.test(snip)){
+            const tag=snip.toLowerCase();
+            const ln=ptl(i);
+            add('error',ln,`Missing <code>&gt;</code> — <span class="wt">&lt;${eh(snip)}</span> has no closing bracket`,tag,i);
+            if(!VOID.has(tag)) malformed.push({tag,pos:i,line:ln});
+          }
+        }
+        i=found?j+1:j; continue;
+      } else if(s[i]==='>'){
+        // Orphan > — check it has a matching < nearby
+        let k=i-1,fo=false,lb=0;
+        while(k>=0&&lb<=8){
+          if(s[k]==='<'){fo=true;break;}
+          if(s[k]==='\n')lb++;
+          k--;
+        }
+        if(!fo) add('warning',ptl(i),`Orphan <code>&gt;</code> — no matching <code>&lt;</code> found nearby`,'',i);
+        i++;
+      } else i++;
+    }
+  }
+
+  // ── 2. Tokenise (quote-aware) ────────────────────────────────────────────
+  const tokens=[];
+  {
+    const s=stripped; let i=0;
+    while(i<s.length){
+      if(s[i]!=='<'){i++;continue;}
+      if(s[i+1]==='/'){
+        let j=i+2; while(j<s.length&&s[j]!=='>') j++;
+        const nm=s.slice(i+2,j).trim().match(/^([a-zA-Z][a-zA-Z0-9:-]*)/);
+        if(nm) tokens.push({k:'close',tag:nm[1].toLowerCase(),pos:i});
+        i=j+1; continue;
+      }
+      if(s[i+1]==='!'||s[i+1]==='?'){
+        const e=s.indexOf('>',i); i=e<0?s.length:e+1; continue;
+      }
+      if(/[a-zA-Z]/.test(s[i+1]||'')){
+        let j=i+1,iq=false,qc='';
+        while(j<s.length){
+          if(iq){if(s[j]===qc)iq=false;}
+          else if(s[j]==='"'||s[j]==="'"){iq=true;qc=s[j];}
+          else if(s[j]==='>') break;
+          j++;
+        }
+        const ts=s.slice(i,j+1);
+        const nm=ts.match(/^<([a-zA-Z][a-zA-Z0-9:-]*)/);
+        if(nm){
+          const tag=nm[1].toLowerCase();
+          const sc=ts.trimEnd().endsWith('/>')||VOID.has(tag);
+          tokens.push({k:sc?'void':'open',tag,pos:i,attrs:ts.slice(nm[0].length,ts.length-(ts.trimEnd().endsWith('/>')?2:1))});
+        }
+        i=j+1; continue;
+      }
+      i++;
+    }
+    // Inject malformed opens
+    for(const m of malformed) tokens.push({k:'open',tag:m.tag,pos:m.pos,attrs:'',syn:true});
+    tokens.sort((a,b)=>a.pos-b.pos);
+  }
+
+  // ── 3. Attribute checks ──────────────────────────────────────────────────
+  for(const t of tokens){
+    if((t.k!=='open'&&t.k!=='void')||t.syn) continue;
+    const ln=ptl(t.pos), attrs=t.attrs||'';
+    // Unquoted values — strip quoted first to avoid false positives
+    const as=attrs.replace(/=\s*"[^"]*"/g,'=__Q__').replace(/=\s*'[^']*'/g,'=__Q__');
+    let am; const ur=/\s([a-zA-Z][a-zA-Z0-9_:-]*)=(?!__Q__)([^\s>\/][^\s>]*)/g;
+    while((am=ur.exec(as))!==null){
+      if(/^[a-zA-Z0-9_.:\-\/%#]+$/.test(am[2])) continue;
+      add('warning',ln,`Attribute <span class="wt">${eh(am[1])}</span> has unquoted value on <span class="wt">&lt;${t.tag}&gt;</span>`,t.tag);
+    }
+    if(!KNOWN.has(t.tag)&&!t.tag.includes(':'))
+      add('info',ln,`Unknown tag <span class="wt">&lt;${t.tag}&gt;</span>`,t.tag);
+    if(t.tag==='img'&&!/\balt\s*=/i.test(attrs))
+      add('info',ln,`<span class="wt">&lt;img&gt;</span> missing <code>alt</code>`,t.tag);
+  }
+
+  // ── 4. Tag balance ───────────────────────────────────────────────────────
+  const stack=[];
+  for(const t of tokens){
+    if(t.k==='void') continue;
+    const ln=ptl(t.pos);
+    if(t.k==='open'){
+      stack.push({tag:t.tag,line:ln,pos:t.pos});
+    } else {
+      const top=stack.length?stack[stack.length-1]:null;
+      if(top&&top.tag===t.tag){stack.pop();continue;}
+      const cf=fam(t.tag);
+      // Table tags search entire stack; others search 8 deep.
+      // Hard-stop at family boundary so </div> never matches <tr>.
+      const lim=cf==='T'?0:Math.max(0,stack.length-8);
+      let found=-1;
+      for(let i=stack.length-1;i>=lim;i--){
+        if(fam(stack[i].tag)!==cf) break;
+        if(stack[i].tag===t.tag){found=i;break;}
+      }
+      if(found<0){
+        add('error',ln,`Extra closing <span class="wt">&lt;/${t.tag}&gt;</span> — no matching opening tag`,t.tag,t.pos);
+      } else {
+        for(let i=stack.length-1;i>found;i--){
+          const o=stack[i];
+          if(fam(o.tag)!==cf) continue;
+          add(OPT.has(o.tag)?'warning':'error',o.line,
+            `<span class="wt">&lt;${o.tag}&gt;</span> (line ${o.line}) not closed before <span class="wt">&lt;/${t.tag}&gt;</span> on line ${ln}`,
+            o.tag,o.pos);
+        }
+        stack.splice(found,stack.length-found);
+      }
+    }
+  }
+  for(const item of stack){
+    add(OPT.has(item.tag)?'warning':'error',item.line,
+      `<span class="wt">&lt;${item.tag}&gt;</span> (line ${item.line}) was never closed`,
+      item.tag,item.pos);
+  }
+
+  // ── 5. CSS validation ────────────────────────────────────────────────────
+  let cm; const cr=/<style[^>]*>([\s\S]*?)<\/style>/gi;
+  while((cm=cr.exec(html))!==null){
+    const boff=cm.index+cm[0].indexOf(cm[1]);
+    const css=cm[1].replace(/\/\*[\s\S]*?\*\//g,m=>' '.repeat(m.length));
+    let depth=0; const opens2=[];
+    for(let i=0;i<css.length;i++){
+      if(css[i]==='{'){depth++;opens2.push(i);}
+      else if(css[i]==='}'){
+        if(depth===0) add('error',ptl(boff+i),'CSS: unexpected <code>}</code>','',boff+i);
+        else{opens2.pop();depth--;}
+      }
+    }
+    if(depth>0&&opens2.length) add('error',ptl(boff+opens2[0]),'CSS: unclosed <code>{</code>','',boff+opens2[0]);
+    const rr=/\{([^{}]*)\}/g; let rm;
+    while((rm=rr.exec(css))!==null){
+      const seen=new Map();
+      for(const d of rm[1].split(';')){
+        const ci2=d.indexOf(':'); if(ci2<0) continue;
+        const prop=d.slice(0,ci2).trim().toLowerCase();
+        if(!prop) continue;
+        if(seen.has(prop)){add('info',ptl(boff+rm.index),`CSS: duplicate property <code>${prop}</code>`,'');seen.delete(prop);}
+        else seen.set(prop,true);
+      }
+    }
+  }
+
+  iss.sort((a,b)=>a.line-b.line||(a.type==='error'?-1:1));
+  return iss;
+}
+
+// ── Render warnings ────────────────────────────────────────────────────────
+function renderWarnings(iss,f){
+  const filt=f==='all'?iss:iss.filter(i=>i.type===f);
+  const e=iss.filter(i=>i.type==='error').length;
+  const w=iss.filter(i=>i.type==='warning').length;
+  const ii=iss.filter(i=>i.type==='info').length;
+  ecEl.textContent=e+(e===1?' error':' errors');
+  wcEl.textContent=w+(w===1?' warning':' warnings');
+  icEl.textContent=ii+' info';
+  if(!iss.length){statusEl.className='ok';statusEl.textContent='✓ Valid';}
+  else if(e){statusEl.className='error';statusEl.textContent=e+(e===1?' error':' errors');}
+  else{statusEl.className='warn';statusEl.textContent=w+' warnings';}
+  if(!filt.length){
+    warnList.innerHTML=`<div class="nw${!iss.length?' ok':''}">${!iss.length?'✓ No issues found.':'No issues match this filter.'}</div>`;
+    return;
+  }
+  const ic2={error:'✖',warning:'▲',info:'●'};
+  const cl={error:'e',warning:'w',info:'i'};
+  warnList.innerHTML=filt.map((is,idx)=>{
+    const oi=iss.indexOf(is);
+    return `<div class="wi ${cl[is.type]}" data-i="${oi}" tabindex="0">
+      <span class="wi-ic ${cl[is.type]}">${ic2[is.type]}</span>
+      <span class="wi-ln">Line ${is.line}</span>
+      <span class="wi-msg">${is.msg}</span>
+    </div>`;
+  }).join('');
+  warnList.querySelectorAll('.wi').forEach(el=>{
+    el.addEventListener('click',()=>jump(el));
+    el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' ')jump(el);});
+  });
+}
+
+function jump(el){
+  warnList.querySelectorAll('.wi').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  const is=issues[+el.dataset.i]; if(!is) return;
+  const text=ed.value, lines=text.split('\n'), tl=is.line-1;
+  let off=0; for(let i=0;i<tl&&i<lines.length;i++) off+=lines[i].length+1;
+  const lt=lines[tl]||''; let ss=off,se=off+lt.length;
+  if(is.cp>=0){const rest=text.slice(is.cp),te=rest.search(/>/);if(te>0&&te<400){ss=is.cp;se=is.cp+te+1;}}
+  else if(is.tag){const r=new RegExp(`<\\/?${is.tag.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}[\\s\\/>]?`,'i');const mm=r.exec(lt);if(mm){ss=off+mm.index;se=off+mm.index+mm[0].length;}}
+  const lh=19;
+  ed.scrollTop=Math.max(0,tl*lh-ed.clientHeight/2);
+  Promise.resolve().then(()=>{ed.focus({preventScroll:true});ed.setSelectionRange(ss,se);sync();});
+}
+
+document.querySelectorAll('.fb').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.fb').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); filter=b.dataset.f; renderWarnings(issues,filter);
+  });
+});
+
+// ── Main input handler ─────────────────────────────────────────────────────
+function onInput(){
+  const text=ed.value;
+  charsEl.textContent=text.length.toLocaleString()+' chars';
+  updateGutter(text);
+
+  clearTimeout(hTimer);
+  hTimer=setTimeout(()=>{
+    hl.innerHTML=buildHL(ed.value);
+    sync(); // re-sync after highlight rebuild
+  }, text.length>40000?500:150);
+
+  clearTimeout(vTimer);
+  if(!text.trim()){
+    issues=[]; renderWarnings([],filter);
+    statusEl.className=''; statusEl.textContent='Ready'; charsEl.textContent=''; return;
+  }
+  statusEl.className=''; statusEl.textContent='…';
+  vTimer=setTimeout(()=>{
+    const t=ed.value;
+    setTimeout(()=>{issues=validate(t);renderWarnings(issues,filter);},0);
+  }, text.length>40000?900:600);
+}
+
+ed.addEventListener('input',onInput);
+ed.addEventListener('keydown',ev=>{
+  if(ev.key==='Tab'){
+    ev.preventDefault();
+    const s=ed.selectionStart,e2=ed.selectionEnd;
+    ed.value=ed.value.slice(0,s)+'  '+ed.value.slice(e2);
+    ed.selectionStart=ed.selectionEnd=s+2;
+    onInput();
+  }
+});
+
+// Init
+updateGutter('');
+})();
+</script>
+</body>
+</html>

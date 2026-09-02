@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eDM T&Cs HTML to Plain Text Converter</title>
+
+<style>
+:root {
+    --bg: #eef3f8;
+    --bg-strong: #e4ebf3;
+    --panel: rgba(255, 255, 255, 0.9);
+    --panel-alt: #f8fafc;
+    --line: #dfe7f1;
+    --line-strong: #c9d4e3;
+    --text: #1d2a39;
+    --muted: #66758a;
+    --accent: #1f3c88;
+    --accent-soft: #e9efff;
+    --accent-strong: #152d62;
+    --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+    --radius: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", "Inter", Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 38px 22px;
+    background:
+        radial-gradient(circle at top left, rgba(103, 126, 234, 0.14), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 25%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
+    color: var(--text);
+}
+
+.app {
+    max-width: 1520px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(210, 220, 233, 0.8);
+    border-radius: 24px;
+    padding: 28px 28px 24px;
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    margin: 0 0 18px;
+    font-size: clamp(1.8rem, 2vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+}
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+button {
+    appearance: none;
+    border: 1px solid rgba(19, 36, 76, 0.08);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #1d2c4d 0%, #122544 100%);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 12px 18px;
+    box-shadow: 0 8px 18px rgba(23, 42, 84, 0.2);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(23, 42, 84, 0.24);
+    filter: brightness(1.04);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.container {
+    display: flex;
+    gap: 22px;
+    align-items: stretch;
+}
+
+.panel {
+    flex: 1;
+    min-width: 0;
+}
+
+.panel h2 {
+    margin: 0 0 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+textarea,
+pre {
+    width: 100%;
+    height: 620px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 16px 16px;
+    overflow-y: auto;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+textarea {
+    resize: none;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    outline: none;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    color: var(--text);
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+textarea:focus {
+    border-color: rgba(31, 60, 136, 0.55);
+    box-shadow: 0 0 0 4px rgba(92, 118, 199, 0.12);
+}
+
+textarea::placeholder {
+    color: #8a97ab;
+}
+
+pre {
+    background: linear-gradient(180deg, #fbfcff 0%, #f4f8ff 100%);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    margin: 0;
+    color: #233349;
+}
+
+.status {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.wrapBtn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.wrapBtn button {
+    background: linear-gradient(180deg, #eff4ff 0%, #e2eafc 100%);
+    color: var(--accent-strong);
+    border-color: rgba(31, 60, 136, 0.14);
+    box-shadow: 0 8px 15px rgba(31, 60, 136, 0.08);
+}
+
+.wrapBtn button:hover {
+    background: linear-gradient(180deg, #f4f8ff 0%, #dde8ff 100%);
+}
+
+@media (max-width: 1000px) {
+    body {
+        padding: 20px 14px;
+    }
+
+    .app {
+        padding: 20px 18px 18px;
+        border-radius: 18px;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    textarea,
+    pre {
+        height: 340px;
+    }
+
+    .wrapBtn {
+        justify-content: stretch;
+    }
+
+    .wrapBtn button {
+        width: 100%;
+    }
+}
+</style>
+
+</head>
+<body>
+
+<div class="app">
+
+    <h1>eDM T&Cs HTML to Plain Text Converter</h1>
+
+    <div class="toolbar">
+
+    </div>
+
+    <div class="container">
+
+        <div class="panel">
+            <h2>HTML Input</h2>
+            <textarea
+                id="input"
+                placeholder="Paste your HTML here..."
+            ></textarea>
+        </div>
+
+        <div class="panel">
+            <h2>Plain Text Output</h2>
+            <pre id="output"></pre>
+        </div>
+
+    </div>
+
+    <div class="status">
+        Paste HTML on the left. Conversion happens automatically.
+    </div>
+
+    <div class="wrapBtn">
+        <button id="copyBtn">
+            Copy Plain Text Output
+        </button>
+    </div>
+
+</div>
+
+<script>
+function convert() {
+
+    const input = document.getElementById("input").value;
+
+    const parser = new DOMParser();
+
+    const doc = parser.parseFromString(input, "text/html");
+
+    function walk(node) {
+
+        let text = "";
+
+        node.childNodes.forEach(child => {
+
+            if (child.nodeType === Node.TEXT_NODE) {
+
+                text += child.nodeValue;
+            }
+
+            else if (child.nodeType === Node.ELEMENT_NODE) {
+
+                const tag = child.tagName.toLowerCase();
+
+                if (tag === "a") {
+
+                    const linkText = walk(child);
+                    const href = child.getAttribute("href");
+
+                    text += linkText + " (" + href + ")";
+                }
+
+                else if (tag === "br") {
+
+                    text += "\n";
+                }
+
+                else if (tag === "p") {
+
+                    text += walk(child) + "\n\n";
+                }
+
+                else if (
+                    ["table", "tbody", "tr", "td", "th"].includes(tag)
+                ) {
+
+                    text += walk(child) + " ";
+                }
+
+                else {
+
+                    text += walk(child);
+                }
+            }
+        });
+
+        return text;
+    }
+
+    let result = walk(doc.body);
+
+    result = result.replace(/\u00A0/g, " ");
+    result = result.replace(/(\d+\.)\s*\n\s*/g, "$1 ");
+    result = result.replace(/[ \t]+\n/g, "\n");
+    result = result.replace(/\n[ \t]+/g, "\n");
+    result = result.replace(/[ \t]{2,}/g, " ");
+    result = result.replace(/\n{3,}/g, "\n\n");
+
+    document.getElementById("output").textContent =
+        result.trim();
+}
+
+function copyOutput() {
+
+    const output =
+        document.getElementById("output").textContent;
+
+    navigator.clipboard.writeText(output)
+        .then(() => {
+
+            const btn =
+                document.getElementById("copyBtn");
+
+            const original =
+                btn.textContent;
+
+            btn.textContent = "Copied!";
+
+            setTimeout(() => {
+
+                btn.textContent = original;
+
+            }, 1500);
+        })
+        .catch(() => {
+
+            alert("Failed to copy.");
+        });
+}
+
+document
+    .getElementById("input")
+    .addEventListener("input", convert);
+
+document
+    .getElementById("copyBtn")
+    .addEventListener("click", copyOutput);
+</script>
+
+</body>
+</html>

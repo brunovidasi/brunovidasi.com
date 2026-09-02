@@ -1,0 +1,73 @@
+[
+  {
+    "id": "darualab",
+    "title": "Darua Lab",
+    "url": "darualab.com",
+    "live": "https://www.darualab.com/",
+    "status": "live",
+    "icon": "🧪",
+    "role": "Freelance — Front-End Design & Development",
+    "description": "End-to-end front-end build for Darua Lab, taken from initial concept through to a deployed, responsive site.",
+    "logo": "img/clients/darua-lab.png",
+    "screenshot": "img/screenshots/darua-lab.jpg",
+    "screenshotGif": "img/screenshots/darua-lab.gif",
+    "github": ""
+  },
+  {
+    "id": "brazilianculturalcentre",
+    "title": "Brazilian Cultural Centre",
+    "url": "brazilianculturalcentre.com",
+    "live": "https://www.brazilianculturalcentre.com/",
+    "status": "live",
+    "icon": "🎭",
+    "role": "Freelance — Front-End Design & Development",
+    "description": "Front-end design and build for the Brazilian Cultural Centre's website.",
+    "logo": "img/clients/brazilian-cultural-centre.png",
+    "screenshot": "img/screenshots/brazilian-cultural-centre.jpg",
+    "screenshotGif": "img/screenshots/brazilian-cultural-centre.gif",
+    "github": ""
+  },
+  {
+    "id": "rheem",
+    "title": "Rheem Hot Water",
+    "url": "rheem.com.au",
+    "live": "https://www.rheem.com.au/rheem/",
+    "status": "live",
+    "icon": "🔥",
+    "role": "The Hallway — Front-End Design & Development",
+    "description": "Front-end design and development work on the Rheem Hot Water website using Node.js and React, delivered while at The Hallway.",
+    "logo": "img/clients/rheem.svg",
+    "screenshot": "img/screenshots/rheem.jpg",
+    "screenshotGif": "img/screenshots/rheem.gif",
+    "github": ""
+  },
+  {
+    "id": "westernsydneyairport",
+    "title": "Western Sydney International",
+    "url": "westernsydney.com.au",
+    "live": "",
+    "archiveUrl": "https://web.archive.org/web/20241211211736/https://westernsydney.com.au/",
+    "status": "offline",
+    "icon": "✈️",
+    "role": "The Hallway — Front-End Design & Development",
+    "description": "Built the Western Sydney International Airport website in Drupal 8 while at The Hallway. The site has since been fully redesigned; this is preserved via the Wayback Machine.",
+    "logo": "img/clients/westernsydneyairport.png",
+    "screenshot": "img/screenshots/westernsydneyairport.jpg",
+    "screenshotGif": "img/screenshots/westernsydneyairport.gif",
+    "github": ""
+  },
+  {
+    "id": "generalpants",
+    "title": "General Pants Co.",
+    "url": "generalpants.com",
+    "live": "https://www.generalpants.com/",
+    "status": "live",
+    "icon": "👖",
+    "role": "General Pants Co. — Front-End Design & Development",
+    "description": "Front-end development for General Pants Co.'s website migration from Hybris to Salesforce, working as part of the in-house team.",
+    "logo": "img/clients/generalpants.png",
+    "screenshot": "img/screenshots/generalpants.jpg",
+    "screenshotGif": "img/screenshots/generalpants.gif",
+    "github": ""
+  }
+]

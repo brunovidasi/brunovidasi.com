@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de CPF</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Gerador de CPF</h1>
+  <p class="sub">Gera números de CPF matematicamente válidos (dígitos verificadores corretos), com opção de escolher a região fiscal / estado.</p>
+
+  <div class="card">
+    <label for="state">Estado / Região fiscal</label>
+    <select id="state"></select>
+
+    <div class="row">
+      <div>
+        <label for="count">Quantidade</label>
+        <select id="count" class="count-wrap">
+          <option value="1">1 CPF</option>
+          <option value="5">5 CPFs</option>
+          <option value="10">10 CPFs</option>
+          <option value="20">20 CPFs</option>
+        </select>
+      </div>
+      <div>
+        <label for="format">Formato</label>
+        <select id="format">
+          <option value="formatted">000.000.000-00</option>
+          <option value="plain">00000000000</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="generateBtn" style="margin-top:14px;">Gerar</button>
+  </div>
+
+  <div id="singleResultCard" class="card" style="display:none;">
+    <div class="result" id="cpfResult">—</div>
+    <div class="meta" id="cpfMeta"></div>
+    <button class="secondary" id="copyBtn">Copiar</button>
+  </div>
+
+  <div id="listCard" class="card" style="display:none;">
+    <div id="listContainer" class="list"></div>
+    <button class="secondary" id="copyAllBtn">Copiar todos</button>
+  </div>
+
+  <div class="disclaimer">
+    Apenas para testes de software / preenchimento de formulários fictícios. Os números gerados passam na validação matemática do CPF, mas não pertencem a nenhuma pessoa real registrada na Receita Federal. Não use para fins ilegais.
+  </div>
+</div>
+
+<div class="toast" id="toast">Copiado!</div>
+
+<script src="script.js"></script>
+</body>
+</html>

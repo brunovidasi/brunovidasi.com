@@ -1,0 +1,87 @@
+<html>
+
+<head>
+
+    <title>Fearless Pong | The Hallway</title>
+    <script src="jquery.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div id="wrap">
+
+  <div id="startMenu">
+    <div class="imageThw">
+      <img src="thw.png" />
+    </div>
+    <div class="centralised">
+      <div class="imageLogo">
+        <img src="fearless.png" />
+      </div>
+      <button id="startBtn">PLAY</button>
+    </div>
+    <div class="bottom">
+      <div class="text">
+        <img src="icon.png"> This game has been designed for fearless desktop players, put the phone down.
+      </div>
+      <div class="copyright">
+        &copy; The Hallway 2020
+      </div>
+    </div>
+  </div>
+
+  <div id="pauseMenu">
+    <div class="imageThw">
+      <img src="thw.png" />
+    </div>
+    <div class="centralised">
+      <div class="imageLogo">
+        <img src="paused.png" />
+      </div>
+      <button id="continueBtn">Continue Playing</button>
+      <button id="restartBtn">Restart</button>
+    </div>
+  </div>
+
+  <div id="gameOverMenu">
+    <div class="imageThw">
+      <img src="thw.png" />
+    </div>
+    <div class="centralised">
+      <div class="imageLogo">
+        <img src="whatareyouafraidof.png" />
+      </div>
+      <button id="againBtn">Play again</button>
+    </div>
+    <h1 id="gameMessage"></h1>
+  </div>
+
+  <div id="gameWinMenu">
+    <div class="imageThw">
+      <img src="thw.png" />
+    </div>
+    <div class="centralised">
+      <div class="imageLogo">
+        <img src="fearless_win.png" />
+      </div>
+      <button id="againBtn2">Play again</button>
+    </div>
+    <h1 id="gameMessage"></h1>
+  </div>
+
+  <div id="gameInstructions" style="opacity: 0;">
+    <img src="arrowkeys.png" />
+  </div>
+
+  <div id="gameplay">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+  </div>
+</div>
+
+
+</body>
+
+</html>

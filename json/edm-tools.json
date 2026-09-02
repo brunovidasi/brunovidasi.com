@@ -1,0 +1,75 @@
+[
+  {
+    "id": "edm-lln-renamer",
+    "title": "eDM LLN Renamer",
+    "category": "edm-tools",
+    "icon": "🏷️",
+    "description": "Bulk-renames campaign files/folders inside a zip by replacing old LLN codes with a new one, updating file paths and in-file references.",
+    "path": "projects/eDM-Automation-Tools/eDM LLN Renamer.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a0551a-d911-78ac-8c5e-09fa8c88bd7b",
+    "featured": true
+  },
+  {
+    "id": "css-minifier",
+    "title": "eDM CSS Minifier",
+    "category": "edm-tools",
+    "icon": "🎨",
+    "description": "Byte-safe CSS minification with a built-in verification pass, preserving Outlook/MSO conditional comments.",
+    "path": "projects/eDM-Automation-Tools/CSS MINIFIER.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a0550f-79a5-7cb5-9493-175a80b53a59",
+    "featured": true
+  },
+  {
+    "id": "edm-html-validator",
+    "title": "eDM HTML Validator",
+    "category": "edm-tools",
+    "icon": "✅",
+    "description": "Live-highlighting HTML/CSS editor with real-time validation — flags unclosed tags, unknown tags, missing alt attributes, and CSS issues, with click-to-jump navigation.",
+    "path": "projects/eDM-Automation-Tools/eDM HTML Validator.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a05537-a60f-7c13-ad99-838d2e778eaa",
+    "featured": true
+  },
+  {
+    "id": "edm-body-text-converter",
+    "title": "eDM Body Text to HTML Converter",
+    "category": "edm-tools",
+    "icon": "📝",
+    "description": "Converts plain body text into email-ready HTML — wraps selected text in <strong>, auto-superscripts trademarks/footnotes, and converts line breaks to <br>.",
+    "path": "projects/eDM-Automation-Tools/eDM Body Text to HTML Converter.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a05535-1f1e-7b88-ac24-ac05c740cf55"
+  },
+  {
+    "id": "edm-tcs-add-link",
+    "title": "eDM T&Cs HTML Add Link",
+    "category": "edm-tools",
+    "icon": "🔗",
+    "description": "Rich-text editor for T&Cs copy — select text to insert grey or blue styled links, then output clean, email-safe HTML.",
+    "path": "projects/eDM-Automation-Tools/eDM T&Cs HTML Add Link.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a05538-d6bc-7c4e-8d39-e77838420d67"
+  },
+  {
+    "id": "edm-tcs-to-plain-text",
+    "title": "eDM T&Cs HTML to Plain Text Converter",
+    "category": "edm-tools",
+    "icon": "📃",
+    "description": "Converts HTML terms & conditions blocks into clean plain text, expanding links to \"text (url)\" format.",
+    "path": "projects/eDM-Automation-Tools/eDM T&Cs HTML to Plain Text Converter.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a05539-e4be-7c73-b6e1-eabbdbca39be"
+  },
+  {
+    "id": "html-diff-tool",
+    "title": "HTML Diff Tool",
+    "category": "edm-tools",
+    "icon": "🔍",
+    "description": "Compares two HTML snippets side by side with line- and word-level highlighting and an ignore-whitespace toggle.",
+    "path": "projects/eDM-Automation-Tools/HTML DIFF TOOL.html",
+    "github": "https://github.com/brunovidasi/eDM-Automation-Tools",
+    "codepen": "https://codepen.io/editor/brunovidasi/pen/01a05524-84ef-789f-b586-64e3fac40d08"
+  }
+]

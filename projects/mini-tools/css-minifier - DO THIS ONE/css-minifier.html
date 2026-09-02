@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Minifier</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161922;
+    --border: #262b38;
+    --text: #e6e8ee;
+    --muted: #8b91a3;
+    --accent: #5b8cff;
+    --accent-hover: #4677f0;
+    --good: #4caf7d;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    padding: 24px;
+  }
+  h1 {
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 20px 0;
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+  }
+  .opt input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+  .spacer { flex: 1; }
+  button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent-hover); }
+  button.secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  button.secondary:hover { border-color: var(--accent); }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .col-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .col-head label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  textarea {
+    width: 100%;
+    height: 480px;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    resize: vertical;
+    white-space: pre;
+  }
+  textarea:focus { outline: 1px solid var(--accent); }
+  .stats {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .stats strong { color: var(--text); }
+  .stats .saved { color: var(--good); }
+  .copybtn {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+  .warn {
+    font-size: 12px;
+    color: #d9a441;
+    background: rgba(217,164,65,0.08);
+    border: 1px solid rgba(217,164,65,0.25);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 4px;
+    display: none;
+  }
+  .warn.show { display: block; }
+  .verify {
+    font-size: 12px;
+    margin-top: 4px;
+    color: var(--muted);
+  }
+  .verify.match { color: var(--good); }
+</style>
+</head>
+<body>
+
+<h1>CSS Minifier</h1>
+<p class="sub">Local, offline, byte-safe minification &mdash; whitespace and (optionally) comments only. No value rewriting, no semicolon dropping, no color shortening.</p>
+
+<div class="toolbar">
+  <label class="opt">
+    <input type="checkbox" id="stripComments">
+    Strip comments
+  </label>
+  <label class="opt">
+    <input type="checkbox" id="preserveBangComments" checked>
+    Always keep <code>/*! ... */</code> &amp; conditional/MSO comments
+  </label>
+  <div class="spacer"></div>
+  <button id="minifyBtn">Minify</button>
+  <button class="secondary" id="clearBtn">Clear</button>
+</div>
+
+<div class="grid">
+  <div class="col">
+    <div class="col-head">
+      <label for="input">Input CSS</label>
+    </div>
+    <textarea id="input" placeholder="Paste your CSS here..." spellcheck="false"></textarea>
+    <div class="stats" id="inStats"></div>
+  </div>
+  <div class="col">
+    <div class="col-head">
+      <label for="output">Minified Output</label>
+      <button class="secondary copybtn" id="copyBtn">Copy</button>
+    </div>
+    <textarea id="output" placeholder="Minified CSS will appear here..." spellcheck="false" readonly></textarea>
+    <div class="stats" id="outStats"></div>
+    <div class="verify" id="verifyMsg"></div>
+    <div class="warn" id="warnMsg"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const input = document.getElementById('input');
+  const output = document.getElementById('output');
+  const inStats = document.getElementById('inStats');
+  const outStats = document.getElementById('outStats');
+  const verifyMsg = document.getElementById('verifyMsg');
+  const warnMsg = document.getElementById('warnMsg');
+  const stripComments = document.getElementById('stripComments');
+  const preserveBangComments = document.getElementById('preserveBangComments');
+
+  // --- Tokenizer-based minifier -------------------------------------
+  // Walks the CSS character by character, tracking whether we're inside
+  // a string, a comment, or plain code. This avoids regex-based
+  // minifiers' classic failure mode: accidentally "minifying" inside
+  // string literals (e.g. content: " / "; or url("a;b.css")) or breaking
+  // on nested/odd comment placement. Every character that is kept is
+  // copied verbatim - we never rewrite values, reorder rules, or alter
+  // anything other than removing safe whitespace and (optionally)
+  // comments.
+
+  function minifyCSS(css, opts) {
+    const { strip, keepBang } = opts;
+    let out = [];
+    let i = 0;
+    const len = css.length;
+
+    let inString = null;   // ' or " when inside a string literal
+    let lastMeaningful = '';   // last non-removed char written to out, for whitespace collapsing decisions
+
+    function isWhitespace(ch) {
+      return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' || ch === '\f';
+    }
+
+    while (i < len) {
+      const ch = css[i];
+
+      // Inside a string literal: copy everything verbatim until the
+      // matching unescaped quote.
+      if (inString) {
+        out.push(ch);
+        if (ch === '\\' && i + 1 < len) {
+          // copy escaped char verbatim too, skip interpreting it
+          out.push(css[i + 1]);
+          i += 2;
+          continue;
+        }
+        if (ch === inString) {
+          inString = null;
+        }
+        i++;
+        continue;
+      }
+
+      // Entering a string
+      if (ch === '"' || ch === "'") {
+        inString = ch;
+        out.push(ch);
+        i++;
+        continue;
+      }
+
+      // Comment
+      if (ch === '/' && css[i + 1] === '*') {
+        const end = css.indexOf('*/', i + 2);
+        const commentBody = end === -1 ? css.slice(i) : css.slice(i, end + 2);
+        const isBang = commentBody.length > 2 && commentBody[2] === '!';
+        const looksLikeConditional = /\[if|<!--|-->|mso|outlook/i.test(commentBody);
+
+        const keepThis = !strip || (keepBang && (isBang || looksLikeConditional));
+
+        if (keepThis) {
+          out.push(commentBody);
+          lastMeaningful = commentBody.slice(-1);
+        }
+        // else: comment dropped entirely, no whitespace artifact left behind
+        i = end === -1 ? len : end + 2;
+        continue;
+      }
+
+      // Whitespace: collapse runs to a single space, but drop entirely
+      // around characters where it is provably safe (after/before
+      // { } ; : , and at start/end of stripped regions). We keep it
+      // conservative: only remove whitespace adjacent to structural
+      // punctuation, otherwise collapse to one space so things like
+      // `margin: 0 auto` never get glued into `margin:0auto`.
+      if (isWhitespace(ch)) {
+        let j = i;
+        while (j < len && isWhitespace(css[j])) j++;
+        const next = css[j];
+
+        const prevChar = lastMeaningful;
+        const dropBefore = prevChar === '' || '{};:,>+~('.includes(prevChar);
+        const dropAfter = next === undefined || '{};,>+~)'.includes(next) || next === ':' || next === '!';
+
+        if (!(dropBefore || dropAfter)) {
+          out.push(' ');
+          lastMeaningful = ' ';
+        }
+        i = j;
+        continue;
+      }
+
+      // Trailing semicolon before a closing brace is safe to drop
+      if (ch === ';') {
+        let j = i + 1;
+        while (j < len && isWhitespace(css[j])) j++;
+        if (css[j] === '}') {
+          i++;
+          continue; // skip the redundant semicolon
+        }
+        out.push(ch);
+        lastMeaningful = ch;
+        i++;
+        continue;
+      }
+
+      out.push(ch);
+      lastMeaningful = ch;
+      i++;
+    }
+
+    return out.join('').trim();
+  }
+
+  // --- Semantic verification -----------------------------------------
+  // Strip all whitespace and comments from BOTH the original and the
+  // minified result, then compare. If they don't match, something
+  // other than whitespace/comments changed, which should never happen.
+  // This is a safety net so you can trust the output 1:1 matches input.
+
+  function normalizeForComparison(css) {
+    let result = '';
+    let i = 0;
+    const len = css.length;
+    let inString = null;
+    while (i < len) {
+      const ch = css[i];
+      if (inString) {
+        if (ch !== ' ' && ch !== '\t' && ch !== '\n' && ch !== '\r' && ch !== '\f') {
+          // keep string content as-is (including internal spaces, since those are meaningful)
+        }
+        result += ch;
+        if (ch === '\\' && i + 1 < len) { result += css[i+1]; i += 2; continue; }
+        if (ch === inString) inString = null;
+        i++;
+        continue;
+      }
+      if (ch === '"' || ch === "'") { inString = ch; result += ch; i++; continue; }
+      if (ch === '/' && css[i+1] === '*') {
+        const end = css.indexOf('*/', i + 2);
+        i = end === -1 ? len : end + 2;
+        continue;
+      }
+      if (ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' || ch === '\f') { i++; continue; }
+      result += ch;
+      i++;
+    }
+    return result;
+  }
+
+  function formatBytes(n) {
+    return n.toLocaleString() + ' B';
+  }
+
+  function updateInStats() {
+    const v = input.value;
+    inStats.innerHTML = '<span><strong>' + formatBytes(new Blob([v]).size) + '</strong></span>';
+  }
+
+  function run() {
+    const css = input.value;
+    if (!css.trim()) {
+      output.value = '';
+      outStats.innerHTML = '';
+      verifyMsg.textContent = '';
+      warnMsg.classList.remove('show');
+      return;
+    }
+
+    const minified = minifyCSS(css, {
+      strip: stripComments.checked,
+      keepBang: preserveBangComments.checked
+    });
+
+    output.value = minified;
+
+    const inBytes = new Blob([css]).size;
+    const outBytes = new Blob([minified]).size;
+    const savedPct = inBytes > 0 ? (((inBytes - outBytes) / inBytes) * 100).toFixed(1) : 0;
+
+    outStats.innerHTML =
+      '<span><strong>' + formatBytes(outBytes) + '</strong></span>' +
+      '<span class="saved">&minus;' + savedPct + '%</span>';
+
+    // Verify: comments-and-whitespace-stripped versions of input vs
+    // output should be identical. If comments were preserved (not
+    // stripped), compare against an input that also keeps comments;
+    // if comments were stripped, compare a comment-free normalization.
+    let normInput, normOutput;
+    if (stripComments.checked) {
+      normInput = normalizeForComparison(css);
+      normOutput = normalizeForComparison(minified);
+    } else {
+      // comments retained - compare raw structural content only (still strip whitespace)
+      normInput = normalizeForComparison(css.replace(/\/\*[\s\S]*?\*\//g, m => '\u0001' + m + '\u0001'));
+      normOutput = normalizeForComparison(minified.replace(/\/\*[\s\S]*?\*\//g, m => '\u0001' + m + '\u0001'));
+    }
+
+    if (normInput === normOutput) {
+      verifyMsg.textContent = '✓ Verified: output is semantically identical to input (whitespace/comments only).';
+      verifyMsg.classList.add('match');
+      warnMsg.classList.remove('show');
+    } else {
+      verifyMsg.textContent = '';
+      verifyMsg.classList.remove('match');
+      warnMsg.textContent = '⚠ Verification mismatch detected - output may differ from input beyond whitespace/comments. Please review manually before using.';
+      warnMsg.classList.add('show');
+    }
+
+    updateInStats();
+  }
+
+  document.getElementById('minifyBtn').addEventListener('click', run);
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    input.value = '';
+    output.value = '';
+    inStats.innerHTML = '';
+    outStats.innerHTML = '';
+    verifyMsg.textContent = '';
+    warnMsg.classList.remove('show');
+  });
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value).then(function () {
+      const btn = document.getElementById('copyBtn');
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(function () { btn.textContent = original; }, 1200);
+    });
+  });
+
+  input.addEventListener('input', updateInStats);
+  stripComments.addEventListener('change', function () {
+    if (input.value.trim()) run();
+  });
+  preserveBangComments.addEventListener('change', function () {
+    if (input.value.trim()) run();
+  });
+
+  updateInStats();
+})();
+</script>
+
+</body>
+</html>

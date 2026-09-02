@@ -1,0 +1,15 @@
+h1 {
+  color: #2B86FF;
+  font-size: 48px;
+  padding-top: 30px;
+}
+
+h2 {
+  color: #333;
+  padding-top: 25px;
+}
+
+.lastUpdated {
+  font-style: italic;
+  font-size:16px;
+}

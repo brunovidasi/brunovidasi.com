@@ -1,0 +1,32 @@
+[
+  {
+    "id": "edm-kinetic-accordion",
+    "title": "eDM Accordion Module (3 Items)",
+    "category": "edm-kinetic-modules",
+    "icon": "🪗",
+    "description": "3-panel click-to-expand accordion built entirely with HTML/CSS — no JavaScript, no AMP for Email. Falls back to all panels expanded in Outlook and other non-supporting clients.",
+    "path": "projects/eDM-kinetic-modules/accordian-3-items/index.html",
+    "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
+    "codepen": ""
+  },
+  {
+    "id": "edm-kinetic-carousel",
+    "title": "eDM Carousel Module (5 Items)",
+    "category": "edm-kinetic-modules",
+    "icon": "🎠",
+    "description": "5-slide interactive carousel built entirely with HTML/CSS — no JavaScript, no AMP for Email. Checkbox-hack dot/arrow navigation, with a fully-visible stacked fallback for Outlook and other non-supporting clients.",
+    "path": "projects/eDM-kinetic-modules/carousel-5-items/index.html",
+    "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
+    "codepen": ""
+  },
+  {
+    "id": "edm-kinetic-tabs",
+    "title": "eDM Tabs Module (4 Items)",
+    "category": "edm-kinetic-modules",
+    "icon": "🗂️",
+    "description": "4-tab interactive switcher built entirely with HTML/CSS — no JavaScript, no AMP for Email. Falls back to all panels stacked and visible in Outlook and other non-supporting clients.",
+    "path": "projects/eDM-kinetic-modules/tabs-4-items/index.html",
+    "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
+    "codepen": ""
+  }
+]

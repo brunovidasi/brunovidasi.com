@@ -1,0 +1,210 @@
+/* ===================================================================
+   COLOUR TOKENS
+   Light mode = white bg / #333 text. Dark mode = #333 bg / white text.
+   --accent (#0077bb) stays the same in both modes.
+=================================================================== */
+:root {
+  --bg: #FFFFFF;
+  --text: #333333;
+  --muted: rgba(51, 51, 51, 0.6);
+  --accent: #0077bb;
+  --button-text: #FFFFFF;
+  --button-ring: rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #333333;
+    --text: #FFFFFF;
+    --muted: rgba(255, 255, 255, 0.6);
+    --button-ring: rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* ===================================================================
+   BASE
+=================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* centers the whole page, one item under the other */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page {
+  width: 100%;
+  max-width: 460px;
+  padding: 48px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ===================================================================
+   PROFILE PHOTO
+   Replace "profile.jpg" below with your own photo file
+   (same folder as this html). Until then, initials show instead.
+=================================================================== */
+.avatar {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  margin-bottom: 18px;
+  border: 3px solid #FFFFFF;
+}
+
+.avatar-fallback {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  margin-bottom: 18px;
+}
+
+/* ===================================================================
+   TITLE
+=================================================================== */
+h1 {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.subtitle {
+  margin: 0 0 0px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+/* ===================================================================
+   LINKS LIST
+=================================================================== */
+.category-links {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.links {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+.category-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  padding-top: 15px;
+}
+
+.category-arrow {
+  padding-right: 10px;
+  color: var(--muted);
+
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.category-title {
+  width: 100%;
+  text-align: left;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 10px 0 8px;
+  color: var(--muted);
+}
+
+.link-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 14px;
+  color: var(--button-text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 0 0 1px var(--button-ring), 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.link-item .icon {
+  position: absolute;
+  left: 18px;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.link-item .label {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.link-item:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .link-item:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+  }
+}
+
+/* ===================================================================
+   FOOTER
+=================================================================== */
+footer {
+  margin-top: 36px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

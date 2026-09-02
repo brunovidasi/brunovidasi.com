@@ -1,0 +1,21 @@
+{
+    "name": "Suicide Hotline | Global Suicide Hotline Redirect",
+    "short_name" : "Suicide Hotline",
+    "start_url": "index.html",
+    "scope" : "./",
+    "icons": [
+        {
+            "src": "./img/globe-icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./img/globe-icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#fff",
+    "background_color": "#fff",
+    "display": "standalone"
+}

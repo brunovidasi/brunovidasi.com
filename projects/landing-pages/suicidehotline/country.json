@@ -1,0 +1,804 @@
+{
+  "AU": {
+      "flag_icon": "img/flags/au.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Lifeline Australia",
+      "tel_no": "131144",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "000"
+  },
+  "BR": {
+      "flag_icon": "img/flags/br.png",
+      "support_title": "Precisa de ajuda? Ligue para",
+      "tel_company": "Centro de Valorização da Vida",
+      "tel_no": "141",
+      "if_danger": "Se a sua vida está perigo, ligue para:",
+      "tel_danger": "192"
+  },
+  "CA": {
+      "Alberta": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "St. Paul & District Crisis Centre",
+        "tel_no": "1-800-263-3045",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "British Columbia": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Canadian Mental Health Association Crisis Line",
+        "tel_no": "1-888-353-2273",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Manitoba": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Klinic Community Health Care",
+        "tel_no": "1-888-322-3019",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "New Brunswick": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Chimo Helpline",
+        "tel_no": "1-800-667-5005",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Newfoundland and Labrador": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Newfoundland and Labrador Mental Health Crisis Line",
+        "tel_no": "(709) 737-4668",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Northwest Territories": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "NWT Help Line",
+        "tel_no": "1-800-661-0844",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Nova Scotia": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Nova Scotia Mental Health Crisis Telephone Line",
+        "tel_no": "1-888-429-8167",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Nunavut": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Kamatsiaqtut Help line",
+        "tel_no": "1-800-265-3333",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Ontario": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Connex Ontario",
+        "tel_no": "1-866-531-2600",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Prince Edward Island": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Island Helpline",
+        "tel_no": "1-800-218-2885",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Quebec": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Quebec National Crisis Line",
+        "tel_no": "1-866-277-3553",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      },
+      "Saskatchewan": {
+        "flag_icon": "img/flags/ca.png",
+        "support_title": "Support is just a call away",
+        "tel_company": "Saskatoon Crisis Intervention Service Inc.",
+        "tel_no": "(306) 933-6200",
+        "if_danger": "If life is in danger call:",
+        "tel_danger": "911"
+      }
+  },
+  "NZ": {
+      "flag_icon": "img/flags/nz.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "1737, need to talk?",
+      "tel_no": "1737",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "111"
+  },
+  "IN": {
+      "flag_icon": "img/flags/in.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans Mumbai",
+      "tel_no": "+91 84229 84528",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "102"
+   },
+  "ID": {
+      "flag_icon": "img/flags/id.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Kementerian Kesehatan",
+      "tel_no": "500 454",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "119"
+  },
+  "PH": {
+      "flag_icon": "img/flags/ph.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Manila Lifeline Centre",
+      "tel_no": "(02) 8969191",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "117"
+  },
+  "NO": {
+      "flag_icon": "img/flags/no.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Mental Helse",
+      "tel_no": "116",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "113"
+  },
+  "SE": {
+      "flag_icon": "img/flags/se.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Självmordslinjen",
+      "tel_no": "90101",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "ZA": {
+      "flag_icon": "img/flags/za.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Lifeline",
+      "tel_no": "0861 322 322",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "10177"
+  },
+  "US": {
+      "flag_icon": "img/flags/us.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "National Suicide Prevention Lifeline",
+      "tel_no": "1-800-273-8255",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "UK": {
+      "flag_icon": "img/flags/uk.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans",
+      "tel_no": "116 123",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "IE": {
+      "flag_icon": "img/flags/ie.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans",
+      "tel_no": "116 123",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "DK": {
+      "flag_icon": "img/flags/dk.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Livslinien",
+      "tel_no": "70 201 201",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "DE": {
+      "flag_icon": "img/flags/de.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Telefonseelsorge",
+      "tel_no": "0800 111 0 111",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "FR": {
+      "flag_icon": "img/flags/fr.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Suicide écoute",
+      "tel_no": "01 45 39 40 00",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "MX": {
+      "flag_icon": "img/flags/mx.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "SAPTEL",
+      "tel_no": "(55) 5259-8121",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "SG": {
+      "flag_icon": "img/flags/sg.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans of Singapore",
+      "tel_no": "1800-221 4444",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "995"
+  },
+  "LB": {
+      "flag_icon": "img/flags/lb.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Embrace Lifeline",
+      "tel_no": "1564",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "140"
+  },
+  "MY": {
+      "flag_icon": "img/flags/my.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "LifeLine Malaysia",
+      "tel_no": "603-4265 7995",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "NL": {
+      "flag_icon": "img/flags/nl.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "113 Suicide Prevention",
+      "tel_no": "0900-0113",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "VE": {
+      "flag_icon": "img/flags/ve.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Telefono De La Esperanza",
+      "tel_no": "0241-8433308",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "171"
+  },
+  "CL": {
+      "flag_icon": "img/flags/cl.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Telefono De La Esperanza",
+      "tel_no": "(00 56 42) 22 12 00",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "131"
+  },
+  "ES": {
+      "flag_icon": "img/flags/es.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Telefono De La Esperanza",
+      "tel_no": "717 003 717",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "AR": {
+      "flag_icon": "img/flags/ar.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Centro de Atencíon al Familiar del Suicida",
+      "tel_no": "(54-11) 4758-2554",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "107"
+  },
+  "PL": {
+      "flag_icon": "img/flags/pl.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Olsztynski Telefon Zaufania 'Anonimowy Przyjaciel",
+      "tel_no": "89 19288",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "TH": {
+      "flag_icon": "img/flags/th.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "The Samaritans of Thailand",
+      "tel_no": "02-713-6791",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "1669"
+  },
+  "JP": {
+      "flag_icon": "img/flags/jp.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Befrienders Worldwide Osaka Suicide Prevent Center",
+      "tel_no": "06-6260-4343",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "119"
+  },
+  "KR": {
+      "flag_icon": "img/flags/kr.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Love-Line",
+      "tel_no": "(2) 715 8600",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "119"
+  },
+  "DZ": {
+      "flag_icon": "img/flags/dz.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Suicide Hotline Algeria",
+      "tel_no": "0021 3983 2000 58",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "34342"
+  },
+  "AM": {
+      "flag_icon": "img/flags/am.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Trust Social Work and Sociological Research Centre",
+      "tel_no": "(2) 538194",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "AT": {
+      "flag_icon": "img/flags/at.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Rat auf Draht",
+      "tel_no": "147",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "BS": {
+      "flag_icon": "img/flags/bs.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "National Suicide Hotline",
+      "tel_no": "322-2763",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "BD": {
+      "flag_icon": "img/flags/bd.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Kaan Pete Roi",
+      "tel_no": "(+880)01985275286",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "BB": {
+      "flag_icon": "img/flags/bb.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans of Barbados",
+      "tel_no": "(246) 4299999",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "BE": {
+      "flag_icon": "img/flags/be.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "National Suicide Hotline",
+      "tel_no": "1813",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "BO": {
+      "flag_icon": "img/flags/bo.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Teléfono de la Esperanza",
+      "tel_no": "(00 591 4) 4 25 42 42",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "110"
+  },
+  "BW": {
+      "flag_icon": "img/flags/bw.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "National Lifeline",
+      "tel_no": "3911270",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "BG": {
+      "flag_icon": "img/flags/bg.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Sofia Hotline",
+      "tel_no": "0035 9249 17 223",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "KH": {
+      "flag_icon": "img/flags/kh.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "TPO Cambodia",
+      "tel_no": "(+855) 0 23 63 66 991",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "117"
+  },
+  "CN": {
+      "flag_icon": "img/flags/cn.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Lifeline Shanghai",
+      "tel_no": "400 821 1215",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "110"
+  },
+  "CO": {
+      "flag_icon": "img/flags/co.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Teléfono de la Esperanza - Medellin",
+      "tel_no": "448 29 45",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "123"
+  },
+  "HR": {
+      "flag_icon": "img/flags/hr.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Plavi Telefon",
+      "tel_no": "48 33 888",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "CY": {
+      "flag_icon": "img/flags/cy.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Cyprus Samaritans",
+      "tel_no": "80007773",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "CZ": {
+      "flag_icon": "img/flags/cz.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Modrá Linka",
+      "tel_no": "549 241 010",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "EC": {
+      "flag_icon": "img/flags/ec.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Teléfono Amigo",
+      "tel_no": "(02) 290 6030",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "EE": {
+      "flag_icon": "img/flags/ee.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Eluliin",
+      "tel_no": "655 8088",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "FJ": {
+      "flag_icon": "img/flags/fj.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Lifeline Fiji",
+      "tel_no": "132 454",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "FI": {
+      "flag_icon": "img/flags/fi.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Finnish Association for Mental Health",
+      "tel_no": "010 195 202",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "GH": {
+      "flag_icon": "img/flags/gh.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "National Lifeline",
+      "tel_no": "2332 444 71279",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "GR": {
+      "flag_icon": "img/flags/gr.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Suicide Help",
+      "tel_no": "1018",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "GY": {
+      "flag_icon": "img/flags/gy.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Inter-agency Suicide Prevention Help Line",
+      "tel_no": "223-0001",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "HN": {
+      "flag_icon": "img/flags/hn.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Telefono de la Esperanza - San Pedro Sula",
+      "tel_no": "(+504) 2557 80 11",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "199"
+  },
+  "HK": {
+      "flag_icon": "img/flags/hk.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "The Samaritans",
+      "tel_no": "2896 0000",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "HU": {
+      "flag_icon": "img/flags/hu.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Blue line",
+      "tel_no": "116-123",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "IS": {
+      "flag_icon": "img/flags/is.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Hjálparsíma",
+      "tel_no": "1717",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "IR": {
+      "flag_icon": "img/flags/ir.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Iran Organization of Well Being",
+      "tel_no": "1480",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "110"
+  },
+  "IL": {
+      "flag_icon": "img/flags/il.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Eran.org.il Suicide line",
+      "tel_no": "1201",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "100"
+  },
+  "IT": {
+      "flag_icon": "img/flags/it.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans - ONLUS",
+      "tel_no": "800 86 00 22",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "JM": {
+      "flag_icon": "img/flags/jm.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Ministry of Health National Emergency Operation Center",
+      "tel_no": "1-888-663-5683",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "119"
+  },
+  "KE": {
+      "flag_icon": "img/flags/ke.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Befrienders Kenya",
+      "tel_no": "(+254)72217817",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  },
+  "LV": {
+      "flag_icon": "img/flags/lv.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Skalbes.lv",
+      "tel_no": "371 67222922",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "113"
+  },
+  "LR": {
+      "flag_icon": "img/flags/lr.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Lifeline Liberia",
+      "tel_no": "(+231)06534308",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "LT": {
+      "flag_icon": "img/flags/lt.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Vilties linija",
+      "tel_no": "116 123",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "LU": {
+      "flag_icon": "img/flags/lu.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "454545.lu",
+      "tel_no": "352 45 45 45",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "MU": {
+      "flag_icon": "img/flags/mu.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Befrienders Mauritius",
+      "tel_no": "(+230) 800 93 93",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "MD": {
+      "flag_icon": "img/flags/md.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Altruism Association Moldova",
+      "tel_no": "(+373) 60 806 623",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "902"
+  },
+  "MN": {
+      "flag_icon": "img/flags/mn.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "National Centre for Mental Health",
+      "tel_no": "(+976) 1800-2000",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "105"
+  },
+  "MA": {
+      "flag_icon": "img/flags/ma.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Sourire de Reda",
+      "tel_no": "(6) 62 58 95 70",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "190"
+  },
+  "NA": {
+      "flag_icon": "img/flags/na.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "LifeLine Namibia",
+      "tel_no": "(09264) 61-232-221",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "1011"
+  },
+  "NP": {
+      "flag_icon": "img/flags/np.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Transcultural Psychosocial Organization-Nepal",
+      "tel_no": "1660 0102005",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "100"
+  },
+  "NG": {
+      "flag_icon": "img/flags/ng.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Mentally Aware Nigeria Initiative",
+      "tel_no": "(+234) 8051493163",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "PK": {
+      "flag_icon": "img/flags/pk.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Umang Pakistan",
+      "tel_no": "(+92) 317 4288665",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "15"
+  },
+  "PG": {
+      "flag_icon": "img/flags/pg.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "LifeLine Port Moresby",
+      "tel_no": "675 326 0011",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "000"
+  },
+  "PE": {
+      "flag_icon": "img/flags/pe.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Sentido",
+      "tel_no": "01 498 2711",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "105"
+  },
+  "PT": {
+      "flag_icon": "img/flags/pt.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Voz de Apoio",
+      "tel_no": "225 50 60 70",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "PR": {
+      "flag_icon": "img/flags/us.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "NAMI Puerto Rico",
+      "tel_no": "(703) 524-7600",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "RO": {
+      "flag_icon": "img/flags/ro.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Alianţa Română de Prevenţie a Suicidului",
+      "tel_no": "0800 801 200",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "RU": {
+      "flag_icon": "img/flags/ru.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans (Cherepovets)",
+      "tel_no": "007 (8202) 577-577",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "WS": {
+      "flag_icon": "img/flags/ws.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Fa'ataua Le Ola - Samoa Lifeline",
+      "tel_no": "800 5433",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "995"
+  },
+  "RS": {
+      "flag_icon": "img/flags/rs.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Centar Srce",
+      "tel_no": "0800 300 303",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "192"
+  },
+  "SI": {
+      "flag_icon": "img/flags/si.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Zaupni telefon Samarijan in Sopotnik",
+      "tel_no": "116 123",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "LK": {
+      "flag_icon": "img/flags/lk.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Sri Lanka Sumithrayo",
+      "tel_no": "112696666",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "119"
+  },
+  "CH": {
+      "flag_icon": "img/flags/ch.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Die dargebotene Hand",
+      "tel_no": "143",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "TW": {
+      "flag_icon": "img/flags/tw.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Taiwan Suicide Prevention Center",
+      "tel_no": "0800 788 995",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "110"
+  },
+  "TR": {
+      "flag_icon": "img/flags/tr.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Ankara University Psychiatric Crisis Research Center",
+      "tel_no": "0312 363 03 26",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "UA": {
+      "flag_icon": "img/flags/ua.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Odessa Confidence Telephone Service",
+      "tel_no": "(+380) 0487 32715",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "112"
+  },
+  "UY": {
+      "flag_icon": "img/flags/uy.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "ASSE",
+      "tel_no": "0800 8483",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "911"
+  },
+  "ZW": {
+      "flag_icon": "img/flags/zw.png",
+      "support_title": "Support is just a call away",
+      "tel_company": "Samaritans Bulawayo",
+      "tel_no": "(+263)965000",
+      "if_danger": "If life is in danger call:",
+      "tel_danger": "999"
+  }
+}

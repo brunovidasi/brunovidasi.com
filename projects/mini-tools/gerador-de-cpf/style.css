@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --paper:#efe9da; --paper-raised:#f7f3e8; --ink:#2a2620; --ink-soft:#5c5548;
+  --line:#c9bfa4; --line-strong:#9c9077;
+  --carimbo:#8c2f28; --oficial:#1f3f5c; --oficial-dark:#152c40;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; font-family:'Inter',-apple-system,sans-serif;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.02), transparent 120px),
+    var(--paper);
+  background-attachment:fixed;
+  color:var(--ink); padding:28px 20px;
+  display:flex; justify-content:center;
+}
+.wrap{width:100%; max-width:480px;}
+h1{
+  font-family:'Source Serif 4', Georgia, serif; font-weight:700;
+  font-size:23px; margin:0 0 3px; letter-spacing:.2px;
+  display:flex; align-items:baseline; gap:9px;
+}
+h1::before{
+  content:'№'; font-family:'Space Mono',monospace; font-size:15px;
+  color:var(--carimbo); font-weight:700;
+}
+p.sub{
+  color:var(--ink-soft); font-size:12.5px; margin:0 0 22px; line-height:1.5;
+  padding-left:24px; border-left:2px solid var(--line);
+}
+.card{
+  background:var(--paper-raised);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:20px 18px; margin-bottom:18px;
+  position:relative;
+  box-shadow:0 1px 0 var(--paper-raised), 3px 3px 0 rgba(42,38,32,0.05);
+}
+.card::before{
+  content:''; position:absolute; top:8px; bottom:8px; left:8px;
+  width:1px; background:repeating-linear-gradient(180deg, var(--line) 0 4px, transparent 4px 8px);
+  opacity:.6;
+}
+label{
+  display:block; font-size:10.5px; color:var(--ink-soft); margin-bottom:6px;
+  text-transform:uppercase; letter-spacing:1.1px; font-weight:600;
+}
+select, button, input{
+  width:100%; padding:11px 12px; border-radius:2px; border:1px solid var(--line-strong);
+  background:#fffdf7; color:var(--ink); font-size:14.5px;
+  font-family:'Inter',sans-serif;
+}
+select{
+  margin-bottom:14px; appearance:none;
+  background-image:linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+                    linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+  background-size:5px 5px, 5px 5px;
+  background-repeat:no-repeat;
+}
+button{
+  background:var(--oficial); border:1px solid var(--oficial-dark); color:#f3efe3;
+  font-weight:600; letter-spacing:.4px; text-transform:uppercase; font-size:12.5px;
+  cursor:pointer; transition:transform .1s ease, background .15s ease;
+  padding:13px;
+}
+button:hover{background:var(--oficial-dark);}
+button:active{transform:translateY(1px);}
+button.secondary{
+  background:transparent; color:var(--oficial); border:1px solid var(--line-strong);
+  margin-top:9px; text-transform:none; font-weight:500; letter-spacing:0;
+}
+button.secondary:hover{background:rgba(31,63,92,0.06);}
+
+.result{
+  text-align:center; font-size:24px; letter-spacing:1.5px; font-weight:700;
+  font-family:'Space Mono', monospace;
+  padding:20px 10px; margin:18px 0 8px;
+  background:
+    repeating-linear-gradient(135deg, rgba(140,47,40,0.04) 0 2px, transparent 2px 14px),
+    #fffdf7;
+  border-radius:2px;
+  border:1.5px solid var(--carimbo);
+  outline:5px solid transparent;
+  box-shadow:0 0 0 3px #fffdf7, 0 0 0 4px var(--carimbo);
+  color:var(--oficial-dark);
+  word-break:break-all;
+  position:relative;
+  transform:rotate(-0.4deg);
+}
+.meta{
+  font-size:11.5px; color:var(--carimbo); text-align:center;
+  text-transform:uppercase; letter-spacing:.8px; font-weight:600;
+}
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--paper); padding:9px 18px; border-radius:2px;
+  font-size:12.5px; font-weight:600; letter-spacing:.3px; opacity:0; pointer-events:none;
+  transition:opacity .2s ease;
+}
+.toast.show{opacity:1;}
+.list{margin-top:14px;}
+.list-item{
+  display:flex; justify-content:space-between; align-items:center;
+  background:#fffdf7; border:1px solid var(--line); border-left:3px solid var(--oficial);
+  border-radius:1px;
+  padding:10px 12px; margin-bottom:7px; font-size:14.5px;
+  font-family:'Space Mono', monospace;
+}
+.list-item button{
+  width:auto; padding:6px 11px; font-size:11px; margin:0;
+}
+.row{display:flex; gap:10px;}
+.row > *{flex:1;}
+.disclaimer{
+  font-size:10.5px; color:var(--ink-soft); line-height:1.6; margin-top:20px;
+  border-top:1px dashed var(--line-strong); padding-top:12px;
+  font-style:italic;
+}
+.count-wrap select{margin-bottom:0;}

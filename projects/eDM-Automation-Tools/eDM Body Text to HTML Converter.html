@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eDM Body Text to HTML Converter</title>
+
+<style>
+:root {
+    --bg: #eef3f8;
+    --bg-strong: #e4ebf3;
+    --panel: rgba(255, 255, 255, 0.9);
+    --panel-alt: #f8fafc;
+    --line: #dfe7f1;
+    --line-strong: #c9d4e3;
+    --text: #1d2a39;
+    --muted: #66758a;
+    --accent: #1f3c88;
+    --accent-soft: #e9efff;
+    --accent-strong: #152d62;
+    --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+    --radius: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", "Inter", Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 38px 22px;
+    background:
+        radial-gradient(circle at top left, rgba(103, 126, 234, 0.14), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 25%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
+    color: var(--text);
+}
+
+.app {
+    max-width: 1520px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(210, 220, 233, 0.8);
+    padding: 28px 28px 24px;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    margin: 0 0 18px;
+    font-size: clamp(1.8rem, 2vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+    color: var(--text);
+}
+
+/* BUTTON BAR (TOP) */
+.toolbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+button {
+    appearance: none;
+    border: 1px solid rgba(19, 36, 76, 0.08);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #1d2c4d 0%, #122544 100%);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 12px 18px;
+    box-shadow: 0 8px 18px rgba(23, 42, 84, 0.2);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(23, 42, 84, 0.24);
+    filter: brightness(1.04);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* LAYOUT */
+.container {
+    display: flex;
+    gap: 22px;
+    align-items: stretch;
+}
+
+/* PANELS */
+.panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+label {
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* TEXTAREAS */
+textarea {
+    width: 100%;
+    height: 620px;
+    padding: 18px 16px 16px;
+    font-size: 0.96rem;
+    line-height: 1.6;
+    color: var(--text);
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    resize: none;
+    outline: none;
+    transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+textarea:focus {
+    border-color: rgba(31, 60, 136, 0.55);
+    box-shadow: 0 0 0 4px rgba(92, 118, 199, 0.12);
+}
+
+textarea::placeholder {
+    color: #8a97ab;
+}
+
+/* OUTPUT STYLE */
+#output {
+    background: linear-gradient(180deg, #fbfcff 0%, #f4f8ff 100%);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    white-space: pre-wrap;
+    color: #233349;
+}
+
+/* HELPER */
+.helper {
+    font-size: 13px;
+    color: #666;
+    margin-top: -5px;
+}
+
+.wrapBtn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.wrapBtn button {
+    background: linear-gradient(180deg, #eff4ff 0%, #e2eafc 100%);
+    color: var(--accent-strong);
+    border-color: rgba(31, 60, 136, 0.14);
+    box-shadow: 0 8px 15px rgba(31, 60, 136, 0.08);
+}
+
+.wrapBtn button:hover {
+    background: linear-gradient(180deg, #f4f8ff 0%, #dde8ff 100%);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    body {
+        padding: 20px 14px;
+    }
+
+    .app {
+        padding: 20px 18px 18px;
+        border-radius: 18px;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    textarea {
+        height: 340px;
+    }
+
+    .wrapBtn {
+        justify-content: stretch;
+    }
+
+    .wrapBtn button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>eDM Body Text to HTML Converter</h1>
+
+<!-- BUTTONS TOP -->
+<div class="toolbar">
+    <button onclick="makeBold()">Bold Selected Text</button>
+    <button onclick="convertText()">Convert</button>
+</div>
+
+<div class="container">
+
+    <!-- INPUT -->
+    <div class="panel">
+
+        <label for="input">Paste your original text here</label>
+
+        <textarea id="input" placeholder="Paste text here..."></textarea>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="panel">
+
+        <label for="output">HTML Output</label>
+
+        <textarea id="output" readonly
+        placeholder="Converted HTML will appear here..."></textarea>
+
+        <div class="wrapBtn">
+            <button onclick="copyOutput()">Copy HTML Output</button>
+        </div>
+
+    </div>
+
+    
+
+</div>
+
+</div>
+
+<script>
+function makeBold() {
+    const textarea = document.getElementById("input");
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+
+    if (start === end) {
+        alert("Please select some text first.");
+        return;
+    }
+
+    const selectedText = text.substring(start, end);
+
+    const newText =
+        text.substring(0, start) +
+        "**" + selectedText + "**" +
+        text.substring(end);
+
+    textarea.value = newText;
+
+    convertText();
+
+    textarea.focus();
+    textarea.setSelectionRange(start, end + 4);
+}
+
+function convertText() {
+    let text = document.getElementById("input").value;
+
+    if (!text.trim()) {
+        document.getElementById("output").value = "";
+        return;
+    }
+
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/®/g, '<sup style="font-size:13px; line-height:13px;">®</sup>');
+    text = text.replace(/([a-zA-Z.,!?)])(\d+)/g, '$1<sup style="font-size:13px; line-height:13px;">$2</sup>');
+    text = text.replace(/\r?\n/g, '<br class="mb-space-hide">');
+
+    document.getElementById("output").value = text.trim();
+}
+
+function copyOutput() {
+    const output = document.getElementById("output");
+
+    if (!output.value.trim()) {
+        // alert("Nothing to copy yet.");
+        return;
+    }
+
+    navigator.clipboard.writeText(output.value)
+        .then(() => {
+
+            const btn = document.querySelector("button[onclick='copyOutput()']");
+            const original = btn.textContent;
+
+            btn.textContent = "Copied!";
+
+            setTimeout(() => {
+                btn.textContent = original;
+            }, 1500);
+
+        })
+        .catch(() => {
+            alert("Copy failed. Please copy manually.");
+        });
+}
+
+document.getElementById("input").addEventListener("input", convertText);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YE931YLK10"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YE931YLK10');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MPX7KT');</script>
+<!-- End Google Tag Manager -->
+
+<meta name="google-site-verification" content="0n1i6yENIhCmFAn8gLPTdebr-a__Yv87JZLwsTPsAdQ" />
+<meta name="google-site-verification" content="4yZ1b2NMRtxMHCE4Z_wYrv0dqA6MPCBSpJlgfOoTv-M" />
+<meta name="google-site-verification" content="vpMsRBP4t7irjB4J6PPLm7m-CNkpJ3FMrCEnZ2x72j8" />
+
+<title>Bruno Vieira • @brunovidasi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="Bruno Vieira, Bruno, Bruno Vieira da Silva, Bruno Vidasi, brunovidasi, vieira, vieira da silva, brunovidasi.com, brunovida.si, vidasi.com, vidasi, vida si, bruno adventista, bruno, bruno si, bvidasi, desenvolvedor web, programador, programador web, bruno programador, bruno desenvolvedor, programador rio de janeiro, desenvolvedor php, php, desenvolvedor html5, html5, criação de sites">
+<meta name="description" content="Bruno Vieira — Senior Developer, Sydney. Full stack web development, front-end engineering. 14+ years of experience.">
+
+<meta property="og:site_name" content="Bruno Vieira" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Bruno Vieira" />
+<meta property="og:url" content="http://brunovida.si" />
+<!-- <meta property="og:image" content="http://brunovida.si/img/website.png" />
+<link rel="image_src" href="./img/website.png" /> -->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-43397149-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MPX7KT"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div id="rain"></div>
+<div id="boot"><pre id="bootText"></pre></div>
+
+<div id="app">
+  <div class="titlebar">
+    <button class="dot r" id="dotRed" title="Reload"></button>
+    <button class="dot y" id="dotYellow" title="Minimize"></button>
+    <button class="dot g" id="dotGreen" title="Toggle sidebar"></button>
+    <span class="path">bruno-vieira — portfolio</span>
+    <img class="titlebar-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="shell" id="shell">
+    <div class="explorer">
+      <div class="label-row">
+        <div class="label">EXPLORER</div>
+        <div class="explorer-actions">
+          <button class="explorer-more" id="explorerMore" title="More Actions...">⋯</button>
+          <button class="explorer-close" id="explorerClose" title="Close">✕</button>
+        </div>
+      </div>
+      <div class="explorer-menu" id="explorerMenu">
+        <button class="explorer-menu-item" id="closeAllTabsBtn">Close All Tabs</button>
+      </div>
+      <div id="fileTree"></div>
+    </div>
+
+    <div class="main">
+      <div class="tabs" id="tabBar"></div>
+
+      <div class="editor" id="editorArea">
+        <div class="empty-state" id="emptyState">No file is open — select one from the explorer to continue.</div>
+
+        <!-- INTRO -->
+        <div class="panel" id="panel-intro">
+          <h1 class="hero"><span class="fixed-part">Hi, I'm Bruno. <span class="wave-emoji">👋</span></span><span id="heroVariable"></span><span class="cursor-caret">|</span></h1>
+
+          <code class="block">
+<div class="code-line"><span class="lineno">1</span><span class="com">// loaded from Sydney, AU</span></div>
+<div class="code-line"><span class="lineno">2</span><span class="kw">const</span> bruno <span class="kw">=</span> {</div>
+<div class="code-line"><span class="lineno">3</span>&nbsp;&nbsp;name: <span class="str">'Bruno Vieira'</span>,</div>
+<div class="code-line"><span class="lineno">4</span>&nbsp;&nbsp;role: <span class="str">'Software Programmer · Full Stack Developer'</span>,</div>
+<div class="code-line"><span class="lineno">5</span>&nbsp;&nbsp;experience: <span class="str">'<span class="years-exp">13</span>+ years'</span>,</div>
+<div class="code-line"><span class="lineno">6</span>&nbsp;&nbsp;location: <span class="str">'Sydney, Australia'</span>,</div>
+<div class="code-line"><span class="lineno">7</span>&nbsp;&nbsp;origin: <span class="str">'Rio de Janeiro, Brazil'</span>,</div>
+<div class="code-line"><span class="lineno">8</span>&nbsp;&nbsp;currently: <span class="str">'front-end @ Dentsu (Amex)'</span></div>
+<div class="code-line"><span class="lineno">9</span>};</div>
+          </code>
+
+          <div class="socials">
+            <a class="soc-linkedin" href="https://www.linkedin.com/in/brunovidasi/?locale=en_US" target="_blank" title="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="#ffffff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a class="soc-github" href="https://github.com/brunovidasi" target="_blank" title="GitHub">
+              <svg viewBox="0 0 24 24" fill="#ffffff"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.754-1.333-1.754-1.089-.744.084-.729.084-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.807 1.305 3.492.998.108-.775.42-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            </a>
+            <a class="soc-codepen" href="https://codepen.io/brunovidasi" target="_blank" title="CodePen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round">
+                <path d="M12 2.5 22 9v6l-10 6.5L2 15V9z"/>
+                <path d="M12 2.5v6.2M12 22v-6.2M2 9l10 6.2M22 9 12 15.2M2 15l10-6.2M22 15 12 8.8"/>
+              </svg>
+            </a>
+            <a class="soc-more" href="https://follow.brunovidasi.com/" target="_blank" title="All links">+</a>
+          </div>
+
+          <div class="proj-preview-label">Recent projects</div>
+          <div class="commit clickable" data-open="websites">
+            <div class="commit-body">
+              <div class="msg">Websites</div>
+              <div class="meta">Darua Lab · Brazilian Cultural Centre · +more</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="landing-pages">
+            <div class="commit-body">
+              <div class="msg">Landing Pages</div>
+              <div class="meta">Flow Party Sydney · Suicide Hotline · +1 more</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="mini-tools">
+            <div class="commit-body">
+              <div class="msg">Mini Tools</div>
+              <div class="meta">Gerador de CPF</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="edm-work">
+            <div class="commit-body">
+              <div class="msg">eDM Work</div>
+              <div class="meta">Kinetic Modules · Campaign Case Studies</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="edm-tools">
+            <div class="commit-body">
+              <div class="msg">eDM Automation Tools</div>
+              <div class="meta">HTML Validator · LLN Renamer · +5 more</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BIO -->
+        <div class="panel" id="panel-bio">
+          <h2 class="sect"><span class="brk">&lt;</span>about <span class="attr">name</span>=<span class="str">"Bruno"</span> <span class="attr">role</span>=<span class="str">"Senior Developer"</span> <span class="attr">based</span>=<span class="str">"Sydney, AU"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="about-header">
+            <div class="avatar-wrap">
+              <div class="avatar-ring"></div>
+              <div class="avatar-circle-bg"><img src="img/bg.jpeg" alt=""></div>
+              <div class="avatar-photo-mask">
+                <img class="avatar-photo" src="img/avatar.png" alt="Bruno Vieira">
+              </div>
+              <div class="speech-bubble">hello world! 👋</div>
+            </div>
+          </div>
+
+          <div class="bio-text typed-bio"><span id="bioTypedText"></span></div>
+
+          <div class="bio-after" id="bioAfter">
+            <div class="bio-text">
+              📧 <a href="mailto:contact@brunovidasi.com">contact@brunovidasi.com</a>
+            </div>
+            <div class="about-nav">
+              <button onclick="openFile('experience')">→ experience.js</button>
+              <button onclick="openFile('education')">→ education.md</button>
+              <button onclick="openFile('skills')">→ skills.json</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPERIENCE -->
+        <div class="panel" id="panel-experience">
+          <h2 class="sect"><span class="brk">&lt;</span>work-experience <span class="attr">name</span>=<span class="str">"Bruno"</span> <span class="attr">role</span>=<span class="str">"Senior Developer"</span> <span class="attr">years</span>=<span class="str">"<span class="years-exp">13</span>"</span><span class="brk"> /&gt;</span></h2>
+          <div class="sect-intro">A timeline of where I've worked, from my first internship in Rio de Janeiro to my current role in Sydney — <span class="years-exp">13</span> years across full-stack development, front-end engineering, and more recently, HTML email production. Click a role to see the details.</div>
+
+          <div class="mt-26 mb-26">
+            <button class="doc-btn" onclick="openFile('documents')">📄 View / download resume →</button>
+          </div>
+
+          <div class="commit open">
+            <div class="commit-body">
+              <div class="year">Aug 2023 – Present</div>
+              <div class="msg">Senior Developer</div>
+              <div class="meta">Dentsu · Sydney, Australia</div>
+              <div class="clients-line">Main client: American Express</div>
+              <div class="stack-row">
+                <span class="stack-pill">HTML Email / eDM</span><span class="stack-pill">Front-End Development</span>
+                <span class="stack-pill">Mentoring</span><span class="stack-pill">Process Improvement</span>
+                <span class="stack-pill">Code Quality</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Provides technical guidance across the full SDLC — requirements, design, development, testing, and documentation — for a major enterprise client</li>
+                  <li>Owns end-to-end delivery of complex application features, working independently with full ownership of technical decisions</li>
+                  <li>Maintains long-term code reusability and platform stability; integrates new technologies into existing systems</li>
+                  <li>Mentors engineers and leads internal knowledge-sharing sessions</li>
+                  <li>Delivers HTML email (eDM) production for enterprise campaigns, coding for Outlook/MSO rendering and cross-client compatibility</li>
+                  <li>Built internal HTML/JS/CSS tools (validators, minifiers, diff utilities) to streamline QA workflows</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">Oct 2022 – Jul 2023 (10 mos)</div>
+              <div class="msg">Technical Lead / Front-End Developer</div>
+              <div class="meta">General Pants Co. · Sydney, Australia</div>
+              <div class="clients-line">Main clients: Alquemie Group, SurfStitch, Ginger &amp; Smart, Lego, AlphabetSoup, Insight</div>
+              <div class="stack-row">
+                <span class="stack-pill">HTML5</span><span class="stack-pill">CSS3</span><span class="stack-pill">jQuery</span>
+                <span class="stack-pill">React</span><span class="stack-pill">Shopify</span><span class="stack-pill">REST APIs</span>
+                <span class="stack-pill">Hybris</span><span class="stack-pill">Salesforce Commerce Cloud</span>
+                <span class="stack-pill">Agile</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Led front-end development across Shopify, SAP Hybris, and Salesforce Commerce Cloud storefronts using HTML5, CSS3, jQuery, and React</li>
+                  <li>Managed a conversion-optimisation programme, including A/B test implementation</li>
+                  <li>Delivered RESTful API integrations within an agile team spanning internal and external members</li>
+                  <li>Managed team workload, workflow, and delivery accountability</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">Oct 2017 – Oct 2022 (5 yrs)</div>
+              <div class="msg">Software Programmer</div>
+              <div class="meta">The Hallway · Sydney, Australia</div>
+              <div class="clients-line">Main clients: Rheem Hot Water, Western Sydney Airport, Westconnex, Astrazeneca</div>
+              <div class="stack-row">
+                <span class="stack-pill">Node.js</span><span class="stack-pill">Express</span><span class="stack-pill">Drupal 7/8</span>
+                <span class="stack-pill">HTML5</span><span class="stack-pill">CSS3</span><span class="stack-pill">JavaScript</span>
+                <span class="stack-pill">jQuery</span><span class="stack-pill">PHP</span><span class="stack-pill">MySQLi</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Software requirements elicitation, analysis, and documentation</li>
+                  <li>Development effort estimation</li>
+                  <li>Built applications, frameworks, and websites (PHP, Drupal 7/8, Node.js back-end; JS, HTML5, CSS3 front-end)</li>
+                  <li>Integrations between information systems</li>
+                  <li>Web-based software maintenance, testing, and debugging</li>
+                  <li>Technical software documentation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">Jun 2015 – Feb 2017 (1 yr 9 mos)</div>
+              <div class="msg">Software Programmer</div>
+              <div class="meta">SCE Sistemas · Rio de Janeiro, Brazil</div>
+              <div class="stack-row">
+                <span class="stack-pill">PHP</span><span class="stack-pill">OpenCart</span><span class="stack-pill">Laravel</span>
+                <span class="stack-pill">CodeIgniter</span><span class="stack-pill">JavaScript</span><span class="stack-pill">HTML5</span>
+                <span class="stack-pill">CSS3</span><span class="stack-pill">MySQL</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Requirements elicitation focused on e-commerce systems</li>
+                  <li>Built applications using PHP, OpenCart, Laravel, CodeIgniter (back-end); JS, HTML5, CSS3 (front-end)</li>
+                  <li>Design and implementation of MySQL databases</li>
+                  <li>Web services (APIs) and system integrations</li>
+                  <li>Maintenance, testing, debugging, and technical documentation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">Aug 2014 – May 2015 (10 mos)</div>
+              <div class="msg">Junior Software Programmer</div>
+              <div class="meta">AM4 · Rio de Janeiro, Brazil</div>
+              <div class="stack-row">
+                <span class="stack-pill">PHP</span><span class="stack-pill">ASP.NET</span><span class="stack-pill">JavaScript</span>
+                <span class="stack-pill">HTML5</span><span class="stack-pill">CSS3</span><span class="stack-pill">MySQL</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Requirements elicitation, analysis, and documentation</li>
+                  <li>Applications using PHP and ASP.NET (back-end); JS, HTML5, CSS3 (front-end)</li>
+                  <li>MySQL database design and implementation</li>
+                  <li>Web services (APIs) and system integrations</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">Jul 2013 – Jun 2014 (1 yr)</div>
+              <div class="msg">Software Development Intern</div>
+              <div class="meta">Imaginatto · Rio de Janeiro, Brazil</div>
+              <div class="stack-row">
+                <span class="stack-pill">PHP</span><span class="stack-pill">CakePHP</span><span class="stack-pill">CodeIgniter</span>
+                <span class="stack-pill">JavaScript</span><span class="stack-pill">HTML5</span><span class="stack-pill">CSS3</span>
+                <span class="stack-pill">Android</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Web-based applications and MySQL databases</li>
+                  <li>PHP with CakePHP/CodeIgniter (back-end); JS, HTML5, CSS3 (front-end)</li>
+                  <li>Full SDLC involvement: requirements, design, estimation, implementation, testing, debugging</li>
+                  <li>Maintenance of web and Android apps</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EDUCATION -->
+        <div class="panel" id="panel-education">
+          <h2 class="sect"><span class="brk">&lt;</span>education <span class="attr">degree</span>=<span class="str">"Bachelor of Information Systems"</span><span class="brk"> /&gt;</span></h2>
+          <div class="sect-intro">Formal education and vocational training, from my Bachelor's degree in Rio de Janeiro to project management studies in Sydney. Click an entry to see more.</div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">2018</div>
+              <div class="msg">Certificate IV in Project Management</div>
+              <div class="meta">Australian Pacific College · Sydney, Australia</div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">2018</div>
+              <div class="msg">Certificate III in Business</div>
+              <div class="meta">Australian Pacific College · Sydney, Australia</div>
+            </div>
+          </div>
+
+          <div class="commit">
+            <div class="commit-body">
+              <div class="year">2017</div>
+              <div class="msg">Certificate II in Business</div>
+              <div class="meta">Australian Pacific College · Sydney, Australia</div>
+            </div>
+          </div>
+
+          <div class="commit open featured">
+            <div class="commit-body">
+              <div class="year">2012 – 2015</div>
+              <div class="msg">Bachelor of Information Systems <span class="edu-badge">★ Main</span></div>
+              <div class="meta">Estácio de Sá University · Rio de Janeiro, Brazil</div>
+              <div class="stack-row">
+                <span class="stack-pill">🎓 Grade: 8.29 / 10</span>
+              </div>
+              <div class="details">
+                <ul>
+                  <li>Full-time degree covering software engineering, systems analysis, and database design</li>
+                  <li>Foundation for a <span class="years-exp">13</span>+ year career across full-stack and front-end development</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="panel" id="panel-skills">
+          <h2 class="sect"><span class="brk">&lt;</span>skills <span class="attr">type</span>=<span class="str">"tech-stack"</span><span class="brk"> /&gt;</span></h2>
+          <div class="sect-intro">Languages, frameworks and tools I use day to day.</div>
+
+          <div class="skill-label">Languages &amp; Tools</div>
+          <div class="skill-grid">
+            <div class="skill-card" data-name="PHP">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312zm-3.26 7.451c-.261.25-.575.438-.917.551-.336.108-.765.164-1.285.164H5.357l-.327 1.681H3.652l1.23-6.326h2.65c.797 0 1.378.209 1.744.628.366.418.476 1.002.33 1.752a2.836 2.836 0 0 1-.305.847c-.143.255-.33.49-.561.703zm4.024.715l.543-2.799c.063-.318.039-.536-.068-.651-.107-.116-.336-.174-.687-.174H11.46l-.704 3.625H9.388l1.23-6.327h1.367l-.327 1.682h1.218c.767 0 1.295.134 1.586.401s.378.7.263 1.299l-.572 2.944h-1.389zm7.597-2.265a2.782 2.782 0 0 1-.305.847c-.143.255-.33.49-.561.703a2.44 2.44 0 0 1-.917.551c-.336.108-.765.164-1.286.164h-1.18l-.327 1.682h-1.378l1.23-6.326h2.649c.797 0 1.378.209 1.744.628.366.417.477 1.001.331 1.751zM17.766 10.207h-.943l-.516 2.648h.838c.557 0 .971-.105 1.242-.314.272-.21.455-.559.551-1.049.092-.47.049-.802-.125-.995s-.524-.29-1.047-.29z"/></svg>
+              <span class="skill-name">PHP</span>
+            </div>
+            <div class="skill-card" data-name="Node.js">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M11.998,24c-0.321,0-0.641-0.084-0.922-0.247l-2.936-1.737c-0.438-0.245-0.224-0.332-0.08-0.383 c0.585-0.203,0.703-0.25,1.328-0.604c0.065-0.037,0.151-0.023,0.218,0.017l2.256,1.339c0.082,0.045,0.197,0.045,0.272,0l8.795-5.076 c0.082-0.047,0.134-0.141,0.134-0.238V6.921c0-0.099-0.053-0.192-0.137-0.242l-8.791-5.072c-0.081-0.047-0.189-0.047-0.271,0 L3.075,6.68C2.99,6.729,2.936,6.825,2.936,6.921v10.15c0,0.097,0.054,0.189,0.139,0.235l2.409,1.392 c1.307,0.654,2.108-0.116,2.108-0.89V7.787c0-0.142,0.114-0.253,0.256-0.253h1.115c0.139,0,0.255,0.112,0.255,0.253v10.021 c0,1.745-0.95,2.745-2.604,2.745c-0.508,0-0.909,0-2.026-0.551L2.28,18.675c-0.57-0.329-0.922-0.945-0.922-1.604V6.921 c0-0.659,0.353-1.275,0.922-1.603l8.795-5.082c0.557-0.315,1.296-0.315,1.848,0l8.794,5.082c0.57,0.329,0.924,0.944,0.924,1.603 v10.15c0,0.659-0.354,1.273-0.924,1.604l-8.794,5.078C12.643,23.916,12.324,24,11.998,24z M19.099,13.993 c0-1.9-1.284-2.406-3.987-2.763c-2.731-0.361-3.009-0.548-3.009-1.187c0-0.528,0.235-1.233,2.258-1.233 c1.807,0,2.473,0.389,2.747,1.607c0.024,0.115,0.129,0.199,0.247,0.199h1.141c0.071,0,0.138-0.031,0.186-0.081 c0.048-0.054,0.074-0.123,0.067-0.196c-0.177-2.098-1.571-3.076-4.388-3.076c-2.508,0-4.004,1.058-4.004,2.833 c0,1.925,1.488,2.457,3.895,2.695c2.88,0.282,3.103,0.703,3.103,1.269c0,0.983-0.789,1.402-2.642,1.402 c-2.327,0-2.839-0.584-3.011-1.742c-0.02-0.124-0.126-0.215-0.253-0.215h-1.137c-0.141,0-0.254,0.112-0.254,0.253 c0,1.482,0.806,3.248,4.655,3.248C17.501,17.007,19.099,15.91,19.099,13.993z"/></svg>
+              <span class="skill-name">Node.js</span>
+            </div>
+            <div class="skill-card" data-name="React">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></svg>
+              <span class="skill-name">React</span>
+            </div>
+            <div class="skill-card" data-name="MySQL">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M16.405 5.501c-.115 0-.193.014-.274.033v.013h.014c.054.104.146.18.214.273.054.107.1.214.154.32l.014-.015c.094-.066.14-.172.14-.333-.04-.047-.046-.094-.08-.14-.04-.067-.126-.1-.18-.153zM5.77 18.695h-.927a50.854 50.854 0 00-.27-4.41h-.008l-1.41 4.41H2.45l-1.4-4.41h-.01a72.892 72.892 0 00-.195 4.41H0c.055-1.966.192-3.81.41-5.53h1.15l1.335 4.064h.008l1.347-4.064h1.095c.242 2.015.384 3.86.428 5.53zm4.017-4.08c-.378 2.045-.876 3.533-1.492 4.46-.482.716-1.01 1.073-1.583 1.073-.153 0-.34-.046-.566-.138v-.494c.11.017.24.026.386.026.268 0 .483-.075.647-.222.197-.18.295-.382.295-.605 0-.155-.077-.47-.23-.944L6.23 14.615h.91l.727 2.36c.164.536.233.91.205 1.123.4-1.064.678-2.227.835-3.483zm12.325 4.08h-2.63v-5.53h.885v4.85h1.745zm-3.32.135l-1.016-.5c.09-.076.177-.158.255-.25.433-.506.648-1.258.648-2.253 0-1.83-.718-2.746-2.155-2.746-.704 0-1.254.232-1.65.697-.43.508-.646 1.256-.646 2.245 0 .972.19 1.686.574 2.14.35.41.877.615 1.583.615.264 0 .506-.033.725-.098l1.325.772.36-.622zM15.5 17.588c-.225-.36-.337-.94-.337-1.736 0-1.393.424-2.09 1.27-2.09.443 0 .77.167.977.5.224.362.336.936.336 1.723 0 1.404-.424 2.108-1.27 2.108-.445 0-.77-.167-.978-.5zm-1.658-.425c0 .47-.172.856-.516 1.156-.344.3-.803.45-1.384.45-.543 0-1.064-.172-1.573-.515l.237-.476c.438.22.833.328 1.19.328.332 0 .593-.073.783-.22a.754.754 0 00.3-.615c0-.33-.23-.61-.648-.845-.388-.213-1.163-.657-1.163-.657-.422-.307-.632-.636-.632-1.177 0-.45.157-.81.47-1.085.315-.278.72-.415 1.22-.415.512 0 .98.136 1.4.41l-.213.476a2.726 2.726 0 00-1.064-.23c-.283 0-.502.068-.654.206a.685.685 0 00-.248.524c0 .328.234.61.666.85.393.215 1.187.67 1.187.67.433.305.648.63.648 1.168zm9.382-5.852c-.535-.014-.95.04-1.297.188-.1.04-.26.04-.274.167.055.053.063.14.11.214.08.134.218.313.346.407.14.11.28.216.427.31.26.16.555.255.81.416.145.094.293.213.44.313.073.05.12.14.214.172v-.02c-.046-.06-.06-.147-.105-.214-.067-.067-.134-.127-.2-.193a3.223 3.223 0 00-.695-.675c-.214-.146-.682-.35-.77-.595l-.013-.014c.146-.013.32-.066.46-.106.227-.06.435-.047.67-.106.106-.027.213-.06.32-.094v-.06c-.12-.12-.21-.283-.334-.395a8.867 8.867 0 00-1.104-.823c-.21-.134-.476-.22-.697-.334-.08-.04-.214-.06-.26-.127-.12-.146-.19-.34-.275-.514a17.69 17.69 0 01-.547-1.163c-.12-.262-.193-.523-.34-.763-.69-1.137-1.437-1.826-2.586-2.5-.247-.14-.543-.2-.856-.274-.167-.008-.334-.02-.5-.027-.11-.047-.216-.174-.31-.235-.38-.24-1.364-.76-1.644-.072-.18.434.267.862.422 1.082.115.153.26.328.34.5.047.116.06.235.107.356.106.294.207.622.347.897.073.14.153.287.247.413.054.073.146.107.167.227-.094.136-.1.334-.154.5-.24.757-.146 1.693.194 2.25.107.166.362.534.703.393.3-.12.234-.5.32-.835.02-.08.007-.133.048-.187v.015c.094.188.188.367.274.555.206.328.566.668.867.895.16.12.287.328.487.402v-.02h-.015c-.043-.058-.1-.086-.154-.133a3.445 3.445 0 01-.35-.4 8.76 8.76 0 01-.747-1.218c-.11-.21-.202-.436-.29-.643-.04-.08-.04-.2-.107-.24-.1.146-.247.273-.32.453-.127.288-.14.642-.188 1.01-.027.007-.014 0-.027.014-.214-.052-.287-.274-.367-.46-.2-.475-.233-1.238-.06-1.785.047-.14.247-.582.167-.716-.042-.127-.174-.2-.247-.303a2.478 2.478 0 01-.24-.427c-.16-.374-.24-.788-.414-1.162-.08-.173-.22-.354-.334-.513-.127-.18-.267-.307-.368-.52-.033-.073-.08-.194-.027-.274.014-.054.042-.075.094-.09.088-.072.335.022.422.062.247.1.455.194.662.334.094.066.195.193.315.226h.14c.214.047.455.014.655.073.355.114.675.28.962.46a5.953 5.953 0 012.085 2.286c.08.154.115.295.188.455.14.33.313.663.455.982.14.315.275.636.476.897.1.14.502.213.682.286.133.06.34.115.46.188.23.14.454.3.67.454.11.076.443.243.463.378z"/></svg>
+              <span class="skill-name">MySQL</span>
+            </div>
+            <div class="skill-card" data-name="HTML5">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>
+              <span class="skill-name">HTML5</span>
+            </div>
+            <div class="skill-card" data-name="CSS3">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M0 0v20.16A3.84 3.84 0 0 0 3.84 24h16.32A3.84 3.84 0 0 0 24 20.16V3.84A3.84 3.84 0 0 0 20.16 0Zm14.256 13.08c1.56 0 2.28 1.08 2.304 2.64h-1.608c.024-.288-.048-.6-.144-.84-.096-.192-.288-.264-.552-.264-.456 0-.696.264-.696.84-.024.576.288.888.768 1.08.72.288 1.608.744 1.92 1.296q.432.648.432 1.656c0 1.608-.912 2.592-2.496 2.592-1.656 0-2.4-1.032-2.424-2.688h1.68c0 .792.264 1.176.792 1.176.264 0 .456-.072.552-.24.192-.312.24-1.176-.048-1.512-.312-.408-.912-.6-1.32-.816q-.828-.396-1.224-.936c-.24-.36-.36-.888-.36-1.536 0-1.44.936-2.472 2.424-2.448m5.4 0c1.584 0 2.304 1.08 2.328 2.64h-1.608c0-.288-.048-.6-.168-.84-.096-.192-.264-.264-.528-.264-.48 0-.72.264-.72.84s.288.888.792 1.08c.696.288 1.608.744 1.92 1.296.264.432.408.984.408 1.656.024 1.608-.888 2.592-2.472 2.592-1.68 0-2.424-1.056-2.448-2.688h1.68c0 .744.264 1.176.792 1.176.264 0 .456-.072.552-.24.216-.312.264-1.176-.048-1.512-.288-.408-.888-.6-1.32-.816-.552-.264-.96-.576-1.2-.936s-.36-.888-.36-1.536c-.024-1.44.912-2.472 2.4-2.448m-11.031.018c.711-.006 1.419.198 1.839.63.432.432.672 1.128.648 1.992H9.336c.024-.456-.096-.792-.432-.96-.312-.144-.768-.048-.888.24-.12.264-.192.576-.168.864v3.504c0 .744.264 1.128.768 1.128a.65.65 0 0 0 .552-.264c.168-.24.192-.552.168-.84h1.776c.096 1.632-.984 2.712-2.568 2.688-1.536 0-2.496-.864-2.472-2.472v-4.032c0-.816.24-1.44.696-1.848.432-.408 1.146-.624 1.857-.63"/></svg>
+              <span class="skill-name">CSS3</span>
+            </div>
+            <div class="skill-card" data-name="JavaScript">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/></svg>
+              <span class="skill-name">JavaScript</span>
+            </div>
+            <div class="skill-card" data-name="jQuery">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M1.525 5.87c-2.126 3.054-1.862 7.026-.237 10.269.037.079.078.154.118.229.023.052.049.1.077.15.013.027.031.056.047.082.026.052.054.102.081.152l.157.266c.03.049.057.097.09.146.056.094.12.187.178.281.026.04.05.078.079.117a6.368 6.368 0 00.31.445c.078.107.156.211.24.315.027.038.058.076.086.115l.22.269c.028.03.055.067.084.099.098.118.202.233.306.35l.005.006a3.134 3.134 0 00.425.44c.08.083.16.165.245.245l.101.097c.111.105.223.209.34.309.002 0 .003.002.005.003l.057.05c.102.089.205.178.31.26l.125.105c.085.068.174.133.26.2l.137.105c.093.07.192.139.287.207.035.025.07.05.106.073l.03.023.28.185.12.08c.148.094.294.184.44.272.041.02.084.044.123.068.108.062.22.125.329.183.06.034.122.063.184.094.075.042.153.083.234.125a.324.324 0 01.056.023c.033.015.064.031.096.047.12.06.245.118.375.175.024.01.05.02.076.034.144.063.289.123.438.182.034.01.07.027.105.04.135.051.274.103.411.152l.05.018c.154.052.305.102.46.15.036.01.073.023.111.033.16.048.314.105.474.137 10.273 1.872 13.258-6.177 13.258-6.177-2.508 3.266-6.958 4.127-11.174 3.169-.156-.036-.312-.086-.47-.132a13.539 13.539 0 01-.567-.182l-.062-.024c-.136-.046-.267-.097-.4-.148a1.615 1.615 0 00-.11-.04c-.148-.06-.29-.121-.433-.184-.031-.01-.057-.024-.088-.036a23.44 23.44 0 01-.362-.17 1.485 1.485 0 01-.106-.052c-.094-.044-.188-.095-.28-.143a3.947 3.947 0 01-.187-.096c-.114-.06-.227-.125-.34-.187-.034-.024-.073-.044-.112-.066a15.922 15.922 0 01-.439-.27 2.107 2.107 0 01-.118-.078 6.01 6.01 0 01-.312-.207c-.035-.023-.067-.048-.103-.073a9.553 9.553 0 01-.295-.212c-.042-.034-.087-.066-.132-.1-.088-.07-.177-.135-.265-.208l-.118-.095a10.593 10.593 0 01-.335-.28.258.258 0 00-.037-.031l-.347-.316-.1-.094c-.082-.084-.166-.164-.25-.246l-.098-.1a9.081 9.081 0 01-.309-.323l-.015-.016c-.106-.116-.21-.235-.313-.355-.027-.03-.053-.064-.08-.097l-.227-.277a21.275 21.275 0 01-.34-.449C2.152 11.79 1.306 7.384 3.177 3.771m4.943-.473c-1.54 2.211-1.454 5.169-.254 7.508a9.111 9.111 0 00.678 1.133c.23.33.484.721.793.988.107.122.223.24.344.36l.09.09c.114.11.232.217.35.325l.016.013a9.867 9.867 0 00.414.342c.034.023.063.05.096.073.14.108.282.212.428.316l.015.009c.062.045.128.086.198.13.028.018.06.042.09.06.106.068.21.132.318.197.017.007.032.016.048.023.09.055.188.108.282.157.033.02.065.035.1.054.066.033.132.068.197.102l.032.014c.135.067.273.129.408.19.034.014.063.025.092.039.111.048.224.094.336.137.05.017.097.037.144.052.102.038.21.073.31.108l.14.045c.147.045.295.104.449.13C22.164 17.206 24 11.098 24 11.098c-1.653 2.38-4.852 3.513-8.261 2.628a8.04 8.04 0 01-.449-.13c-.048-.014-.09-.029-.136-.043-.104-.036-.211-.07-.312-.109l-.144-.054c-.113-.045-.227-.087-.336-.135-.034-.015-.065-.025-.091-.04-.14-.063-.281-.125-.418-.192l-.206-.107-.119-.06a5.673 5.673 0 01-.265-.15.62.62 0 01-.062-.035c-.106-.066-.217-.13-.318-.198-.034-.019-.065-.042-.097-.062l-.208-.136c-.144-.1-.285-.208-.428-.313-.032-.029-.063-.053-.094-.079-1.499-1.178-2.681-2.79-3.242-4.613-.59-1.897-.46-4.023.56-5.75m4.292-.147c-.909 1.334-.996 2.99-.37 4.46.665 1.563 2.024 2.79 3.608 3.37.065.025.128.046.196.07l.088.027c.092.03.185.063.28.084 4.381.845 5.567-2.25 5.886-2.704-1.043 1.498-2.792 1.857-4.938 1.335a4.85 4.85 0 01-.516-.16 6.352 6.352 0 01-.618-.254 6.53 6.53 0 01-1.082-.66c-1.922-1.457-3.113-4.236-1.859-6.5"/></svg>
+              <span class="skill-name">jQuery</span>
+            </div>
+            <div class="skill-card" data-name="Bootstrap">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M11.77 11.24H9.956V8.202h2.152c1.17 0 1.834.522 1.834 1.466 0 1.008-.773 1.572-2.174 1.572zm.324 1.206H9.957v3.348h2.231c1.459 0 2.232-.585 2.232-1.685s-.795-1.663-2.326-1.663zM24 11.39v1.218c-1.128.108-1.817.944-2.226 2.268-.407 1.319-.463 2.937-.42 4.186.045 1.3-.968 2.5-2.337 2.5H4.985c-1.37 0-2.383-1.2-2.337-2.5.043-1.249-.013-2.867-.42-4.186-.41-1.324-1.1-2.16-2.228-2.268V11.39c1.128-.108 1.819-.944 2.227-2.268.408-1.319.464-2.937.42-4.186-.045-1.3.968-2.5 2.338-2.5h14.032c1.37 0 2.382 1.2 2.337 2.5-.043 1.249.013 2.867.42 4.186.409 1.324 1.098 2.16 2.226 2.268zm-7.927 2.817c0-1.354-.953-2.333-2.368-2.488v-.057c1.04-.169 1.856-1.135 1.856-2.213 0-1.537-1.213-2.538-3.062-2.538h-4.16v10.172h4.181c2.218 0 3.553-1.086 3.553-2.876z"/></svg>
+              <span class="skill-name">Bootstrap</span>
+            </div>
+            <div class="skill-card" data-name="WordPress">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M21.469 6.825c.84 1.537 1.318 3.3 1.318 5.175 0 3.979-2.156 7.456-5.363 9.325l3.295-9.527c.615-1.54.82-2.771.82-3.864 0-.405-.026-.78-.07-1.11m-7.981.105c.647-.03 1.232-.105 1.232-.105.582-.075.514-.93-.067-.899 0 0-1.755.135-2.88.135-1.064 0-2.85-.15-2.85-.15-.585-.03-.661.855-.075.885 0 0 .54.061 1.125.09l1.68 4.605-2.37 7.08L5.354 6.9c.649-.03 1.234-.1 1.234-.1.585-.075.516-.93-.065-.896 0 0-1.746.138-2.874.138-.2 0-.438-.008-.69-.015C4.911 3.15 8.235 1.215 12 1.215c2.809 0 5.365 1.072 7.286 2.833-.046-.003-.091-.009-.141-.009-1.06 0-1.812.923-1.812 1.914 0 .89.513 1.643 1.06 2.531.411.72.89 1.643.89 2.977 0 .915-.354 1.994-.821 3.479l-1.075 3.585-3.9-11.61.001.014zM12 22.784c-1.059 0-2.081-.153-3.048-.437l3.237-9.406 3.315 9.087c.024.053.05.101.078.149-1.12.393-2.325.609-3.582.609M1.211 12c0-1.564.336-3.05.935-4.39L7.29 21.709C3.694 19.96 1.212 16.271 1.211 12M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0"/></svg>
+              <span class="skill-name">WordPress</span>
+            </div>
+            <div class="skill-card" data-name="CodeIgniter">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M11.466 0c.88 1.423-.28 3.306-1.207 4.358-.899 1.02-1.992 1.873-2.985 2.8-1.066.996-2.091 2.044-2.967 3.213-1.753 2.339-2.827 5.28-2.038 8.199.788 2.916 3.314 4.772 6.167 5.429-1.44-.622-2.786-2.203-2.79-3.82-.003-1.765 1.115-3.262 2.505-4.246-.167.632-.258 1.21.155 1.774a1.68 1.68 0 0 0 1.696.642c1.487-.326 1.556-1.96.674-2.914-.872-.943-1.715-2.009-1.384-3.377.167-.685.588-1.328 1.121-1.787-.41 1.078.755 2.14 1.523 2.67 1.332.918 2.793 1.612 4.017 2.688 1.288 1.132 2.24 2.661 2.047 4.435-.208 1.923-1.736 3.26-3.45 3.936 3.622-.8 7.365-3.61 7.44-7.627.093-3.032-1.903-5.717-5.158-7.384.19.48.074.697-.058.924-.55.944-2.082 1.152-2.835.184-1.205-1.548.025-3.216.197-4.855.215-2.055-1.073-4.049-2.67-5.242z"/></svg>
+              <span class="skill-name">CodeIgniter</span>
+            </div>
+            <div class="skill-card" data-name="Drupal">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M15.78 5.113C14.09 3.425 12.48 1.815 11.998 0c-.48 1.815-2.09 3.425-3.778 5.113-2.534 2.53-5.405 5.4-5.405 9.702a9.184 9.185 0 1018.368 0c0-4.303-2.871-7.171-5.405-9.702M6.72 16.954c-.563-.019-2.64-3.6 1.215-7.416l2.55 2.788a.218.218 0 01-.016.325c-.61.625-3.204 3.227-3.527 4.126-.066.186-.164.18-.222.177M12 21.677a3.158 3.158 0 01-3.158-3.159 3.291 3.291 0 01.787-2.087c.57-.696 2.37-2.655 2.37-2.655s1.774 1.988 2.367 2.649a3.09 3.09 0 01.792 2.093A3.158 3.158 0 0112 21.677m6.046-5.123c-.068.15-.223.398-.431.405-.371.014-.411-.177-.686-.583-.604-.892-5.864-6.39-6.848-7.455-.866-.935-.122-1.595.223-1.94C10.736 6.547 12 5.285 12 5.285s3.766 3.574 5.336 6.016c1.57 2.443 1.029 4.556.71 5.253"/></svg>
+              <span class="skill-name">Drupal</span>
+            </div>
+            <div class="skill-card" data-name="Shopify">
+              <svg class="skill-icon" viewBox="0 0 24 24"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg>
+              <span class="skill-name">Shopify</span>
+            </div>
+            <div class="skill-card" data-name="Magento">
+              <span class="skill-icon-letter">M</span>
+              <span class="skill-name">Magento</span>
+            </div>
+          </div>
+
+          <div class="skill-label">Full Stack Development</div>
+          <div class="skill-row">
+            <span class="pill">⚙️ Back-end &amp; Front-end Development</span>
+            <span class="pill">🗄️ Database Design</span>
+            <span class="pill">🔄 Agile &amp; Scrum</span>
+            <span class="pill">✉️ HTML Email / eDM Production</span>
+          </div>
+
+          <div class="skill-label">Core Skills</div>
+          <div class="cv-skills">
+            <div class="cv-skill-line"><span class="cv-skill-key">Languages &amp; Front-End:</span> JavaScript (ES6+), React, jQuery, HTML5, CSS3</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">Back-End &amp; Frameworks:</span> PHP, Node.js, Laravel, CodeIgniter</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">E-commerce Platforms:</span> Shopify (Liquid), Salesforce Commerce Cloud, SAP Hybris</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">CMS:</span> Drupal 7, Drupal 8</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">Email / eDM Development:</span> HTML email production, Outlook/MSO rendering, cross-client QA</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">Data &amp; Integration:</span> MySQL, RESTful APIs, systems integration</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">Tools &amp; Collaboration:</span> Git, Jira, Confluence, Bitbucket</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">Agile Practices:</span> Agile/Scrum, full SDLC, code review, A/B testing, technical documentation</div>
+            <div class="cv-skill-line"><span class="cv-skill-key">Leadership:</span> Technical leadership, mentoring, stakeholder communication</div>
+          </div>
+
+          <div class="skill-label">Languages Spoken</div>
+          <div class="skill-row">
+            <span class="pill">🇦🇺 English</span><span class="pill">🇧🇷 Portuguese</span><span class="pill">🇪🇸 Spanish</span>
+          </div>
+        </div>
+
+        <!-- WEBSITES -->
+        <div class="panel" id="panel-websites">
+          <h2 class="sect"><span class="brk">&lt;</span>websites <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="websites">0</span>"</span> <span class="attr">type</span>=<span class="str">"live-preview"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="tools-intro">
+            <div class="tools-intro-text">Full websites I've designed and built for clients and personal projects. Some are still live today, others have since been retired — click a live one to open it in a new tab.</div>
+          </div>
+
+          <div class="tools-toolbar">
+            <div class="website-filters">
+              <button class="filter-pill active" onclick="filterWebsites('all', this)">🌐 All</button>
+              <button class="filter-pill" onclick="filterWebsites('live', this)">🟢 Live</button>
+              <button class="filter-pill" onclick="filterWebsites('offline', this)">⚫ Offline</button>
+            </div>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-websites" data-category="websites"></div>
+        </div>
+
+        <!-- LANDING PAGES -->
+        <div class="panel" id="panel-landing-pages">
+          <h2 class="sect"><span class="brk">&lt;</span>landing-pages <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="landing-pages">0</span>"</span> <span class="attr">type</span>=<span class="str">"static-site"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="tools-intro">
+            <div class="tools-intro-text">A few of the landing pages and single-page sites I've designed and built end-to-end — from brand concept to a deployed, responsive site.</div>
+          </div>
+
+          <div class="tools-toolbar">
+            <div class="tools-intro-tags">
+              <span class="pill sm">🖥️ Full sites</span>
+              <span class="pill sm">📱 Responsive</span>
+              <span class="pill sm">🌐 Live deployed</span>
+            </div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('landing-pages', this)">👁 View all</button>
+          </div>
+
+          <div class="timeline-list" id="toolsGrid-landing-pages" data-category="landing-pages"></div>
+        </div>
+
+        <!-- SITE HISTORY -->
+        <div class="panel" id="panel-site-history">
+          <h2 class="sect"><span class="brk">&lt;</span>site-history <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="site-history">0</span>"</span> <span class="attr">type</span>=<span class="str">"timeline"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="tools-intro">
+            <div class="tools-intro-text">My personal website has gone through a lot of versions — this is a visual trip through all of them, from my very first attempt back in 2012 to the one you're browsing right now. Each snapshot reflects where I was at as a developer at the time: the design trends I liked, the tools I was learning, and how much (or how little) front-end polish I knew how to pull off.</div>
+          </div>
+
+          <div class="tools-toolbar">
+            <div class="tools-intro-tags">
+              <span class="pill sm">🕰️ Since 2012</span>
+              <span class="pill sm">🎨 Design evolution</span>
+              <span class="pill sm">🌐 Personal site</span>
+            </div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('site-history', this)">👁 View all</button>
+          </div>
+
+          <div class="timeline-list" id="toolsGrid-site-history" data-category="site-history"></div>
+        </div>
+
+        <!-- MINI TOOLS -->
+        <div class="panel" id="panel-mini-tools">
+          <h2 class="sect"><span class="brk">&lt;</span>mini-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools">0</span>"</span> <span class="attr">type</span>=<span class="str">"standalone"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="tools-intro">
+            <div class="tools-intro-text">Small standalone tools I've built for everyday dev and production tasks. View them inline or check the source.</div>
+          </div>
+
+          <div class="tools-toolbar">
+            <div class="tools-intro-tags">
+              <span class="pill sm">📄 Single-file</span>
+              <span class="pill sm">🧪 Dev utilities</span>
+              <span class="pill sm">⚡ No install</span>
+            </div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools', this)">👁 View all</button>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-mini-tools" data-category="mini-tools"></div>
+        </div>
+
+        <!-- EDM TOOLS -->
+        <div class="panel" id="panel-edm-tools">
+          <h2 class="sect"><span class="brk">&lt;</span>eDM-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="edm-tools">0</span>"</span> <span class="attr">type</span>=<span class="str">"single-HTML-file"</span> <span class="attr">for</span>=<span class="str">"Email-Marketing-Campaigns"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="tools-intro">
+            <div class="tools-intro-text">Single-file tools I built to speed up HTML email production — handling <span class="kw-pill">Outlook/MSO</span> quirks and repetitive campaign tasks.</div>
+          </div>
+
+          <div class="tools-toolbar">
+            <div class="tools-intro-tags">
+              <span class="pill sm">📄 Single-file</span>
+              <span class="pill sm">📋 Copy &amp; paste ready</span>
+              <span class="pill sm">⚡ No install</span>
+            </div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('edm-tools', this)">👁 View all</button>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-edm-tools" data-category="edm-tools"></div>
+        </div>
+
+        <!-- EDM WORK -->
+        <div class="panel" id="panel-edm-work">
+          <h2 class="sect"><span class="brk">&lt;</span>eDM-work <span class="attr">type</span>=<span class="str">"case-studies"</span><span class="brk"> /&gt;</span></h2>
+          <div class="sect-intro">Kinetic email modules and campaign work from building eDMs for American Express and ANZ. Client campaign source isn't public (confidentiality), so those are shown as case studies instead — the challenge, the technique, and the outcome.</div>
+          <div class="case-list" id="toolsGrid-edm-work" data-category="edm-work"></div>
+
+          <div class="skill-label mt-30">Kinetic Modules</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">Reusable kinetic modules I built entirely with HTML/CSS (no JavaScript, no AMP for Email), designed to work across real-world email clients without relying on scripting support.</div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('edm-kinetic-modules', this)">👁 View all</button>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-edm-work-modules" data-category="edm-kinetic-modules"></div>
+        </div>
+
+        <!-- FREELANCE -->
+        <div class="panel" id="panel-freelance">
+          <h2 class="sect"><span class="brk">&lt;</span>freelance <span class="attr">status</span>=<span class="str">"open"</span><span class="brk"> /&gt;</span></h2>
+          <div class="bio-text">
+            Outside my full-time role, I take on a limited number of freelance projects — mostly
+            front-end builds, Shopify stores, and HTML email production for campaigns.
+          </div>
+
+          <div class="skill-label mt-26">Services</div>
+          <div class="skill-row">
+            <span class="pill">Front-End Development</span><span class="pill">React</span>
+            <span class="pill">Shopify Builds &amp; Customisation</span><span class="pill">HTML Email / eDM</span>
+            <span class="pill">WordPress</span><span class="pill">PHP / Node.js Back-End</span>
+          </div>
+
+          <div class="skill-label">Good fit for</div>
+          <div class="bio-text">
+            Small business front-ends, Shopify store builds or theme customisation, and marketing
+            email templates that need to actually survive Outlook. Happy to jump on a quick call
+            first to see if it's a good match.
+          </div>
+
+          <div class="skill-label mt-26">Some of my clients</div>
+          <div class="client-logos">
+            <a href="https://www.brazilianculturalcentre.com/" target="_blank" rel="noopener" title="Brazilian Cultural Centre">
+              <img src="img/clients/brazilian-cultural-centre.png" alt="Brazilian Cultural Centre">
+            </a>
+            <a href="https://www.darualab.com/" target="_blank" rel="noopener" title="Darua Lab">
+              <img src="img/clients/darua-lab.png" alt="Darua Lab">
+            </a>
+          </div>
+
+          <div class="mt-26">
+            <button class="doc-btn" onclick="openFile('contact')">Get in touch →</button>
+          </div>
+        </div>
+
+        <!-- CV / CONTACT -->
+        <div class="panel" id="panel-contact">
+          <h2 class="sect"><span class="brk">&lt;</span>contact <span class="attr">email</span>=<span class="str">"contact@brunovidasi.com"</span> <span class="attr">status</span>=<span class="str">"open-to-work"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="contact-block">
+            <div class="obj-key"><span class="brace">email:</span></div>
+            <div class="email-row">
+              <span class="ic-emoji">📧</span>
+              <span id="emailText">contact@brunovidasi.com</span>
+              <button class="doc-btn" onclick="copyEmail()">Copy</button>
+              <a class="doc-btn" href="mailto:contact@brunovidasi.com">Send a message →</a>
+              <span class="copy-fb" id="copyFeedback">Copied!</span>
+            </div>
+          </div>
+
+          <div class="contact-block">
+            <div class="obj-key"><span class="brace">message:</span> <span class="com">// or send it straight from here</span></div>
+
+            <div class="composer">
+              <div class="composer-titlebar">
+                <span class="composer-dot r"></span>
+                <span class="composer-dot y"></span>
+                <span class="composer-dot g"></span>
+                <span class="composer-title">New Message</span>
+              </div>
+
+              <form class="contact-form" id="contactForm">
+                <input type="hidden" name="access_key" value="0ed4ec3f-5b86-4765-b5db-40cdf15ff41e">
+                <input type="checkbox" name="botcheck" class="hp-field" tabindex="-1" autocomplete="off">
+
+                <div class="composer-field">
+                  <label>To</label>
+                  <div class="composer-static">contact@brunovidasi.com</div>
+                </div>
+
+                <div class="composer-field">
+                  <label>From</label>
+                  <div class="composer-inline">
+                    <input type="text" name="name" placeholder="Your name" required>
+                    <input type="email" name="email" placeholder="your@email.com" required>
+                  </div>
+                </div>
+
+                <div class="composer-field">
+                  <label>Subject</label>
+                  <input type="text" name="subject" placeholder="What's this about?" required>
+                </div>
+
+                <textarea class="composer-body" name="message" rows="5" placeholder="Write your message…" required></textarea>
+
+                <div class="h-captcha" data-captcha="true" data-theme="dark"></div>
+
+                <div class="form-actions">
+                  <button type="submit" class="composer-send" id="contactSubmitBtn">Send <span class="send-icon">➤</span></button>
+                  <span class="form-fb" id="contactFormFeedback"></span>
+                </div>
+              </form>
+
+              <div class="contact-form-success" id="contactFormSuccess" hidden>
+                <span class="ic-emoji">✅</span>
+                <div>
+                  <div class="success-title">Message sent!</div>
+                  <div class="success-sub">Thanks for reaching out — I'll get back to you soon. <a href="#" id="contactFormReset">Send another message</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- DOCUMENTS -->
+        <div class="panel" id="panel-documents">
+          <h2 class="sect"><span class="brk">&lt;</span>documents <span class="attr">format</span>=<span class="str">"PDF"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="contact-block">
+            <div class="obj-key"><span class="brace">links:</span></div>
+            <div class="link-chips">
+              <a class="link-chip" href="https://www.linkedin.com/in/brunovidasi/?locale=en_US" target="_blank">
+                <span class="icon-circle soc-linkedin"><svg viewBox="0 0 24 24" fill="#ffffff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>
+                linkedin.com/in/brunovidasi
+              </a>
+              <a class="link-chip" href="https://github.com/brunovidasi" target="_blank">
+                <span class="icon-circle soc-github"><svg viewBox="0 0 24 24" fill="#ffffff"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.754-1.333-1.754-1.089-.744.084-.729.084-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.807 1.305 3.492.998.108-.775.42-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
+                github.com/brunovidasi
+              </a>
+              <a class="link-chip" href="https://codepen.io/brunovidasi" target="_blank">
+                <span class="icon-circle soc-codepen"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round"><path d="M12 2.5 22 9v6l-10 6.5L2 15V9z"/><path d="M12 2.5v6.2M12 22v-6.2M2 9l10 6.2M22 9 12 15.2M2 15l10-6.2M22 15 12 8.8"/></svg></span>
+                codepen.io/brunovidasi
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-block">
+            <div class="obj-key"><span class="brace">resumes:</span> <span class="com">// view inline or download</span></div>
+
+            <div class="doc-card">
+              <div class="doc-head">
+                <span class="ic-emoji">📄</span>
+                <div class="doc-name">Curriculum Vitae — English</div>
+                <div class="doc-actions">
+                  <button class="doc-btn" onclick="toggleDoc('cv-en')">👁 View</button>
+                  <a class="doc-btn" href="resume.pdf" download>⬇ Download</a>
+                </div>
+              </div>
+              <div class="doc-embed" id="embed-cv-en">
+                <iframe data-src="resume.pdf" title="Curriculum Vitae — English"></iframe>
+              </div>
+            </div>
+
+            <div class="doc-card">
+              <div class="doc-head">
+                <span class="ic-emoji">📄</span>
+                <div class="doc-name">Curriculum Vitae — Português</div>
+                <div class="doc-actions">
+                  <button class="doc-btn" onclick="toggleDoc('cv-pt')">👁 View</button>
+                  <a class="doc-btn" href="curriculo.pdf" download>⬇ Download</a>
+                </div>
+              </div>
+              <div class="doc-embed" id="embed-cv-pt">
+                <iframe data-src="curriculo.pdf" title="Curriculum Vitae — Português"></iframe>
+              </div>
+            </div>
+
+            <div class="doc-card">
+              <div class="doc-head">
+                <span class="ic-emoji">📄</span>
+                <div class="doc-name">Curriculum Vitae — Español</div>
+                <div class="doc-actions">
+                  <button class="doc-btn" onclick="toggleDoc('cv-es')">👁 View</button>
+                  <a class="doc-btn" href="resume_es.pdf" download>⬇ Download</a>
+                </div>
+              </div>
+              <div class="doc-embed" id="embed-cv-es">
+                <iframe data-src="resume_es.pdf" title="Curriculum Vitae — Español"></iframe>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <span>⎇ bruno-vieira</span>
+    <span><b><span class="years-exp">13</span>+ yrs</b> experience in software development</span>
+    <span class="statusbar-credit">© <span class="current-year">2026</span> - <a href="https://brunovida.si" target="_blank">brunovida.si</a></span>
+    <span class="dev-toggle" id="devModeToggle" title="Toggle DEV mode — skips the boot/loading animation on page load">DEV: OFF</span>
+  </div>
+</div>
+
+<script src="js/script.js" defer></script>
+<script src="https://web3forms.com/client/script.js" async defer></script>
+
+</body>
+</html>

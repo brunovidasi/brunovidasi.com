@@ -1,0 +1,33 @@
+[
+  {
+    "id": "social-links",
+    "title": "Social Links",
+    "category": "mini-tools",
+    "icon": "📱",
+    "description": "I wanted to create a simple website that brought all my social links together, essentially working like a personal Linktree that I could share on my social profiles and make it easy for people to find me online.",
+    "path": "projects/mini-tools/social-links/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi/tree/main/follow.brunovidasi.com",
+    "live": "https://follow.brunovidasi.com",
+    "codepen": ""
+  },
+  {
+    "id": "gerador-de-cpf",
+    "title": "Gerador de CPF",
+    "category": "mini-tools",
+    "icon": "🪪",
+    "description": "Generates mathematically valid Brazilian CPF numbers (correct check digits) for software testing, with a fiscal-region selector.",
+    "path": "projects/mini-tools/gerador-de-cpf/index.html",
+    "github": "https://github.com/brunovidasi/Gerador-de-CPF",
+    "codepen": "https://codepen.io/brunovidasi/pen/gbmpmax"
+  },
+  {
+    "id": "ig-relationship-checker",
+    "title": "IG Relationship Checker",
+    "category": "mini-tools",
+    "icon": "📊",
+    "description": "A web-based tool that analyzes your IG followers and following data. Upload your IG data export to identify mutual friends, inactive accounts, and who doesn't follow you back.",
+    "path": "projects/mini-tools/ig-relationship-checker/index.html",
+    "github": "",
+    "codepen": ""
+  }
+]

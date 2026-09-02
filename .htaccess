@@ -1,0 +1,23 @@
+
+RewriteEngine on
+
+ErrorDocument 400 /400.shtml
+ErrorDocument 401 /401.shtml
+ErrorDocument 403 /403.shtml
+ErrorDocument 404 /404.shtml
+ErrorDocument 500 /500.shtml
+RewriteCond %{HTTP_HOST} ^comunidadeadventista\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.comunidadeadventista\.com$
+RewriteRule ^/?$ "https\:\/\/www\.facebook\.com\/comunidadeadventista" [R=301,L]
+RewriteCond %{HTTP_HOST} ^brunovidasi\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.brunovidasi\.com$
+RewriteRule ^/?$ "https\:\/\/brunovida\.si\/" [R=301,L]
+RewriteCond %{HTTP_HOST} ^flowparty\.com\.au$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.flowparty\.com\.au$
+RewriteRule ^/?$ "https\:\/\/flowparty\.com\.au\/sydney" [R=301,L]
+
+# brunovida.si tab deep-links (e.g. /bio, /experience): serve the SPA shell
+# for a direct visit/refresh so client-side JS can render the right tab.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(bio|experience|education|skills|websites|landing-pages|mini-tools|edm-tools|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
