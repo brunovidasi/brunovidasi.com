@@ -58,6 +58,11 @@ let openTabs = ['intro', 'about', 'experience','education','skills','contact'];
 let activeId = 'intro';
 let openFolders = { about:true, projects:true };
 
+// ---- bio.md: shows once, no typing animation (declared early so the initial
+// render — which may land straight on the about tab via deep link — can use it) ----
+let bioTypedOnce = false;
+const bioText = `Hi, I'm Bruno — a Brazilian-born, Sydney-based developer with ${yearsExperience}+ years of experience across full-stack and front-end development. I specialise in building reliable, well-structured systems — from custom PHP/Node back-ends to pixel-perfect front-ends.\n\nI'm 32, originally from Rio de Janeiro, Brazil, and I've called Sydney home since 2017. \nI'm an Australian citizen, fluent in English, Portuguese and Spanish.`;
+
 // ---------------- dev mode (localhost only: skips boot animation, uses #hash deep-links
 // instead of clean paths so local static servers without .htaccess rewrite support still work) ----------------
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
@@ -1040,10 +1045,6 @@ function showRain(){
     }
   }, 45);
 }
-
-// ---- bio.md: shows once, no typing animation ----
-let bioTypedOnce = false;
-const bioText = `Hi, I'm Bruno — a Brazilian-born, Sydney-based developer with ${yearsExperience}+ years of experience across full-stack and front-end development. I specialise in building reliable, well-structured systems — from custom PHP/Node back-ends to pixel-perfect front-ends.\n\nI'm 32, originally from Rio de Janeiro, Brazil, and I've called Sydney home since 2017. \nI'm an Australian citizen, fluent in English, Portuguese and Spanish.`;
 
 function startBioTyping(){
   if(bioTypedOnce) return;
