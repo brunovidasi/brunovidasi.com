@@ -98,9 +98,10 @@ canvas#rain{
   border-radius:0;
 }
 .win.minimized{
-  transform:scale(.02) translateY(60vh);
+  transform:scale(.02);
   opacity:0;
   pointer-events:none;
+  transition:transform .4s cubic-bezier(.6,0,.35,1), opacity .3s ease .1s;
 }
 
 .titlebar{
@@ -487,8 +488,13 @@ document.addEventListener('click', function(){
   dotMin.addEventListener('click', function(e){
     e.stopPropagation();
     pinPosition();
-    winEl.classList.add('minimized');
     dockRestore.style.display = 'flex';
+    var winRect = winEl.getBoundingClientRect();
+    var dockRect = dockRestore.getBoundingClientRect();
+    winEl.style.transformOrigin =
+      (dockRect.left + dockRect.width / 2 - winRect.left) + 'px ' +
+      (dockRect.top + dockRect.height / 2 - winRect.top) + 'px';
+    winEl.classList.add('minimized');
   });
   dockRestore.addEventListener('click', function(){
     winEl.classList.remove('minimized');
