@@ -59,6 +59,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
+<canvas id="bgRain"></canvas>
+<div class="bg-overlay">
+  <img class="bg-overlay-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
+  <div class="bg-overlay-note">
+    <p class="bg-overlay-text" id="bgOverlayText">This website itself is hand-coded by me from scratch — a small showcase of my work in its own right :-)</p>
+    <div class="bg-overlay-sign" id="bgOverlaySign">— Bruno Vieira</div>
+  </div>
+  <div class="bg-overlay-meta">© 2026 · <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></div>
+  <div class="bg-overlay-hint">click the dock below to bring the site back</div>
+</div>
+
 <div id="rain"></div>
 <div id="boot"><pre id="bootText"></pre></div>
 
@@ -815,6 +826,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <span class="statusbar-credit">© <span class="current-year">2026</span> - <a href="https://brunovida.si" target="_blank">brunovida.si</a></span>
     <span class="dev-toggle" id="devModeToggle" title="Toggle DEV mode — skips the boot/loading animation on page load">DEV: OFF</span>
   </div>
+</div>
+
+<div class="dock-restore" id="dockRestore">
+  <span class="dot y"></span>
+  <span>bruno-vieira — dev-portfolio</span>
 </div>
 
 <script src="js/script.js" defer></script>

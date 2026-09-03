@@ -214,11 +214,11 @@ function typoFor(correct){
   return typo;
 }
 
-function typingDelay(char){
+function typingDelay(char, speed){
   let delay = 40 + Math.random() * 70;
   if(char === ' ') delay += 60;
   if('="/<>'.includes(char)) delay += 30;
-  return delay;
+  return delay * speed;
 }
 
 // Clones the container's children so the typing animation can rebuild the same
@@ -252,9 +252,10 @@ function buildTypingPlan(container){
   return { frag, chars };
 }
 
-function humanTypeSect(container){
+function humanTypeSect(container, speed, onComplete){
   if(!container || container.dataset.typed) return;
   container.dataset.typed = '1';
+  speed = speed || 1;
 
   const { frag, chars } = buildTypingPlan(container);
   container.innerHTML = '';
@@ -262,19 +263,24 @@ function humanTypeSect(container){
   const cursor = document.createElement('span');
   cursor.className = 'cursor-caret sect-caret';
   cursor.textContent = '|';
-  container.appendChild(cursor);
+  const lastEntry = chars[chars.length - 1];
+  const cursorHost = (lastEntry && (lastEntry.node || lastEntry.el) && (lastEntry.node || lastEntry.el).parentNode) || container;
+  cursorHost.appendChild(cursor);
 
   let i = 0;
   let mistakeCooldown = 0;
 
   function typeNext(){
-    if(i >= chars.length) return;
+    if(i >= chars.length){
+      if(onComplete) onComplete();
+      return;
+    }
     const entry = chars[i];
 
     if(entry.type === 'reveal'){
       entry.el.style.visibility = '';
       i++;
-      setTimeout(typeNext, 90 + Math.random() * 60);
+      setTimeout(typeNext, (90 + Math.random() * 60) * speed);
       return;
     }
 
@@ -289,16 +295,16 @@ function humanTypeSect(container){
         setTimeout(()=>{
           node.textContent += char;
           i++;
-          setTimeout(typeNext, typingDelay(char));
-        }, 90 + Math.random() * 80);
-      }, 160 + Math.random() * 180);
+          setTimeout(typeNext, typingDelay(char, speed));
+        }, (90 + Math.random() * 80) * speed);
+      }, (160 + Math.random() * 180) * speed);
       return;
     }
 
     node.textContent += char;
     i++;
     if(mistakeCooldown > 0) mistakeCooldown--;
-    setTimeout(typeNext, typingDelay(char));
+    setTimeout(typeNext, typingDelay(char, speed));
   }
 
   typeNext();
@@ -857,10 +863,50 @@ document.getElementById('dotRed').addEventListener('click', ()=>{
   location.href = '/' + location.search;
 });
 document.getElementById('dotYellow').addEventListener('click', ()=>{
-  const app = document.getElementById('app');
-  app.classList.add('minimize-fx');
-  setTimeout(()=> app.classList.remove('minimize-fx'), 350);
+  document.getElementById('app').classList.add('minimized');
+  document.getElementById('bgRain').classList.add('show');
+  document.querySelector('.bg-overlay').classList.add('show');
+  document.getElementById('dockRestore').style.display = 'flex';
+  humanTypeSect(document.getElementById('bgOverlayText'), 0.55, ()=>{
+    document.getElementById('bgOverlaySign').classList.add('show');
+  });
 });
+document.getElementById('dockRestore').addEventListener('click', ()=>{
+  document.getElementById('app').classList.remove('minimized');
+  document.getElementById('bgRain').classList.remove('show');
+  document.querySelector('.bg-overlay').classList.remove('show');
+  document.getElementById('dockRestore').style.display = 'none';
+});
+
+// ---- background matrix rain (revealed behind the app when minimized) ----
+(function(){
+  var canvas = document.getElementById('bgRain');
+  var ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  var chars = "01";
+  var fontSize = 15;
+  var cols, drops;
+  function setup(){
+    cols = Math.floor(canvas.width / fontSize);
+    drops = new Array(cols).fill(0).map(function(){ return Math.random() * -50; });
+  }
+  setup();
+  window.addEventListener('resize', setup);
+  function draw(){
+    ctx.fillStyle = 'rgba(11,14,12,0.14)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#8fd19e';
+    ctx.font = fontSize + 'px monospace';
+    for(var i = 0; i < drops.length; i++){
+      var ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+      drops[i] = (drops[i] * fontSize > canvas.height && Math.random() > 0.975) ? 0 : drops[i] + 1;
+    }
+  }
+  setInterval(draw, 55);
+})();
 let lockedScrollY = 0;
 function setMobileNavLock(locked){
   const body = document.body;

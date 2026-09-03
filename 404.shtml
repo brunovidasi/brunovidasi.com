@@ -48,20 +48,59 @@ canvas#rain{
   opacity:.22;
 }
 
+.bg-404{
+  position:fixed; inset:0; z-index:1;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  pointer-events:none;
+  text-align:center;
+  padding:24px;
+}
+.bg-404 .num{
+  font-size:clamp(90px, 26vw, 320px);
+  font-weight:800;
+  letter-spacing:4px;
+  line-height:1;
+  color:var(--accent);
+  opacity:.1;
+}
+.bg-404 .sub{
+  margin-top:10px;
+  font-size:clamp(12px, 2.4vw, 20px);
+  font-weight:600;
+  letter-spacing:.5em;
+  color:var(--muted);
+  opacity:.16;
+}
+
 .scanlines{
-  position:fixed; inset:0; z-index:1; pointer-events:none;
+  position:fixed; inset:0; z-index:2; pointer-events:none;
   background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.12) 3px);
   mix-blend-mode:multiply;
 }
 
 .win{
-  position:relative; z-index:2;
+  position:relative; z-index:3;
   width:100%; max-width:640px;
   background:var(--panel);
   border:1px solid var(--line);
   border-radius:10px;
   box-shadow:0 30px 80px rgba(0,0,0,.55);
   overflow:hidden;
+  transition:transform .35s cubic-bezier(.5,0,.5,1), opacity .3s ease, left .25s ease, top .25s ease, width .25s ease, height .25s ease, border-radius .25s ease, max-width .25s ease;
+}
+.win.dragging{
+  transition:none;
+  user-select:none;
+}
+.win.maximized{
+  transition:left .25s ease, top .25s ease, width .25s ease, height .25s ease, border-radius .25s ease;
+  max-width:none;
+  border-radius:0;
+}
+.win.minimized{
+  transform:scale(.02) translateY(60vh);
+  opacity:0;
+  pointer-events:none;
 }
 
 .titlebar{
@@ -69,17 +108,41 @@ canvas#rain{
   padding:10px 12px;
   background:var(--panel-2);
   border-bottom:1px solid var(--line);
+  cursor:grab;
+  touch-action:none;
 }
-.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.titlebar:active{ cursor:grabbing; }
+.dot{
+  width:11px; height:11px; border-radius:50%; display:inline-block;
+  border:none; padding:0; -webkit-appearance:none; appearance:none;
+  cursor:pointer;
+  position:relative;
+}
 .dot.r{ background:#ff5f57; }
 .dot.y{ background:#febc2e; }
 .dot.g{ background:#28c840; }
+.dot::before{
+  content:'';
+  position:absolute; inset:-6px;
+}
 .titlebar .path{
   margin-left:8px;
   font-size:12px;
   color:var(--muted);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+
+.dock-restore{
+  position:fixed; left:16px; bottom:16px; z-index:4;
+  display:none; align-items:center; gap:8px;
+  background:var(--panel); border:1px solid var(--line);
+  border-radius:8px; padding:8px 12px;
+  font-family:var(--mono); font-size:12px; color:var(--muted);
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+.dock-restore:hover{ color:var(--text); border-color:var(--accent); }
+.dock-restore .dot{ width:9px; height:9px; }
 
 .term{
   padding:20px 22px 24px;
@@ -92,12 +155,6 @@ canvas#rain{
 .term pre{ margin:0; white-space:pre-wrap; word-break:break-word; }
 
 #typed{ min-height:6.6em; }
-.cursor{
-  display:inline-block; width:8px; height:1em; background:var(--ok);
-  vertical-align:text-bottom; margin-left:2px;
-  animation:blink 1s steps(1) infinite;
-}
-@keyframes blink{ 50%{ opacity:0; } }
 
 .glitch-wrap{ margin:18px 0 10px; transition:opacity .5s ease, transform .5s ease; }
 .glitch-wrap.pending{ opacity:0; transform:translateY(6px); }
@@ -145,13 +202,23 @@ canvas#rain{
 .tagline{ color:var(--muted); font-size:13px; margin:0 0 18px; }
 .tagline b{ color:var(--text); font-weight:600; }
 
-.hint{ color:var(--muted); font-size:12px; margin:0 0 6px; }
+.hint{ color:var(--muted); font-size:12px; margin:14px 0 6px; }
 .hint kbd{
   font-family:var(--mono); background:var(--panel-2); border:1px solid var(--line);
   border-radius:4px; padding:1px 5px; color:var(--text);
 }
 
-.history{ margin-bottom:2px; }
+.history{
+  margin-bottom:2px;
+  max-height:220px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--line) transparent;
+}
+.history::-webkit-scrollbar{ width:8px; }
+.history::-webkit-scrollbar-track{ background:transparent; }
+.history::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+.history::-webkit-scrollbar-thumb:hover{ background:var(--muted); }
 .history .line{ white-space:pre-wrap; word-break:break-word; }
 .history .out{ color:var(--muted); }
 .history .out.err{ color:var(--err); }
@@ -181,13 +248,17 @@ canvas#rain{
 <body>
 
 <canvas id="rain"></canvas>
+<div class="bg-404" aria-hidden="true">
+  <div class="num">404</div>
+  <div class="sub">NOT FOUND</div>
+</div>
 <div class="scanlines"></div>
 
 <div class="win">
-  <div class="titlebar">
-    <span class="dot r"></span>
-    <span class="dot y"></span>
-    <span class="dot g"></span>
+  <div class="titlebar" id="titlebar">
+    <button type="button" class="dot r" id="dotClose" aria-label="Go to brunovida.si" title="brunovida.si"></button>
+    <button type="button" class="dot y" id="dotMin" aria-label="Minimize" title="Minimize"></button>
+    <button type="button" class="dot g" id="dotMax" aria-label="Full screen" title="Full screen"></button>
     <span class="path">bruno-vieira — 404</span>
   </div>
 
@@ -219,6 +290,11 @@ canvas#rain{
   </div>
 </div>
 
+<div class="dock-restore" id="dockRestore">
+  <span class="dot y"></span>
+  <span>bruno-vieira — 404</span>
+</div>
+
 <script>
 var REQ_URI = window.location.pathname + window.location.search;
 if(!REQ_URI || REQ_URI === '/') REQ_URI = '/that-page';
@@ -231,14 +307,12 @@ var lines = [
   "$ cd " + REQ_URI,
   "bash: cd: " + REQ_URI + ": No such file or directory",
   "$ find / -iname \"*the-page-you-wanted*\" 2>/dev/null",
-  "(0 results)",
-  "$ echo $?"
+  "(0 results)"
 ];
 
 var li = 0, ci = 0;
 function typeLine(){
   if(li >= lines.length){
-    typedEl.innerHTML = typedEl.innerHTML + '<span class="cursor"></span>';
     setTimeout(function(){
       revealEl.classList.remove('pending');
       focusInput();
@@ -285,11 +359,16 @@ function focusInput(){
   input.focus();
 }
 
+function scrollHistoryToBottom(){
+  historyEl.scrollTop = historyEl.scrollHeight;
+}
+
 function printLine(text, cls){
   var div = document.createElement('div');
   div.className = 'line' + (cls ? ' out ' + cls : '');
   div.textContent = text;
   historyEl.appendChild(div);
+  scrollHistoryToBottom();
 }
 
 function printCmd(cmd){
@@ -297,6 +376,7 @@ function printCmd(cmd){
   div.className = 'line';
   div.innerHTML = '<span class="prompt">guest@brunovida.si</span>:<span class="path-seg">' + cwdEl.textContent + '</span>$ ' + cmd.replace(/</g,'&lt;');
   historyEl.appendChild(div);
+  scrollHistoryToBottom();
 }
 
 function runCommand(raw){
@@ -314,7 +394,7 @@ function runCommand(raw){
     printLine('  whoami          ...');
     printLine('  clear           clear this terminal');
   } else if(verb === 'ls'){
-    printLine(Object.keys(ROUTES).filter(function(k){ return k !== '~' && k !== '/'; }).join('  '), 'ok');
+    printLine(Object.keys(ROUTES).filter(function(k){ return k !== '~' && k !== '/'; }).join('\n'), 'ok');
   } else if(verb === 'cd'){
     var target = arg || 'home';
     if(ROUTES.hasOwnProperty(target)){
@@ -349,6 +429,107 @@ input.addEventListener('keydown', function(e){
 document.addEventListener('click', function(){
   focusInput();
 });
+
+// ---- window chrome: drag, minimize, maximize ----
+(function(){
+  var winEl = document.querySelector('.win');
+  var titlebar = document.getElementById('titlebar');
+  var dotClose = document.getElementById('dotClose');
+  var dotMin = document.getElementById('dotMin');
+  var dotMax = document.getElementById('dotMax');
+  var dockRestore = document.getElementById('dockRestore');
+
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  function pinPosition(){
+    if(winEl.dataset.positioned === '1') return;
+    var rect = winEl.getBoundingClientRect();
+    winEl.style.position = 'fixed';
+    winEl.style.left = rect.left + 'px';
+    winEl.style.top = rect.top + 'px';
+    winEl.style.width = rect.width + 'px';
+    winEl.style.margin = '0';
+    winEl.dataset.positioned = '1';
+  }
+
+  // ---- drag ----
+  var drag = null;
+  titlebar.addEventListener('pointerdown', function(e){
+    if(e.target.closest('.dot')) return;
+    if(winEl.classList.contains('maximized') || winEl.classList.contains('minimized')) return;
+    pinPosition();
+    var rect = winEl.getBoundingClientRect();
+    drag = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+    winEl.classList.add('dragging');
+    titlebar.setPointerCapture(e.pointerId);
+  });
+  titlebar.addEventListener('pointermove', function(e){
+    if(!drag) return;
+    var x = clamp(e.clientX - drag.dx, 0, window.innerWidth - winEl.offsetWidth);
+    var y = clamp(e.clientY - drag.dy, 0, window.innerHeight - winEl.offsetHeight);
+    winEl.style.left = x + 'px';
+    winEl.style.top = y + 'px';
+  });
+  function endDrag(){
+    drag = null;
+    winEl.classList.remove('dragging');
+  }
+  titlebar.addEventListener('pointerup', endDrag);
+  titlebar.addEventListener('pointercancel', endDrag);
+
+  // ---- red: go to brunovida.si ----
+  dotClose.addEventListener('click', function(e){
+    e.stopPropagation();
+    window.location.href = 'https://brunovida.si/';
+  });
+
+  // ---- yellow: minimize to dock ----
+  dotMin.addEventListener('click', function(e){
+    e.stopPropagation();
+    pinPosition();
+    winEl.classList.add('minimized');
+    dockRestore.style.display = 'flex';
+  });
+  dockRestore.addEventListener('click', function(){
+    winEl.classList.remove('minimized');
+    dockRestore.style.display = 'none';
+  });
+
+  // ---- green: full screen toggle ----
+  var savedRect = null;
+  dotMax.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(winEl.classList.contains('minimized')){
+      winEl.classList.remove('minimized');
+      dockRestore.style.display = 'none';
+    }
+    if(winEl.classList.contains('maximized')){
+      winEl.classList.remove('maximized');
+      if(savedRect){
+        winEl.style.left = savedRect.left + 'px';
+        winEl.style.top = savedRect.top + 'px';
+        winEl.style.width = savedRect.width + 'px';
+        winEl.style.height = '';
+      }
+    } else {
+      pinPosition();
+      var rect = winEl.getBoundingClientRect();
+      savedRect = { left: rect.left, top: rect.top, width: rect.width };
+      winEl.classList.add('maximized');
+      winEl.style.left = '0px';
+      winEl.style.top = '0px';
+      winEl.style.width = '100vw';
+      winEl.style.height = '100vh';
+    }
+  });
+
+  window.addEventListener('resize', function(){
+    if(winEl.dataset.positioned !== '1' || winEl.classList.contains('maximized')) return;
+    var rect = winEl.getBoundingClientRect();
+    winEl.style.left = clamp(rect.left, 0, Math.max(0, window.innerWidth - rect.width)) + 'px';
+    winEl.style.top = clamp(rect.top, 0, Math.max(0, window.innerHeight - rect.height)) + 'px';
+  });
+})();
 
 // ---- background matrix rain ----
 (function(){

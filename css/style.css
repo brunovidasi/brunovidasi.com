@@ -104,22 +104,149 @@ a {
   opacity: .5;
 }
 
+#bgRain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity .3s ease .05s;
+}
+
+#bgRain.show {
+  opacity: .22;
+}
+
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 24px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease .05s;
+}
+
+.bg-overlay.show {
+  opacity: 1;
+}
+
+.bg-overlay-logo {
+  height: 40px;
+  width: auto;
+  margin-bottom: 4px;
+}
+
+.bg-overlay-note {
+  width: min(46ch, calc(100vw - 48px));
+  text-align: center;
+}
+
+.bg-overlay-text {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.bg-overlay-sign {
+  display: block;
+  margin-top: 10px;
+  text-align: right;
+  font-family: var(--sans);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+
+.bg-overlay-sign.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.bg-overlay-meta {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  pointer-events: auto;
+}
+
+.bg-overlay-meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.bg-overlay-meta a:hover {
+  text-decoration: underline;
+}
+
+.bg-overlay-hint {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  opacity: .7;
+  margin-top: 6px;
+}
+
+.dock-restore {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 41;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+
+.dock-restore:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.dock-restore .dot {
+  width: 9px;
+  height: 9px;
+  cursor: pointer;
+}
+
 #app {
+  position: relative;
+  z-index: 1;
   height: 100vh;
   display: flex;
   flex-direction: column;
   opacity: 0;
   transition: opacity .8s ease, transform .35s ease;
-  transform-origin: top left;
+  transform-origin: 130px calc(100% - 34px);
 }
 
 #app.show {
   opacity: 1;
 }
 
-#app.minimize-fx {
-  transform: scale(.92);
-  opacity: .6;
+#app.minimized {
+  transform: scale(.02);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .4s cubic-bezier(.6,0,.35,1), opacity .3s ease .1s;
 }
 
 .titlebar {
