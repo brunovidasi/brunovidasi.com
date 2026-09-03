@@ -63,6 +63,15 @@ let openFolders = { about:true, projects:true };
 let bioTypedOnce = false;
 const bioText = `Hi, I'm Bruno — a Brazilian-born, Sydney-based developer with ${yearsExperience}+ years of experience across full-stack and front-end development. I specialise in building reliable, well-structured systems — from custom PHP/Node back-ends to pixel-perfect front-ends.\n\nI'm 32, originally from Rio de Janeiro, Brazil, and I've called Sydney home since 2017. \nI'm an Australian citizen, fluent in English, Portuguese and Spanish.`;
 
+// ---- terminal-style "decrypt" reveal for the email address (declared early — same
+// TDZ reason as bioTypedOnce above: a direct /contact visit calls startEmailReveal()
+// during the initial render, before code further down the file has run) ----
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*+=?';
+let emailScrambleTimer = null;
+const emailRowEl = document.getElementById('emailRow');
+const emailTextEl = document.getElementById('emailText');
+let emailRevealedOnce = false;
+
 // ---------------- dev mode (localhost only: skips boot animation, uses #hash deep-links
 // instead of clean paths so local static servers without .htaccess rewrite support still work) ----------------
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
@@ -774,10 +783,6 @@ function copyEmail(){
   });
 }
 
-// ---- terminal-style "decrypt" reveal for the email address ----
-const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*+=?';
-let emailScrambleTimer = null;
-
 function scrambleReveal(el, stepMs = 28){
   const target = el.dataset.email || el.textContent;
   clearInterval(emailScrambleTimer);
@@ -800,13 +805,10 @@ function scrambleReveal(el, stepMs = 28){
   }, stepMs);
 }
 
-const emailRowEl = document.getElementById('emailRow');
-const emailTextEl = document.getElementById('emailText');
 if(emailRowEl && emailTextEl){
   emailRowEl.addEventListener('mouseenter', ()=> scrambleReveal(emailTextEl));
 }
 
-let emailRevealedOnce = false;
 function startEmailReveal(){
   if(emailRevealedOnce || !emailTextEl) return;
   emailRevealedOnce = true;
