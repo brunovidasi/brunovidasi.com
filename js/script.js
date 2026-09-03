@@ -320,6 +320,8 @@ function showActivePanel(){
       el.classList.add('active');
       const sect = el.querySelector('h2.sect');
       if(sect) humanTypeSect(sect);
+      if(activeId === 'about') startBioTyping();
+      if(activeId === 'contact') startEmailReveal();
     }
   } else {
     empty.classList.add('show');
@@ -338,8 +340,6 @@ function openFile(id){
   if(files[id].folder) openFolders[files[id].folder] = true;
   if(!openTabs.includes(id)) openTabs.push(id);
   setActive(id);
-  if(id === 'about') startBioTyping();
-  if(id === 'contact') startEmailReveal();
   document.getElementById('shell').classList.remove('mobile-nav-open');
   setMobileNavLock(false);
 }
@@ -375,8 +375,6 @@ function handleRouteChange(){
     renderTabs();
     renderExplorer();
     showActivePanel();
-    if(activeId === 'about') startBioTyping();
-    if(activeId === 'contact') startEmailReveal();
   }
 }
 window.addEventListener('popstate', handleRouteChange);
