@@ -364,6 +364,7 @@ function showActivePanel(){
       if(activeId === 'about') startBioTyping();
       if(activeId === 'contact') startEmailReveal();
       if(activeId === 'websites') renderWebsiteDetail();
+      if(activeId === 'mini-games') fitGameFrame();
     }
   } else {
     empty.classList.add('show');
@@ -678,7 +679,7 @@ function renderMiniGameCard(project){
         <button class="game-fullscreen-btn" onclick="openGameFullscreen('${project.id}')" title="Fullscreen">${ICON_FULLSCREEN_SVG}</button>
       </div>
       <div class="game-frame-wrap" id="gameFrame-${project.id}">
-        <iframe src="${path}" title="${title}" onload="fitGameFrame(this)"></iframe>
+        <iframe src="${path}" title="${title}" onload="fitGameFrame()"></iframe>
       </div>
       <div class="website-body">
         <div class="website-body-inner">
@@ -697,24 +698,34 @@ function renderMiniGameCard(project){
     </div>`;
 }
 
-// ---- size a game's box to its own content height (same-origin iframe), so each game
-// fills its box instead of floating in a fixed-height frame sized for a different game ----
-function fitGameFrame(iframe){
+// ---- size every game's box to the tallest game's content height (same-origin iframes),
+// so all the game boxes line up instead of each floating at its own natural height ----
+function measureGameHeight(iframe){
   try{
     const doc = iframe.contentDocument;
-    if(!doc || !doc.body) return;
+    if(!doc || !doc.body) return 0;
     // body/html usually carry min-height:100vh (so a game looks right opened standalone),
     // which makes their own scrollHeight just echo the iframe's current (fallback) height —
     // measure how far the actual content reaches instead, via its top-level children
     const bottoms = Array.from(doc.body.children)
       .map(el => el.getBoundingClientRect().bottom)
       .filter(v => v > 0);
-    const naturalHeight = bottoms.length ? Math.max(...bottoms) : doc.body.scrollHeight;
-    const wrap = iframe.closest('.game-frame-wrap');
-    if(wrap && naturalHeight) wrap.style.height = Math.min(Math.max(Math.ceil(naturalHeight), 320), 640) + 'px';
+    return bottoms.length ? Math.max(...bottoms) : doc.body.scrollHeight;
   } catch(e){
-    // cross-origin or otherwise unreadable — keep the CSS fallback height
+    // cross-origin or otherwise unreadable
+    return 0;
   }
+}
+
+function fitGameFrame(){
+  const wraps = Array.from(document.querySelectorAll('.game-frame-wrap'));
+  const heights = wraps.map(wrap => measureGameHeight(wrap.querySelector('iframe')));
+  const naturalHeight = Math.max(0, ...heights);
+  // a wrap still hidden behind an inactive tab measures 0 — skip and retry once its
+  // panel becomes active (see showActivePanel), rather than locking in a bogus height
+  if(!naturalHeight) return;
+  const sharedHeight = Math.min(Math.max(Math.ceil(naturalHeight), 320), 640) + 'px';
+  wraps.forEach(wrap => { wrap.style.height = sharedHeight; });
 }
 
 function openGameFullscreen(id){
