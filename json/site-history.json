@@ -16,7 +16,7 @@
       { "id": "site-2026-prototype-1", "label": "Prototype", "path": "projects/brunovidasi.com/2026-prototype/bruno-portfolio-demo-v1.html" },
       { "id": "site-2026-prototype-2", "label": "Alternative 1", "path": "projects/brunovidasi.com/2026-prototype/bruno-portfolio-demo-v2.html" },
       { "id": "site-2026-prototype-3", "label": "Alternative 2", "path": "projects/brunovidasi.com/2026-prototype/bruno-portfolio-demo-v3.html" },
-      { "id": "site-2026-prototype-4", "label": "404 Error", "path": "404.shtml" }
+      { "id": "site-2026-prototype-4", "label": "404 Error (Terminal Style)", "path": "404.shtml" }
     ]
   },
   {

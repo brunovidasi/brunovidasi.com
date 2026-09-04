@@ -517,19 +517,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="panel" id="panel-websites">
           <h2 class="sect"><span class="brk">&lt;</span>websites <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="websites">0</span>"</span> <span class="attr">type</span>=<span class="str">"live-preview"</span><span class="brk"> /&gt;</span></h2>
 
-          <div class="tools-intro">
-            <div class="tools-intro-text">Full websites I've designed and built for clients and personal projects. Some are still live today, others have since been retired — click a live one to open it in a new tab.</div>
-          </div>
-
-          <div class="tools-toolbar">
-            <div class="website-filters">
-              <button class="filter-pill active" onclick="filterWebsites('all', this)">🌐 All</button>
-              <button class="filter-pill" onclick="filterWebsites('live', this)">🟢 Live</button>
-              <button class="filter-pill" onclick="filterWebsites('offline', this)">⚫ Offline</button>
+          <div class="website-list-view" id="websiteListView">
+            <div class="tools-intro">
+              <div class="tools-intro-text">Full websites I've designed and built for clients and personal projects. Some are still live today, others have since been retired — click a screenshot to see the full write-up, or use the buttons to visit a site directly.</div>
             </div>
+
+            <div class="tools-toolbar">
+              <div class="website-filters" id="websiteStatusFilters">
+                <button class="filter-pill active" onclick="filterWebsites('all', this)">🌐 All</button>
+                <button class="filter-pill" onclick="filterWebsites('live', this)">🟢 Live</button>
+                <button class="filter-pill" onclick="filterWebsites('offline', this)">⚫ Offline</button>
+              </div>
+              <select class="website-company-select" id="websiteCompanySelect" onchange="filterWebsitesByCompany(this.value)"></select>
+            </div>
+
+            <div class="tools-grid" id="toolsGrid-websites" data-category="websites"></div>
           </div>
 
-          <div class="tools-grid" id="toolsGrid-websites" data-category="websites"></div>
+          <div class="website-detail" id="websiteDetailView"></div>
         </div>
 
         <!-- LANDING PAGES -->

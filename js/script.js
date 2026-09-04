@@ -58,6 +58,14 @@ let openTabs = ['intro', 'about', 'experience','education','skills','contact'];
 let activeId = 'intro';
 let openFolders = { about:true, projects:true };
 
+// ---- website detail page state (declared early — same TDZ reason as bioTypedOnce
+// below: a direct /websites/<id> visit resolves this via applyPath() during the
+// initial render, before code further down the file has run) ----
+let websiteDetailId = null;
+let websiteItems = [];
+let websitesSectKey = ''; // tracks what the websites panel's <h2 class="sect"> currently shows, so it only retypes when that actually changes
+let websiteDetailWasOpen = false; // tracks the previous render, so the list only replays its enter transition on an actual detail->list switch
+
 // ---- bio.md: shows once, no typing animation (declared early so the initial
 // render — which may land straight on the about tab via deep link — can use it) ----
 let bioTypedOnce = false;
@@ -94,21 +102,38 @@ function applyPath(id){
   return true;
 }
 
+// ---- website detail id travels as a ?p= query param (not a path segment) so a direct
+// visit to a project page never breaks this document's relative asset paths, which
+// resolve against whatever the pathname's directory depth happens to be ----
+function readWebsiteDetailFromUrl(){
+  return new URLSearchParams(location.search).get('p');
+}
+
+function stripWebsiteDetailParam(search){
+  if(!search || !search.includes('p=')) return search || '';
+  const params = new URLSearchParams(search);
+  params.delete('p');
+  const str = params.toString();
+  return str ? '?' + str : '';
+}
+
 function updatePath(id){
+  const search = stripWebsiteDetailParam(location.search);
   if(isDevMode()){
     const newHash = id ? '#' + id : '';
-    if(location.hash !== newHash){
-      history.replaceState(null, '', location.pathname + location.search + newHash);
+    if(location.hash !== newHash || location.search !== search){
+      history.replaceState(null, '', location.pathname + search + newHash);
     }
     return;
   }
   const newPath = id ? '/' + id : '/';
-  if(location.pathname !== newPath){
-    history.replaceState(null, '', newPath + location.search);
+  if(location.pathname !== newPath || location.search !== search){
+    history.replaceState(null, '', newPath + search);
   }
 }
 
 const enteredViaDeepLink = applyPath(currentRouteId());
+if(activeId === 'websites') websiteDetailId = readWebsiteDetailFromUrl();
 
 function renderExplorer(){
   const tree = document.getElementById('fileTree');
@@ -336,6 +361,7 @@ function showActivePanel(){
       if(sect) humanTypeSect(sect);
       if(activeId === 'about') startBioTyping();
       if(activeId === 'contact') startEmailReveal();
+      if(activeId === 'websites') renderWebsiteDetail();
     }
   } else {
     empty.classList.add('show');
@@ -343,6 +369,7 @@ function showActivePanel(){
 }
 
 function setActive(id){
+  websiteDetailId = null;
   activeId = id;
   renderTabs();
   renderExplorer();
@@ -361,6 +388,7 @@ function openFile(id){
 function closeTab(id){
   const idx = openTabs.indexOf(id);
   if(idx === -1) return;
+  websiteDetailId = null;
   openTabs.splice(idx,1);
   if(activeId === id){
     if(openTabs.length){
@@ -378,6 +406,7 @@ function closeTab(id){
 function closeAllTabs(){
   openTabs = [];
   activeId = null;
+  websiteDetailId = null;
   renderTabs();
   renderExplorer();
   showActivePanel();
@@ -386,6 +415,7 @@ function closeAllTabs(){
 
 function handleRouteChange(){
   if(applyPath(currentRouteId())){
+    websiteDetailId = activeId === 'websites' ? readWebsiteDetailFromUrl() : null;
     renderTabs();
     renderExplorer();
     showActivePanel();
@@ -558,7 +588,7 @@ function renderWebsiteCard(project){
   const github = escapeHtml(project.github);
   const status = project.status === 'live' ? 'live' : 'offline';
   const iconHtml = project.icon ? escapeHtml(project.icon) : '🌐';
-  const yearHtml = project.year ? `<span class="tool-year">${escapeHtml(String(project.year))}</span>` : '';
+  const yearHtml = project.year ? `<span class="website-year">${escapeHtml(String(project.year))}</span> ` : '';
   const roleHtml = project.role ? `<div class="website-role">${escapeHtml(project.role)}</div>` : '';
   const logoHtml = project.logo ? `<img class="website-logo" src="${escapeHtml(project.logo)}" alt="${title} logo">` : '';
   const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
@@ -575,19 +605,19 @@ function renderWebsiteCard(project){
   const cardClickable = !!visitTargetUrl;
   const overlayHtml = status === 'offline' && !isArchived ? `<div class="website-offline-overlay">🕸️ No longer live</div>` : '';
   const visitHtml = cardClickable
-    ? `<button class="doc-btn" onclick="event.stopPropagation();openInNewWindow('${visitTargetUrl}')">${ICON_LIVE_SVG}${isArchived ? 'View on Wayback Machine' : 'Visit site'}</button>`
+    ? `<button class="doc-btn" onclick="openInNewWindow('${visitTargetUrl}')">${ICON_LIVE_SVG}${isArchived ? 'View on Wayback Machine' : 'Visit site'}</button>`
     : `<span class="doc-btn website-offline-btn">🕸️ Offline</span>`;
-  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${ICON_GITHUB_SVG}GitHub</a>` : '';
-  const clickAttr = cardClickable ? ` onclick="openInNewWindow('${visitTargetUrl}')"` : '';
+  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
+  const companySlug = slugify(websiteFilterCompany(project.company));
 
   return `
-    <div class="website-card" id="project-${project.id}" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}${cardClickable ? ' tabindex="0"' : ''}${clickAttr}>
+    <div class="website-card" id="project-${project.id}" data-status="${status}" data-company="${companySlug}"${isArchived ? ' data-archived="true"' : ''}>
       <div class="website-chrome">
         <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
         <div class="website-urlbar"><span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>${url}</div>
         <span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>
       </div>
-      <div class="website-thumb${thumbSrc ? '' : ' placeholder'}">
+      <div class="website-thumb${thumbSrc ? '' : ' placeholder'}" tabindex="0" role="button" aria-label="View ${title} project details" onclick="openWebsiteDetail('${project.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWebsiteDetail('${project.id}');}">
         <div class="website-thumb-scroll">
           ${thumbHtml}
         </div>
@@ -597,8 +627,7 @@ function renderWebsiteCard(project){
         <div class="website-body-inner">
           <div class="website-info">
             <div class="doc-head">
-              <div class="doc-name">${title}</div>
-              ${yearHtml}
+              <div class="doc-name">${yearHtml}${title}</div>
             </div>
             ${roleHtml}
             ${descHtml}
@@ -607,6 +636,7 @@ function renderWebsiteCard(project){
           ${logoHtml ? `<div class="website-logo-wrap">${logoHtml}</div>` : ''}
         </div>
         <div class="doc-actions">
+          <button class="doc-btn" onclick="openWebsiteDetail('${project.id}')">${ICON_EYE_SVG}View project</button>
           ${visitHtml}
           ${githubHtml}
         </div>
@@ -614,11 +644,224 @@ function renderWebsiteCard(project){
     </div>`;
 }
 
+function slugify(str){
+  return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'personal';
+}
+
+// ---- personal projects (no company set) are grouped into "Freelance" for company
+// filtering — there's no separate "Personal" option in the dropdown ----
+function websiteFilterCompany(company){
+  return (!company || company === 'Personal') ? 'Freelance' : company;
+}
+
+function applyWebsiteFilters(){
+  const grid = document.getElementById('toolsGrid-websites');
+  if(!grid) return;
+  const status = grid.dataset.filter || 'all';
+  const company = grid.dataset.companyFilter || 'all';
+  let visibleCount = 0;
+  grid.querySelectorAll('.website-card').forEach(card => {
+    const statusMatch = status === 'all' || card.dataset.status === status;
+    const companyMatch = company === 'all' || card.dataset.company === company;
+    const visible = statusMatch && companyMatch;
+    card.style.display = visible ? '' : 'none';
+    if(visible) visibleCount++;
+  });
+  let emptyNote = grid.querySelector('.website-filter-empty');
+  if(visibleCount === 0){
+    if(!emptyNote){
+      emptyNote = document.createElement('div');
+      emptyNote.className = 'website-filter-empty grid-empty-note';
+      emptyNote.textContent = 'No websites match these filters.';
+      grid.appendChild(emptyNote);
+    }
+  } else if(emptyNote){
+    emptyNote.remove();
+  }
+}
+
 function filterWebsites(status, btn){
   const grid = document.getElementById('toolsGrid-websites');
   if(!grid) return;
   grid.dataset.filter = status;
   btn.parentElement.querySelectorAll('.filter-pill').forEach(b => b.classList.toggle('active', b === btn));
+  applyWebsiteFilters();
+}
+
+function filterWebsitesByCompany(company){
+  const grid = document.getElementById('toolsGrid-websites');
+  if(!grid) return;
+  grid.dataset.companyFilter = company;
+  applyWebsiteFilters();
+  const select = document.getElementById('websiteCompanySelect');
+  if(select && select.value !== company) select.value = company;
+}
+
+function renderWebsiteCompanyFilters(items){
+  const select = document.getElementById('websiteCompanySelect');
+  if(!select) return;
+  const companies = [...new Set(items.map(p => websiteFilterCompany(p.company)))].sort();
+  const options = [`<option value="all">🏢 All Companies</option>`]
+    .concat(companies.map(c => `<option value="${slugify(c)}">${escapeHtml(c)}</option>`));
+  select.innerHTML = options.join('');
+}
+
+// ---- jump here from an experience/freelance project chip: pre-filter to that
+// project's own company, resetting any lingering Live/Offline filter so the
+// target card can't be hidden by a stale status filter ----
+function filterWebsitesToCompany(companySlug){
+  const allStatusBtn = document.querySelector('#websiteStatusFilters .filter-pill');
+  if(allStatusBtn) filterWebsites('all', allStatusBtn);
+  filterWebsitesByCompany(companySlug);
+}
+
+// ---- website detail page: opened from a card's screenshot, own /websites?p=<id> URL
+// (query param rather than a path segment — see stripWebsiteDetailParam above) ----
+function openWebsiteDetail(id){
+  websiteDetailId = id;
+  showActivePanel();
+  const params = new URLSearchParams(location.search);
+  params.set('p', id);
+  const search = '?' + params.toString();
+  const path = isDevMode() ? location.pathname : '/websites';
+  const hash = isDevMode() ? (location.hash || '#websites') : '';
+  history.replaceState(null, '', path + search + hash);
+  const editor = document.getElementById('editorArea');
+  if(editor) editor.scrollTop = 0;
+}
+
+function closeWebsiteDetail(){
+  websiteDetailId = null;
+  showActivePanel();
+  updatePath('websites');
+  const editor = document.getElementById('editorArea');
+  if(editor) editor.scrollTop = 0;
+}
+
+function renderWebsiteDetailHtml(project){
+  const title = escapeHtml(project.title);
+  const url = escapeHtml(project.url);
+  const live = escapeHtml(project.live);
+  const github = escapeHtml(project.github);
+  const status = project.status === 'live' ? 'live' : 'offline';
+  const iconHtml = project.icon ? escapeHtml(project.icon) : '🌐';
+  const yearHtml = project.year ? `<span class="website-year">${escapeHtml(String(project.year))}</span> ` : '';
+  const roleHtml = project.role ? `<div class="website-role">${escapeHtml(project.role)}</div>` : '';
+  const logoHtml = project.logo ? `<img class="website-logo" src="${escapeHtml(project.logo)}" alt="${title} logo">` : '';
+  const descHtml = project.description ? `<div class="website-detail-desc">${escapeHtml(project.description)}</div>` : '';
+  const techList = Array.isArray(project.tech) ? project.tech : [];
+  const techHtml = techList.length ? `<div class="website-tech">${techList.map(t => `<span class="kw-pill">${escapeHtml(t)}</span>`).join('')}</div>` : '';
+  const thumbSrc = project.screenshot || project.screenshotGif;
+  const enableHoverGif = !!(project.screenshot && project.screenshotGif);
+  const thumbHtml = thumbSrc
+    ? `<img class="website-thumb-img" src="${escapeHtml(thumbSrc)}" alt="${title} screenshot" loading="lazy"${enableHoverGif ? ` data-static-src="${escapeHtml(project.screenshot)}" data-gif-src="${escapeHtml(project.screenshotGif)}"` : ''}>`
+    : `<span class="website-thumb-icon">${iconHtml}</span>`;
+  const archiveUrl = escapeHtml(project.archiveUrl || '');
+  const isArchived = status === 'offline' && !!project.archiveUrl;
+  const visitTargetUrl = status === 'live' ? live : archiveUrl;
+  const cardClickable = !!visitTargetUrl;
+  const overlayHtml = status === 'offline' && !isArchived ? `<div class="website-offline-overlay">🕸️ No longer live</div>` : '';
+  const visitHtml = cardClickable
+    ? `<button class="doc-btn" onclick="openInNewWindow('${visitTargetUrl}')">${ICON_LIVE_SVG}${isArchived ? 'View on Wayback Machine' : 'Visit site'}</button>`
+    : `<span class="doc-btn website-offline-btn">🕸️ Offline</span>`;
+  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
+
+  return `
+    <div class="website-detail-inner">
+    <button class="website-detail-back" onclick="closeWebsiteDetail()">← Back to all websites</button>
+    <div class="website-card website-detail-card" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}>
+      <div class="website-detail-split">
+        <div class="website-detail-media">
+          <div class="website-chrome">
+            <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
+            <div class="website-urlbar"><span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>${url}</div>
+            <span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>
+          </div>
+          <div class="website-thumb website-detail-thumb${thumbSrc ? '' : ' placeholder'}">
+            ${thumbHtml}
+            ${overlayHtml}
+          </div>
+        </div>
+        <div class="website-detail-info-col">
+          <div class="website-detail-head-row">
+            <div class="website-info">
+              <div class="doc-head">
+                <div class="doc-name">${yearHtml}${title}</div>
+              </div>
+              ${roleHtml}
+            </div>
+            ${logoHtml ? `<div class="website-logo-wrap">${logoHtml}</div>` : ''}
+          </div>
+          ${descHtml}
+          ${techHtml}
+          <div class="doc-actions">
+            ${visitHtml}
+            ${githubHtml}
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>`;
+}
+
+// ---- the websites panel's top <h2 class="sect"> switches between the tab-level
+// "<websites count=... />" tag and a per-project "<website name=... year=... />" tag,
+// retyping (like every other section header) only when that content actually changes ----
+function websitesSectHtml(){
+  const project = websiteDetailId && websiteItems.find(p => p.id === websiteDetailId);
+  if(project){
+    const title = escapeHtml(project.title);
+    const yearAttr = project.year ? ` <span class="attr">year</span>=<span class="str">"${escapeHtml(String(project.year))}"</span>` : '';
+    return `<span class="brk">&lt;</span>website <span class="attr">name</span>=<span class="str">"${title}"</span>${yearAttr}<span class="brk"> /&gt;</span>`;
+  }
+  return `<span class="brk">&lt;</span>websites <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="websites">${websiteItems.length}</span>"</span> <span class="attr">type</span>=<span class="str">"live-preview"</span><span class="brk"> /&gt;</span>`;
+}
+
+function updateWebsitesSect(){
+  const sect = document.querySelector('#panel-websites h2.sect');
+  if(!sect) return;
+  const project = websiteDetailId && websiteItems.find(p => p.id === websiteDetailId);
+  const key = project ? project.id : '';
+  if(key === websitesSectKey) return;
+  websitesSectKey = key;
+  sect.dataset.typed = '';
+  sect.innerHTML = websitesSectHtml();
+  humanTypeSect(sect);
+}
+
+function renderWebsiteDetail(){
+  updateWebsitesSect();
+  const listView = document.getElementById('websiteListView');
+  const detailView = document.getElementById('websiteDetailView');
+  if(!listView || !detailView) return;
+  const wasOpen = websiteDetailWasOpen;
+  websiteDetailWasOpen = !!websiteDetailId;
+  if(!websiteDetailId){
+    listView.style.display = '';
+    if(wasOpen){
+      // a lingering animation class would replay the moment this panel's ancestor
+      // is re-shown from display:none by an unrelated tab switch — remove it once
+      // the transition finishes so it only ever plays for a genuine detail->list close
+      listView.classList.remove('pane-enter');
+      void listView.offsetWidth; // restart the CSS animation
+      listView.classList.add('pane-enter');
+      listView.addEventListener('animationend', () => listView.classList.remove('pane-enter'), { once: true });
+    }
+    detailView.classList.remove('active');
+    detailView.innerHTML = '';
+    return;
+  }
+  listView.style.display = 'none';
+  detailView.classList.add('active');
+  const project = websiteItems.find(p => p.id === websiteDetailId);
+  if(!project){
+    detailView.innerHTML = websiteItems.length
+      ? `<div class="website-detail-inner"><button class="website-detail-back" onclick="closeWebsiteDetail()">← Back to all websites</button><div class="website-detail-missing">Project not found.</div></div>`
+      : '';
+    return;
+  }
+  detailView.innerHTML = renderWebsiteDetailHtml(project);
+  setupWebsiteHoverGifs(detailView);
 }
 
 const CATEGORY_RENDERERS = {
@@ -629,7 +872,7 @@ const CATEGORY_RENDERERS = {
 };
 
 // categories rendered as a year-descending timeline (most recent first)
-const TIMELINE_CATEGORIES = new Set(['landing-pages', 'site-history']);
+const TIMELINE_CATEGORIES = new Set(['landing-pages', 'site-history', 'websites']);
 
 const projectGrids = document.querySelectorAll('[id^="toolsGrid-"]');
 const projectCategories = [...new Set(Array.from(projectGrids).map(g => g.dataset.category || g.id.replace('toolsGrid-', '')))];
@@ -669,6 +912,10 @@ Promise.all(projectCategories.map(category =>
     el.textContent = (byCategory[category] || []).length;
   });
   setupWebsiteHoverGifs();
+  websiteItems = byCategory.websites || [];
+  renderWebsiteCompanyFilters(websiteItems);
+  applyWebsiteFilters();
+  if(activeId === 'websites') renderWebsiteDetail();
   const allProjects = Object.entries(byCategory).flatMap(([category, items]) =>
     (items || []).map(item => ({ ...item, category })));
   renderExperienceProjects(allProjects);
@@ -677,8 +924,9 @@ Promise.all(projectCategories.map(category =>
 
 // ---- little clickable box that jumps to a project's card in its own tab ----
 function projectChipHtml(p){
+  const companySlug = p.category === 'websites' ? slugify(websiteFilterCompany(p.company)) : '';
   return `
-    <button class="exp-project-chip" onclick="goToProject('${p.category}','${p.id}')">
+    <button class="exp-project-chip" onclick="goToProject('${p.category}','${p.id}','${companySlug}')">
       ${p.icon ? `<span class="ic-emoji">${escapeHtml(p.icon)}</span>` : ''}<span>${escapeHtml(p.title)}</span>
     </button>`;
 }
@@ -709,8 +957,9 @@ function renderFreelanceProjects(allProjects){
 // ---- jump from an experience mini box to the matching project card ----
 // (edm-kinetic-modules cards live nested inside the edm-work tab, not their own tab)
 const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-work' };
-function goToProject(category, id){
+function goToProject(category, id, companySlug){
   openFile(PROJECT_TAB_OVERRIDES[category] || category);
+  if(category === 'websites' && companySlug) filterWebsitesToCompany(companySlug);
   requestAnimationFrame(() => {
     const el = document.getElementById('project-' + id);
     if(!el) return;
@@ -721,8 +970,8 @@ function goToProject(category, id){
 }
 
 // ---- swap a website thumbnail from its static screenshot to its live-motion GIF on hover ----
-function setupWebsiteHoverGifs(){
-  document.querySelectorAll('.website-thumb-img[data-gif-src]').forEach(img => {
+function setupWebsiteHoverGifs(root){
+  (root || document).querySelectorAll('.website-thumb-img[data-gif-src]').forEach(img => {
     const thumb = img.closest('.website-thumb');
     if(!thumb) return;
     thumb.addEventListener('mouseenter', () => { img.src = img.dataset.gifSrc; });
@@ -1071,6 +1320,7 @@ let tlPos = 0;
 let tlIndex = 0;
 let tlChar = 0;
 let tlDeleting = false;
+let tlMistakeCooldown = 0;  // chars to wait before another typo can occur (see typoFor)
 const TYPE_SPEED = 65;     // ms per character while typing
 const DELETE_SPEED = 65;   // same speed while deleting
 const READ_PAUSE = 3800;   // pause once fully typed, so it can be read
@@ -1096,7 +1346,24 @@ function tickTagline(){
 
   if(!tlDeleting){
     tlChar++;
+    const char = current[tlChar - 1];
+    const canMistake = tlMistakeCooldown <= 0 && tlChar < current.length && /[a-zA-Z0-9]/.test(char) && Math.random() < 0.02;
+
+    if(canMistake){
+      tlMistakeCooldown = 15;
+      el.textContent = current.slice(0, tlChar - 1) + typoFor(char);
+      setTimeout(()=>{
+        el.textContent = current.slice(0, tlChar - 1);
+        setTimeout(()=>{
+          el.textContent = current.slice(0, tlChar);
+          setTimeout(tickTagline, TYPE_SPEED);
+        }, 90 + Math.random() * 80);
+      }, 160 + Math.random() * 180);
+      return;
+    }
+
     el.textContent = current.slice(0, tlChar);
+    if(tlMistakeCooldown > 0) tlMistakeCooldown--;
     if(tlChar >= current.length){
       tlDeleting = true;
       setTimeout(tickTagline, READ_PAUSE);
@@ -1126,7 +1393,7 @@ function startCyclingTagline(){
     tlOrder = shuffleTaglineOrder(-1);
     tlPos = 0;
     tlIndex = tlOrder[0];
-    tlChar = 0; tlDeleting = false;
+    tlChar = 0; tlDeleting = false; tlMistakeCooldown = 0;
     document.getElementById('heroVariable').textContent = '';
     tickTagline();
   });
