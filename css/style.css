@@ -1823,6 +1823,36 @@ h2.sect .brk {
   display: block;
 }
 
+/* web-systems: fill the media column's full height and crop overflow off the
+   right edge, instead of the websites tab's full-width/scroll-to-see-more behavior */
+#panel-web-systems .website-detail-thumb {
+  overflow: hidden;
+}
+
+#panel-web-systems .website-detail-thumb img {
+  width: auto;
+  max-width: none;
+  height: 100%;
+}
+
+/* thumb-contain: for entries with no real screenshot (e.g. a logo standing in for
+   one) — show it small and centered instead of filling/cropping the frame */
+.website-thumb.thumb-contain,
+.website-thumb.thumb-contain .website-thumb-scroll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.website-thumb.thumb-contain img,
+#panel-web-systems .website-detail-thumb.thumb-contain img {
+  width: auto;
+  height: auto;
+  max-width: 55%;
+  max-height: 60%;
+  object-fit: contain;
+}
+
 .website-thumb-scroll {
   width: 100%;
   height: 100%;
@@ -1867,8 +1897,8 @@ h2.sect .brk {
   font-size: 12.5px;
 }
 
-.website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb img,
-.website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb-icon {
+#panel-websites .website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb img,
+#panel-websites .website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb-icon {
   filter: grayscale(1);
   opacity: .5;
 }

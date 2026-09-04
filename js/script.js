@@ -38,6 +38,7 @@ const files = {
   education:         { label:'education.md',        icon:'md',   folder:'about' },
   skills:            { label:'skills.json',         icon:'json', folder:'about' },
   websites:          { label:'websites.html',       icon:'html', folder:'projects' },
+  'web-systems':     { label:'web-systems.html',    icon:'html', folder:'projects' },
   'landing-pages':   { label:'landing-pages.html',  icon:'html', folder:'projects' },
   'mini-tools':      { label:'mini-tools.html',     icon:'html', folder:'projects' },
   'edm-tools':       { label:'eDM-tools.html',      icon:'html', folder:'projects' },
@@ -50,7 +51,7 @@ const files = {
 };
 const folders = {
   about:    { label:'about/', children:['about','experience','education','skills'] },
-  projects: { label:'projects/', children:['websites','landing-pages','mini-tools','edm-work','edm-tools','mini-games','site-history'] }
+  projects: { label:'projects/', children:['websites','web-systems','landing-pages','mini-tools','edm-work','edm-tools','mini-games','site-history'] }
 };
 const rootOrder = ['intro','about','projects','freelance','documents','contact'];
 
@@ -60,13 +61,24 @@ let openTabs = DEFAULT_OPEN_TABS.slice();
 let activeId = 'intro';
 let openFolders = { about:true, projects:true };
 
+// ---- website-style panels: "websites" and "web-systems" share the exact same
+// list/filter/detail mechanics (see renderWebsiteCard / renderWebsiteDetail below),
+// keyed by category so both panels can run through the same generic functions ----
+const WEBSITE_STYLE_CATEGORIES = ['websites', 'web-systems'];
+const WEBSITE_CATEGORY_LABELS = { websites: 'websites', 'web-systems': 'web systems' };
+const WEBSITE_CATEGORY_TAGS = { websites: { plural: 'websites', singular: 'website' }, 'web-systems': { plural: 'web-systems', singular: 'web-system' } };
+
 // ---- website detail page state (declared early — same TDZ reason as bioTypedOnce
 // below: a direct /websites/<id> visit resolves this via applyPath() during the
 // initial render, before code further down the file has run) ----
-let websiteDetailId = null;
-let websiteItems = [];
-let websitesSectKey = ''; // tracks what the websites panel's <h2 class="sect"> currently shows, so it only retypes when that actually changes
-let websiteDetailWasOpen = false; // tracks the previous render, so the list only replays its enter transition on an actual detail->list switch
+let websiteDetailIds = { websites: null, 'web-systems': null };
+let websiteItemsByCategory = { websites: [], 'web-systems': [] };
+let websiteSectKeys = { websites: '', 'web-systems': '' }; // tracks what each website-style panel's <h2 class="sect"> currently shows, so it only retypes when that actually changes
+let websiteDetailWasOpen = { websites: false, 'web-systems': false }; // tracks the previous render, so the list only replays its enter transition on an actual detail->list switch
+
+function resetWebsiteDetailIds(){
+  WEBSITE_STYLE_CATEGORIES.forEach(c => websiteDetailIds[c] = null);
+}
 
 // ---- bio.md: shows once, no typing animation (declared early so the initial
 // render — which may land straight on the about tab via deep link — can use it) ----
@@ -135,7 +147,7 @@ function updatePath(id){
 }
 
 const enteredViaDeepLink = applyPath(currentRouteId());
-if(activeId === 'websites') websiteDetailId = readWebsiteDetailFromUrl();
+if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) websiteDetailIds[activeId] = readWebsiteDetailFromUrl();
 
 function renderExplorer(){
   const tree = document.getElementById('fileTree');
@@ -363,7 +375,7 @@ function showActivePanel(){
       if(sect) humanTypeSect(sect);
       if(activeId === 'about') startBioTyping();
       if(activeId === 'contact') startEmailReveal();
-      if(activeId === 'websites') renderWebsiteDetail();
+      if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) renderWebsiteDetail(activeId);
       if(activeId === 'mini-games') fitGameFrame();
     }
   } else {
@@ -372,7 +384,7 @@ function showActivePanel(){
 }
 
 function setActive(id){
-  websiteDetailId = null;
+  resetWebsiteDetailIds();
   activeId = id;
   renderTabs();
   renderExplorer();
@@ -391,7 +403,7 @@ function openFile(id){
 function closeTab(id){
   const idx = openTabs.indexOf(id);
   if(idx === -1) return;
-  websiteDetailId = null;
+  resetWebsiteDetailIds();
   openTabs.splice(idx,1);
   if(activeId === id){
     if(openTabs.length){
@@ -409,7 +421,7 @@ function closeTab(id){
 function closeAllTabs(){
   openTabs = [];
   activeId = null;
-  websiteDetailId = null;
+  resetWebsiteDetailIds();
   renderTabs();
   renderExplorer();
   showActivePanel();
@@ -424,14 +436,15 @@ function handleRouteChange(){
     // tab showing on screen
     activeId = 'intro';
     openTabs = DEFAULT_OPEN_TABS.slice();
-    websiteDetailId = null;
+    resetWebsiteDetailIds();
     renderTabs();
     renderExplorer();
     showActivePanel();
     return;
   }
   if(applyPath(id)){
-    websiteDetailId = activeId === 'websites' ? readWebsiteDetailFromUrl() : null;
+    resetWebsiteDetailIds();
+    if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) websiteDetailIds[activeId] = readWebsiteDetailFromUrl();
     renderTabs();
     renderExplorer();
     showActivePanel();
@@ -465,6 +478,7 @@ const ICON_CODEPEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" 
 const ICON_LIVE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
 const ICON_EYE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>';
 const ICON_EYE_OFF_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>';
+const ICON_PDF_SVG = '<svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>';
 
 function escapeHtml(str){
   if(str == null) return '';
@@ -597,7 +611,8 @@ function renderCaseCard(project){
     </div>`;
 }
 
-function renderWebsiteCard(project){
+function renderWebsiteCard(project, _sameYearAsPrevious, category){
+  category = category || 'websites';
   const title = escapeHtml(project.title);
   const url = escapeHtml(project.url);
   const live = escapeHtml(project.live);
@@ -612,28 +627,33 @@ function renderWebsiteCard(project){
   const techHtml = techList.length ? `<div class="website-tech">${techList.map(t => `<span class="kw-pill">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   const thumbSrc = project.screenshot || project.screenshotGif;
   const enableHoverGif = !!(project.screenshot && project.screenshotGif);
+  const containThumb = project.thumbFit === 'contain';
   const thumbHtml = thumbSrc
     ? `<img class="website-thumb-img" src="${escapeHtml(thumbSrc)}" alt="${title} screenshot" loading="lazy"${enableHoverGif ? ` data-static-src="${escapeHtml(project.screenshot)}" data-gif-src="${escapeHtml(project.screenshotGif)}"` : ''}>`
     : `<span class="website-thumb-icon">${iconHtml}</span>`;
+  const showStatus = category !== 'web-systems';
   const archiveUrl = escapeHtml(project.archiveUrl || '');
   const isArchived = status === 'offline' && !!project.archiveUrl;
   const visitTargetUrl = status === 'live' ? live : archiveUrl;
   const cardClickable = !!visitTargetUrl;
-  const overlayHtml = status === 'offline' && !isArchived ? `<div class="website-offline-overlay">🕸️ No longer live</div>` : '';
+  const overlayHtml = showStatus && status === 'offline' && !isArchived ? `<div class="website-offline-overlay">🕸️ No longer live</div>` : '';
   const visitHtml = cardClickable
     ? `<button class="doc-btn" onclick="openInNewWindow('${visitTargetUrl}')">${ICON_LIVE_SVG}${isArchived ? 'View on Wayback Machine' : 'Visit site'}</button>`
-    : `<span class="doc-btn website-offline-btn">🕸️ Offline</span>`;
+    : (showStatus ? `<span class="doc-btn website-offline-btn">🕸️ Offline</span>` : '');
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
+  const pdfHtml = project.pdf ? `<a class="doc-btn" href="${escapeHtml(project.pdf)}" target="_blank" rel="noopener">${ICON_PDF_SVG}Read thesis</a>` : '';
   const companySlug = slugify(websiteFilterCompany(project.company));
+  const lockHtml = showStatus ? `<span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>` : '';
+  const statusBadgeHtml = showStatus ? `<span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>` : '';
 
   return `
     <div class="website-card" id="project-${project.id}" data-status="${status}" data-company="${companySlug}"${isArchived ? ' data-archived="true"' : ''}>
       <div class="website-chrome">
         <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
-        <div class="website-urlbar"><span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>${url}</div>
-        <span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>
+        <div class="website-urlbar">${lockHtml}${url}</div>
+        ${statusBadgeHtml}
       </div>
-      <div class="website-thumb${thumbSrc ? '' : ' placeholder'}" tabindex="0" role="button" aria-label="View ${title} project details" onclick="openWebsiteDetail('${project.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWebsiteDetail('${project.id}');}">
+      <div class="website-thumb${thumbSrc ? '' : ' placeholder'}${containThumb ? ' thumb-contain' : ''}" tabindex="0" role="button" aria-label="View ${title} project details" onclick="openWebsiteDetail('${category}','${project.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWebsiteDetail('${category}','${project.id}');}">
         <div class="website-thumb-scroll">
           ${thumbHtml}
         </div>
@@ -652,9 +672,10 @@ function renderWebsiteCard(project){
           ${logoHtml ? `<div class="website-logo-wrap">${logoHtml}</div>` : ''}
         </div>
         <div class="doc-actions">
-          <button class="doc-btn" onclick="openWebsiteDetail('${project.id}')">${ICON_EYE_SVG}View project</button>
+          <button class="doc-btn" onclick="openWebsiteDetail('${category}','${project.id}')">${ICON_EYE_SVG}View project</button>
           ${visitHtml}
           ${githubHtml}
+          ${pdfHtml}
         </div>
       </div>
     </div>`;
@@ -745,8 +766,8 @@ function websiteFilterCompany(company){
   return (!company || company === 'Personal') ? 'Freelance' : company;
 }
 
-function applyWebsiteFilters(){
-  const grid = document.getElementById('toolsGrid-websites');
+function applyWebsiteFilters(category){
+  const grid = document.getElementById('toolsGrid-' + category);
   if(!grid) return;
   const status = grid.dataset.filter || 'all';
   const company = grid.dataset.companyFilter || 'all';
@@ -763,7 +784,7 @@ function applyWebsiteFilters(){
     if(!emptyNote){
       emptyNote = document.createElement('div');
       emptyNote.className = 'website-filter-empty grid-empty-note';
-      emptyNote.textContent = 'No websites match these filters.';
+      emptyNote.textContent = `No ${WEBSITE_CATEGORY_LABELS[category] || category} match these filters.`;
       grid.appendChild(emptyNote);
     }
   } else if(emptyNote){
@@ -771,26 +792,26 @@ function applyWebsiteFilters(){
   }
 }
 
-function filterWebsites(status, btn){
-  const grid = document.getElementById('toolsGrid-websites');
+function filterWebsites(category, status, btn){
+  const grid = document.getElementById('toolsGrid-' + category);
   if(!grid) return;
   grid.dataset.filter = status;
   btn.parentElement.querySelectorAll('.filter-pill').forEach(b => b.classList.toggle('active', b === btn));
-  applyWebsiteFilters();
+  applyWebsiteFilters(category);
 }
 
-function filterWebsitesByCompany(company){
-  const grid = document.getElementById('toolsGrid-websites');
+function filterWebsitesByCompany(category, company){
+  const grid = document.getElementById('toolsGrid-' + category);
   if(!grid) return;
   grid.dataset.companyFilter = company;
-  applyWebsiteFilters();
-  const select = document.getElementById('websiteCompanySelect');
+  applyWebsiteFilters(category);
+  const select = document.getElementById('webCompanySelect-' + category);
   if(select && select.value !== company) select.value = company;
   if(select) select.classList.toggle('active', company !== 'all');
 }
 
-function renderWebsiteCompanyFilters(items){
-  const select = document.getElementById('websiteCompanySelect');
+function renderWebsiteCompanyFilters(category, items){
+  const select = document.getElementById('webCompanySelect-' + category);
   if(!select) return;
   const companies = [...new Set(items.map(p => websiteFilterCompany(p.company)))].sort();
   const options = [`<option value="all">🏢 All Companies</option>`]
@@ -801,36 +822,36 @@ function renderWebsiteCompanyFilters(items){
 // ---- jump here from an experience/freelance project chip: pre-filter to that
 // project's own company, resetting any lingering Live/Offline filter so the
 // target card can't be hidden by a stale status filter ----
-function filterWebsitesToCompany(companySlug){
-  const allStatusBtn = document.querySelector('#websiteStatusFilters .filter-pill');
-  if(allStatusBtn) filterWebsites('all', allStatusBtn);
-  filterWebsitesByCompany(companySlug);
+function filterWebsitesToCompany(category, companySlug){
+  const allStatusBtn = document.querySelector('#webStatusFilters-' + category + ' .filter-pill');
+  if(allStatusBtn) filterWebsites(category, 'all', allStatusBtn);
+  filterWebsitesByCompany(category, companySlug);
 }
 
 // ---- website detail page: opened from a card's screenshot, own /websites?p=<id> URL
 // (query param rather than a path segment — see stripWebsiteDetailParam above) ----
-function openWebsiteDetail(id){
-  websiteDetailId = id;
+function openWebsiteDetail(category, id){
+  websiteDetailIds[category] = id;
   showActivePanel();
   const params = new URLSearchParams(location.search);
   params.set('p', id);
   const search = '?' + params.toString();
-  const path = isDevMode() ? location.pathname : '/websites';
-  const hash = isDevMode() ? (location.hash || '#websites') : '';
+  const path = isDevMode() ? location.pathname : '/' + category;
+  const hash = isDevMode() ? (location.hash || '#' + category) : '';
   history.pushState(null, '', path + search + hash);
   const editor = document.getElementById('editorArea');
   if(editor) editor.scrollTop = 0;
 }
 
-function closeWebsiteDetail(){
-  websiteDetailId = null;
+function closeWebsiteDetail(category){
+  websiteDetailIds[category] = null;
   showActivePanel();
-  updatePath('websites');
+  updatePath(category);
   const editor = document.getElementById('editorArea');
   if(editor) editor.scrollTop = 0;
 }
 
-function renderWebsiteDetailHtml(project){
+function renderWebsiteDetailHtml(project, category){
   const title = escapeHtml(project.title);
   const url = escapeHtml(project.url);
   const live = escapeHtml(project.live);
@@ -846,31 +867,36 @@ function renderWebsiteDetailHtml(project){
   const techHtml = techList.length ? `<div class="website-tech">${techList.map(t => `<span class="kw-pill">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   const thumbSrc = project.screenshot || project.screenshotGif;
   const enableHoverGif = !!(project.screenshot && project.screenshotGif);
+  const containThumb = project.thumbFit === 'contain';
   const thumbHtml = thumbSrc
     ? `<img class="website-thumb-img" src="${escapeHtml(thumbSrc)}" alt="${title} screenshot" loading="lazy"${enableHoverGif ? ` data-static-src="${escapeHtml(project.screenshot)}" data-gif-src="${escapeHtml(project.screenshotGif)}"` : ''}>`
     : `<span class="website-thumb-icon">${iconHtml}</span>`;
+  const showStatus = category !== 'web-systems';
   const archiveUrl = escapeHtml(project.archiveUrl || '');
   const isArchived = status === 'offline' && !!project.archiveUrl;
   const visitTargetUrl = status === 'live' ? live : archiveUrl;
   const cardClickable = !!visitTargetUrl;
-  const overlayHtml = status === 'offline' && !isArchived ? `<div class="website-offline-overlay">🕸️ No longer live</div>` : '';
+  const overlayHtml = showStatus && status === 'offline' && !isArchived ? `<div class="website-offline-overlay">🕸️ No longer live</div>` : '';
   const visitHtml = cardClickable
     ? `<button class="doc-btn" onclick="openInNewWindow('${visitTargetUrl}')">${ICON_LIVE_SVG}${isArchived ? 'View on Wayback Machine' : 'Visit site'}</button>`
-    : `<span class="doc-btn website-offline-btn">🕸️ Offline</span>`;
+    : (showStatus ? `<span class="doc-btn website-offline-btn">🕸️ Offline</span>` : '');
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
+  const pdfHtml = project.pdf ? `<a class="doc-btn" href="${escapeHtml(project.pdf)}" target="_blank" rel="noopener">${ICON_PDF_SVG}Read thesis</a>` : '';
+  const lockHtml = showStatus ? `<span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>` : '';
+  const statusBadgeHtml = showStatus ? `<span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>` : '';
 
   return `
     <div class="website-detail-inner">
-    <button class="website-detail-back" onclick="closeWebsiteDetail()">← Back to all websites</button>
+    <button class="website-detail-back" onclick="closeWebsiteDetail('${category}')">← Back to all ${WEBSITE_CATEGORY_LABELS[category] || category}</button>
     <div class="website-card website-detail-card" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}>
       <div class="website-detail-split">
         <div class="website-detail-media">
           <div class="website-chrome">
             <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
-            <div class="website-urlbar"><span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>${url}</div>
-            <span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>
+            <div class="website-urlbar">${lockHtml}${url}</div>
+            ${statusBadgeHtml}
           </div>
-          <div class="website-thumb website-detail-thumb${thumbSrc ? '' : ' placeholder'}">
+          <div class="website-thumb website-detail-thumb${thumbSrc ? '' : ' placeholder'}${containThumb ? ' thumb-contain' : ''}">
             ${thumbHtml}
             ${overlayHtml}
           </div>
@@ -886,11 +912,12 @@ function renderWebsiteDetailHtml(project){
             ${logoHtml ? `<div class="website-logo-wrap">${logoHtml}</div>` : ''}
           </div>
           ${descHtml}
-          ${extendedDescHtml}
           ${techHtml}
+          ${extendedDescHtml}
           <div class="doc-actions">
             ${visitHtml}
             ${githubHtml}
+            ${pdfHtml}
           </div>
         </div>
       </div>
@@ -898,39 +925,48 @@ function renderWebsiteDetailHtml(project){
     </div>`;
 }
 
-// ---- the websites panel's top <h2 class="sect"> switches between the tab-level
+// ---- a website-style panel's top <h2 class="sect"> switches between the tab-level
 // "<websites count=... />" tag and a per-project "<website name=... year=... />" tag,
 // retyping (like every other section header) only when that content actually changes ----
-function websitesSectHtml(){
-  const project = websiteDetailId && websiteItems.find(p => p.id === websiteDetailId);
+function websitesSectHtml(category){
+  const detailId = websiteDetailIds[category];
+  const items = websiteItemsByCategory[category] || [];
+  const tags = WEBSITE_CATEGORY_TAGS[category] || { plural: category, singular: category };
+  const project = detailId && items.find(p => p.id === detailId);
   if(project){
     const title = escapeHtml(project.title);
     const yearAttr = project.year ? ` <span class="attr">year</span>=<span class="str">"${escapeHtml(String(project.year))}"</span>` : '';
-    return `<span class="brk">&lt;</span>website <span class="attr">name</span>=<span class="str">"${title}"</span>${yearAttr}<span class="brk"> /&gt;</span>`;
+    return `<span class="brk">&lt;</span>${tags.singular} <span class="attr">name</span>=<span class="str">"${title}"</span>${yearAttr}<span class="brk"> /&gt;</span>`;
   }
-  return `<span class="brk">&lt;</span>websites <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="websites">${websiteItems.length}</span>"</span> <span class="attr">type</span>=<span class="str">"live-preview"</span><span class="brk"> /&gt;</span>`;
+  const typeAttr = category === 'websites' ? 'live-preview' : 'internal-system';
+  return `<span class="brk">&lt;</span>${tags.plural} <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="${category}">${items.length}</span>"</span> <span class="attr">type</span>=<span class="str">"${typeAttr}"</span><span class="brk"> /&gt;</span>`;
 }
 
-function updateWebsitesSect(){
-  const sect = document.querySelector('#panel-websites h2.sect');
+function updateWebsitesSect(category){
+  const sect = document.querySelector('#panel-' + category + ' h2.sect');
   if(!sect) return;
-  const project = websiteDetailId && websiteItems.find(p => p.id === websiteDetailId);
+  const detailId = websiteDetailIds[category];
+  const items = websiteItemsByCategory[category] || [];
+  const project = detailId && items.find(p => p.id === detailId);
   const key = project ? project.id : '';
-  if(key === websitesSectKey) return;
-  websitesSectKey = key;
+  if(key === websiteSectKeys[category]) return;
+  websiteSectKeys[category] = key;
   sect.dataset.typed = '';
-  sect.innerHTML = websitesSectHtml();
+  sect.innerHTML = websitesSectHtml(category);
   humanTypeSect(sect);
 }
 
-function renderWebsiteDetail(){
-  updateWebsitesSect();
-  const listView = document.getElementById('websiteListView');
-  const detailView = document.getElementById('websiteDetailView');
+function renderWebsiteDetail(category){
+  updateWebsitesSect(category);
+  const panel = document.getElementById('panel-' + category);
+  if(!panel) return;
+  const listView = panel.querySelector('.website-list-view');
+  const detailView = panel.querySelector('.website-detail');
   if(!listView || !detailView) return;
-  const wasOpen = websiteDetailWasOpen;
-  websiteDetailWasOpen = !!websiteDetailId;
-  if(!websiteDetailId){
+  const detailId = websiteDetailIds[category];
+  const wasOpen = websiteDetailWasOpen[category];
+  websiteDetailWasOpen[category] = !!detailId;
+  if(!detailId){
     listView.style.display = '';
     if(wasOpen){
       // a lingering animation class would replay the moment this panel's ancestor
@@ -947,19 +983,21 @@ function renderWebsiteDetail(){
   }
   listView.style.display = 'none';
   detailView.classList.add('active');
-  const project = websiteItems.find(p => p.id === websiteDetailId);
+  const items = websiteItemsByCategory[category] || [];
+  const project = items.find(p => p.id === detailId);
   if(!project){
-    detailView.innerHTML = websiteItems.length
-      ? `<div class="website-detail-inner"><button class="website-detail-back" onclick="closeWebsiteDetail()">← Back to all websites</button><div class="website-detail-missing">Project not found.</div></div>`
+    detailView.innerHTML = items.length
+      ? `<div class="website-detail-inner"><button class="website-detail-back" onclick="closeWebsiteDetail('${category}')">← Back to all ${WEBSITE_CATEGORY_LABELS[category] || category}</button><div class="website-detail-missing">Project not found.</div></div>`
       : '';
     return;
   }
-  detailView.innerHTML = renderWebsiteDetailHtml(project);
+  detailView.innerHTML = renderWebsiteDetailHtml(project, category);
   setupWebsiteHoverGifs(detailView);
 }
 
 const CATEGORY_RENDERERS = {
   websites: renderWebsiteCard,
+  'web-systems': renderWebsiteCard,
   'edm-work': renderCaseCard,
   'landing-pages': renderTimelineCard,
   'site-history': renderTimelineCard,
@@ -967,7 +1005,7 @@ const CATEGORY_RENDERERS = {
 };
 
 // categories rendered as a year-descending timeline (most recent first)
-const TIMELINE_CATEGORIES = new Set(['landing-pages', 'site-history', 'websites']);
+const TIMELINE_CATEGORIES = new Set(['landing-pages', 'site-history', 'websites', 'web-systems']);
 
 const projectGrids = document.querySelectorAll('[id^="toolsGrid-"]');
 const projectCategories = [...new Set(Array.from(projectGrids).map(g => g.dataset.category || g.id.replace('toolsGrid-', '')))];
@@ -999,7 +1037,7 @@ Promise.all(projectCategories.map(category =>
     grid.innerHTML = sortedItems.map((item, i) => {
       const prev = sortedItems[i - 1];
       const sameYearAsPrevious = TIMELINE_CATEGORIES.has(category) && !!prev && prev.year === item.year;
-      return renderer(item, sameYearAsPrevious);
+      return renderer(item, sameYearAsPrevious, category);
     }).join('');
   });
   document.querySelectorAll('.tool-count').forEach(el=>{
@@ -1007,10 +1045,12 @@ Promise.all(projectCategories.map(category =>
     el.textContent = (byCategory[category] || []).length;
   });
   setupWebsiteHoverGifs();
-  websiteItems = byCategory.websites || [];
-  renderWebsiteCompanyFilters(websiteItems);
-  applyWebsiteFilters();
-  if(activeId === 'websites') renderWebsiteDetail();
+  WEBSITE_STYLE_CATEGORIES.forEach(category => {
+    websiteItemsByCategory[category] = byCategory[category] || [];
+    renderWebsiteCompanyFilters(category, websiteItemsByCategory[category]);
+    applyWebsiteFilters(category);
+  });
+  if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) renderWebsiteDetail(activeId);
   const allProjects = Object.entries(byCategory).flatMap(([category, items]) =>
     (items || []).map(item => ({ ...item, category })));
   renderExperienceProjects(allProjects);
@@ -1019,7 +1059,7 @@ Promise.all(projectCategories.map(category =>
 
 // ---- little clickable box that jumps to a project's card in its own tab ----
 function projectChipHtml(p){
-  const companySlug = p.category === 'websites' ? slugify(websiteFilterCompany(p.company)) : '';
+  const companySlug = WEBSITE_STYLE_CATEGORIES.includes(p.category) ? slugify(websiteFilterCompany(p.company)) : '';
   return `
     <button class="exp-project-chip" onclick="goToProject('${p.category}','${p.id}','${companySlug}')">
       ${p.icon ? `<span class="ic-emoji">${escapeHtml(p.icon)}</span>` : ''}<span>${escapeHtml(p.title)}</span>
@@ -1054,7 +1094,7 @@ function renderFreelanceProjects(allProjects){
 const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-work' };
 function goToProject(category, id, companySlug){
   openFile(PROJECT_TAB_OVERRIDES[category] || category);
-  if(category === 'websites' && companySlug) filterWebsitesToCompany(companySlug);
+  if(WEBSITE_STYLE_CATEGORIES.includes(category) && companySlug) filterWebsitesToCompany(category, companySlug);
   requestAnimationFrame(() => {
     const el = document.getElementById('project-' + id);
     if(!el) return;

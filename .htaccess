@@ -20,4 +20,4 @@ RewriteRule ^/?$ "https\:\/\/flowparty\.com\.au\/sydney" [R=301,L]
 # for a direct visit/refresh so client-side JS can render the right tab.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(about|intro|experience|education|skills|websites|landing-pages|mini-tools|edm-tools|mini-games|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
+RewriteRule ^(about|intro|experience|education|skills|websites|web-systems|landing-pages|mini-tools|edm-tools|mini-games|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]

@@ -146,6 +146,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="meta">Darua Lab · Brazilian Cultural Centre · +more</div>
             </div>
           </div>
+          <div class="commit clickable" data-open="web-systems">
+            <div class="commit-body">
+              <div class="msg">Web Systems</div>
+              <div class="meta">NewTimesheet</div>
+            </div>
+          </div>
           <div class="commit clickable" data-open="landing-pages">
             <div class="commit-body">
               <div class="msg">Landing Pages</div>
@@ -415,8 +421,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                       <span class="kw-pill">Bootstrap</span>
                       <span class="kw-pill">HTML5</span>
                       <span class="kw-pill">CSS3</span>
+                      <span class="kw-pill">MySQL</span>
                     </div>
                     <div class="case-actions">
+                      <button class="doc-btn" onclick="openFile('web-systems'); openWebsiteDetail('web-systems','programmertime');"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View project</button>
                       <a class="doc-btn" href="https://github.com/brunovidasi/ProgrammerTime" target="_blank" rel="noopener"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-github"></use></svg>GitHub</a>
                       <a class="doc-btn" href="projects/programmertime/TCC%20Programmer%20Time%20Bruno%20e%20Filipe.pdf" target="_blank" rel="noopener"><svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>Read thesis (PDF, Portuguese)</a>
                     </div>
@@ -523,24 +531,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="panel" id="panel-websites">
           <h2 class="sect"><span class="brk">&lt;</span>websites <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="websites">0</span>"</span> <span class="attr">type</span>=<span class="str">"live-preview"</span><span class="brk"> /&gt;</span></h2>
 
-          <div class="website-list-view" id="websiteListView">
+          <div class="website-list-view">
             <div class="tools-intro">
               <div class="tools-intro-text">Full websites I've designed and built for clients and personal projects. Some are still live today, others have since been retired — click a screenshot to see the full write-up, or use the buttons to visit a site directly.</div>
             </div>
 
             <div class="tools-toolbar">
-              <div class="website-filters" id="websiteStatusFilters">
-                <button class="filter-pill active" onclick="filterWebsites('all', this)">🌐 All</button>
-                <button class="filter-pill" onclick="filterWebsites('live', this)">🟢 Live</button>
-                <button class="filter-pill" onclick="filterWebsites('offline', this)">⚫ Offline</button>
+              <div class="website-filters" id="webStatusFilters-websites">
+                <button class="filter-pill active" onclick="filterWebsites('websites', 'all', this)">🌐 All</button>
+                <button class="filter-pill" onclick="filterWebsites('websites', 'live', this)">🟢 Live</button>
+                <button class="filter-pill" onclick="filterWebsites('websites', 'offline', this)">⚫ Offline</button>
               </div>
-              <select class="website-company-select" id="websiteCompanySelect" onchange="filterWebsitesByCompany(this.value)"></select>
+              <select class="website-company-select" id="webCompanySelect-websites" onchange="filterWebsitesByCompany('websites', this.value)"></select>
             </div>
 
             <div class="tools-grid" id="toolsGrid-websites" data-category="websites"></div>
           </div>
 
-          <div class="website-detail" id="websiteDetailView"></div>
+          <div class="website-detail"></div>
+        </div>
+
+        <!-- WEB SYSTEMS -->
+        <div class="panel" id="panel-web-systems">
+          <h2 class="sect"><span class="brk">&lt;</span>web-systems <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="web-systems">0</span>"</span> <span class="attr">type</span>=<span class="str">"internal-system"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="website-list-view">
+            <div class="tools-intro">
+              <div class="tools-intro-text">Internal business systems and applications I've built while working for various companies — timesheet tools, back-office systems and more. Click a screenshot to see the full write-up, including my role and the business rules behind each one.</div>
+            </div>
+
+            <div class="tools-toolbar tools-toolbar--end">
+              <select class="website-company-select" id="webCompanySelect-web-systems" onchange="filterWebsitesByCompany('web-systems', this.value)"></select>
+            </div>
+
+            <div class="tools-grid" id="toolsGrid-web-systems" data-category="web-systems"></div>
+          </div>
+
+          <div class="website-detail"></div>
         </div>
 
         <!-- LANDING PAGES -->
