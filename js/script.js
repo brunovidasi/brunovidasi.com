@@ -679,7 +679,7 @@ function renderMiniGameCard(project){
         <button class="game-fullscreen-btn" onclick="openGameFullscreen('${project.id}')" title="Fullscreen">${ICON_FULLSCREEN_SVG}</button>
       </div>
       <div class="game-frame-wrap" id="gameFrame-${project.id}">
-        <iframe src="${path}" title="${title}" onload="fitGameFrame()"></iframe>
+        <iframe src="${path}" title="${title}" scrolling="no" onload="fitGameFrame()"></iframe>
       </div>
       <div class="website-body">
         <div class="website-body-inner">
