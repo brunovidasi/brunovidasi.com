@@ -46,7 +46,7 @@
 
   let gameRunning = true;
   let gamePaused = false;
-  let wallsBlocked = true;
+  let wallsBlocked = false;
 
   let gameTimer = null; // setInterval id (equivalent to javax.swing.Timer)
   let message = "";
