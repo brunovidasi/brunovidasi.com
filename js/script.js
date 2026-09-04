@@ -123,13 +123,13 @@ function updatePath(id){
   if(isDevMode()){
     const newHash = id ? '#' + id : '';
     if(location.hash !== newHash || location.search !== search){
-      history.replaceState(null, '', location.pathname + search + newHash);
+      history.pushState(null, '', location.pathname + search + newHash);
     }
     return;
   }
   const newPath = id ? '/' + id : '/';
   if(location.pathname !== newPath || location.search !== search){
-    history.replaceState(null, '', newPath + search);
+    history.pushState(null, '', newPath + search);
   }
 }
 
@@ -792,7 +792,7 @@ function openWebsiteDetail(id){
   const search = '?' + params.toString();
   const path = isDevMode() ? location.pathname : '/websites';
   const hash = isDevMode() ? (location.hash || '#websites') : '';
-  history.replaceState(null, '', path + search + hash);
+  history.pushState(null, '', path + search + hash);
   const editor = document.getElementById('editorArea');
   if(editor) editor.scrollTop = 0;
 }
