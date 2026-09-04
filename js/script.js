@@ -55,7 +55,8 @@ const folders = {
 const rootOrder = ['intro','about','projects','freelance','documents','contact'];
 
 // default-open tabs, as requested
-let openTabs = ['intro', 'about', 'experience','education','skills','contact'];
+const DEFAULT_OPEN_TABS = ['intro', 'about', 'experience','education','skills','contact'];
+let openTabs = DEFAULT_OPEN_TABS.slice();
 let activeId = 'intro';
 let openFolders = { about:true, projects:true };
 
@@ -415,7 +416,20 @@ function closeAllTabs(){
 }
 
 function handleRouteChange(){
-  if(applyPath(currentRouteId())){
+  const id = currentRouteId();
+  if(!id){
+    // back/forward landed on root "/" -- restore the default intro tab state,
+    // since applyPath('') is a no-op and would otherwise leave the previous
+    // tab showing on screen
+    activeId = 'intro';
+    openTabs = DEFAULT_OPEN_TABS.slice();
+    websiteDetailId = null;
+    renderTabs();
+    renderExplorer();
+    showActivePanel();
+    return;
+  }
+  if(applyPath(id)){
     websiteDetailId = activeId === 'websites' ? readWebsiteDetailFromUrl() : null;
     renderTabs();
     renderExplorer();
