@@ -516,9 +516,9 @@ function renderToolCard(project){
           ${viewHtml}
           ${openWindowHtml}
           ${liveHtml}
-          ${githubHtml}
           ${codepenHtml}
           ${prototypeBtnsHtml}
+          ${githubHtml}
         </div>
       </div>${embedHtml}${prototypeEmbedsHtml}
     </div>`;
