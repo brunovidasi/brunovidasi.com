@@ -452,12 +452,6 @@
     menus.forEach((m) => m.classList.remove("open"));
   }
 
-  // ---- Confirm before closing the tab (equivalent to WindowListener) ----
-  window.addEventListener("beforeunload", (e) => {
-    e.preventDefault();
-    e.returnValue = "";
-  });
-
   // ---- Initialization ----
   function start() {
     chooseSnakeSkin(0);
