@@ -176,6 +176,14 @@
     console.log("Resumed.");
   }
 
+  function togglePause() {
+    if (gamePaused) {
+      resume();
+    } else {
+      pause();
+    }
+  }
+
   function gameTick() {
     if (gameRunning) {
       checkFood();
@@ -243,7 +251,7 @@
     ctx.fillText("PAUSED", WIDTH / 2, HEIGHT / 2);
 
     ctx.font = "bold 15px 'JetBrains Mono', Consolas, monospace";
-    ctx.fillText("CTRL + R to resume :)", WIDTH / 2, HEIGHT / 2 + 25);
+    ctx.fillText("P or SPACE to resume :)", WIDTH / 2, HEIGHT / 2 + 25);
 
     ctx.textAlign = "left";
   }
@@ -316,10 +324,9 @@
         exitGame();
         break;
       case "KeyP":
-        if (e.ctrlKey || e.metaKey) { e.preventDefault(); pause(); }
-        break;
-      case "KeyR":
-        if (e.ctrlKey || e.metaKey) { e.preventDefault(); resume(); }
+      case "Space":
+        e.preventDefault();
+        togglePause();
         break;
       case "KeyM":
         if (e.ctrlKey || e.metaKey) { e.preventDefault(); chooseSnakeSkin(0); }
@@ -384,7 +391,7 @@
       "* Try to eat as many fruits as possible and rack up points,\n" +
       "while your little snake keeps growing with every bite.\n\n" +
       "* Use the arrow keys to move the snake.\n\n" +
-      "* Pause the game at any time with CTRL + P\n\n" +
+      "* Pause and resume the game at any time with P or SPACE\n\n" +
       "Good luck, little snake!"
     );
   }
