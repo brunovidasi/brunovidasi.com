@@ -1,26 +1,36 @@
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../../../fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'seti';
+  src: url('../../../fonts/seti.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: #1b1b1b;
-  font-family: "Consolas", "Courier New", monospace;
-}
-
-#app {
-  width: 650px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-  border: 1px solid #444;
+  background: #0b0e0c;
+  font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
 }
 
 /* ---- Menu bar ---- */
 #menubar {
+  width: 100%;
   display: flex;
-  background: #ececec;
-  border-bottom: 1px solid #b8b8b8;
+  background: #171c18;
+  border-bottom: 1px solid #23291f;
   user-select: none;
   font-size: 13px;
 }
@@ -33,12 +43,13 @@ body {
   padding: 6px 14px;
   cursor: pointer;
   font: inherit;
+  color: #c8d1c4;
 }
 
 .menu-title:hover,
 .menu.open .menu-title {
-  background: #2f6fed;
-  color: #fff;
+  background: #23291f;
+  color: #ffb454;
 }
 
 .menu-items {
@@ -47,9 +58,9 @@ body {
   top: 100%;
   left: 0;
   min-width: 220px;
-  background: #fff;
-  border: 1px solid #b8b8b8;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  background: #121613;
+  border: 1px solid #23291f;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
   z-index: 10;
   flex-direction: column;
   padding: 4px 0;
@@ -67,24 +78,25 @@ body {
   padding: 6px 14px;
   cursor: pointer;
   font: inherit;
-  color: #222;
+  color: #c8d1c4;
 }
 
-.menu-items button:hover { background: #2f6fed; color: #fff; }
-
-.menu-items .shortcut { opacity: 0.6; font-size: 11px; }
-.menu-items .shortcut:hover { opacity: 0.9; }
+.menu-items button:hover { background: #23291f; color: #ffb454; }
 
 .menu-items hr {
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #23291f;
   margin: 4px 0;
 }
 
 /* ---- Game canvas ---- */
+#gameWrap { padding: 16px; }
+
 #grade {
   display: block;
-  background: #000;
+  background: #0b0e0c;
+  border: 1px solid #23291f;
+  border-radius: 4px;
   cursor: default;
 }
 
@@ -92,29 +104,33 @@ body {
 #modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
   z-index: 100;
 }
 
 #modal-overlay.hidden { display: none; }
 
 #modal {
-  background: #fff;
-  border-radius: 6px;
+  background: #121613;
+  border: 1px solid #23291f;
+  border-radius: 8px;
   min-width: 320px;
   max-width: 460px;
+  max-height: 100%;
+  overflow-y: auto;
   padding: 20px 24px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-  font-family: "Consolas", "Courier New", monospace;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
 }
 
 #modal h2 {
   margin: 0 0 12px;
   font-size: 16px;
-  color: #1b1b1b;
+  color: #ffb454;
 }
 
 #modal p {
@@ -122,7 +138,7 @@ body {
   margin: 0 0 18px;
   font-size: 13px;
   line-height: 1.5;
-  color: #333;
+  color: #c8d1c4;
 }
 
 #modal-buttons {
@@ -133,12 +149,13 @@ body {
 
 #modal-buttons button {
   padding: 6px 16px;
-  border: 1px solid #999;
-  background: #f2f2f2;
-  border-radius: 4px;
+  border: 1px solid #23291f;
+  background: #171c18;
+  color: #c8d1c4;
+  border-radius: 6px;
   cursor: pointer;
   font: inherit;
   font-size: 13px;
 }
 
-#modal-buttons button:hover { background: #2f6fed; color: #fff; border-color: #2f6fed; }
+#modal-buttons button:hover { border-color: #ffb454; color: #ffb454; }

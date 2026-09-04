@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Blue Snake Revolution!</title>
+<link rel="icon" href="images/icone.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Menu bar (equivalent to Java's JMenuBar) -->
+<nav id="menubar">
+  <div class="menu">
+    <button class="menu-title">Game</button>
+    <div class="menu-items">
+      <button data-action="newGame">New Game</button>
+      <hr>
+      <button data-action="pause">Pause Game</button>
+      <button data-action="resume">Resume Game</button>
+      <hr>
+      <button data-action="exit">Exit</button>
+    </div>
+  </div>
+
+  <div class="menu">
+    <button class="menu-title">Edit</button>
+    <div class="menu-items">
+      <button data-action="lockWalls">Lock Walls</button>
+      <button data-action="unlockWalls">Unlock Walls</button>
+      <hr>
+      <button data-action="orangeSnake">Orange Snake</button>
+      <button data-action="greenSnake">Green Snake</button>
+    </div>
+  </div>
+
+  <div class="menu">
+    <button class="menu-title">Help</button>
+    <div class="menu-items">
+      <button data-action="manual">Manual</button>
+      <hr>
+      <button data-action="developer">About the developer</button>
+    </div>
+  </div>
+</nav>
+
+<div id="gameWrap">
+  <canvas id="grade" width="650" height="400"></canvas>
+</div>
+
+<!-- Generic modal (equivalent to Java's JOptionPane) -->
+<div id="modal-overlay" class="hidden">
+  <div id="modal">
+    <h2 id="modal-title"></h2>
+    <p id="modal-text"></p>
+    <div id="modal-buttons"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

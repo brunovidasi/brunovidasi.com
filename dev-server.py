@@ -23,7 +23,7 @@ PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
 # Keep this route list in sync with the RewriteRule in .htaccess.
 SPA_ROUTES = re.compile(
     r"^/(bio|experience|education|skills|websites|landing-pages"
-    r"|mini-tools|edm-tools|edm-work|site-history|freelance"
+    r"|mini-tools|edm-tools|mini-games|edm-work|site-history|freelance"
     r"|contact|documents)/?$"
 )
 

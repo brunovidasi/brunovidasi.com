@@ -1,0 +1,20 @@
+[
+  {
+    "id": "snake",
+    "title": "Snake Game",
+    "category": "mini-games",
+    "icon": "🐍",
+    "description": "A classic Snake game. Arrow keys to move, with walls, pause, and it speeds up as you go.",
+    "path": "projects/mini-games/snake/index.html",
+    "github": "https://github.com/brunovidasi/Snake-Game"
+  },
+  {
+    "id": "campo-minado",
+    "title": "Minesweeper",
+    "category": "mini-games",
+    "icon": "💣",
+    "description": "My take on Minesweeper. Left click to reveal a square; right click or Shift+click, to flag it as a mine — with a difficulty picker.",
+    "path": "projects/mini-games/campo-minado/index.html",
+    "github": "https://github.com/brunovidasi/Campo-Minado"
+  }
+]

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Minesweeper - Bruno Vieira</title>
+<style>
+	@font-face {
+		font-family: 'JetBrains Mono';
+		src: url('../../../fonts/JetBrainsMono-Variable.woff2') format('woff2');
+		font-weight: 100 800;
+		font-display: swap;
+	}
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		background: #0b0e0c;
+		font-family: 'JetBrains Mono', Tahoma, Verdana, Arial, sans-serif;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		min-height: 100vh;
+		color: #c8d1c4;
+	}
+
+	/* ===== MENU BAR ===== */
+	#menubar {
+		width: 100%;
+		background: #171c18;
+		border-bottom: 1px solid #23291f;
+		display: flex;
+		font-size: 13px;
+		user-select: none;
+		position: relative;
+		z-index: 10;
+	}
+	.menu-item { position: relative; }
+	.menu-title {
+		padding: 6px 12px;
+		cursor: pointer;
+		color: #c8d1c4;
+	}
+	.menu-title:hover, .menu-item.open .menu-title { background: #23291f; color: #ffb454; }
+	.menu-dropdown {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		background: #121613;
+		border: 1px solid #23291f;
+		box-shadow: 2px 2px 10px rgba(0,0,0,.5);
+		min-width: 210px;
+	}
+	.menu-item.open .menu-dropdown { display: block; }
+	.menu-option {
+		padding: 6px 14px;
+		cursor: pointer;
+		white-space: nowrap;
+		color: #c8d1c4;
+	}
+	.menu-option:hover { background: #23291f; color: #ffb454; }
+	.menu-sep { border-top: 1px solid #23291f; margin: 4px 0; }
+
+	/* ===== BOARD ===== */
+	#gameWrap { padding: 16px; }
+	#status {
+		color: #c8d1c4;
+		text-align: center;
+		font-size: 14px;
+		margin-bottom: 8px;
+	}
+	canvas {
+		display: block;
+		border: 1px solid #23291f;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	/* ===== MODAL ===== */
+	#overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		background: rgba(0,0,0,.6);
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+		z-index: 100;
+	}
+	#modal {
+		background: #121613;
+		border: 1px solid #23291f;
+		border-radius: 8px;
+		min-width: 320px;
+		max-width: 480px;
+		max-height: 100%;
+		display: flex;
+		flex-direction: column;
+		box-shadow: 0 12px 40px rgba(0,0,0,.5);
+		overflow: hidden;
+	}
+	#modal h3 {
+		flex-shrink: 0;
+		margin: 0;
+		padding: 10px 16px;
+		background: #171c18;
+		color: #ffb454;
+		font-size: 15px;
+		border-bottom: 1px solid #23291f;
+	}
+	#modal .body {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+		padding: 16px;
+		white-space: pre-line;
+		font-size: 13px;
+		line-height: 1.6;
+		color: #c8d1c4;
+	}
+	#modal .actions {
+		flex-shrink: 0;
+		padding: 10px 16px;
+		text-align: right;
+		background: #0f1310;
+		border-top: 1px solid #23291f;
+	}
+	#modal button {
+		font-family: inherit;
+		font-size: 12px;
+		padding: 6px 14px;
+		border: 1px solid #23291f;
+		background: #171c18;
+		color: #c8d1c4;
+		border-radius: 6px;
+		cursor: pointer;
+	}
+	#modal button:hover { border-color: #ffb454; color: #ffb454; }
+</style>
+</head>
+<body>
+
+<div id="menubar">
+	<div class="menu-item" data-menu="game">
+		<div class="menu-title">Game</div>
+		<div class="menu-dropdown">
+			<div class="menu-option" data-action="newGame">New Game</div>
+			<div class="menu-sep"></div>
+			<div class="menu-option" data-action="new30">New Game - Beginner</div>
+			<div class="menu-option" data-action="new40">New Game - Easy</div>
+			<div class="menu-option" data-action="new50">New Game - Medium</div>
+			<div class="menu-option" data-action="new60">New Game - Intermediate</div>
+			<div class="menu-option" data-action="new75">New Game - Hard</div>
+			<div class="menu-option" data-action="new100">New Game - Impossible</div>
+		</div>
+	</div>
+	<div class="menu-item" data-menu="help">
+		<div class="menu-title">Help</div>
+		<div class="menu-dropdown">
+			<div class="menu-option" data-action="manual">Manual</div>
+			<div class="menu-sep"></div>
+			<div class="menu-option" data-action="about">About the developer</div>
+		</div>
+	</div>
+</div>
+
+<div id="gameWrap">
+	<div id="status">Mines: 60 &nbsp;|&nbsp; Score: 0</div>
+	<canvas id="board"></canvas>
+</div>
+
+<div id="overlay">
+	<div id="modal">
+		<h3 id="modalTitle"></h3>
+		<div class="body" id="modalText"></div>
+		<div class="actions"><button id="modalOk">OK</button></div>
+	</div>
+</div>
+
+<script>
+(function () {
+	'use strict';
+
+	// ===== Board configuration (same as the Java version) =====
+	var ROWS = 15;
+	var COLS = 25;
+	var CELL_SIZE = 24; // size of each cell in pixels
+
+	var UNVISITED = 0;
+	var FLAGGED = 1;
+	var VISITED = 2;
+
+	var NUMBER_COLORS = {
+		1: '#00bfff', // light blue
+		2: '#ffa500', // orange
+		3: '#00ff7f', // light green
+		4: '#0000ff', // blue
+		5: '#ff0000', // red
+		6: '#ff00ff'  // magenta (6+)
+	};
+
+	var canvas = document.getElementById('board');
+	var ctx = canvas.getContext('2d');
+	canvas.width = 2 + CELL_SIZE * COLS;
+	canvas.height = 2 + CELL_SIZE * ROWS;
+
+	var state, mined, mineCount, gameInProgress, playerWon, points;
+
+	function setPoints(v) {
+		points = v;
+		document.getElementById('status').textContent =
+			'Mines: ' + mineCount + '  |  Score: ' + points;
+	}
+
+	// ===== Start game =====
+	function startGame(mineTotal) {
+		setPoints(0);
+		mineCount = mineTotal;
+		console.log('Game started with ' + mineCount + ' mines.');
+
+		while (true) {
+			gameInProgress = true;
+			playerWon = false;
+			mined = [];
+			state = [];
+			for (var r = 0; r < ROWS; r++) {
+				mined.push(new Array(COLS).fill(false));
+				state.push(new Array(COLS).fill(UNVISITED));
+			}
+
+			for (var i = 0; i < mineCount; i++) {
+				var r2, c2;
+				while (true) {
+					r2 = Math.floor(ROWS * Math.random());
+					c2 = Math.floor(COLS * Math.random());
+					if ((r2 + c2 > 2) && (r2 < ROWS - 1 || c2 < COLS - 1) && !mined[r2][c2]) {
+						break;
+					}
+				}
+				mined[r2][c2] = true;
+			}
+
+			visit(0, 0);
+
+			if (boardIsValid()) break;
+		}
+		draw();
+	}
+
+	function boardIsValid() {
+		if (state[ROWS - 1][COLS - 1] === VISITED) {
+			return false;
+		}
+		return true;
+	}
+
+	function hasVisitedNeighbor(row, col) {
+		if (row > 0 && state[row - 1][col] > UNVISITED) return true;
+		if (row < ROWS - 1 && state[row + 1][col] > UNVISITED) return true;
+		if (col > 0 && state[row][col - 1] > UNVISITED) return true;
+		if (col < COLS - 1 && state[row][col + 1] > UNVISITED) return true;
+		return false;
+	}
+
+	function reveal(row, col) {
+		state[row][col] = VISITED;
+		setPoints(points + 1);
+	}
+
+	function visit(row, col) {
+		if (mined[row][col]) {
+			gameInProgress = false;
+			playerWon = false;
+		} else {
+			reveal(row, col);
+			if (state[ROWS - 1][COLS - 1] === VISITED) {
+				gameInProgress = false;
+				playerWon = true;
+				calculateFinalScore(points);
+			}
+		}
+	}
+
+	function countMines(row, col) {
+		var ct = 0;
+		if (row > 0) {
+			if (col > 0 && mined[row - 1][col - 1]) ct++;
+			if (mined[row - 1][col]) ct++;
+			if (col < COLS - 1 && mined[row - 1][col + 1]) ct++;
+		}
+		if (col > 0 && mined[row][col - 1]) ct++;
+		if (col < COLS - 1 && mined[row][col + 1]) ct++;
+		if (row < ROWS - 1) {
+			if (col > 0 && mined[row + 1][col - 1]) ct++;
+			if (mined[row + 1][col]) ct++;
+			if (col < COLS - 1 && mined[row + 1][col + 1]) ct++;
+		}
+		return ct;
+	}
+
+	function calculateFinalScore(pt) {
+		pt = pt + 5;
+		pt = pt + mineCount;
+		setPoints(pt);
+		showScore(pt);
+	}
+
+	function showScore(score) {
+		var text = score > 1 ? (score + ' points.') : (score + ' point.');
+		openModal('Your score is:', text);
+	}
+
+	// ===== Mouse click =====
+	function handleClick(evt, isFlag) {
+		var rect = canvas.getBoundingClientRect();
+		var x = evt.clientX - rect.left;
+		var y = evt.clientY - rect.top;
+
+		var row = Math.floor((y - 1) / CELL_SIZE);
+		var col = Math.floor((x - 1) / CELL_SIZE);
+
+		if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
+		if (state[row][col] === VISITED) return;
+		if (!hasVisitedNeighbor(row, col)) return;
+		if (!gameInProgress) return;
+
+		if (isFlag) {
+			if (state[row][col] === UNVISITED) {
+				state[row][col] = FLAGGED;
+				if (mined[row][col]) setPoints(points + 1);
+			} else {
+				state[row][col] = UNVISITED;
+				if (mined[row][col]) setPoints(points - 1);
+			}
+		} else {
+			if (state[row][col] === FLAGGED) return;
+			visit(row, col);
+		}
+		draw();
+	}
+
+	canvas.addEventListener('click', function (evt) { handleClick(evt, evt.shiftKey); });
+	canvas.addEventListener('contextmenu', function (evt) {
+		evt.preventDefault();
+		handleClick(evt, true);
+	});
+
+	// ===== Drawing (equivalent to paintComponent) =====
+	function draw() {
+		ctx.fillStyle = '#2a3323';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		for (var r = 0; r < ROWS; r++) {
+			for (var c = 0; c < COLS; c++) {
+				var x = 2 + CELL_SIZE * c;
+				var y = 2 + CELL_SIZE * r;
+				var w = 23, h = 23;
+				var isTarget = (r === ROWS - 1 && c === COLS - 1);
+				var showBombIcon = false;
+				var bg;
+
+				if (mined[r][c] && !gameInProgress) {
+					if (playerWon) {
+						bg = '#0000ff';
+					} else {
+						bg = '#ff0000';
+						showBombIcon = true;
+					}
+				} else if (state[r][c] === FLAGGED) {
+					bg = '#2a3323';
+				} else if (isTarget) {
+					bg = '#05070a';
+				} else if (state[r][c] === VISITED) {
+					bg = '#161a13';
+				} else {
+					bg = '#2a3323';
+				}
+
+				// 3D block: "raised" if unvisited, "flat" if visited
+				draw3DRect(x, y, w, h, bg, state[r][c] !== VISITED);
+
+				if (state[r][c] === FLAGGED) {
+					drawFlag(x, y);
+				} else if (showBombIcon) {
+					drawBomb(x, y);
+				} else if (state[r][c] === VISITED) {
+					var mines = countMines(r, c);
+					if (mines > 0) {
+						ctx.fillStyle = NUMBER_COLORS[Math.min(mines, 6)];
+						ctx.font = 'bold 15px \'JetBrains Mono\', Georgia, serif';
+						ctx.textBaseline = 'alphabetic';
+						ctx.fillText('' + mines, x + 6, y + 16);
+					}
+				}
+			}
+		}
+
+		if (!gameInProgress) {
+			ctx.fillStyle = 'rgba(0,0,0,0.35)';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			ctx.fillStyle = '#ffffff';
+			ctx.font = 'bold 30px \'JetBrains Mono\', Georgia, serif';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillText(playerWon ? 'YOU WIN!' : 'GAME OVER!', canvas.width / 2, canvas.height / 2);
+			ctx.textAlign = 'left';
+			ctx.textBaseline = 'alphabetic';
+		}
+	}
+
+	function draw3DRect(x, y, w, h, color, raised) {
+		ctx.fillStyle = color;
+		ctx.fillRect(x, y, w, h);
+
+		var light = 'rgba(255,255,255,0.6)';
+		var dark = 'rgba(0,0,0,0.5)';
+		ctx.strokeStyle = raised ? light : dark;
+		ctx.beginPath();
+		ctx.moveTo(x, y + h);
+		ctx.lineTo(x, y);
+		ctx.lineTo(x + w, y);
+		ctx.stroke();
+
+		ctx.strokeStyle = raised ? dark : light;
+		ctx.beginPath();
+		ctx.moveTo(x + w, y);
+		ctx.lineTo(x + w, y + h);
+		ctx.lineTo(x, y + h);
+		ctx.stroke();
+	}
+
+	function drawBomb(x, y) {
+		ctx.font = '16px sans-serif';
+		ctx.textBaseline = 'alphabetic';
+		ctx.fillText('💣', x + 3, y + 18);
+	}
+
+	function drawFlag(x, y) {
+		ctx.font = '16px sans-serif';
+		ctx.textBaseline = 'alphabetic';
+		ctx.fillText('🚩', x + 3, y + 18);
+	}
+
+	// ===== Menu =====
+	var menuItems = document.querySelectorAll('.menu-item');
+	menuItems.forEach(function (item) {
+		item.querySelector('.menu-title').addEventListener('click', function (e) {
+			e.stopPropagation();
+			var wasOpen = item.classList.contains('open');
+			menuItems.forEach(function (mi) { mi.classList.remove('open'); });
+			if (!wasOpen) item.classList.add('open');
+		});
+	});
+	document.addEventListener('click', function () {
+		menuItems.forEach(function (mi) { mi.classList.remove('open'); });
+	});
+
+	var actions = {
+		newGame: function () { startGame(mineCount); },
+		new30: function () { startGame(30); },
+		new40: function () { startGame(40); },
+		new50: function () { startGame(50); },
+		new60: function () { startGame(60); },
+		new75: function () { startGame(75); },
+		new100: function () { startGame(100); },
+		manual: function () {
+			openModal('How to Play',
+				'Controls:\n\n' +
+				'• Left click - Reveals the number of mines, or explodes.\n' +
+				'• Right click, or Shift + left click - Flags the square as a mine.\n\n' +
+				'How to Play:\n\n' +
+				'• Try to get through every square by clicking or flagging it as a mine, without setting any off. ' +
+				'The squares will give you the hints you need to keep going.\n\n' +
+				'Objective:\n\n' +
+				'• Reach the last square in the bottom right, marked in black :)\n\n' +
+				'Good luck, little grasshopper!');
+		},
+		about: function () {
+			openModal('About the Developer:',
+				'Bruno Vieira\n\n' +
+				'www.brunovidasi.com | bruno@brunovidasi.com\n\n' +
+				'Built this one in Java, back when I was starting out — still fun to play.');
+		}
+	};
+
+	document.querySelectorAll('.menu-option').forEach(function (opt) {
+		opt.addEventListener('click', function (e) {
+			e.stopPropagation();
+			var action = actions[opt.getAttribute('data-action')];
+			if (action) action();
+			menuItems.forEach(function (mi) { mi.classList.remove('open'); });
+		});
+	});
+
+	// ===== Modal =====
+	function openModal(title, text) {
+		document.getElementById('modalTitle').textContent = title;
+		document.getElementById('modalText').textContent = text;
+		document.getElementById('overlay').style.display = 'flex';
+	}
+	document.getElementById('modalOk').addEventListener('click', function () {
+		document.getElementById('overlay').style.display = 'none';
+	});
+
+	// ===== Start =====
+	startGame(60);
+})();
+</script>
+</body>
+</html>

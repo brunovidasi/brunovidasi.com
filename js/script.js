@@ -41,6 +41,7 @@ const files = {
   'landing-pages':   { label:'landing-pages.html',  icon:'html', folder:'projects' },
   'mini-tools':      { label:'mini-tools.html',     icon:'html', folder:'projects' },
   'edm-tools':       { label:'eDM-tools.html',      icon:'html', folder:'projects' },
+  'mini-games':      { label:'mini-games.html',     icon:'html', folder:'projects' },
   'edm-work':        { label:'eDM-work.html',       icon:'html', folder:'projects' },
   'site-history':    { label:'site-history.php',    icon:'php',  folder:'projects' },
   freelance:         { label:'freelance.css',       icon:'css',  folder:null },
@@ -49,7 +50,7 @@ const files = {
 };
 const folders = {
   about:    { label:'about/', children:['about','experience','education','skills'] },
-  projects: { label:'projects/', children:['websites','landing-pages','mini-tools','edm-work','edm-tools','site-history'] }
+  projects: { label:'projects/', children:['websites','landing-pages','mini-tools','edm-work','edm-tools','mini-games','site-history'] }
 };
 const rootOrder = ['intro','about','projects','freelance','documents','contact'];
 
@@ -644,6 +645,71 @@ function renderWebsiteCard(project){
     </div>`;
 }
 
+// ---- mini-games: same "browser window" chrome as a website-card, but the body is a
+// live, playable iframe instead of a screenshot — no lazy-loading, it's the whole point ----
+const ICON_FULLSCREEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>';
+
+function renderMiniGameCard(project){
+  const title = escapeHtml(project.title);
+  const path = escapeHtml(project.path);
+  const github = escapeHtml(project.github);
+  const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
+  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub (2013 project)</a>` : '';
+
+  return `
+    <div class="website-card game-card" id="project-${project.id}">
+      <div class="website-chrome">
+        <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
+        <div class="website-urlbar"><span class="website-lock">🎮</span> ${title}</div>
+        <button class="game-fullscreen-btn" onclick="openGameFullscreen('${project.id}')" title="Fullscreen">${ICON_FULLSCREEN_SVG}</button>
+      </div>
+      <div class="game-frame-wrap" id="gameFrame-${project.id}">
+        <iframe src="${path}" title="${title}" onload="fitGameFrame(this)"></iframe>
+      </div>
+      <div class="website-body">
+        <div class="website-body-inner">
+          <div class="website-info">
+            <div class="doc-head">
+              <div class="doc-name">${title}</div>
+            </div>
+            ${descHtml}
+          </div>
+        </div>
+        <div class="doc-actions">
+          <button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>
+          ${githubHtml}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ---- size a game's box to its own content height (same-origin iframe), so each game
+// fills its box instead of floating in a fixed-height frame sized for a different game ----
+function fitGameFrame(iframe){
+  try{
+    const doc = iframe.contentDocument;
+    if(!doc || !doc.body) return;
+    // body/html usually carry min-height:100vh (so a game looks right opened standalone),
+    // which makes their own scrollHeight just echo the iframe's current (fallback) height —
+    // measure how far the actual content reaches instead, via its top-level children
+    const bottoms = Array.from(doc.body.children)
+      .map(el => el.getBoundingClientRect().bottom)
+      .filter(v => v > 0);
+    const naturalHeight = bottoms.length ? Math.max(...bottoms) : doc.body.scrollHeight;
+    const wrap = iframe.closest('.game-frame-wrap');
+    if(wrap && naturalHeight) wrap.style.height = Math.min(Math.max(Math.ceil(naturalHeight), 320), 640) + 'px';
+  } catch(e){
+    // cross-origin or otherwise unreadable — keep the CSS fallback height
+  }
+}
+
+function openGameFullscreen(id){
+  const wrap = document.getElementById('gameFrame-' + id);
+  if(!wrap) return;
+  if(wrap.requestFullscreen) wrap.requestFullscreen();
+  else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
+}
+
 function slugify(str){
   return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'personal';
 }
@@ -695,6 +761,7 @@ function filterWebsitesByCompany(company){
   applyWebsiteFilters();
   const select = document.getElementById('websiteCompanySelect');
   if(select && select.value !== company) select.value = company;
+  if(select) select.classList.toggle('active', company !== 'all');
 }
 
 function renderWebsiteCompanyFilters(items){
@@ -749,6 +816,7 @@ function renderWebsiteDetailHtml(project){
   const roleHtml = project.role ? `<div class="website-role">${escapeHtml(project.role)}</div>` : '';
   const logoHtml = project.logo ? `<img class="website-logo" src="${escapeHtml(project.logo)}" alt="${title} logo">` : '';
   const descHtml = project.description ? `<div class="website-detail-desc">${escapeHtml(project.description)}</div>` : '';
+  const extendedDescHtml = project.extendedDescription ? `<div class="website-detail-desc website-detail-desc--extended">${escapeHtml(project.extendedDescription)}</div>` : '';
   const techList = Array.isArray(project.tech) ? project.tech : [];
   const techHtml = techList.length ? `<div class="website-tech">${techList.map(t => `<span class="kw-pill">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   const thumbSrc = project.screenshot || project.screenshotGif;
@@ -793,6 +861,7 @@ function renderWebsiteDetailHtml(project){
             ${logoHtml ? `<div class="website-logo-wrap">${logoHtml}</div>` : ''}
           </div>
           ${descHtml}
+          ${extendedDescHtml}
           ${techHtml}
           <div class="doc-actions">
             ${visitHtml}
@@ -868,7 +937,8 @@ const CATEGORY_RENDERERS = {
   websites: renderWebsiteCard,
   'edm-work': renderCaseCard,
   'landing-pages': renderTimelineCard,
-  'site-history': renderTimelineCard
+  'site-history': renderTimelineCard,
+  'mini-games': renderMiniGameCard
 };
 
 // categories rendered as a year-descending timeline (most recent first)
@@ -1002,11 +1072,32 @@ function toggleAllDocs(category, btn){
   if(btn) btn.innerHTML = shouldOpen ? `${ICON_EYE_OFF_SVG}Collapse all` : `${ICON_EYE_SVG}View all`;
 }
 
+// ---- swap a "View" button's icon (and, when its label is literally "View"/"Hide", its text) to reflect open state ----
+function setViewButtonState(btn, isOpen){
+  if(!btn) return;
+  const icon = btn.querySelector('svg.btn-icon');
+  if(icon) icon.outerHTML = isOpen ? ICON_EYE_OFF_SVG : ICON_EYE_SVG;
+  const textNode = Array.from(btn.childNodes).find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+  if(textNode && (textNode.textContent.trim() === 'View' || textNode.textContent.trim() === 'Hide')){
+    textNode.textContent = isOpen ? 'Hide' : 'View';
+  }
+}
+
 // ---- contact page interactions ----
 function toggleDoc(id){
   const embed = document.getElementById('embed-'+id);
+  if(!embed) return;
   const isOpen = embed.classList.toggle('open');
   if(isOpen) loadEmbedIframe(embed);
+  document.querySelectorAll(`.doc-btn[onclick="toggleDoc('${id}')"]`).forEach(btn => setViewButtonState(btn, isOpen));
+  const group = embed.dataset.group;
+  if(group){
+    document.querySelectorAll(`.doc-embed[data-group="${group}"]`).forEach(e => {
+      const groupId = e.id.replace(/^embed-/, '');
+      const groupBtn = document.querySelector(`.doc-btn[onclick^="toggleExclusiveDoc('${groupId}',"]`);
+      setViewButtonState(groupBtn, e.classList.contains('open'));
+    });
+  }
 }
 // ---- like toggleDoc, but closes sibling embeds sharing the same group first (e.g. prototype variants) ----
 function toggleExclusiveDoc(id, group){
