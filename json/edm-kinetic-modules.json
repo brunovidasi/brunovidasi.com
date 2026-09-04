@@ -1,22 +1,23 @@
 [
   {
-    "id": "edm-kinetic-accordion",
-    "title": "eDM Accordion Module (3 Items)",
-    "category": "edm-kinetic-modules",
-    "icon": "🪗",
-    "description": "3-panel click-to-expand accordion built entirely with HTML/CSS — no JavaScript, no AMP for Email. Falls back to all panels expanded in Outlook and other non-supporting clients.",
-    "path": "projects/eDM-kinetic-modules/accordian-3-items/index.html",
-    "company": "Dentsu",
-    "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
-    "codepen": ""
-  },
-  {
     "id": "edm-kinetic-carousel",
     "title": "eDM Carousel Module (5 Items)",
     "category": "edm-kinetic-modules",
     "icon": "🎠",
     "description": "5-slide interactive carousel built entirely with HTML/CSS — no JavaScript, no AMP for Email. Checkbox-hack dot/arrow navigation, with a fully-visible stacked fallback for Outlook and other non-supporting clients.",
     "path": "projects/eDM-kinetic-modules/carousel-5-items/index.html",
+    "company": "Dentsu",
+    "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
+    "codepen": "",
+    "featured": true
+  },
+  {
+    "id": "edm-kinetic-accordion",
+    "title": "eDM Accordion Module (3 Items)",
+    "category": "edm-kinetic-modules",
+    "icon": "🪗",
+    "description": "3-panel click-to-expand accordion built entirely with HTML/CSS — no JavaScript, no AMP for Email. Falls back to all panels expanded in Outlook and other non-supporting clients.",
+    "path": "projects/eDM-kinetic-modules/accordian-3-items/index.html",
     "company": "Dentsu",
     "github": "https://github.com/brunovidasi/eDM-kinetic-modules",
     "codepen": ""

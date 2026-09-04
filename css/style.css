@@ -1520,7 +1520,7 @@ h2.sect .brk {
 }
 
 .tool-card {
-  flex: 1 1 calc(50% - 16px);
+  flex: 0 1 calc(50% - 8px);
   min-width: 280px;
   margin-bottom: 0;
 }
@@ -1714,7 +1714,7 @@ h2.sect .brk {
 }
 
 .website-card {
-  flex: 1 1 calc(50% - 16px);
+  flex: 0 1 calc(50% - 8px);
   min-width: 300px;
   border: 1px solid var(--line);
   border-radius: 10px;
