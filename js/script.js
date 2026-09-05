@@ -462,6 +462,7 @@ document.querySelectorAll('.commit').forEach(c=>{
   const details = c.querySelector('.details');
   if(!details) return;
   details.classList.add('more');
+  c.classList.add('open');
   const msg = c.querySelector('.msg');
   msg.classList.add('toggle-title');
   msg.insertAdjacentHTML('beforeend', ' <span class="chev">▾</span>');
