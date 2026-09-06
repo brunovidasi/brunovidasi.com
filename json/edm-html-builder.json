@@ -1,0 +1,19 @@
+[
+  {
+    "id": "edm-html-builder-tool",
+    "title": "eDM HTML Builder",
+    "category": "edm-html-builder",
+    "icon": "🧩",
+    "badge": "Internal Tool",
+    "year": 2025,
+    "role": "Dentsu — Senior Developer",
+    "media": "img/screenshots/edm-builder.png",
+    "description": "Visual, module-based builder I made at Dentsu to speed up producing HTML emails (eDMs) for American Express — no more hand-coding each campaign from scratch. Pick modules from a reusable library, fill in copy/images/colours through auto-generated forms, and preview live on desktop and mobile before exporting or saving the campaign.",
+    "challenge": "Hand-coding every Amex eDM from scratch made campaign production slow and error-prone, especially wrangling Outlook/MSO quirks over and over.",
+    "technique": "Built a PHP/MySQL, database-driven module library — headers, footers, hero banners, feature grids, step guides, an interactive kinetic carousel — so campaigns are assembled by picking modules and filling in auto-generated forms, with live desktop/mobile preview and a full HTML source view. New module types can be added by editing seed data alone, with no UI code changes required.",
+    "outcome": "Turned eDM production into a fill-in-the-blanks process, with Outlook-safe markup (conditional table wrapping, VML buttons, VML background overlays) baked into every module, cutting build time on repeat Amex campaigns.",
+    "github": "https://github.com/brunovidasi/eDM-html-builder",
+    "company": "Dentsu",
+    "tech": ["PHP", "MySQL", "PDO", "JavaScript"]
+  }
+]

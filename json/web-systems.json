@@ -108,5 +108,23 @@
     "github": "https://github.com/brunovidasi/simmed",
     "company": "SCE Sistemas",
     "tech": ["PHP", "CodeIgniter", "MySQL"]
+  },
+  {
+    "id": "edm-html-builder",
+    "title": "eDM HTML Builder",
+    "url": "Dentsu (American Express) — internal eDM production tool",
+    "year": 2025,
+    "live": "",
+    "status": "offline",
+    "icon": "🧩",
+    "role": "Dentsu — Senior Developer",
+    "description": "Module-based visual builder I built to speed up producing HTML emails (eDMs) for American Express — assemble a campaign from a reusable module library instead of hand-coding each one.",
+    "logo": "",
+    "screenshot": "img/screenshots/edm-builder.png",
+    "screenshotGif": "",
+    "github": "https://github.com/brunovidasi/eDM-html-builder",
+    "linkTo": { "category": "edm-html-builder", "id": "edm-html-builder-tool" },
+    "company": "Dentsu",
+    "tech": ["PHP", "MySQL", "PDO", "JavaScript"]
   }
 ]

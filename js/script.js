@@ -38,13 +38,13 @@ const files = {
   education:         { label:'education.md',        icon:'md',   folder:'about' },
   skills:            { label:'skills.json',         icon:'json', folder:'about' },
   websites:          { label:'websites.html',       icon:'html', folder:'projects' },
-  'web-systems':     { label:'web-systems.html',    icon:'html', folder:'projects' },
+  'web-systems':     { label:'web-systems.php',     icon:'php',  folder:'projects' },
   'landing-pages':   { label:'landing-pages.html',  icon:'html', folder:'projects' },
   'mini-tools':      { label:'mini-tools.html',     icon:'html', folder:'projects' },
   'edm-tools':       { label:'eDM-tools.html',      icon:'html', folder:'projects' },
   'mini-games':      { label:'mini-games.html',     icon:'html', folder:'projects' },
   'edm-work':        { label:'eDM-work.html',       icon:'html', folder:'projects' },
-  'site-history':    { label:'site-history.php',    icon:'php',  folder:'projects' },
+  'site-history':    { label:'site-history.html',   icon:'html', folder:'projects' },
   freelance:         { label:'freelance.css',       icon:'css',  folder:null },
   contact:           { label:'contact.sh',          icon:'sh',   folder:null },
   documents:         { label:'documents.pdf',       icon:'pdf',  folder:null }
@@ -467,7 +467,22 @@ document.querySelectorAll('.commit').forEach(c=>{
   msg.classList.add('toggle-title');
   msg.insertAdjacentHTML('beforeend', ' <span class="chev">▾</span>');
   msg.addEventListener('click', ()=> c.classList.toggle('open'));
+  const logo = c.querySelector('.commit-logo');
+  if(logo) logo.addEventListener('click', ()=> c.classList.toggle('open'));
 });
+
+// ---- experience panel: toggle all job details at once ----
+function toggleAllJobDetails(){
+  const commits = document.querySelectorAll('#panel-experience .commit');
+  const btn = document.getElementById('toggleJobDetailsBtn');
+  if(!commits.length || !btn) return;
+  const hide = btn.dataset.hidden !== 'true';
+  commits.forEach(c=> c.classList.toggle('open', !hide));
+  btn.dataset.hidden = String(hide);
+  btn.innerHTML = hide
+    ? '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>Show job details'
+    : '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>Hide job details';
+}
 
 renderExplorer();
 renderTabs();
@@ -571,12 +586,16 @@ function renderCaseCard(project){
   const title = escapeHtml(project.title);
   const badge = project.badge ? `<span class="case-badge">${escapeHtml(project.badge)}</span>` : '';
   const iconHtml = project.icon ? `<span class="ic-emoji">${escapeHtml(project.icon)}</span>` : '';
+  const yearHtml = project.year ? `<span class="website-year">${escapeHtml(String(project.year))}</span>` : '';
+  const roleHtml = project.role ? `<div class="website-role">${escapeHtml(project.role)}</div>` : '';
+  const techList = Array.isArray(project.tech) ? project.tech : [];
+  const techHtml = techList.length ? `<div class="website-tech">${techList.map(t => `<span class="kw-pill">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   const mediaList = Array.isArray(project.media) ? project.media.filter(Boolean) : (project.media ? [project.media] : []);
   let mediaHtml;
   if(mediaList.length === 0){
     mediaHtml = `<div class="case-media empty">🖼️ Screenshot / GIF coming soon</div>`;
   } else if(mediaList.length === 1){
-    mediaHtml = `<div class="case-media"><img src="${escapeHtml(mediaList[0])}" alt="${title}" loading="lazy"></div>`;
+    mediaHtml = `<div class="case-media"><div class="case-media-scroll"><img src="${escapeHtml(mediaList[0])}" alt="${title}" loading="lazy"></div></div>`;
   } else {
     const imgs = mediaList.map(src => `<img src="${escapeHtml(src)}" alt="${title}" loading="lazy">`).join('');
     const dots = mediaList.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}" onclick="carouselGoto('${project.id}', ${i})"></span>`).join('');
@@ -603,9 +622,12 @@ function renderCaseCard(project){
         <div class="case-head">
           ${iconHtml}
           <div class="case-title">${title}</div>
+          ${yearHtml}
           ${badge}
         </div>
+        ${roleHtml}
         ${descHtml}
+        ${techHtml}
         ${sections}
         ${githubHtml ? `<div class="case-actions">${githubHtml}</div>` : ''}
       </div>
@@ -632,6 +654,10 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
   const thumbHtml = thumbSrc
     ? `<img class="website-thumb-img" src="${escapeHtml(thumbSrc)}" alt="${title} screenshot" loading="lazy"${enableHoverGif ? ` data-static-src="${escapeHtml(project.screenshot)}" data-gif-src="${escapeHtml(project.screenshotGif)}"` : ''}>`
     : `<span class="website-thumb-icon">${iconHtml}</span>`;
+  const linkTo = project.linkTo;
+  const detailAction = linkTo
+    ? `goToProject('${escapeHtml(linkTo.category)}','${escapeHtml(linkTo.id)}','')`
+    : `openWebsiteDetail('${category}','${project.id}')`;
   const showStatus = category !== 'web-systems';
   const archiveUrl = escapeHtml(project.archiveUrl || '');
   const isArchived = status === 'offline' && !!project.archiveUrl;
@@ -654,7 +680,7 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
         <div class="website-urlbar">${lockHtml}${url}</div>
         ${statusBadgeHtml}
       </div>
-      <div class="website-thumb${thumbSrc ? '' : ' placeholder'}${containThumb ? ' thumb-contain' : ''}" tabindex="0" role="button" aria-label="View ${title} project details" onclick="openWebsiteDetail('${category}','${project.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWebsiteDetail('${category}','${project.id}');}">
+      <div class="website-thumb${thumbSrc ? '' : ' placeholder'}${containThumb ? ' thumb-contain' : ''}" tabindex="0" role="button" aria-label="View ${title} project details" onclick="${detailAction}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${detailAction};}">
         <div class="website-thumb-scroll">
           ${thumbHtml}
         </div>
@@ -673,7 +699,7 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
           ${logoHtml ? `<div class="website-logo-wrap">${logoHtml}</div>` : ''}
         </div>
         <div class="doc-actions">
-          <button class="doc-btn" onclick="openWebsiteDetail('${category}','${project.id}')">${ICON_EYE_SVG}View project</button>
+          <button class="doc-btn" onclick="${detailAction}">${ICON_EYE_SVG}View project</button>
           ${visitHtml}
           ${githubHtml}
           ${pdfHtml}
@@ -1000,6 +1026,7 @@ const CATEGORY_RENDERERS = {
   websites: renderWebsiteCard,
   'web-systems': renderWebsiteCard,
   'edm-work': renderCaseCard,
+  'edm-html-builder': renderCaseCard,
   'landing-pages': renderTimelineCard,
   'site-history': renderTimelineCard,
   'mini-games': renderMiniGameCard
@@ -1054,8 +1081,11 @@ Promise.all(projectCategories.map(category =>
   if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) renderWebsiteDetail(activeId);
   const allProjects = Object.entries(byCategory).flatMap(([category, items]) =>
     (items || []).map(item => ({ ...item, category })));
-  renderExperienceProjects(allProjects);
-  renderFreelanceProjects(allProjects);
+  // projects with a `linkTo` are aliases shown on another page's card — skip them here
+  // so the aliased project only shows up once as a "related project" chip
+  const chipProjects = allProjects.filter(p => !p.linkTo);
+  renderExperienceProjects(chipProjects);
+  renderFreelanceProjects(chipProjects);
 });
 
 // ---- little clickable box that jumps to a project's card in its own tab ----
@@ -1092,7 +1122,7 @@ function renderFreelanceProjects(allProjects){
 
 // ---- jump from an experience mini box to the matching project card ----
 // (edm-kinetic-modules cards live nested inside the edm-work tab, not their own tab)
-const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-work' };
+const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-work', 'edm-html-builder': 'edm-tools' };
 function goToProject(category, id, companySlug){
   openFile(PROJECT_TAB_OVERRIDES[category] || category);
   if(WEBSITE_STYLE_CATEGORIES.includes(category) && companySlug) filterWebsitesToCompany(category, companySlug);

@@ -20,6 +20,18 @@
     ]
   },
   {
+    "id": "touristguide",
+    "title": "Rio Tourist Guide",
+    "category": "site-history",
+    "icon": "🗺️",
+    "year": 2016,
+    "description": "A personal website I built while working as a tourist guide in Rio de Janeiro, presenting myself as a helper for visitors exploring the city.",
+    "path": "projects/brunovidasi.com/touristguide/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
+  },
+  {
     "id": "site-2025",
     "title": "brunovidasi.com — 2025",
     "category": "site-history",
@@ -40,18 +52,6 @@
     "description": "This was my first attempt at turning my resume into a website — a redesign built so people could explore my skills, learn what I do, and see where I’ve worked.",
     "path": "projects/brunovidasi.com/2018/index.html",
     "github": "https://github.com/brunovidasi/brunovidasi",
-    "live": "",
-    "codepen": ""
-  },
-  {
-    "id": "touristguide",
-    "title": "Rio Tourist Guide",
-    "category": "site-history",
-    "icon": "🗺️",
-    "year": 2016,
-    "description": "A personal website I built while working as a tourist guide in Rio de Janeiro, presenting myself as a helper for visitors exploring the city.",
-    "path": "projects/brunovidasi.com/touristguide/index.html",
-    "github": "",
     "live": "",
     "codepen": ""
   },

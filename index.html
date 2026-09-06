@@ -219,7 +219,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h2 class="sect"><span class="brk">&lt;</span>work-experience <span class="attr">role</span>=<span class="str">"Senior Developer"</span> <span class="attr">years</span>=<span class="str">"<span class="years-exp">13</span>"</span><span class="brk"> /&gt;</span></h2>
           <div class="sect-intro">A timeline of where I've worked, from my first internship in Rio de Janeiro to my current role in Sydney — <span class="years-exp">13</span> years across full-stack development, front-end engineering, and more recently, HTML email production. Click a role to see the details.</div>
 
-          <div class="mt-26 mb-26">
+          <div class="mt-26 mb-26 doc-actions">
+            <button class="doc-btn" id="toggleJobDetailsBtn" onclick="toggleAllJobDetails()"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>Hide job details</button>
             <button class="doc-btn" onclick="openFile('documents')"><svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>View / download resume →</button>
           </div>
 
@@ -245,6 +246,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
+            <img class="commit-logo" src="img/clients/dentsu.png" alt="Dentsu logo">
           </div>
 
           <div class="commit" data-company="General Pants Co.">
@@ -268,6 +270,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
+            <img class="commit-logo" src="img/clients/generalpants.png" alt="General Pants Co. logo">
           </div>
 
           <div class="commit" data-company="The Hallway">
@@ -292,6 +295,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
+            <img class="commit-logo" src="img/clients/thehallway.png" alt="The Hallway logo">
           </div>
 
           <div class="commit" data-company="SCE Sistemas">
@@ -314,6 +318,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
+            <img class="commit-logo" src="img/clients/scesistemas.png" alt="SCE Sistemas logo">
           </div>
 
           <div class="commit" data-company="AM4">
@@ -334,6 +339,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
+            <img class="commit-logo" src="img/clients/am4.png" alt="AM4 logo">
           </div>
 
           <div class="commit" data-company="Imaginatto">
@@ -355,6 +361,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
+            <img class="commit-logo" src="img/clients/imaginatto.png" alt="Imaginatto logo">
           </div>
         </div>
 
@@ -556,11 +563,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h2 class="sect"><span class="brk">&lt;</span>web-systems <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="web-systems">0</span>"</span> <span class="attr">type</span>=<span class="str">"internal-system"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="website-list-view">
-            <div class="tools-intro">
-              <div class="tools-intro-text">Internal business systems and applications I've built while working for various companies — timesheet tools, back-office systems and more. Click a screenshot to see the full write-up, including my role and the business rules behind each one.</div>
-            </div>
-
-            <div class="tools-toolbar tools-toolbar--end">
+            <div class="tools-toolbar tools-toolbar--kinetic">
+              <div class="sect-intro kinetic-intro">Internal business systems and applications I've built while working for various companies — timesheet tools, back-office systems and more. Click a screenshot to see the full write-up, including my role and the business rules behind each one.</div>
               <select class="website-company-select" id="webCompanySelect-web-systems" onchange="filterWebsitesByCompany('web-systems', this.value)"></select>
             </div>
 
@@ -634,16 +638,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="panel" id="panel-edm-tools">
           <h2 class="sect"><span class="brk">&lt;</span>eDM-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="edm-tools">0</span>"</span> <span class="attr">type</span>=<span class="str">"single-HTML-file"</span> <span class="attr">for</span>=<span class="str">"Email-Marketing-Campaigns"</span><span class="brk"> /&gt;</span></h2>
 
-          <div class="tools-intro">
-            <div class="tools-intro-text">Single-file tools I built to speed up HTML email production — handling <span class="kw-pill">Outlook/MSO</span> quirks and repetitive campaign tasks.</div>
+          <div class="skill-label">Builder Tool</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">A visual, module-based builder I built at Dentsu to speed up producing Amex eDMs — pick modules, fill in copy through generated forms, preview live, export ready-to-send HTML.</div>
           </div>
 
-          <div class="tools-toolbar">
-            <div class="tools-intro-tags">
-              <span class="pill sm">📄 Single-file</span>
-              <span class="pill sm">📋 Copy &amp; paste ready</span>
-              <span class="pill sm">⚡ No install</span>
-            </div>
+          <div class="tools-grid" id="toolsGrid-edm-html-builder" data-category="edm-html-builder"></div>
+
+          <div class="skill-label mt-30">Automation Tools</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">Single-file tools I built to speed up HTML email production — handling <span class="kw-pill">Outlook/MSO</span> quirks and repetitive campaign tasks.</div>
             <button class="doc-btn view-all-btn" onclick="toggleAllDocs('edm-tools', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
@@ -697,6 +703,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <li>Setting up or customising a Shopify store or theme</li>
             <li>Coding marketing emails that render correctly everywhere, Outlook included</li>
             <li>Keeping an existing site healthy — bug fixes, content updates, ongoing maintenance</li>
+            <li>Ongoing maintenance of websites and web systems</li>
           </ul>
           <div class="bio-text mt-16">Happy to jump on a quick call first, to scope the work and see if it's a good match.</div>
 
