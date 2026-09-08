@@ -441,6 +441,9 @@
 			startGame(difficulty);
 			return;
 		}
+		if (paused && (evt.key === 'ArrowUp' || evt.key === 'ArrowDown')) {
+			togglePause();
+		}
 		switch (evt.key) {
 			case 'ArrowUp': paddleOneDir = -1; evt.preventDefault(); break;
 			case 'ArrowDown': paddleOneDir = 1; evt.preventDefault(); break;

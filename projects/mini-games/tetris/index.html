@@ -600,6 +600,11 @@
 			startGame(1);
 			return;
 		}
+		if (paused && (evt.key === 'ArrowLeft' || evt.key === 'ArrowRight' || evt.key === 'ArrowDown' || evt.key === 'ArrowUp')) {
+			evt.preventDefault();
+			togglePause();
+			return;
+		}
 		if (evt.repeat && (evt.key === 'ArrowUp' || evt.key === ' ' || evt.code === 'Space')) return;
 		switch (evt.key) {
 			case 'ArrowLeft': if (tryMove(0, -1)) refreshLock(); draw(); evt.preventDefault(); break;
@@ -610,6 +615,9 @@
 			case 'p': case 'P': togglePause(); break;
 			case 'Escape': togglePause(); break;
 		}
+	});
+	window.addEventListener('blur', function () {
+		if (gameInProgress) togglePause(true);
 	});
 
 	var menuItems = document.querySelectorAll('.menu-item');

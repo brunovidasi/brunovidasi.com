@@ -315,6 +315,9 @@
   }
 
   window.addEventListener("keydown", (e) => {
+    if (gamePaused && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+      resume();
+    }
     switch (e.code) {
       case "ArrowLeft":
         if (!right) {
@@ -367,6 +370,10 @@
         if (e.ctrlKey || e.metaKey) { e.preventDefault(); chooseSnakeSkin(1); }
         break;
     }
+  });
+
+  window.addEventListener("blur", () => {
+    if (gameRunning && !gamePaused) pause();
   });
 
   const overlay = document.getElementById("modal-overlay");
