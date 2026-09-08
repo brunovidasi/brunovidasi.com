@@ -50,6 +50,8 @@
   let right = false;
   let up = false;
   let down = false;
+  let queuedDirection = null;
+  const OPPOSITES = { left: "right", right: "left", up: "down", down: "up" };
 
   let gameRunning = true;
   let gamePaused = false;
@@ -80,6 +82,7 @@
     right = false;
     up = false;
     down = false;
+    queuedDirection = null;
 
     SCORE = 0;
     DELAY = baseDelay;
@@ -169,6 +172,31 @@
       (skin === SKINS.female ? "✓ " : "  ") + "Green Snake";
   }
 
+  function currentDirectionName() {
+    if (left) return "left";
+    if (right) return "right";
+    if (up) return "up";
+    if (down) return "down";
+    return null;
+  }
+
+  function requestDirection(name) {
+    if (queuedDirection) return; // one pending change is enough until the next tick applies it
+    const base = currentDirectionName();
+    if (base && OPPOSITES[name] === base) return;
+    if (name === base) return;
+    queuedDirection = name;
+  }
+
+  function applyQueuedDirection() {
+    if (!queuedDirection) return;
+    left = queuedDirection === "left";
+    right = queuedDirection === "right";
+    up = queuedDirection === "up";
+    down = queuedDirection === "down";
+    queuedDirection = null;
+  }
+
   function move() {
     for (let i = snakeLength; i > 0; i--) {
       x[i] = x[i - 1];
@@ -224,6 +252,7 @@
 
   function gameTick() {
     if (gameRunning) {
+      applyQueuedDirection();
       move();
       checkCollision();
       checkFood();
@@ -320,39 +349,19 @@
     }
     switch (e.code) {
       case "ArrowLeft":
-        if (!right) {
-          left = true;
-          up = false;
-          down = false;
-          console.log("-> Left");
-        }
+        requestDirection("left");
         e.preventDefault();
         break;
       case "ArrowRight":
-        if (!left) {
-          right = true;
-          up = false;
-          down = false;
-          console.log("-> Right");
-        }
+        requestDirection("right");
         e.preventDefault();
         break;
       case "ArrowUp":
-        if (!down) {
-          up = true;
-          left = false;
-          right = false;
-          console.log("-> Up");
-        }
+        requestDirection("up");
         e.preventDefault();
         break;
       case "ArrowDown":
-        if (!up) {
-          down = true;
-          left = false;
-          right = false;
-          console.log("-> Down");
-        }
+        requestDirection("down");
         e.preventDefault();
         break;
       case "Escape":
