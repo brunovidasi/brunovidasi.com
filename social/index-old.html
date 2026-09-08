@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
 
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8QK8CM38BZ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -12,11 +13,13 @@
     gtag('config', 'G-8QK8CM38BZ');
   </script>
 
+  <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KB5LXRP');</script>
+  <!-- End Google Tag Manager -->
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,41 +34,37 @@
   <meta property="og:image" content="http://brunovida.si/img/website.png" />
   <link rel="image_src" href="../img/website.png" />
 
-  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'>
 
   <title>Bruno Vieira &middot; @brunovidasi</title>
 
   <style>
-    @font-face {
-      font-family: 'JetBrains Mono';
-      src: url('../fonts/JetBrainsMono-Variable.woff2') format('woff2');
-      font-weight: 100 800;
-      font-style: normal;
-      font-display: swap;
-    }
-
-    @font-face {
-      font-family: 'Inter';
-      src: url('../fonts/Inter-Variable.woff2') format('woff2');
-      font-weight: 100 900;
-      font-style: normal;
-      font-display: swap;
-    }
-
+    /* ===================================================================
+       COLOUR TOKENS
+       Light mode = white bg / #333 text. Dark mode = #333 bg / white text.
+       --accent (#0077bb) stays the same in both modes.
+    =================================================================== */
     :root {
-      --bg: #0b0e0c;
-      --panel-2: #171c18;
-      --line: #23291f;
-      --text: #c8d1c4;
-      --muted: #6f7a68;
-      --accent: #ffb454;
-      --accent-dim: #a67638;
-      --mono: 'JetBrains Mono', monospace;
-      --sans: 'Inter', sans-serif;
+      --bg: #FFFFFF;
+      --text: #333333;
+      --muted: rgba(51, 51, 51, 0.6);
+      --accent: #0077bb;
       --button-text: #FFFFFF;
-      --button-ring: rgba(255, 255, 255, 0.12);
+      --button-ring: rgba(0, 0, 0, 0.06);
     }
 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #333333;
+        --text: #FFFFFF;
+        --muted: rgba(255, 255, 255, 0.6);
+        --button-ring: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    /* ===================================================================
+       BASE
+    =================================================================== */
     * {
       box-sizing: border-box;
     }
@@ -75,7 +74,9 @@
       min-height: 100vh;
       background: var(--bg);
       color: var(--text);
-      font-family: var(--mono);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+      /* centers the whole page, one item under the other */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -91,54 +92,19 @@
       text-align: center;
     }
 
-    .avatar-wrap {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      flex-shrink: 0;
-      margin-bottom: 22px;
-    }
-
-    .avatar-ring {
-      position: absolute;
-      inset: 0;
+    /* ===================================================================
+       PROFILE PHOTO
+       Replace "profile.jpg" below with your own photo file
+       (same folder as this html). Until then, initials show instead.
+    =================================================================== */
+    .avatar {
+      width: 125px;
+      height: 125px;
       border-radius: 50%;
-      z-index: 0;
-      background: linear-gradient(135deg, var(--accent), var(--accent-dim));
-    }
-
-    .avatar-circle-bg {
-      position: absolute;
-      inset: 5px;
-      border-radius: 50%;
-      overflow: hidden;
-      z-index: 1;
-      background: var(--accent);
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-    }
-
-    .avatar-photo-mask {
-      position: absolute;
-      left: 50%;
-      bottom: 5px;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 190px;
-      overflow: hidden;
-      clip-path: inset(0 round 0 0 70px 70px);
-      z-index: 2;
-    }
-
-    .avatar-photo {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 140px;
-      height: 140px;
       object-fit: cover;
-      object-position: center top;
-      transform-origin: 50% bottom;
-      transform: scale(1.15);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      margin-bottom: 18px;
+      border: 3px solid #FFFFFF;
     }
 
     .avatar-fallback {
@@ -146,43 +112,37 @@
       height: 104px;
       border-radius: 50%;
       background: var(--accent);
-      color: #1a1500;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 36px;
       font-weight: 700;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-      margin-bottom: 22px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      margin-bottom: 18px;
     }
 
+    /* ===================================================================
+       TITLE
+    =================================================================== */
     h1 {
-      margin: 0 0 8px;
-      font-family: var(--sans);
-      font-size: 1.4rem;
+      margin: 0 0 6px;
+      font-size: 1.3rem;
       font-weight: 700;
-      color: #eef1ea;
+      color: var(--text);
     }
 
     .subtitle {
       margin: 0 0 0px;
-      min-height: 1em;
-      font-family: var(--mono);
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 2px;
       color: var(--muted);
     }
 
-    .cursor-caret {
-      color: var(--accent);
-      animation: blink 1s steps(1) infinite;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-
+    /* ===================================================================
+       LINKS LIST
+    =================================================================== */
     .category-links {
       width: 100%;
       display: flex;
@@ -225,7 +185,6 @@
     .category-title {
       width: 100%;
       text-align: left;
-      font-family: var(--mono);
       font-size: 0.75rem;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -243,10 +202,9 @@
       border-radius: 14px;
       color: var(--button-text);
       text-decoration: none;
-      font-family: var(--sans);
       font-weight: 600;
       font-size: 0.95rem;
-      box-shadow: 0 0 0 1px var(--button-ring), 0 2px 6px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 0 0 1px var(--button-ring), 0 2px 6px rgba(0, 0, 0, 0.12);
       transition: transform 0.15s ease, filter 0.15s ease;
     }
 
@@ -273,9 +231,11 @@
       }
     }
 
+    /* ===================================================================
+       FOOTER
+    =================================================================== */
     footer {
       margin-top: 36px;
-      font-family: var(--sans);
       font-size: 0.8rem;
       color: var(--muted);
     }
@@ -294,6 +254,12 @@
 
 <body>
 
+  <!-- =====================================================================
+       ICON SPRITE
+       Each <symbol> is a reusable icon, referenced below via <use href="#icon-x">.
+       To add a new icon: add a <symbol> here, then reference its id in the
+       LINKS array in the script at the bottom of the page.
+  ===================================================================== -->
   <svg style="display:none" aria-hidden="true">
 
     <symbol id="icon-website" viewBox="0 0 24 24">
@@ -340,6 +306,8 @@
       <path fill="currentColor" d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/>
     </symbol>
 
+    <!-- LinkedIn's official artwork isn't freely redistributable, so this is
+         an original simplified "in" mark rather than a traced logo. -->
     <symbol id="icon-linkedin" viewBox="0 0 24 24">
       <circle fill="currentColor" cx="5.5" cy="6" r="2"/>
       <rect fill="currentColor" x="3.8" y="9" width="3.4" height="11"/>
@@ -350,6 +318,8 @@
       <path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
     </symbol>
 
+    <!-- CodePen's official mark is also restricted, so this is an original
+         hexagon + crossing-lines glyph that nods to it. -->
     <symbol id="icon-codepen" viewBox="0 0 24 24">
       <polygon points="12,3 21,9 21,15 12,21 3,15 3,9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
       <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M7 9.5 12 13l5-3.5M7 14.5 12 11l5 3.5M12 3v6M12 15v6"/>
@@ -367,11 +337,15 @@
       <path fill="currentColor" d="M8.984 2.596v17.547l3.915 1.261V6.688c0-.69.304-1.151.794-.991.636.18.76.814.76 1.505v5.875c2.441 1.193 4.362-.002 4.362-3.152 0-3.237-1.126-4.675-4.438-5.827-1.307-.448-3.728-1.186-5.39-1.502zm4.656 16.241l6.296-2.275c.715-.258.826-.625.246-.818-.586-.192-1.637-.139-2.357.123l-4.205 1.5V14.98l.24-.085s1.201-.42 2.913-.615c1.696-.18 3.785.03 5.437.661 1.848.601 2.04 1.472 1.576 2.072-.465.6-1.622 1.036-1.622 1.036l-8.544 3.107V18.86zM1.807 18.6c-1.9-.545-2.214-1.668-1.352-2.32.801-.586 2.16-1.052 2.16-1.052l5.615-2.013v2.313L4.205 17c-.705.271-.825.632-.239.826.586.195 1.637.15 2.343-.12L8.247 17v2.074c-.12.03-.256.044-.39.073-1.939.331-3.996.196-6.038-.479z"/>
     </symbol>
 
+    <!-- Xbox's sphere artwork is trademarked, so this is an original
+         circle + X mark rather than a traced logo. -->
     <symbol id="icon-xbox" viewBox="0 0 24 24">
       <circle fill="none" stroke="currentColor" stroke-width="1.6" cx="12" cy="12" r="9.4"/>
       <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M7 7l10 10M17 7L7 17"/>
     </symbol>
 
+    <!-- Nintendo's wordmark is trademarked, so this is an original
+         "Joy-Con grips + screen" silhouette rather than a traced logo. -->
     <symbol id="icon-nintendoswitch" viewBox="0 0 24 24">
       <rect fill="currentColor" x="2" y="3" width="6.5" height="18" rx="3"/>
       <rect fill="currentColor" x="15.5" y="3" width="6.5" height="18" rx="3"/>
@@ -382,21 +356,18 @@
 
   <div class="page">
 
-    <div class="avatar-wrap" id="avatarWrap">
-      <div class="avatar-ring"></div>
-      <div class="avatar-circle-bg"></div>
-      <div class="avatar-photo-mask">
-        <img
-          class="avatar-photo"
-          src="../img/avatar.png"
-          alt="Bruno Vieira"
-          onerror="document.getElementById('avatarWrap').replaceWith(Object.assign(document.createElement('div'), {className:'avatar-fallback', id:'avatarWrap', textContent:'BV'}))"
-        >
-      </div>
-    </div>
+    <!-- Profile photo: drop a "profile.jpg" file next to this html file
+         to use your own photo. Until then, initials are shown instead. -->
+    <img
+      class="avatar"
+      id="avatar"
+      src="profile.jpg"
+      alt="Bruno Vieira"
+      onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'avatar-fallback', id:'avatar', textContent:'BV'}))"
+    >
 
     <h1>Bruno Vieira</h1>
-    <p class="subtitle"><span id="subtitleTyped"></span><span class="cursor-caret" id="subtitleCaret">|</span></p>
+    <p class="subtitle">FOLLOW &middot; ADD &middot; CONTACT</p>
 
     <nav class="links" id="links"></nav>
 
@@ -407,56 +378,13 @@
   </div>
 
   <script>
-    const SUBTITLE_PHRASES = [
-      'Hey!! How are you?',
-      'Looking for me?',
-      'Find me online here',
-      'FOLLOW · ADD · CONTACT',
-    ];
-    const TYPE_SPEED = 65;
-    const DELETE_SPEED = 65;
-    const READ_PAUSE = 3800;
-    const NEXT_PAUSE = 500;
-
-    let subIndex = 0;
-    let subChar = 0;
-    let subDeleting = false;
-
-    function tickSubtitle() {
-      const el = document.getElementById('subtitleTyped');
-      const current = SUBTITLE_PHRASES[subIndex];
-
-      if (!subDeleting) {
-        subChar++;
-        el.textContent = current.slice(0, subChar);
-        if (subChar >= current.length) {
-          if (subIndex >= SUBTITLE_PHRASES.length - 1) {
-            document.getElementById('subtitleCaret').remove();
-            return;
-          }
-          subDeleting = true;
-          setTimeout(tickSubtitle, READ_PAUSE);
-          return;
-        }
-        setTimeout(tickSubtitle, TYPE_SPEED);
-      } else {
-        subChar--;
-        el.textContent = current.slice(0, subChar);
-        if (subChar <= 0) {
-          subDeleting = false;
-          subIndex = (subIndex + 1) % SUBTITLE_PHRASES.length;
-          setTimeout(tickSubtitle, NEXT_PAUSE);
-          return;
-        }
-        setTimeout(tickSubtitle, DELETE_SPEED);
-      }
-    }
-
-    tickSubtitle();
-  </script>
-
-  <script>
-    const DEFAULT_COLOR = 'var(--accent-dim)';
+    /* =====================================================================
+       LINKS — edit this list to add, remove or reorder buttons.
+       icon  : must match a <symbol id="icon-..."> defined above
+       color : any CSS background value (hex, or a gradient string)
+               omit it (or use "default") to fall back to the accent colour
+    ===================================================================== */
+    const DEFAULT_COLOR = 'var(--accent)';
 
     const links = [
       
@@ -467,7 +395,8 @@
       { category: 'Social', name: 'Pinterest', url: 'https://pinterest.com.au/brunovidasi', icon: 'pinterest', color: '#E60023' },
       { category: 'Social', name: 'Youtube', url: 'https://youtube.com/brunices', icon: 'youtube', color: '#FF0000' },
 
-      { category: 'Professional', name: 'Website / Dev Portfolio', url: 'https://brunovida.si/', icon: 'website', color: DEFAULT_COLOR },
+      { category: 'Professional', name: 'Website', url: 'https://brunovida.si/', icon: 'website', color: DEFAULT_COLOR },
+      { category: 'Professional', name: 'Resume', url: 'https://brunovida.si/resume/', icon: 'resume', color: DEFAULT_COLOR },
       { category: 'Professional', name: 'Email me', url: 'mailto:contact@brunovidasi.com', icon: 'email', color: DEFAULT_COLOR },
       { category: 'Professional', name: 'LinkedIn', url: 'https://linkedin.com/in/brunovidasi', icon: 'linkedin', color: '#0A66C2' },
       { category: 'Professional', name: 'GitHub', url: 'https://github.com/brunovidasi', icon: 'github', color: '#181717' },
@@ -485,6 +414,7 @@
       { category: 'Other', name: 'Discogs', url: 'https://www.discogs.com/user/brunovidasi', icon: 'discogs', color: '#000000' },
     ];
 
+    // Render the buttons into the page
     const container = document.getElementById('links');
 
     let currentCategory = '';
@@ -528,6 +458,7 @@
       a.href = link.url;
       a.style.background = link.color || DEFAULT_COLOR;
 
+      // open real links in a new tab, but not mailto: links
       if (!link.url.startsWith('mailto:')) {
         a.target = '_blank';
         a.rel = 'noopener';
