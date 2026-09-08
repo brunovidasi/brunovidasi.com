@@ -10,6 +10,11 @@
 		font-weight: 100 800;
 		font-display: swap;
 	}
+	@font-face {
+		font-family: 'seti';
+		src: url('../../../fonts/seti.woff') format('woff');
+		font-display: swap;
+	}
 	* { box-sizing: border-box; }
 	body {
 		margin: 0;
@@ -145,12 +150,21 @@
 		<div class="menu-dropdown">
 			<div class="menu-option" data-action="newGame">New Game</div>
 			<div class="menu-sep"></div>
-			<div class="menu-option" data-action="new30">New Game - Beginner</div>
-			<div class="menu-option" data-action="new40">New Game - Easy</div>
-			<div class="menu-option" data-action="new50">New Game - Medium</div>
-			<div class="menu-option" data-action="new60">New Game - Intermediate</div>
-			<div class="menu-option" data-action="new75">New Game - Hard</div>
-			<div class="menu-option" data-action="new100">New Game - Impossible</div>
+			<div class="menu-option" data-action="new30">New Game - 30 Mines - Beginner</div>
+			<div class="menu-option" data-action="new40">New Game - 40 Mines - Easy</div>
+			<div class="menu-option" data-action="new50">New Game - 50 Mines - Medium</div>
+			<div class="menu-option" data-action="new60">New Game - 60 Mines - Intermediate</div>
+			<div class="menu-option" data-action="new75">New Game - 75 Mines - Hard</div>
+			<div class="menu-option" data-action="new100">New Game - 100 Mines - Impossible</div>
+		</div>
+	</div>
+	<div class="menu-item" data-menu="edit">
+		<div class="menu-title">Edit</div>
+		<div class="menu-dropdown">
+			<div class="menu-option" data-action="modeClassic" id="modeClassicOption">✓ Classic (flag all the mines)</div>
+			<div class="menu-option" data-action="modePath" id="modePathOption">  Path (start to target)</div>
+			<div class="menu-sep"></div>
+			<div class="menu-option" data-action="toggleAutoReveal" id="toggleAutoRevealOption">✓ Auto-reveal empty tiles</div>
 		</div>
 	</div>
 	<div class="menu-item" data-menu="help">
@@ -204,6 +218,8 @@
 	canvas.height = 2 + CELL_SIZE * ROWS;
 
 	var state, mined, mineCount, gameInProgress, playerWon, points;
+	var autoRevealEmpty = true;
+	var gameMode = 'classic'; // 'classic' = flag all mines, click anywhere | 'path' = start (colored) -> target (black dot), clicks must border visited tiles
 
 	function setPoints(v) {
 		points = v;
@@ -211,10 +227,19 @@
 			'Mines: ' + mineCount + '  |  Score: ' + points;
 	}
 
+	function setGameMode(mode) {
+		gameMode = mode;
+		document.getElementById('modeClassicOption').textContent =
+			(gameMode === 'classic' ? '✓ ' : '  ') + 'Classic (flag all the mines)';
+		document.getElementById('modePathOption').textContent =
+			(gameMode === 'path' ? '✓ ' : '  ') + 'Path (start to target)';
+		startGame(mineCount);
+	}
+
 	// ===== Start game =====
 	function startGame(mineTotal) {
-		setPoints(0);
 		mineCount = mineTotal;
+		setPoints(0);
 		console.log('Game started with ' + mineCount + ' mines.');
 
 		while (true) {
@@ -239,21 +264,39 @@
 				mined[r2][c2] = true;
 			}
 
-			visit(0, 0);
-
-			if (boardIsValid()) break;
+			if (gameMode !== 'path' || !openingFloodWouldWin()) break;
 		}
 		draw();
 	}
 
-	function boardIsValid() {
-		if (state[ROWS - 1][COLS - 1] === VISITED) {
-			return false;
+	// Checks (without touching real state/points) whether flood-filling from the
+	// starting square would immediately reveal the target, so the player always
+	// gets to make the opening click themselves rather than starting pre-solved.
+	function openingFloodWouldWin() {
+		if (countMines(0, 0) !== 0) return false;
+		var seen = [];
+		for (var r = 0; r < ROWS; r++) seen.push(new Array(COLS).fill(false));
+		seen[0][0] = true;
+		var stack = [[0, 0]];
+		while (stack.length) {
+			var cur = stack.pop();
+			var r = cur[0], c = cur[1];
+			for (var dr = -1; dr <= 1; dr++) {
+				for (var dc = -1; dc <= 1; dc++) {
+					if (dr === 0 && dc === 0) continue;
+					var nr = r + dr, nc = c + dc;
+					if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) continue;
+					if (seen[nr][nc] || mined[nr][nc]) continue;
+					seen[nr][nc] = true;
+					if (countMines(nr, nc) === 0) stack.push([nr, nc]);
+				}
+			}
 		}
-		return true;
+		return seen[ROWS - 1][COLS - 1];
 	}
 
 	function hasVisitedNeighbor(row, col) {
+		if (row === 0 && col === 0) return true;
 		if (row > 0 && state[row - 1][col] > UNVISITED) return true;
 		if (row < ROWS - 1 && state[row + 1][col] > UNVISITED) return true;
 		if (col > 0 && state[row][col - 1] > UNVISITED) return true;
@@ -270,12 +313,47 @@
 		if (mined[row][col]) {
 			gameInProgress = false;
 			playerWon = false;
-		} else {
-			reveal(row, col);
-			if (state[ROWS - 1][COLS - 1] === VISITED) {
-				gameInProgress = false;
-				playerWon = true;
-				calculateFinalScore(points);
+			return;
+		}
+		reveal(row, col);
+		if (autoRevealEmpty && countMines(row, col) === 0) {
+			floodReveal(row, col);
+		}
+		if (gameMode === 'path' && state[ROWS - 1][COLS - 1] === VISITED) {
+			gameInProgress = false;
+			playerWon = true;
+			calculateFinalScore(points);
+		}
+	}
+
+	function allMinesFlagged() {
+		for (var r = 0; r < ROWS; r++) {
+			for (var c = 0; c < COLS; c++) {
+				if (mined[r][c] && state[r][c] !== FLAGGED) return false;
+			}
+		}
+		return true;
+	}
+
+	// Classic minesweeper flood-fill: cascades through empty (0-mine) tiles,
+	// revealing their neighbors, including the bordering numbered tiles.
+	function floodReveal(row, col) {
+		var stack = [[row, col]];
+		while (stack.length) {
+			var cur = stack.pop();
+			var r = cur[0], c = cur[1];
+			for (var dr = -1; dr <= 1; dr++) {
+				for (var dc = -1; dc <= 1; dc++) {
+					if (dr === 0 && dc === 0) continue;
+					var nr = r + dr, nc = c + dc;
+					if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) continue;
+					if (state[nr][nc] !== UNVISITED) continue;
+					if (mined[nr][nc]) continue;
+					reveal(nr, nc);
+					if (countMines(nr, nc) === 0) {
+						stack.push([nr, nc]);
+					}
+				}
 			}
 		}
 	}
@@ -297,9 +375,20 @@
 		return ct;
 	}
 
+	function countCorrectFlags() {
+		var count = 0;
+		for (var r = 0; r < ROWS; r++) {
+			for (var c = 0; c < COLS; c++) {
+				if (state[r][c] === FLAGGED && mined[r][c]) count++;
+			}
+		}
+		return count;
+	}
+
 	function calculateFinalScore(pt) {
 		pt = pt + 5;
 		pt = pt + mineCount;
+		pt = pt + countCorrectFlags();
 		setPoints(pt);
 		showScore(pt);
 	}
@@ -320,16 +409,15 @@
 
 		if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
 		if (state[row][col] === VISITED) return;
-		if (!hasVisitedNeighbor(row, col)) return;
+		if (gameMode === 'path' && !hasVisitedNeighbor(row, col)) return;
 		if (!gameInProgress) return;
 
 		if (isFlag) {
-			if (state[row][col] === UNVISITED) {
-				state[row][col] = FLAGGED;
-				if (mined[row][col]) setPoints(points + 1);
-			} else {
-				state[row][col] = UNVISITED;
-				if (mined[row][col]) setPoints(points - 1);
+			state[row][col] = state[row][col] === UNVISITED ? FLAGGED : UNVISITED;
+			if (gameMode === 'classic' && allMinesFlagged()) {
+				gameInProgress = false;
+				playerWon = true;
+				calculateFinalScore(points);
 			}
 		} else {
 			if (state[row][col] === FLAGGED) return;
@@ -354,7 +442,8 @@
 				var x = 2 + CELL_SIZE * c;
 				var y = 2 + CELL_SIZE * r;
 				var w = 23, h = 23;
-				var isTarget = (r === ROWS - 1 && c === COLS - 1);
+				var isTarget = (gameMode === 'path' && r === ROWS - 1 && c === COLS - 1);
+				var isStart = (gameMode === 'path' && r === 0 && c === 0);
 				var showBombIcon = false;
 				var bg;
 
@@ -369,6 +458,8 @@
 					bg = '#2a3323';
 				} else if (isTarget) {
 					bg = '#05070a';
+				} else if (isStart) {
+					bg = '#ffb454';
 				} else if (state[r][c] === VISITED) {
 					bg = '#161a13';
 				} else {
@@ -436,9 +527,13 @@
 	}
 
 	function drawFlag(x, y) {
-		ctx.font = '16px sans-serif';
+		ctx.fillStyle = '#ffb454';
+		ctx.font = "18px 'seti'";
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText('', x + 11.5, y + 11.5);
+		ctx.textAlign = 'left';
 		ctx.textBaseline = 'alphabetic';
-		ctx.fillText('🚩', x + 3, y + 18);
 	}
 
 	// ===== Menu =====
@@ -463,7 +558,17 @@
 		new60: function () { startGame(60); },
 		new75: function () { startGame(75); },
 		new100: function () { startGame(100); },
+		toggleAutoReveal: function () {
+			autoRevealEmpty = !autoRevealEmpty;
+			document.getElementById('toggleAutoRevealOption').textContent =
+				(autoRevealEmpty ? '✓ ' : '  ') + 'Auto-reveal empty tiles';
+		},
+		modeClassic: function () { setGameMode('classic'); },
+		modePath: function () { setGameMode('path'); },
 		manual: function () {
+			var objective = gameMode === 'path'
+				? '• Reach the last square in the bottom right, marked in black, starting from the colored square in the top left :)'
+				: '• Flag every mine on the board. You can click or flag any square, in any order.';
 			openModal('How to Play',
 				'Controls:\n\n' +
 				'• Left click - Reveals the number of mines, or explodes.\n' +
@@ -471,8 +576,12 @@
 				'How to Play:\n\n' +
 				'• Try to get through every square by clicking or flagging it as a mine, without setting any off. ' +
 				'The squares will give you the hints you need to keep going.\n\n' +
+				'• Clicking an empty square (0 nearby mines) automatically reveals its neighbors too. ' +
+				'Toggle this in the Edit menu.\n\n' +
+				'• Two game modes are available in the Edit menu: Classic (flag all the mines, click anywhere) ' +
+				'and Path (walk from the start square to the target square, one border-adjacent click at a time).\n\n' +
 				'Objective:\n\n' +
-				'• Reach the last square in the bottom right, marked in black :)\n\n' +
+				objective + '\n\n' +
 				'Good luck, little grasshopper!');
 		},
 		about: function () {
@@ -504,6 +613,18 @@
 
 	// ===== Start =====
 	startGame(60);
+
+	// Canvas text renders with whatever font is already loaded at draw time, so a
+	// flood-fill right after page load can paint numbers in the fallback font
+	// while 'JetBrains Mono' is still downloading. A font also isn't fetched at
+	// all until something actually draws with it, so force-load 'seti' (used by
+	// the flag icon) instead of waiting on fonts.ready, which would resolve
+	// immediately without ever requesting it. Redraw once both are ready.
+	if (document.fonts && document.fonts.load) {
+		document.fonts.load("18px 'seti'").catch(function () {}).then(function () {
+			document.fonts.ready.then(function () { draw(); });
+		});
+	}
 })();
 </script>
 </body>

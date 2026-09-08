@@ -25,11 +25,11 @@
   <div class="menu">
     <button class="menu-title">Edit</button>
     <div class="menu-items">
-      <button data-action="lockWalls">Lock Walls</button>
-      <button data-action="unlockWalls">Unlock Walls</button>
+      <button data-action="lockWalls" id="lockWallsOption">  Lock Walls</button>
+      <button data-action="unlockWalls" id="unlockWallsOption">✓ Unlock Walls</button>
       <hr>
-      <button data-action="orangeSnake">Orange Snake</button>
-      <button data-action="greenSnake">Green Snake</button>
+      <button data-action="orangeSnake" id="orangeSnakeOption">✓ Orange Snake</button>
+      <button data-action="greenSnake" id="greenSnakeOption">  Green Snake</button>
     </div>
   </div>
 
@@ -44,6 +44,7 @@
 </nav>
 
 <div id="gameWrap">
+  <div id="status">Score: 0</div>
   <canvas id="grade" width="650" height="400"></canvas>
 </div>
 

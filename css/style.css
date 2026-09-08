@@ -1649,6 +1649,10 @@ h2.sect .brk {
   margin: -4px 0 18px;
 }
 
+.tools-toolbar--timeline {
+  padding-right: 6px;
+}
+
 .grid-empty-note {
   font-family: var(--sans);
   font-size: 13px;
@@ -1675,7 +1679,7 @@ h2.sect .brk {
   color: var(--muted);
   background: var(--panel-2);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 6px;
   padding: 5px 13px;
   cursor: pointer;
   transition: border-color .15s ease, color .15s ease, background .15s ease;
@@ -1698,7 +1702,7 @@ h2.sect .brk {
   color: var(--muted);
   background-color: var(--panel-2);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 6px;
   height: 30px;
   padding: 0 26px 0 13px;
   cursor: pointer;

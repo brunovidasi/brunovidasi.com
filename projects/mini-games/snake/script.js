@@ -17,9 +17,21 @@
 
   // ---- Colors (matches the site's own palette instead of the old pixel-art sprites) ----
   const BG_COLOR = "#0b0e0c";
-  const FOOD_COLOR = "#ffb454"; // same orange as the site's own "html file" </> explorer icon
-  const FOOD_ICON = "";   // that icon's glyph, from the site's seti icon font
+  // Same glyphs/colors as the file explorer on the main site (see ICON_GLYPHS in js/script.js).
+  const FOOD_ICONS = [
+    { char: "", color: "#cbcb41" }, // js
+    { char: "", color: "#ffb454" }, // md
+    { char: "", color: "#cbcb41" }, // json
+    { char: "", color: "#519aba" }, // info
+    { char: "", color: "#ffb454" }, // html
+    { char: "", color: "#a074c4" }, // php
+    { char: "", color: "#8dc149" }, // sh
+    { char: "", color: "#cc3e44" }, // pdf
+    { char: "", color: "#519aba" }, // css
+  ];
   const FOOD_FONT = "20px 'seti'";
+  const HTML_ICON = FOOD_ICONS[4]; // always the icon the first fruit spawns as
+  let food = HTML_ICON;
   const SKINS = {
     male: { head: "#ffb454", body: "#c8d1c4" },   // accent orange head, sage-green body
     female: { head: "#8fd19e", body: "#a67638" }, // ok-green head, dim-orange body
@@ -37,7 +49,6 @@
   let foodY = 0;
 
   let SCORE = 0;
-  const SCORE_FONT = "bold 13px 'JetBrains Mono', Consolas, monospace";
 
   let left = false;
   let right = false;
@@ -59,7 +70,7 @@
       y[i] = 50;
     }
 
-    placeFood();
+    placeFood(false);
 
     if (gameTimer) clearInterval(gameTimer);
     gameTimer = setInterval(gameTick, DELAY);
@@ -86,15 +97,27 @@
   function chooseSnakeSkin(sex) {
     skin = sex === 1 ? SKINS.female : SKINS.male;
     console.log(sex === 1 ? "Green snake selected." : "Orange snake selected.");
+    updateEditMenuChecks();
     paint();
   }
 
-  function placeFood() {
-    let random = Math.floor(Math.random() * RANDOM_X_CELLS);
-    foodX = random * CELL_SIZE;
+  function placeFood(randomizeIcon) {
+    do {
+      const randomX = Math.floor(Math.random() * RANDOM_X_CELLS);
+      foodX = randomX * CELL_SIZE;
 
-    random = Math.floor(Math.random() * RANDOM_Y_CELLS);
-    foodY = random * CELL_SIZE;
+      const randomY = Math.floor(Math.random() * RANDOM_Y_CELLS);
+      foodY = randomY * CELL_SIZE;
+    } while (isOnSnake(foodX, foodY));
+
+    food = randomizeIcon ? FOOD_ICONS[Math.floor(Math.random() * FOOD_ICONS.length)] : HTML_ICON;
+  }
+
+  function isOnSnake(px, py) {
+    for (let i = 0; i < snakeLength; i++) {
+      if (x[i] === px && y[i] === py) return true;
+    }
+    return false;
   }
 
   function checkFood() {
@@ -108,7 +131,7 @@
       }
 
       console.log("-> Ate the fruit.");
-      placeFood();
+      placeFood(true);
     }
   }
 
@@ -122,13 +145,27 @@
   function lockWalls() {
     wallsBlocked = true;
     console.log("Walls locked.");
+    updateEditMenuChecks();
     paint();
   }
 
   function unlockWalls() {
     wallsBlocked = false;
     console.log("Walls unlocked.");
+    updateEditMenuChecks();
     paint();
+  }
+
+  // Mirrors the "✓ option text" checkmark style used in the Minesweeper mini-game's Edit menu.
+  function updateEditMenuChecks() {
+    document.getElementById("lockWallsOption").textContent =
+      (wallsBlocked ? "✓ " : "  ") + "Lock Walls";
+    document.getElementById("unlockWallsOption").textContent =
+      (!wallsBlocked ? "✓ " : "  ") + "Unlock Walls";
+    document.getElementById("orangeSnakeOption").textContent =
+      (skin === SKINS.male ? "✓ " : "  ") + "Orange Snake";
+    document.getElementById("greenSnakeOption").textContent =
+      (skin === SKINS.female ? "✓ " : "  ") + "Green Snake";
   }
 
   function move() {
@@ -150,16 +187,18 @@
       }
     }
 
+    // The last on-screen cell is at WIDTH/HEIGHT - CELL_SIZE — anything past that
+    // would draw fully off-canvas, so that's the real edge to check/wrap against.
     if (wallsBlocked) {
-      if (y[0] > HEIGHT) gameRunning = false;
+      if (y[0] > HEIGHT - CELL_SIZE) gameRunning = false;
       if (y[0] < 0) gameRunning = false;
-      if (x[0] > WIDTH) gameRunning = false;
+      if (x[0] > WIDTH - CELL_SIZE) gameRunning = false;
       if (x[0] < 0) gameRunning = false;
     } else {
-      if (y[0] > HEIGHT) y[0] = 0;
-      if (y[0] < 0) y[0] = HEIGHT;
-      if (x[0] > WIDTH) x[0] = 0;
-      if (x[0] < 0) x[0] = WIDTH;
+      if (y[0] > HEIGHT - CELL_SIZE) y[0] = 0;
+      if (y[0] < 0) y[0] = HEIGHT - CELL_SIZE;
+      if (x[0] > WIDTH - CELL_SIZE) x[0] = 0;
+      if (x[0] < 0) x[0] = WIDTH - CELL_SIZE;
     }
   }
 
@@ -186,15 +225,16 @@
 
   function gameTick() {
     if (gameRunning) {
-      checkFood();
-      checkCollision();
       move();
+      checkCollision();
+      checkFood();
     }
     paint();
   }
 
   // ---- Drawing (equivalent to paint(Graphics)) ----
   function paint() {
+    updateScoreDisplay();
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
     if (gameRunning) {
@@ -207,7 +247,6 @@
         ctx.fillRect(x[i], y[i], CELL_SIZE, CELL_SIZE);
       }
 
-      drawScore();
       drawWallsIndicator();
       drawPauseOverlay();
     } else {
@@ -215,12 +254,16 @@
     }
   }
 
+  function updateScoreDisplay() {
+    document.getElementById("status").textContent = "Score: " + SCORE;
+  }
+
   function drawFood() {
-    ctx.fillStyle = FOOD_COLOR;
+    ctx.fillStyle = food.color;
     ctx.font = FOOD_FONT;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(FOOD_ICON, foodX + CELL_SIZE / 2, foodY + CELL_SIZE / 2 + 1);
+    ctx.fillText(food.char, foodX + CELL_SIZE / 2, foodY + CELL_SIZE / 2 + 1);
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
   }
@@ -230,15 +273,6 @@
     ctx.strokeStyle = "#ffb454";
     ctx.lineWidth = 3;
     ctx.strokeRect(1.5, 1.5, WIDTH - 3, HEIGHT - 3);
-  }
-
-  function drawScore() {
-    const SCORE_TEXT = "SCORE: " + SCORE;
-    ctx.fillStyle = "white";
-    ctx.font = SCORE_FONT;
-    ctx.textBaseline = "alphabetic";
-    const w = ctx.measureText(SCORE_TEXT).width;
-    ctx.fillText(SCORE_TEXT, WIDTH - w - 10, HEIGHT - 10);
   }
 
   function drawPauseOverlay() {

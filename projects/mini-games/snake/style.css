@@ -92,6 +92,13 @@ body {
 /* ---- Game canvas ---- */
 #gameWrap { padding: 16px; }
 
+#status {
+  color: #c8d1c4;
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
 #grade {
   display: block;
   background: #0b0e0c;
