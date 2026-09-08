@@ -25,7 +25,6 @@ body {
   font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
 }
 
-/* ---- Menu bar ---- */
 #menubar {
   width: 100%;
   display: flex;
@@ -89,8 +88,15 @@ body {
   margin: 4px 0;
 }
 
-/* ---- Game canvas ---- */
-#gameWrap { padding: 16px; }
+#gameWrap {
+  padding: 16px;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
 #status {
   color: #c8d1c4;
@@ -107,7 +113,6 @@ body {
   cursor: default;
 }
 
-/* ---- Modal (JOptionPane equivalent) ---- */
 #modal-overlay {
   position: fixed;
   inset: 0;

@@ -724,8 +724,11 @@ function renderMiniGameCard(project){
   const path = escapeHtml(project.path);
   const github = escapeHtml(project.github);
   const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
-  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub (2013 Java)</a>` : '';
-  const githubHtml2026 = `<a class="doc-btn" href="https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-games" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub (2026 HTML5)</a>`;
+  const githubLabel = escapeHtml(project.githubLabel || 'GitHub (2013 Java)');
+  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}${githubLabel}</a>` : '';
+  const githubLabel2026 = escapeHtml(project.githubLabel2026 || 'GitHub (2026 HTML5)');
+  const githubHtml2026 = `<a class="doc-btn" href="https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-games" target="_blank" rel="noopener">${ICON_GITHUB_SVG}${githubLabel2026}</a>`;
+  const campaignHtml = project.campaign ? `<button class="doc-btn" onclick="openInNewWindow('${escapeHtml(project.campaign)}')">${ICON_LIVE_SVG}${escapeHtml(project.campaignLabel || 'View Original Campaign')}</button>` : '';
 
   return `
     <div class="website-card game-card" id="project-${project.id}">
@@ -748,6 +751,7 @@ function renderMiniGameCard(project){
         </div>
         <div class="doc-actions">
           <button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>
+          ${campaignHtml}
           ${githubHtml}
           ${githubHtml2026}
         </div>

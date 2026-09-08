@@ -27,7 +27,6 @@
 		color: #c8d1c4;
 	}
 
-	/* ===== MENU BAR ===== */
 	#menubar {
 		width: 100%;
 		background: #171c18;
@@ -65,8 +64,15 @@
 	.menu-option:hover { background: #23291f; color: #ffb454; }
 	.menu-sep { border-top: 1px solid #23291f; margin: 4px 0; }
 
-	/* ===== BOARD ===== */
-	#gameWrap { padding: 16px; }
+	#gameWrap {
+		padding: 16px;
+		width: 100%;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
 	#status {
 		color: #c8d1c4;
 		text-align: center;
@@ -80,7 +86,6 @@
 		cursor: pointer;
 	}
 
-	/* ===== MODAL ===== */
 	#overlay {
 		display: none;
 		position: fixed;
@@ -178,7 +183,7 @@
 </div>
 
 <div id="gameWrap">
-	<div id="status">Mines: 60 &nbsp;|&nbsp; Score: 0</div>
+	<div id="status">Mines: 60 &nbsp;|&nbsp; Score: 0 &nbsp;|&nbsp; Level: Intermediate</div>
 	<canvas id="board"></canvas>
 </div>
 
@@ -194,22 +199,21 @@
 (function () {
 	'use strict';
 
-	// ===== Board configuration (same as the Java version) =====
 	var ROWS = 15;
 	var COLS = 25;
-	var CELL_SIZE = 24; // size of each cell in pixels
+	var CELL_SIZE = 24;
 
 	var UNVISITED = 0;
 	var FLAGGED = 1;
 	var VISITED = 2;
 
 	var NUMBER_COLORS = {
-		1: '#00bfff', // light blue
-		2: '#ffa500', // orange
-		3: '#00ff7f', // light green
-		4: '#0000ff', // blue
-		5: '#ff0000', // red
-		6: '#ff00ff'  // magenta (6+)
+		1: '#00bfff',
+		2: '#ffa500',
+		3: '#00ff7f',
+		4: '#0000ff',
+		5: '#ff0000',
+		6: '#ff00ff'
 	};
 
 	var canvas = document.getElementById('board');
@@ -219,12 +223,14 @@
 
 	var state, mined, mineCount, gameInProgress, playerWon, points;
 	var autoRevealEmpty = true;
-	var gameMode = 'classic'; // 'classic' = flag all mines, click anywhere | 'path' = start (colored) -> target (black dot), clicks must border visited tiles
+	var gameMode = 'classic';
+
+	var LEVEL_LABELS = { 30: 'Beginner', 40: 'Easy', 50: 'Medium', 60: 'Intermediate', 75: 'Hard', 100: 'Impossible' };
 
 	function setPoints(v) {
 		points = v;
 		document.getElementById('status').textContent =
-			'Mines: ' + mineCount + '  |  Score: ' + points;
+			'Mines: ' + mineCount + '  |  Score: ' + points + '  |  Level: ' + (LEVEL_LABELS[mineCount] || mineCount);
 	}
 
 	function setGameMode(mode) {
@@ -236,7 +242,6 @@
 		startGame(mineCount);
 	}
 
-	// ===== Start game =====
 	function startGame(mineTotal) {
 		mineCount = mineTotal;
 		setPoints(0);
@@ -269,9 +274,6 @@
 		draw();
 	}
 
-	// Checks (without touching real state/points) whether flood-filling from the
-	// starting square would immediately reveal the target, so the player always
-	// gets to make the opening click themselves rather than starting pre-solved.
 	function openingFloodWouldWin() {
 		if (countMines(0, 0) !== 0) return false;
 		var seen = [];
@@ -335,8 +337,6 @@
 		return true;
 	}
 
-	// Classic minesweeper flood-fill: cascades through empty (0-mine) tiles,
-	// revealing their neighbors, including the bordering numbered tiles.
 	function floodReveal(row, col) {
 		var stack = [[row, col]];
 		while (stack.length) {
@@ -398,7 +398,6 @@
 		openModal('Your score is:', text);
 	}
 
-	// ===== Mouse click =====
 	function handleClick(evt, isFlag) {
 		var rect = canvas.getBoundingClientRect();
 		var x = evt.clientX - rect.left;
@@ -432,7 +431,6 @@
 		handleClick(evt, true);
 	});
 
-	// ===== Drawing (equivalent to paintComponent) =====
 	function draw() {
 		ctx.fillStyle = '#2a3323';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -466,7 +464,6 @@
 					bg = '#2a3323';
 				}
 
-				// 3D block: "raised" if unvisited, "flat" if visited
 				draw3DRect(x, y, w, h, bg, state[r][c] !== VISITED);
 
 				if (state[r][c] === FLAGGED) {
@@ -536,7 +533,6 @@
 		ctx.textBaseline = 'alphabetic';
 	}
 
-	// ===== Menu =====
 	var menuItems = document.querySelectorAll('.menu-item');
 	menuItems.forEach(function (item) {
 		item.querySelector('.menu-title').addEventListener('click', function (e) {
@@ -587,7 +583,7 @@
 		about: function () {
 			openModal('About the Developer:',
 				'Bruno Vieira\n\n' +
-				'www.brunovidasi.com | bruno@brunovidasi.com\n\n' +
+				'www.brunovidasi.com | contact@brunovidasi.com\n\n' +
 				'Built this one in Java, back when I was starting out — still fun to play.');
 		}
 	};
@@ -601,7 +597,6 @@
 		});
 	});
 
-	// ===== Modal =====
 	function openModal(title, text) {
 		document.getElementById('modalTitle').textContent = title;
 		document.getElementById('modalText').textContent = text;
@@ -611,15 +606,8 @@
 		document.getElementById('overlay').style.display = 'none';
 	});
 
-	// ===== Start =====
 	startGame(60);
 
-	// Canvas text renders with whatever font is already loaded at draw time, so a
-	// flood-fill right after page load can paint numbers in the fallback font
-	// while 'JetBrains Mono' is still downloading. A font also isn't fetched at
-	// all until something actually draws with it, so force-load 'seti' (used by
-	// the flag icon) instead of waiting on fonts.ready, which would resolve
-	// immediately without ever requesting it. Redraw once both are ready.
 	if (document.fonts && document.fonts.load) {
 		document.fonts.load("18px 'seti'").catch(function () {}).then(function () {
 			document.fonts.ready.then(function () { draw(); });

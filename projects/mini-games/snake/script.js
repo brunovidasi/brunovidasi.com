@@ -1,10 +1,7 @@
-// Snake — by Bruno Vieira. First built in Java (Swing) back in 2013,
-// rebuilt for the browser since.
 
 (function () {
   "use strict";
 
-  // ---- Constants (equivalent to the Grade class) ----
   const WIDTH = 650;
   const HEIGHT = 400;
   const CELL_SIZE = 10;
@@ -15,32 +12,29 @@
   const canvas = document.getElementById("grade");
   const ctx = canvas.getContext("2d");
 
-  // ---- Colors (matches the site's own palette instead of the old pixel-art sprites) ----
   const BG_COLOR = "#0b0e0c";
-  // Same glyphs/colors as the file explorer on the main site (see ICON_GLYPHS in js/script.js).
   const FOOD_ICONS = [
-    { char: "", color: "#cbcb41" }, // js
-    { char: "", color: "#ffb454" }, // md
-    { char: "", color: "#cbcb41" }, // json
-    { char: "", color: "#519aba" }, // info
-    { char: "", color: "#ffb454" }, // html
-    { char: "", color: "#a074c4" }, // php
-    { char: "", color: "#8dc149" }, // sh
-    { char: "", color: "#cc3e44" }, // pdf
-    { char: "", color: "#519aba" }, // css
+    { char: "", color: "#cbcb41" },
+    { char: "", color: "#ffb454" },
+    { char: "", color: "#cbcb41" },
+    { char: "", color: "#519aba" },
+    { char: "", color: "#ffb454" },
+    { char: "", color: "#a074c4" },
+    { char: "", color: "#8dc149" },
+    { char: "", color: "#cc3e44" },
+    { char: "", color: "#519aba" },
   ];
   const FOOD_FONT = "20px 'seti'";
-  const HTML_ICON = FOOD_ICONS[4]; // always the icon the first fruit spawns as
+  const HTML_ICON = FOOD_ICONS[4];
   let food = HTML_ICON;
   const SKINS = {
-    male: { head: "#ffb454", body: "#c8d1c4" },   // accent orange head, sage-green body
-    female: { head: "#8fd19e", body: "#a67638" }, // ok-green head, dim-orange body
+    male: { head: "#ffb454", body: "#c8d1c4" },
+    female: { head: "#8fd19e", body: "#a67638" },
   };
 
   let skin = SKINS.male;
 
-  // ---- Game state ----
-  let baseDelay = 150; // starting speed for the selected difficulty; persists across "New Game"
+  let baseDelay = 150;
   let DELAY = baseDelay;
   const x = new Array(MAX_LENGTH).fill(0);
   const y = new Array(MAX_LENGTH).fill(0);
@@ -50,6 +44,7 @@
   let foodY = 0;
 
   let SCORE = 0;
+  let level = 1;
 
   let left = false;
   let right = false;
@@ -60,10 +55,9 @@
   let gamePaused = false;
   let wallsBlocked = false;
 
-  let gameTimer = null; // setInterval id (equivalent to javax.swing.Timer)
+  let gameTimer = null;
   let message = "";
 
-  // ---- Game loop ----
   function startGame() {
     snakeLength = 3;
     for (let i = 0; i < snakeLength; i++) {
@@ -89,6 +83,7 @@
 
     SCORE = 0;
     DELAY = baseDelay;
+    level = 1;
     gameRunning = true;
     gamePaused = false;
 
@@ -143,6 +138,7 @@
 
   function increaseSpeed() {
     DELAY--;
+    level++;
     if (gameTimer) clearInterval(gameTimer);
     gameTimer = setInterval(gameTick, DELAY);
     console.log("Speed increased.");
@@ -162,7 +158,6 @@
     paint();
   }
 
-  // Mirrors the "✓ option text" checkmark style used in the Minesweeper mini-game's Edit menu.
   function updateEditMenuChecks() {
     document.getElementById("lockWallsOption").textContent =
       (wallsBlocked ? "✓ " : "  ") + "Lock Walls";
@@ -193,8 +188,6 @@
       }
     }
 
-    // The last on-screen cell is at WIDTH/HEIGHT - CELL_SIZE — anything past that
-    // would draw fully off-canvas, so that's the real edge to check/wrap against.
     if (wallsBlocked) {
       if (y[0] > HEIGHT - CELL_SIZE) gameRunning = false;
       if (y[0] < 0) gameRunning = false;
@@ -238,7 +231,6 @@
     paint();
   }
 
-  // ---- Drawing (equivalent to paint(Graphics)) ----
   function paint() {
     updateScoreDisplay();
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -261,7 +253,8 @@
   }
 
   function updateScoreDisplay() {
-    document.getElementById("status").textContent = "Score: " + SCORE;
+    document.getElementById("status").textContent =
+      "Score: " + SCORE + "  |  Speed: " + DELAY + "ms" + "  |  Level: " + level;
   }
 
   function drawFood() {
@@ -321,7 +314,6 @@
     ctx.textAlign = "left";
   }
 
-  // ---- Keyboard (equivalent to the TAdapter class) ----
   window.addEventListener("keydown", (e) => {
     switch (e.code) {
       case "ArrowLeft":
@@ -374,12 +366,9 @@
       case "KeyF":
         if (e.ctrlKey || e.metaKey) { e.preventDefault(); chooseSnakeSkin(1); }
         break;
-      // Ctrl+N and Ctrl+T are reserved by the browser and can't be
-      // intercepted; use the corresponding menu items instead.
     }
   });
 
-  // ---- Generic modal (equivalent to JOptionPane) ----
   const overlay = document.getElementById("modal-overlay");
   const modalTitle = document.getElementById("modal-title");
   const modalText = document.getElementById("modal-text");
@@ -421,7 +410,6 @@
     overlay.classList.add("hidden");
   }
 
-  // ---- Menu actions (equivalent to the Menu class) ----
   function manual() {
     showMessage(
       "How to Play",
@@ -440,7 +428,7 @@
     showMessage(
       "About the Developer:",
       "Bruno Vieira\n\n" +
-      "www.brunovidasi.com | bruno@brunovidasi.com\n\n" +
+      "www.brunovidasi.com | contact@brunovidasi.com\n\n" +
       "ID @brunovidasi 2012.01.74693-1\n\n" +
       "Built this back in 10/2013 — still one of my favourites."
     );
@@ -453,7 +441,6 @@
     });
   }
 
-  // ---- Menu item wiring (HTML) ----
   const actions = {
     newGame: startNewGame,
     newEasy: () => newGameWithDifficulty(150),
@@ -477,7 +464,6 @@
     });
   });
 
-  // Dropdown menus (equivalent to JMenuBar's behavior).
   const menus = document.querySelectorAll(".menu");
   menus.forEach((menu) => {
     const title = menu.querySelector(".menu-title");
@@ -494,15 +480,12 @@
     menus.forEach((m) => m.classList.remove("open"));
   }
 
-  // ---- Initialization ----
   function start() {
     chooseSnakeSkin(0);
     startGame();
     paint();
   }
 
-  // the food glyph comes from a custom icon font — make sure it's actually
-  // loaded before the first paint, or it silently falls back to a blank glyph
   if (document.fonts && document.fonts.load) {
     document.fonts.load(FOOD_FONT).catch(() => {}).then(start);
   } else {

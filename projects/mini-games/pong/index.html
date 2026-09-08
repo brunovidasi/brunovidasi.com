@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pong - Bruno Vieira</title>
+<style>
+	@font-face {
+		font-family: 'JetBrains Mono';
+		src: url('../../../fonts/JetBrainsMono-Variable.woff2') format('woff2');
+		font-weight: 100 800;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: 'seti';
+		src: url('../../../fonts/seti.woff') format('woff');
+	}
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		background: #0b0e0c;
+		font-family: 'JetBrains Mono', Tahoma, Verdana, Arial, sans-serif;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		min-height: 100vh;
+		color: #c8d1c4;
+	}
+
+	#menubar {
+		width: 100%;
+		background: #171c18;
+		border-bottom: 1px solid #23291f;
+		display: flex;
+		font-size: 13px;
+		user-select: none;
+		position: relative;
+		z-index: 10;
+	}
+	.menu-item { position: relative; }
+	.menu-title {
+		padding: 6px 12px;
+		cursor: pointer;
+		color: #c8d1c4;
+	}
+	.menu-title:hover, .menu-item.open .menu-title { background: #23291f; color: #ffb454; }
+	.menu-dropdown {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		background: #121613;
+		border: 1px solid #23291f;
+		box-shadow: 2px 2px 10px rgba(0,0,0,.5);
+		min-width: 230px;
+	}
+	.menu-item.open .menu-dropdown { display: block; }
+	.menu-option {
+		padding: 6px 14px;
+		cursor: pointer;
+		white-space: nowrap;
+		color: #c8d1c4;
+	}
+	.menu-option:hover { background: #23291f; color: #ffb454; }
+	.menu-sep { border-top: 1px solid #23291f; margin: 4px 0; }
+
+	#gameWrap {
+		padding: 16px;
+		width: 100%;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+	#status {
+		color: #c8d1c4;
+		text-align: center;
+		font-size: 14px;
+		margin-bottom: 8px;
+	}
+	canvas {
+		display: block;
+		border: 1px solid #23291f;
+		border-radius: 4px;
+		background: #0b0e0c;
+	}
+
+	#overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		background: rgba(0,0,0,.6);
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+		z-index: 100;
+	}
+	#modal {
+		background: #121613;
+		border: 1px solid #23291f;
+		border-radius: 8px;
+		min-width: 320px;
+		max-width: 480px;
+		max-height: 100%;
+		display: flex;
+		flex-direction: column;
+		box-shadow: 0 12px 40px rgba(0,0,0,.5);
+		overflow: hidden;
+	}
+	#modal h3 {
+		flex-shrink: 0;
+		margin: 0;
+		padding: 10px 16px;
+		background: #171c18;
+		color: #ffb454;
+		font-size: 15px;
+		border-bottom: 1px solid #23291f;
+	}
+	#modal .body {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+		padding: 16px;
+		white-space: pre-line;
+		font-size: 13px;
+		line-height: 1.6;
+		color: #c8d1c4;
+	}
+	#modal .actions {
+		flex-shrink: 0;
+		padding: 10px 16px;
+		text-align: right;
+		background: #0f1310;
+		border-top: 1px solid #23291f;
+	}
+	#modal button {
+		font-family: inherit;
+		font-size: 12px;
+		padding: 6px 14px;
+		border: 1px solid #23291f;
+		background: #171c18;
+		color: #c8d1c4;
+		border-radius: 6px;
+		cursor: pointer;
+	}
+	#modal button:hover { border-color: #ffb454; color: #ffb454; }
+</style>
+</head>
+<body>
+
+<div id="menubar">
+	<div class="menu-item" data-menu="game">
+		<div class="menu-title">Game</div>
+		<div class="menu-dropdown">
+			<div class="menu-option" data-action="newGame">New Game</div>
+			<div class="menu-sep"></div>
+			<div class="menu-option" data-action="newEasy">New Game - Easy</div>
+			<div class="menu-option" data-action="newMedium">New Game - Medium</div>
+			<div class="menu-option" data-action="newHard">New Game - Hard</div>
+			<div class="menu-sep"></div>
+			<div class="menu-option" data-action="pause">Pause Game</div>
+			<div class="menu-option" data-action="resume">Resume Game</div>
+		</div>
+	</div>
+	<div class="menu-item" data-menu="edit">
+		<div class="menu-title">Edit</div>
+		<div class="menu-dropdown">
+			<div class="menu-option" data-action="toggleNet" id="toggleNetOption">✓ Show Center Net</div>
+			<div class="menu-option" data-action="toggleTrail" id="toggleTrailOption">  Show Ball Trail</div>
+		</div>
+	</div>
+	<div class="menu-item" data-menu="help">
+		<div class="menu-title">Help</div>
+		<div class="menu-dropdown">
+			<div class="menu-option" data-action="manual">Manual</div>
+			<div class="menu-sep"></div>
+			<div class="menu-option" data-action="about">About the developer</div>
+		</div>
+	</div>
+</div>
+
+<div id="gameWrap">
+	<div id="status">You: 0 &nbsp;|&nbsp; CPU: 0 &nbsp;|&nbsp; First to 5 wins &nbsp;|&nbsp; Medium</div>
+	<canvas id="board" width="640" height="400"></canvas>
+</div>
+
+<div id="overlay">
+	<div id="modal">
+		<h3 id="modalTitle"></h3>
+		<div class="body" id="modalText"></div>
+		<div class="actions"><button id="modalOk">OK</button></div>
+	</div>
+</div>
+
+<script>
+(function () {
+	'use strict';
+
+	var canvas = document.getElementById('board');
+	var ctx = canvas.getContext('2d');
+	var W = canvas.width, H = canvas.height;
+
+	var PADDLE_W = 10, PADDLE_H = 70, PADDLE_MARGIN = 20;
+	var BALL_SIZE = 18;
+	var WIN_SCORE = 5;
+
+	var COLOR_PLAYER = '#f2f5f0';
+	var COLOR_CPU = '#f2f5f0';
+	var COLOR_BALL = '#ffb454';
+	var COLOR_NET = '#c8d1c4';
+	var NET_OPACITY = 0.18;
+	var BALL_CHAR = '';
+	var BALL_FONT = "26px 'seti'";
+
+	var DIFFICULTIES = {
+		easy:   { label: 'Easy',   aiSpeed: 3.5, aiError: 14, missChance: 0.35, missError: 80, reactionDelay: 8, ballSpeed: 4.2 },
+		medium: { label: 'Medium', aiSpeed: 4.6, aiError: 9,  missChance: 0.16, missError: 65, reactionDelay: 4, ballSpeed: 5 },
+		hard:   { label: 'Hard',   aiSpeed: 7,   aiError: 3,  missChance: 0,    missError: 0,  reactionDelay: 0, ballSpeed: 6 }
+	};
+
+	var difficulty = 'medium';
+	var showNet = true, showTrail = false;
+	var waitingToStart = true;
+	var gameInProgress = false, paused = false;
+	var playerScore = 0, cpuScore = 0;
+	var loopHandle = null;
+
+	var paddleOneY, paddleTwoY;
+	var paddleOneDir = 0;
+	var ball = { x: 0, y: 0, vx: 0, vy: 0 };
+	var trail = [];
+	var aiTargetJitter = 0;
+	var ballYHistory = [];
+
+	function setStatus() {
+		document.getElementById('status').textContent =
+			'You: ' + playerScore + '  |  CPU: ' + cpuScore + '  |  First to ' + WIN_SCORE + ' wins  |  ' + DIFFICULTIES[difficulty].label;
+	}
+
+	function resetPositions() {
+		paddleOneY = H / 2 - PADDLE_H / 2;
+		paddleTwoY = H / 2 - PADDLE_H / 2;
+	}
+
+	function rollAIGuess() {
+		var diff = DIFFICULTIES[difficulty];
+		var sign = Math.random() < 0.5 ? -1 : 1;
+		if (Math.random() < diff.missChance) {
+			aiTargetJitter = sign * diff.missError * (0.6 + Math.random() * 0.4);
+		} else {
+			aiTargetJitter = sign * diff.aiError * Math.random();
+		}
+	}
+
+	function serveBall(towardPlayer) {
+		ball.x = W / 2 - BALL_SIZE / 2;
+		ball.y = H / 2 - BALL_SIZE / 2;
+		var speed = DIFFICULTIES[difficulty].ballSpeed;
+		ball.vx = (towardPlayer ? -1 : 1) * speed;
+		ball.vy = (Math.random() * 2 - 1) * speed * 0.6;
+		trail = [];
+		ballYHistory = [];
+		if (!towardPlayer) rollAIGuess();
+	}
+
+	function startGame(diff) {
+		difficulty = diff;
+		waitingToStart = false;
+		gameInProgress = true;
+		paused = false;
+		playerScore = 0;
+		cpuScore = 0;
+		resetPositions();
+		serveBall(Math.random() < 0.5);
+		setStatus();
+		restartLoop();
+		draw();
+	}
+
+	function restartLoop() {
+		if (loopHandle) clearInterval(loopHandle);
+		if (!gameInProgress || paused) return;
+		loopHandle = setInterval(function () {
+			tick();
+			draw();
+		}, 1000 / 60);
+	}
+
+	function togglePause(force) {
+		if (!gameInProgress) return;
+		var wantPause = typeof force === 'boolean' ? force : !paused;
+		if (wantPause === paused) return;
+		paused = wantPause;
+		if (paused) { clearInterval(loopHandle); loopHandle = null; } else restartLoop();
+		draw();
+	}
+
+	function bounceOffPaddle(paddleY, towardLeft) {
+		var speedUp = 1.04;
+		var relative = (ball.y + BALL_SIZE / 2) - (paddleY + PADDLE_H / 2);
+		var normalized = Math.max(-1, Math.min(1, relative / (PADDLE_H / 2)));
+		var speed = Math.min(Math.abs(ball.vx) * speedUp, DIFFICULTIES[difficulty].ballSpeed * 2.2);
+		ball.vx = (towardLeft ? -1 : 1) * speed;
+		ball.vy = normalized * speed * 0.9;
+		if (!towardLeft) rollAIGuess();
+	}
+
+	function checkWin() {
+		if (playerScore >= WIN_SCORE || cpuScore >= WIN_SCORE) {
+			gameInProgress = false;
+			clearInterval(loopHandle);
+			loopHandle = null;
+			draw();
+			var youWon = playerScore > cpuScore;
+			openModal(youWon ? 'You Win!' : 'CPU Wins',
+				(youWon ? 'You beat the CPU.' : 'The CPU got the better of you this time.') + '\n\n' +
+				'Final Score — You: ' + playerScore + '  CPU: ' + cpuScore);
+			return true;
+		}
+		return false;
+	}
+
+	function tick() {
+		paddleOneY += paddleOneDir * 6;
+		paddleOneY = Math.max(0, Math.min(H - PADDLE_H, paddleOneY));
+
+		var diff = DIFFICULTIES[difficulty];
+		ballYHistory.push(ball.y);
+		var histLimit = diff.reactionDelay + 1;
+		if (ballYHistory.length > histLimit) ballYHistory.shift();
+		var trackedY = ballYHistory[0];
+
+		var target = trackedY + BALL_SIZE / 2 - PADDLE_H / 2 + aiTargetJitter;
+		if (Math.abs(target - paddleTwoY) < diff.aiSpeed) {
+			paddleTwoY = target;
+		} else if (target > paddleTwoY) {
+			paddleTwoY += diff.aiSpeed;
+		} else {
+			paddleTwoY -= diff.aiSpeed;
+		}
+		paddleTwoY = Math.max(0, Math.min(H - PADDLE_H, paddleTwoY));
+
+		if (showTrail) {
+			trail.push({ x: ball.x, y: ball.y });
+			if (trail.length > 8) trail.shift();
+		}
+
+		ball.x += ball.vx;
+		ball.y += ball.vy;
+
+		if (ball.y <= 0) { ball.y = 0; ball.vy = -ball.vy; }
+		if (ball.y + BALL_SIZE >= H) { ball.y = H - BALL_SIZE; ball.vy = -ball.vy; }
+
+		var leftEdge = PADDLE_MARGIN + PADDLE_W;
+		var rightEdge = W - PADDLE_MARGIN - PADDLE_W;
+
+		if (ball.vx < 0 && ball.x <= leftEdge) {
+			if (ball.y + BALL_SIZE >= paddleOneY && ball.y <= paddleOneY + PADDLE_H) {
+				ball.x = leftEdge;
+				bounceOffPaddle(paddleOneY, false);
+			} else if (ball.x + BALL_SIZE < 0) {
+				cpuScore++;
+				setStatus();
+				if (!checkWin()) serveBall(false);
+			}
+		} else if (ball.vx > 0 && ball.x + BALL_SIZE >= rightEdge) {
+			if (ball.y + BALL_SIZE >= paddleTwoY && ball.y <= paddleTwoY + PADDLE_H) {
+				ball.x = rightEdge - BALL_SIZE;
+				bounceOffPaddle(paddleTwoY, true);
+			} else if (ball.x > W) {
+				playerScore++;
+				setStatus();
+				if (!checkWin()) serveBall(true);
+			}
+		}
+	}
+
+	function drawRect(x, y, w, h, color) {
+		ctx.fillStyle = color;
+		ctx.fillRect(x, y, w, h);
+	}
+
+	function drawBall(x, y) {
+		ctx.fillStyle = COLOR_BALL;
+		ctx.font = BALL_FONT;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText(BALL_CHAR, x + BALL_SIZE / 2, y + BALL_SIZE / 2 + 1);
+		ctx.textAlign = 'left';
+		ctx.textBaseline = 'alphabetic';
+	}
+
+	function draw() {
+		ctx.fillStyle = '#0b0e0c';
+		ctx.fillRect(0, 0, W, H);
+
+		if (showNet) {
+			ctx.strokeStyle = COLOR_NET;
+			ctx.globalAlpha = NET_OPACITY;
+			ctx.lineWidth = 2;
+			ctx.setLineDash([6, 8]);
+			ctx.beginPath();
+			ctx.moveTo(W / 2, 0);
+			ctx.lineTo(W / 2, H);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.globalAlpha = 1;
+		}
+
+		drawRect(PADDLE_MARGIN, paddleOneY, PADDLE_W, PADDLE_H, COLOR_PLAYER);
+		drawRect(W - PADDLE_MARGIN - PADDLE_W, paddleTwoY, PADDLE_W, PADDLE_H, COLOR_CPU);
+
+		if (showTrail) {
+			for (var i = 0; i < trail.length; i++) {
+				ctx.globalAlpha = (i + 1) / trail.length * 0.35;
+				drawBall(trail[i].x, trail[i].y);
+			}
+			ctx.globalAlpha = 1;
+		}
+		drawBall(ball.x, ball.y);
+
+		if (waitingToStart || !gameInProgress || paused) {
+			ctx.fillStyle = 'rgba(0,0,0,0.35)';
+			ctx.fillRect(0, 0, W, H);
+			ctx.fillStyle = '#ffffff';
+			ctx.font = 'bold 16px \'JetBrains Mono\', Georgia, serif';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			var msg = waitingToStart ? 'Press Any Key' : (!gameInProgress ? 'GAME OVER!' : 'PAUSED');
+			ctx.fillText(msg, W / 2, H / 2);
+			ctx.textAlign = 'left';
+			ctx.textBaseline = 'alphabetic';
+		}
+	}
+
+	var IGNORED_STARTER_KEYS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab'];
+	document.addEventListener('keydown', function (evt) {
+		if (waitingToStart) {
+			if (IGNORED_STARTER_KEYS.indexOf(evt.key) !== -1) return;
+			if (evt.key === 'ArrowUp' || evt.key === 'ArrowDown' || evt.key === ' ') evt.preventDefault();
+			startGame(difficulty);
+			return;
+		}
+		switch (evt.key) {
+			case 'ArrowUp': paddleOneDir = -1; evt.preventDefault(); break;
+			case 'ArrowDown': paddleOneDir = 1; evt.preventDefault(); break;
+			case 'p': case 'P': togglePause(); break;
+			case 'Escape': togglePause(); break;
+		}
+	});
+	document.addEventListener('keyup', function (evt) {
+		if (evt.key === 'ArrowUp' && paddleOneDir === -1) paddleOneDir = 0;
+		if (evt.key === 'ArrowDown' && paddleOneDir === 1) paddleOneDir = 0;
+	});
+	window.addEventListener('blur', function () {
+		paddleOneDir = 0;
+		if (gameInProgress) togglePause(true);
+	});
+
+	var menuItems = document.querySelectorAll('.menu-item');
+	menuItems.forEach(function (item) {
+		item.querySelector('.menu-title').addEventListener('click', function (e) {
+			e.stopPropagation();
+			var wasOpen = item.classList.contains('open');
+			menuItems.forEach(function (mi) { mi.classList.remove('open'); });
+			if (!wasOpen) item.classList.add('open');
+		});
+	});
+	document.addEventListener('click', function () {
+		menuItems.forEach(function (mi) { mi.classList.remove('open'); });
+	});
+
+	var actions = {
+		newGame: function () { startGame(difficulty); },
+		newEasy: function () { startGame('easy'); },
+		newMedium: function () { startGame('medium'); },
+		newHard: function () { startGame('hard'); },
+		pause: function () { togglePause(true); },
+		resume: function () { togglePause(false); },
+		toggleNet: function () {
+			showNet = !showNet;
+			document.getElementById('toggleNetOption').textContent =
+				(showNet ? '✓ ' : '  ') + 'Show Center Net';
+			draw();
+		},
+		toggleTrail: function () {
+			showTrail = !showTrail;
+			document.getElementById('toggleTrailOption').textContent =
+				(showTrail ? '✓ ' : '  ') + 'Show Ball Trail';
+			draw();
+		},
+		manual: function () {
+			openModal('How to Play',
+				'Controls:\n\n' +
+				'• ↑ / ↓ - Move your paddle (the blue one, on the left) up or down.\n' +
+				'• P or Esc - Pause / Resume.\n\n' +
+				'How to Play:\n\n' +
+				'• Keep the ball from getting past your paddle. Every time it gets past the CPU\'s paddle, you score.\n\n' +
+				'• Where the ball hits your paddle changes the angle it bounces off at — catch it near the edges to place your shots.\n\n' +
+				'• The ball speeds up a little with every rally.\n\n' +
+				'Objective:\n\n' +
+				'• First to ' + WIN_SCORE + ' points wins the match!\n\n' +
+				'Good luck, little grasshopper!');
+		},
+		about: function () {
+			openModal('About the Developer:',
+				'Bruno Vieira\n\n' +
+				'www.brunovidasi.com | contact@brunovidasi.com\n\n' +
+				'Originally built this Pong for a 2020 online campaign at The Hallway — ported it here and gave it the same look as the site\'s other mini-games.');
+		}
+	};
+
+	document.querySelectorAll('.menu-option').forEach(function (opt) {
+		opt.addEventListener('click', function (e) {
+			e.stopPropagation();
+			var action = actions[opt.getAttribute('data-action')];
+			if (action) action();
+			menuItems.forEach(function (mi) { mi.classList.remove('open'); });
+		});
+	});
+
+	function openModal(title, text) {
+		document.getElementById('modalTitle').textContent = title;
+		document.getElementById('modalText').textContent = text;
+		document.getElementById('overlay').style.display = 'flex';
+	}
+	document.getElementById('modalOk').addEventListener('click', function () {
+		document.getElementById('overlay').style.display = 'none';
+	});
+
+	resetPositions();
+	ball.x = W / 2 - BALL_SIZE / 2;
+	ball.y = H / 2 - BALL_SIZE / 2;
+	draw();
+
+	if (document.fonts && document.fonts.load) {
+		Promise.all([
+			document.fonts.load("15px 'JetBrains Mono'").catch(function () {}),
+			document.fonts.load(BALL_FONT).catch(function () {})
+		]).then(function () {
+			document.fonts.ready.then(function () { draw(); });
+		});
+	}
+})();
+</script>
+</body>
+</html>
