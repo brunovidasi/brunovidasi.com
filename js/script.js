@@ -82,7 +82,7 @@ function resetWebsiteDetailIds(){
 // ---- bio.md: shows once, no typing animation (declared early so the initial
 // render — which may land straight on the about tab via deep link — can use it) ----
 let bioTypedOnce = false;
-const bioText = `Hi, I'm Bruno — a Brazilian-born, Sydney-based developer with ${yearsExperience}+ years of experience across full-stack and front-end development. I specialise in building reliable, well-structured systems — from custom PHP/Node back-ends to pixel-perfect front-ends.\n\nI'm 32, originally from Rio de Janeiro, Brazil, and I've called Sydney home since 2017. \nI'm an Australian citizen, fluent in English, Portuguese and Spanish.`;
+const bioText = `Hi, I'm Bruno — a Brazilian-born, Sydney-based developer with ${yearsExperience}+ years of experience across full-stack and front-end development. I specialise in building reliable, well-structured systems — from custom PHP/Node back-ends to pixel-perfect front-ends.\n\nI'm 32, originally from Rio de Janeiro, Brazil, and I've called Sydney home since 2017. \nI'm an Australian citizen, fluent in English, Portuguese and Spanish.\n\nRather than a typical portfolio, this website is built like a developer tool — a file explorer, tabs, even a boot-up sequence — so browsing it feels less like reading a resume and more like poking around a codebase, getting a real sense of how I think and build.`;
 
 // ---- terminal-style "decrypt" reveal for the email address (declared early — same
 // TDZ reason as bioTypedOnce above: a direct /contact visit calls startEmailReveal()
