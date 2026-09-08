@@ -43,7 +43,6 @@ const files = {
   'mini-tools':      { label:'mini-tools.html',     icon:'html', folder:'projects' },
   'edm-tools':       { label:'eDM-tools.html',      icon:'html', folder:'projects' },
   'mini-games':      { label:'mini-games.html',     icon:'html', folder:'projects' },
-  'edm-work':        { label:'eDM-work.html',       icon:'html', folder:'projects' },
   'site-history':    { label:'site-history.html',   icon:'html', folder:'projects' },
   freelance:         { label:'freelance.css',       icon:'css',  folder:null },
   contact:           { label:'contact.sh',          icon:'sh',   folder:null },
@@ -51,7 +50,7 @@ const files = {
 };
 const folders = {
   about:    { label:'about/', children:['about','experience','education','skills'] },
-  projects: { label:'projects/', children:['websites','web-systems','landing-pages','mini-tools','edm-work','edm-tools','mini-games','site-history'] }
+  projects: { label:'projects/', children:['websites','web-systems','landing-pages','mini-tools','edm-tools','mini-games','site-history'] }
 };
 const rootOrder = ['intro','about','projects','freelance','documents','contact'];
 
@@ -1025,7 +1024,6 @@ function renderWebsiteDetail(category){
 const CATEGORY_RENDERERS = {
   websites: renderWebsiteCard,
   'web-systems': renderWebsiteCard,
-  'edm-work': renderCaseCard,
   'edm-html-builder': renderCaseCard,
   'landing-pages': renderTimelineCard,
   'site-history': renderTimelineCard,
@@ -1121,8 +1119,8 @@ function renderFreelanceProjects(allProjects){
 }
 
 // ---- jump from an experience mini box to the matching project card ----
-// (edm-kinetic-modules cards live nested inside the edm-work tab, not their own tab)
-const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-work', 'edm-html-builder': 'edm-tools' };
+// (edm-kinetic-modules and edm-html-builder cards live nested inside the edm-tools tab, not their own tab)
+const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-tools', 'edm-html-builder': 'edm-tools' };
 function goToProject(category, id, companySlug){
   openFile(PROJECT_TAB_OVERRIDES[category] || category);
   if(WEBSITE_STYLE_CATEGORIES.includes(category) && companySlug) filterWebsitesToCompany(category, companySlug);

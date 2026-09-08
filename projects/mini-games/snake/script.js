@@ -40,7 +40,8 @@
   let skin = SKINS.male;
 
   // ---- Game state ----
-  let DELAY = 150;
+  let baseDelay = 150; // starting speed for the selected difficulty; persists across "New Game"
+  let DELAY = baseDelay;
   const x = new Array(MAX_LENGTH).fill(0);
   const y = new Array(MAX_LENGTH).fill(0);
   let snakeLength = 3;
@@ -87,11 +88,16 @@
     down = false;
 
     SCORE = 0;
-    DELAY = 150;
+    DELAY = baseDelay;
     gameRunning = true;
     gamePaused = false;
 
     startGame();
+  }
+
+  function newGameWithDifficulty(delay) {
+    baseDelay = delay;
+    startNewGame();
   }
 
   function chooseSnakeSkin(sex) {
@@ -450,9 +456,11 @@
   // ---- Menu item wiring (HTML) ----
   const actions = {
     newGame: startNewGame,
+    newEasy: () => newGameWithDifficulty(150),
+    newMedium: () => newGameWithDifficulty(100),
+    newHard: () => newGameWithDifficulty(60),
     pause: pause,
     resume: resume,
-    exit: exitGame,
     lockWalls: lockWalls,
     unlockWalls: unlockWalls,
     orangeSnake: () => chooseSnakeSkin(0),
