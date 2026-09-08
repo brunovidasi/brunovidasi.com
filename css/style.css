@@ -2793,7 +2793,6 @@ body.mobile-nav-locked {
   left: 0;
   right: 0;
   width: 100%;
-  overflow: hidden;
 }
 
 @media (max-width: 720px) {
