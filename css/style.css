@@ -269,6 +269,7 @@ a {
   border: none;
   padding: 0;
   position: relative;
+  transition: filter .15s ease, transform .15s ease, box-shadow .15s ease;
 }
 
 .dot.r {
@@ -286,6 +287,7 @@ a {
 .dot:hover {
   filter: brightness(1.2);
   box-shadow: 0 0 6px rgba(255,255,255,.3);
+  transform: scale(1.15);
 }
 
 .titlebar span.path {
@@ -1761,6 +1763,37 @@ h2.sect .brk {
   flex-shrink: 0;
 }
 
+/* interactive traffic lights (minimize/view/reload/fullscreen/back) on a card's chrome */
+.website-dot:not(.disabled) {
+  cursor: pointer;
+  transition: filter .15s ease, transform .15s ease;
+}
+
+.website-dot:not(.disabled):hover {
+  filter: brightness(1.25);
+  transform: scale(1.15);
+}
+
+.website-dot.disabled {
+  opacity: .35;
+}
+
+.website-card.minimized .website-thumb,
+.website-card.minimized .game-frame-wrap,
+.website-card.minimized .website-body {
+  display: none;
+}
+
+/* website/web-system detail page: yellow dot hides the description column so the
+   screenshot takes the full width instead of sharing it 50/50 */
+.website-detail-card.focus-media .website-detail-info-col {
+  display: none;
+}
+
+.website-detail-card.focus-media .website-detail-media {
+  flex: 1 1 100%;
+}
+
 .website-dot.r {
   background: #ff5f57;
 }
@@ -2192,6 +2225,15 @@ h2.sect .brk {
 
 .case-card--compact {
   max-width: 480px;
+}
+
+.case-card.minimized .case-media,
+.case-card.minimized .case-body {
+  display: none;
+}
+
+.case-card.media-hidden .case-media {
+  display: none;
 }
 
 .case-media {

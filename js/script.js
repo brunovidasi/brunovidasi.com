@@ -614,8 +614,16 @@ function renderCaseCard(project){
     .map(key => `<div class="case-section"><b>${key.charAt(0).toUpperCase() + key.slice(1)}:</b> ${escapeHtml(project[key])}</div>`)
     .join('');
   const githubHtml = project.github ? `<a class="doc-btn" href="${escapeHtml(project.github)}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
+  const githubUrl = project.github ? escapeHtml(project.github) : '';
+  const greenDotHtml = githubUrl
+    ? `<span class="website-dot g" onclick="openInNewWindow('${githubUrl}')" title="View source on GitHub"></span>`
+    : `<span class="website-dot g disabled" title="No source link"></span>`;
   return `
     <div class="case-card" id="project-${project.id}">
+      <div class="website-chrome">
+        <span class="website-dot r" onclick="toggleCardMinimize('${project.id}')" title="Minimize"></span><span class="website-dot y" onclick="toggleCaseMediaHidden('${project.id}')" title="Hide screenshot"></span>${greenDotHtml}
+        <div class="website-urlbar">${project.icon ? `<span class="website-lock">${escapeHtml(project.icon)}</span>` : ''}${title}</div>
+      </div>
       ${mediaHtml}
       <div class="case-body">
         <div class="case-head">
@@ -675,7 +683,7 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
   return `
     <div class="website-card" id="project-${project.id}" data-status="${status}" data-company="${companySlug}"${isArchived ? ' data-archived="true"' : ''}>
       <div class="website-chrome">
-        <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
+        <span class="website-dot r" onclick="toggleCardMinimize('${project.id}')" title="Minimize"></span><span class="website-dot y" onclick="toggleCardMinimize('${project.id}')" title="Minimize"></span><span class="website-dot g" onclick="${detailAction}" title="View project"></span>
         <div class="website-urlbar">${lockHtml}${url}</div>
         ${statusBadgeHtml}
       </div>
@@ -716,12 +724,13 @@ function renderMiniGameCard(project){
   const path = escapeHtml(project.path);
   const github = escapeHtml(project.github);
   const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
-  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub (2013 project)</a>` : '';
+  const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub (2013 Java)</a>` : '';
+  const githubHtml2026 = `<a class="doc-btn" href="https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-games" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub (2026 HTML5)</a>`;
 
   return `
     <div class="website-card game-card" id="project-${project.id}">
       <div class="website-chrome">
-        <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
+        <span class="website-dot r" onclick="reloadGameFrame('${project.id}')" title="Reload"></span><span class="website-dot y" onclick="toggleCardMinimize('${project.id}')" title="Minimize"></span><span class="website-dot g" onclick="openGameFullscreen('${project.id}')" title="Fullscreen"></span>
         <div class="website-urlbar"><span class="website-lock">🎮</span> ${title}</div>
         <button class="game-fullscreen-btn" onclick="openGameFullscreen('${project.id}')" title="Fullscreen">${ICON_FULLSCREEN_SVG}</button>
       </div>
@@ -740,6 +749,7 @@ function renderMiniGameCard(project){
         <div class="doc-actions">
           <button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>
           ${githubHtml}
+          ${githubHtml2026}
         </div>
       </div>
     </div>`;
@@ -782,6 +792,36 @@ function openGameFullscreen(id){
   else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
 }
 
+// ---- a game card's own traffic lights: red reloads the iframe, yellow minimizes
+// the card (collapses the frame + body, leaving just the chrome bar), green fullscreens ----
+function reloadGameFrame(id){
+  const wrap = document.getElementById('gameFrame-' + id);
+  const iframe = wrap && wrap.querySelector('iframe');
+  if(!iframe) return;
+  iframe.src = iframe.src;
+}
+
+// ---- shared minimize toggle for any card that uses the "browser window" chrome
+// (game cards and website/web-system cards alike) ----
+function toggleCardMinimize(id){
+  const card = document.getElementById('project-' + id);
+  if(card) card.classList.toggle('minimized');
+}
+
+// ---- a website/web-system detail page's yellow dot: hide the description column
+// so the screenshot gets the full width instead of sharing it 50/50 ----
+function toggleWebsiteDetailFocus(id){
+  const card = document.getElementById('websiteDetail-' + id);
+  if(card) card.classList.toggle('focus-media');
+}
+
+// ---- the eDM Builder case-card's yellow dot: hide just the screenshot, keeping
+// the description/tech/GitHub info below it visible (red minimizes the whole card) ----
+function toggleCaseMediaHidden(id){
+  const card = document.getElementById('project-' + id);
+  if(card) card.classList.toggle('media-hidden');
+}
+
 function slugify(str){
   return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'personal';
 }
@@ -797,6 +837,9 @@ function applyWebsiteFilters(category){
   if(!grid) return;
   const status = grid.dataset.filter || 'all';
   const company = grid.dataset.companyFilter || 'all';
+  // filtering re-shuffles which cards are visible, so any card left minimized would
+  // be easy to lose track of — always come back maximised when a filter changes
+  grid.querySelectorAll('.website-card.minimized').forEach(card => card.classList.remove('minimized'));
   let visibleCount = 0;
   grid.querySelectorAll('.website-card').forEach(card => {
     const statusMatch = status === 'all' || card.dataset.status === status;
@@ -910,15 +953,18 @@ function renderWebsiteDetailHtml(project, category){
   const pdfHtml = project.pdf ? `<a class="doc-btn" href="${escapeHtml(project.pdf)}" target="_blank" rel="noopener">${ICON_PDF_SVG}Read thesis</a>` : '';
   const lockHtml = showStatus ? `<span class="website-lock">${status === 'live' ? '🔒' : '⚠️'}</span>` : '';
   const statusBadgeHtml = showStatus ? `<span class="website-status website-status--${status}">${status === 'live' ? '🟢 Live' : '⚫ Offline'}</span>` : '';
+  const greenDotHtml = cardClickable
+    ? `<span class="website-dot g" onclick="openInNewWindow('${visitTargetUrl}')" title="Visit site"></span>`
+    : `<span class="website-dot g disabled" title="No live link"></span>`;
 
   return `
     <div class="website-detail-inner">
     <button class="website-detail-back" onclick="closeWebsiteDetail('${category}')">← Back to all ${WEBSITE_CATEGORY_LABELS[category] || category}</button>
-    <div class="website-card website-detail-card" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}>
+    <div class="website-card website-detail-card" id="websiteDetail-${project.id}" data-status="${status}"${isArchived ? ' data-archived="true"' : ''}>
       <div class="website-detail-split">
         <div class="website-detail-media">
           <div class="website-chrome">
-            <span class="website-dot r"></span><span class="website-dot y"></span><span class="website-dot g"></span>
+            <span class="website-dot r" onclick="closeWebsiteDetail('${category}')" title="Back"></span><span class="website-dot y" onclick="toggleWebsiteDetailFocus('${project.id}')" title="Toggle screenshot size"></span>${greenDotHtml}
             <div class="website-urlbar">${lockHtml}${url}</div>
             ${statusBadgeHtml}
           </div>
