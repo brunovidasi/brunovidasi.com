@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVG Path Animator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>SVG Path Animator</h1>
+  <p class="sub">Draw or paste a path, preview it as a stroke draw-in, fill reveal, or traveling dot, tune the easing curve, and copy ready-to-use CSS or SMIL.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="card">
+    <div class="card-head">Path source</div>
+
+    <div class="presets" id="presets"></div>
+
+    <div class="source-row">
+      <textarea id="pathInput" class="path-input" spellcheck="false" placeholder='Paste a path "d" attribute (e.g. M10,10 L90,90) or a full &lt;svg&gt;…&lt;/svg&gt;'></textarea>
+      <div class="source-actions">
+        <button class="btn" id="loadBtn">Load path</button>
+        <button class="btn secondary" id="drawToggleBtn">✏️ Draw your own</button>
+      </div>
+    </div>
+    <div class="input-error" id="inputError"></div>
+  </div>
+
+  <div class="grid">
+    <div class="card stage-card">
+      <div class="card-head">Preview <span class="draw-hint" id="drawHint">Click and drag on the canvas to draw</span></div>
+      <div class="stage" id="stage">
+        <svg id="stageSvg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
+          <path id="previewPath" fill="none"></path>
+          <circle id="previewDot" r="4"></circle>
+        </svg>
+        <div class="draw-actions" id="drawActions" hidden>
+          <button class="btn" id="useDrawingBtn">Use this drawing</button>
+          <button class="btn secondary" id="clearDrawingBtn">Clear</button>
+          <button class="btn secondary" id="cancelDrawingBtn">Cancel</button>
+        </div>
+      </div>
+      <div class="transport">
+        <button class="icon-btn" id="restartBtn" title="Restart">⟲</button>
+        <button class="icon-btn primary" id="playPauseBtn" title="Play/Pause">⏸</button>
+        <label class="loop-toggle"><input type="checkbox" id="loopToggle" checked> Loop</label>
+        <div class="stats" id="stats"></div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">Animation</div>
+
+      <div class="setting-block">
+        <div class="setting-label">Type</div>
+        <div class="seg" id="animTypeSeg">
+          <button class="seg-btn active" data-type="draw">Draw</button>
+          <button class="seg-btn" data-type="drawFill">Draw + fill</button>
+          <button class="seg-btn" data-type="dot">Traveling dot</button>
+        </div>
+      </div>
+
+      <div class="setting-block two-col">
+        <label class="range-label">
+          Duration <span class="range-val" id="durationVal">1500ms</span>
+          <input type="range" id="durationRange" min="200" max="5000" step="50" value="1500">
+        </label>
+        <label class="range-label">
+          Delay <span class="range-val" id="delayVal">0ms</span>
+          <input type="range" id="delayRange" min="0" max="2000" step="50" value="0">
+        </label>
+      </div>
+
+      <div class="setting-block">
+        <div class="setting-label">Easing</div>
+        <div class="easing-row">
+          <div class="easing-presets" id="easingPresets"></div>
+          <div class="curve-editor-wrap">
+            <svg id="curveEditor" viewBox="0 0 120 120"></svg>
+            <div class="curve-nums">
+              <input type="number" id="ex1" step="0.01" min="0" max="1">
+              <input type="number" id="ey1" step="0.01">
+              <input type="number" id="ex2" step="0.01" min="0" max="1">
+              <input type="number" id="ey2" step="0.01">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-block two-col" id="drawStyleBlock">
+        <label class="range-label">Stroke color
+          <input type="color" id="strokeColor" value="#3d6b8a">
+        </label>
+        <label class="range-label">Stroke width <span class="range-val" id="strokeWidthVal">3px</span>
+          <input type="range" id="strokeWidthRange" min="1" max="12" step="0.5" value="3">
+        </label>
+      </div>
+
+      <div class="setting-block two-col" id="fillStyleBlock" hidden>
+        <label class="range-label">Fill color
+          <input type="color" id="fillColor" value="#3d6b8a">
+        </label>
+      </div>
+
+      <div class="setting-block two-col" id="dotStyleBlock" hidden>
+        <label class="range-label">Dot color
+          <input type="color" id="dotColor" value="#ab5142">
+        </label>
+        <label class="range-label">Dot size <span class="range-val" id="dotSizeVal">4px</span>
+          <input type="range" id="dotSizeRange" min="1" max="12" step="0.5" value="4">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card export-card">
+    <div class="card-head">
+      Export
+      <div class="tabs" id="exportTabs">
+        <button class="tab-btn active" data-tab="css">CSS</button>
+        <button class="tab-btn" data-tab="svg">SVG (SMIL)</button>
+      </div>
+      <button class="btn copy-btn" id="copyCodeBtn">Copy</button>
+    </div>
+    <pre class="code-block"><code id="codeOutput"></code></pre>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

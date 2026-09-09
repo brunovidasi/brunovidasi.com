@@ -1540,7 +1540,7 @@ h2.sect .brk {
 }
 
 .tool-card {
-  flex: 0 1 calc(50% - 8px);
+  flex: 1 1 calc(50% - 8px);
   min-width: 280px;
   margin-bottom: 0;
 }

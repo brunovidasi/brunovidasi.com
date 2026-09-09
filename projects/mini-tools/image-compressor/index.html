@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Compressor</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/jszip.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Image Compressor</h1>
+  <p class="sub">Drag in images, tune quality and size, download the compressed result.</p>
+  <p class="privacy">Everything runs in your browser — files are never uploaded anywhere.</p>
+
+  <div class="toolbar">
+    <div class="field">
+      <label for="format">Output format</label>
+      <select id="format">
+        <option value="auto">Keep format</option>
+        <option value="image/jpeg">JPEG</option>
+        <option value="image/webp">WebP</option>
+        <option value="image/png">PNG</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="quality">Quality</label>
+      <div class="quality-row">
+        <input type="range" id="quality" min="1" max="100" value="75">
+        <span class="quality-val" id="qualityVal">75%</span>
+      </div>
+    </div>
+
+    <div class="field toggle-field off" id="resizeField">
+      <label class="opt"><input type="checkbox" id="resizeToggle"> Resize to max</label>
+      <div class="toggle-input">
+        <input type="number" id="maxDim" value="1920" min="16" step="1" disabled>
+        <span class="unit">px</span>
+      </div>
+    </div>
+
+    <div class="field toggle-field off" id="limitSizeField">
+      <label class="opt"><input type="checkbox" id="limitSizeToggle"> Limit max size</label>
+      <div class="toggle-input">
+        <input type="number" id="maxSizeKb" value="500" min="1" step="1" disabled>
+        <span class="unit">KB</span>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <button class="secondary" id="clearBtn">Clear all</button>
+  </div>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose images</strong> or drag &amp; drop them here</div>
+    <input type="file" id="fileInput" accept="image/*" multiple>
+  </div>
+
+  <div class="summary" id="summary">
+    <div class="stat"><span class="label">Images</span><span class="value" id="sumCount">0</span></div>
+    <div class="stat"><span class="label">Original</span><span class="value" id="sumOriginal">0 KB</span></div>
+    <div class="stat"><span class="label">Compressed</span><span class="value" id="sumCompressed">0 KB</span></div>
+    <div class="stat"><span class="label">Saved</span><span class="value good" id="sumSaved">0%</span></div>
+    <div class="spacer"></div>
+    <button id="downloadAllBtn">Download all (.zip)</button>
+  </div>
+
+  <div class="empty" id="emptyState">No images yet — add some above.</div>
+  <div class="grid" id="grid"></div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="name" id="modalName"></span>
+      <button id="modalClose">✕</button>
+    </div>
+    <div class="compare" id="compare">
+      <img id="compareAfter" class="after-layer">
+      <img id="compareBefore" class="before-layer">
+      <div class="handle" id="compareHandle"></div>
+    </div>
+    <div class="compare-labels"><span>Original</span><span>Compressed</span></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

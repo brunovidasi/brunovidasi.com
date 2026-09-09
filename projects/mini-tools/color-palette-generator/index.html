@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Palette Generator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Color Palette Generator</h1>
+  <p class="sub">Generate an accessible tonal palette from a base color or an uploaded image, with live WCAG contrast-ratio checks.</p>
+  <p class="privacy">Everything runs in your browser — nothing is uploaded anywhere.</p>
+
+  <div class="panel source-panel">
+    <div class="tabs" id="sourceTabs">
+      <button class="tab active" data-source="color">From color</button>
+      <button class="tab" data-source="image">From image</button>
+    </div>
+
+    <div class="source-view" id="colorSource">
+      <div class="color-pick-row">
+        <input type="color" id="colorSwatch" class="color-swatch-input" value="#3d6b8a">
+        <input type="text" id="hexInput" class="hex-input" value="#3D6B8A" spellcheck="false" autocomplete="off" maxlength="7">
+        <button class="btn" id="randomColorBtn" title="Random base color">Random</button>
+      </div>
+      <div class="presets" id="colorPresets">
+        <button class="preset-swatch" data-hex="#3D6B8A" style="--sw:#3D6B8A"></button>
+        <button class="preset-swatch" data-hex="#AB5142" style="--sw:#AB5142"></button>
+        <button class="preset-swatch" data-hex="#6F8F6A" style="--sw:#6F8F6A"></button>
+        <button class="preset-swatch" data-hex="#8A5BA6" style="--sw:#8A5BA6"></button>
+        <button class="preset-swatch" data-hex="#C98A2E" style="--sw:#C98A2E"></button>
+        <button class="preset-swatch" data-hex="#2E7D6B" style="--sw:#2E7D6B"></button>
+        <button class="preset-swatch" data-hex="#B0416F" style="--sw:#B0416F"></button>
+        <button class="preset-swatch" data-hex="#3A3F8A" style="--sw:#3A3F8A"></button>
+      </div>
+    </div>
+
+    <div class="source-view" id="imageSource" hidden>
+      <label class="dropzone" id="dropzone" for="imageInput">
+        <span class="dz-icon">⇪</span>
+        <span class="dz-text">Drop an image here, or click to choose one</span>
+        <input type="file" id="imageInput" accept="image/*" hidden>
+      </label>
+      <div class="image-preview-row" id="imagePreviewRow" hidden>
+        <img id="imagePreview" alt="Uploaded image preview">
+        <div class="extracted-wrap">
+          <div class="extracted-head">
+            <span>Dominant colors <span class="hint">(click one to use as base)</span></span>
+            <button class="btn secondary" id="reextractBtn">Re-extract</button>
+          </div>
+          <div class="extracted-list" id="extractedList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel palette-panel">
+    <div class="section-head">
+      <span>Tonal palette</span>
+      <div class="export-actions">
+        <button class="btn secondary" id="copyCssBtn">Copy CSS variables</button>
+        <button class="btn secondary" id="copyJsonBtn">Copy JSON</button>
+      </div>
+    </div>
+    <div class="scale-grid" id="scaleGrid"></div>
+  </div>
+
+  <div class="panel contrast-panel">
+    <div class="section-head"><span>Contrast checker</span></div>
+    <div class="contrast-controls">
+      <div class="ctrl-label">
+        Text
+        <div class="color-dropdown" id="fgDropdown">
+          <button type="button" class="color-dd-trigger" id="fgTrigger">
+            <span class="dd-swatch" id="fgSwatch"></span>
+            <span class="dd-label" id="fgLabel"></span>
+            <span class="dd-caret">▾</span>
+          </button>
+          <div class="color-dd-menu" id="fgMenu" hidden></div>
+        </div>
+      </div>
+      <button class="swap-btn" id="swapBtn" title="Swap text/background">⇄</button>
+      <div class="ctrl-label">
+        Background
+        <div class="color-dropdown" id="bgDropdown">
+          <button type="button" class="color-dd-trigger" id="bgTrigger">
+            <span class="dd-swatch" id="bgSwatch"></span>
+            <span class="dd-label" id="bgLabel"></span>
+            <span class="dd-caret">▾</span>
+          </button>
+          <div class="color-dd-menu" id="bgMenu" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contrast-preview" id="contrastPreview">
+      <span class="cp-large">Aa</span>
+      <span class="cp-normal">The quick brown fox jumps over the lazy dog.</span>
+    </div>
+
+    <div class="contrast-results" id="contrastResults"></div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

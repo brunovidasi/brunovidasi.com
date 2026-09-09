@@ -521,7 +521,7 @@ function renderToolCard(project){
   const viewHtml = project.noView ? '' : `<button class="doc-btn" onclick="toggleDoc('${project.id}')">${ICON_EYE_SVG}View</button>`;
   const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
   const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
-  const openWindowHtml = (project.noView || project.category !== 'site-history') ? '' : `<button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>`;
+  const openWindowHtml = (project.noView || project.live || !['site-history', 'mini-tools'].includes(project.category)) ? '' : `<button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>`;
   const embedHtml = project.noView ? '' : `
       <div class="doc-embed" id="embed-${project.id}">
         <iframe data-src="${path}" title="${title}"></iframe>

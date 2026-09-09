@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Generator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Password Generator</h1>
+  <p class="sub">Generate strong random passwords or memorable passphrases, with a live entropy breakdown of exactly how strong (or weak) they are.</p>
+  <p class="privacy">Everything runs in your browser using the Web Crypto API — nothing is sent anywhere.</p>
+
+  <div class="panel">
+    <div class="tabs" id="modeTabs">
+      <button class="tab active" data-mode="password">Password</button>
+      <button class="tab" data-mode="passphrase">Passphrase</button>
+    </div>
+
+    <div class="mode-view" id="passwordView">
+      <div class="length-row">
+        <span class="ctrl-label-inline">Length</span>
+        <input type="range" id="pwLength" min="4" max="64" value="16">
+        <span class="length-value" id="pwLengthValue">16</span>
+      </div>
+
+      <div class="options-grid">
+        <label class="option-toggle"><input type="checkbox" id="optLower" checked><span>a-z</span></label>
+        <label class="option-toggle"><input type="checkbox" id="optUpper" checked><span>A-Z</span></label>
+        <label class="option-toggle"><input type="checkbox" id="optDigits" checked><span>0-9</span></label>
+        <label class="option-toggle"><input type="checkbox" id="optSymbols"><span>!@#$</span></label>
+        <label class="option-toggle"><input type="checkbox" id="optAmbiguous"><span>Exclude ambiguous (l1IO0)</span></label>
+      </div>
+    </div>
+
+    <div class="mode-view" id="passphraseView" hidden>
+      <div class="length-row">
+        <span class="ctrl-label-inline">Words</span>
+        <input type="range" id="ppWords" min="3" max="10" value="5">
+        <span class="length-value" id="ppWordsValue">5</span>
+      </div>
+
+      <div class="options-grid">
+        <label class="option-toggle"><input type="checkbox" id="ppCapitalize" checked><span>Capitalize</span></label>
+        <label class="option-toggle"><input type="checkbox" id="ppNumber" checked><span>Add number</span></label>
+        <div class="separator-picker">
+          <span>Separator</span>
+          <select id="ppSeparator">
+            <option value="-" selected>hyphen -</option>
+            <option value=".">dot .</option>
+            <option value="_">underscore _</option>
+            <option value=" ">space</option>
+            <option value="">none</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="output-row">
+      <div class="output-box" id="outputBox">
+        <span id="outputText">Click Generate</span>
+      </div>
+      <button class="btn secondary" id="copyBtn" title="Copy to clipboard">Copy</button>
+      <button class="btn" id="generateBtn">Generate</button>
+    </div>
+  </div>
+
+  <div class="panel entropy-panel">
+    <div class="section-head"><span>Entropy</span></div>
+
+    <div class="entropy-summary">
+      <div class="entropy-bits">
+        <span class="entropy-number" id="entropyBits">0</span>
+        <span class="entropy-unit">bits</span>
+      </div>
+      <div class="entropy-strength">
+        <div class="strength-bar-track">
+          <div class="strength-bar-fill" id="strengthFill"></div>
+        </div>
+        <span class="strength-label" id="strengthLabel">—</span>
+      </div>
+    </div>
+
+    <div class="entropy-details">
+      <div class="detail-row">
+        <span class="detail-label">Pool / choices</span>
+        <span class="detail-value" id="detailPool">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Combinations</span>
+        <span class="detail-value" id="detailCombos">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Time to crack (offline, 10¹² guesses/sec)</span>
+        <span class="detail-value" id="detailCrackTime">—</span>
+      </div>
+    </div>
+
+    <div class="history-wrap" id="historyWrap" hidden>
+      <div class="section-head"><span>Recent (this session, not stored)</span></div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="wordlist.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

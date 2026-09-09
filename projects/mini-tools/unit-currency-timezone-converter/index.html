@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit / Currency / Timezone Converter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Convert</h1>
+  <p class="sub">Units, currencies, and timezones — one tool, three converters.</p>
+  <p class="privacy" id="privacyNote">Unit &amp; timezone math runs entirely in your browser. Currency needs a live exchange rate, fetched from a free public API.</p>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="units">📏 Units</button>
+    <button class="tab" data-tab="currency">💱 Currency</button>
+    <button class="tab" data-tab="timezone">🕒 Timezones</button>
+  </div>
+
+  <!-- ---------------- UNITS ---------------- -->
+  <section class="panel active" id="panel-units">
+    <div class="category-row" id="unitCategories"></div>
+
+    <div class="convert-card">
+      <div class="convert-col">
+        <label class="convert-label">From</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="unitFromValue" value="1">
+          <select class="convert-select" id="unitFromUnit"></select>
+        </div>
+      </div>
+
+      <button class="swap-btn" id="unitSwap" title="Swap units">⇄</button>
+
+      <div class="convert-col">
+        <label class="convert-label">To</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="unitToValue" readonly>
+          <select class="convert-select" id="unitToUnit"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-line" id="unitRateLine"></div>
+
+    <div class="all-units">
+      <div class="all-units-head">All units in this category</div>
+      <div class="all-units-grid" id="unitAllGrid"></div>
+    </div>
+  </section>
+
+  <!-- ---------------- CURRENCY ---------------- -->
+  <section class="panel" id="panel-currency">
+    <div class="convert-card">
+      <div class="convert-col">
+        <label class="convert-label">Amount</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="curFromValue" value="1">
+          <select class="convert-select" id="curFromUnit"></select>
+        </div>
+      </div>
+
+      <button class="swap-btn" id="curSwap" title="Swap currencies">⇄</button>
+
+      <div class="convert-col">
+        <label class="convert-label">Converted</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="curToValue" readonly>
+          <select class="convert-select" id="curToUnit"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-line" id="curRateLine">Fetching live rates…</div>
+
+    <div class="all-units">
+      <div class="all-units-head">Quick amounts</div>
+      <div class="chip-row" id="curQuickAmounts"></div>
+    </div>
+  </section>
+
+  <!-- ---------------- TIMEZONE ---------------- -->
+  <section class="panel" id="panel-timezone">
+    <div class="tz-source-card">
+      <div class="tz-source-row">
+        <div class="convert-col">
+          <label class="convert-label">Date &amp; time</label>
+          <input type="datetime-local" class="convert-input tz-datetime" id="tzDateTime">
+        </div>
+        <div class="convert-col">
+          <label class="convert-label">In timezone</label>
+          <select class="convert-select tz-select" id="tzFromZone"></select>
+        </div>
+        <button class="expr-btn secondary" id="tzNowBtn" title="Set to current time">Now</button>
+      </div>
+    </div>
+
+    <div class="tz-add-row">
+      <select class="convert-select tz-select" id="tzAddZone"></select>
+      <button class="expr-btn" id="tzAddBtn">Add city</button>
+    </div>
+
+    <div class="tz-list" id="tzList"></div>
+  </section>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXIF Viewer & Editor</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/jszip.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>EXIF Viewer &amp; Editor</h1>
+  <p class="sub">See exactly what metadata is hiding in your photos — camera, settings, timestamps, even GPS location — then edit any field or strip it all out, byte-for-byte, with zero quality loss.</p>
+  <p class="privacy">Everything runs in your browser — files are read and rewritten locally, never uploaded anywhere.</p>
+
+  <div class="toolbar">
+    <label class="opt"><input type="checkbox" id="keepIcc" checked> Keep color profile (ICC) when stripping</label>
+    <div class="spacer"></div>
+    <button class="secondary" id="downloadAllBtn" disabled>Download all cleaned (.zip)</button>
+    <button class="secondary" id="clearBtn" disabled>Clear all</button>
+  </div>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose photos</strong> or drag &amp; drop them here</div>
+    <div class="dropzone-hint">JPEG and PNG supported</div>
+    <input type="file" id="fileInput" accept="image/jpeg,image/png" multiple>
+  </div>
+
+  <div class="empty" id="emptyState">No images yet — add some above.</div>
+  <div class="grid" id="grid"></div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="name" id="modalName"></span>
+      <button id="modalClose">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <span class="modal-hint">Edits apply when you click Save — closing without saving discards them.</span>
+      <button class="secondary" id="modalCancel">Cancel</button>
+      <button id="modalSave">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

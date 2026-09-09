@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regex Tester</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Regex Tester</h1>
+  <p class="sub">Build and debug a regular expression with live match highlighting, a breakdown of named groups, and a searchable cheat sheet.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="pattern-bar">
+    <div class="pattern-row">
+      <span class="delim">/</span>
+      <input id="patternInput" class="pattern-input" placeholder="Enter a regular expression…" spellcheck="false" autocomplete="off">
+      <span class="delim">/</span>
+      <div class="flags" id="flags">
+        <button class="flag-btn" data-flag="g" title="Global — find every match, not just the first">g</button>
+        <button class="flag-btn" data-flag="i" title="Case-insensitive">i</button>
+        <button class="flag-btn" data-flag="m" title="Multiline — ^ and $ match at line breaks">m</button>
+        <button class="flag-btn" data-flag="s" title="Dot-all — . also matches newlines">s</button>
+        <button class="flag-btn" data-flag="u" title="Unicode mode">u</button>
+        <button class="flag-btn" data-flag="y" title="Sticky — match only at lastIndex">y</button>
+      </div>
+      <button class="pattern-btn" id="copyPatternBtn" title="Copy pattern as /source/flags">Copy</button>
+    </div>
+    <div class="pattern-error" id="patternError"></div>
+  </div>
+
+  <div class="main-grid">
+    <div class="main-col">
+      <div class="panel test-section">
+        <div class="section-head">
+          <span>Test string</span>
+          <span class="match-badge" id="matchBadge">0 matches</span>
+        </div>
+        <div class="ts-wrap">
+          <div class="ts-highlight" id="tsHighlight" aria-hidden="true"></div>
+          <textarea id="testInput" class="ts-input" spellcheck="false" placeholder="Paste or type text here to test your pattern against…"></textarea>
+        </div>
+      </div>
+
+      <div class="panel groups-section" id="groupsSection" hidden>
+        <div class="section-head"><span>Named groups</span></div>
+        <div class="groups-list" id="groupsList"></div>
+      </div>
+
+      <div class="panel matches-section">
+        <div class="section-head"><span>Matches</span></div>
+        <div class="matches-list" id="matchesList"></div>
+      </div>
+    </div>
+
+    <div class="side-col">
+      <div class="panel library-section">
+        <div class="section-head"><span>Common patterns</span></div>
+        <div class="library-list" id="libraryList"></div>
+      </div>
+
+      <div class="panel cheatsheet-section">
+        <div class="section-head">
+          <span>Cheat sheet</span>
+          <span class="cheat-hint">click to insert</span>
+        </div>
+        <div class="cheat-groups" id="cheatGroups"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

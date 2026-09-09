@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Diff Checker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Text Diff Checker</h1>
+  <p class="sub">Compare two blocks of text side-by-side, with differences highlighted down to the exact word or character.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="panel toolbar">
+    <div class="tb-group">
+      <span class="tb-label">Compare by</span>
+      <div class="segmented" id="granularitySeg">
+        <button type="button" class="seg-btn active" data-val="word">Words</button>
+        <button type="button" class="seg-btn" data-val="char">Characters</button>
+      </div>
+    </div>
+    <div class="tb-group checks">
+      <label><input type="checkbox" id="ignoreCase"> Ignore case</label>
+      <label><input type="checkbox" id="ignoreWhitespace"> Ignore whitespace</label>
+      <label><input type="checkbox" id="collapseUnchanged" checked> Collapse unchanged lines</label>
+    </div>
+    <div class="tb-group actions">
+      <button type="button" id="swapBtn" title="Swap original and changed">⇄ Swap</button>
+      <button type="button" id="sampleBtn">Try example</button>
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="input-grid">
+    <div class="input-col">
+      <div class="input-head">
+        <span>Original</span>
+        <span class="input-meta" id="metaA">0 lines · 0 chars</span>
+        <label class="file-btn">Load file<input type="file" id="fileA" accept=".txt,.md,.csv,.json,.log,text/plain" hidden></label>
+      </div>
+      <textarea id="inputA" class="diff-input" spellcheck="false" placeholder="Paste or type the original text…"></textarea>
+    </div>
+    <div class="input-col">
+      <div class="input-head">
+        <span>Changed</span>
+        <span class="input-meta" id="metaB">0 lines · 0 chars</span>
+        <label class="file-btn">Load file<input type="file" id="fileB" accept=".txt,.md,.csv,.json,.log,text/plain" hidden></label>
+      </div>
+      <textarea id="inputB" class="diff-input" spellcheck="false" placeholder="Paste or type the changed text…"></textarea>
+    </div>
+  </div>
+
+  <div class="panel result-bar">
+    <div class="stats" id="statsBar"></div>
+    <div class="legend">
+      <span class="lg"><i class="sw sw-del"></i>Removed</span>
+      <span class="lg"><i class="sw sw-ins"></i>Added</span>
+    </div>
+    <button type="button" id="copyDiffBtn">Copy diff</button>
+  </div>
+
+  <div class="panel diff-panel" id="diffPanel">
+    <table class="diff-table" id="diffTable">
+      <colgroup>
+        <col class="col-num">
+        <col class="col-content">
+        <col class="col-num">
+        <col class="col-content">
+      </colgroup>
+      <tbody id="diffBody"></tbody>
+    </table>
+    <div class="diff-empty-state" id="diffEmptyState">Paste some text on both sides to see the diff.</div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

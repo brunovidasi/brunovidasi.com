@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cron Expression Builder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Cron Builder</h1>
+  <p class="sub">Build a cron expression visually, get a plain-English explanation, and preview the next 5 run times.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="presets" id="presets">
+    <button class="preset" data-cron="* * * * *">Every minute</button>
+    <button class="preset" data-cron="*/5 * * * *">Every 5 min</button>
+    <button class="preset" data-cron="*/15 * * * *">Every 15 min</button>
+    <button class="preset" data-cron="0 * * * *">Hourly</button>
+    <button class="preset" data-cron="0 0 * * *">Daily @ midnight</button>
+    <button class="preset" data-cron="0 3 * * *">Daily @ 3am</button>
+    <button class="preset" data-cron="0 9 * * 1-5">Weekdays @ 9am</button>
+    <button class="preset" data-cron="0 0 * * 0">Weekly (Sun)</button>
+    <button class="preset" data-cron="0 0 1 * *">Monthly</button>
+    <button class="preset" data-cron="0 0 1 1 *">Yearly</button>
+  </div>
+
+  <div class="expr-bar">
+    <div class="expr-display" id="exprDisplay">
+      <span class="tok" data-field="minute"></span>
+      <span class="tok" data-field="hour"></span>
+      <span class="tok" data-field="dom"></span>
+      <span class="tok" data-field="month"></span>
+      <span class="tok" data-field="dow"></span>
+    </div>
+    <div class="expr-row">
+      <input type="text" id="exprInput" class="expr-input" spellcheck="false" autocomplete="off">
+      <button class="expr-btn" id="copyBtn" title="Copy expression to clipboard">Copy</button>
+      <button class="expr-btn secondary" id="clearAllBtn" title="Reset all fields to *">Clear all</button>
+    </div>
+    <div class="expr-legend">
+      <span class="tok" data-field="minute">min</span>
+      <span class="tok" data-field="hour">hour</span>
+      <span class="tok" data-field="dom">day</span>
+      <span class="tok" data-field="month">month</span>
+      <span class="tok" data-field="dow">weekday</span>
+    </div>
+    <div class="expr-error" id="exprError"></div>
+  </div>
+
+  <div class="fields" id="fields"></div>
+
+  <div class="explain" id="explain"></div>
+
+  <div class="runs-section">
+    <div class="runs-head">Next 5 run times <span class="tz" id="tzLabel"></span></div>
+    <ol class="runs-list" id="runsList"></ol>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
