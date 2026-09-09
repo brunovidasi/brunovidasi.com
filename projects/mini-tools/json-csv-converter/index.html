@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON/CSV Converter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>JSON/CSV Converter</h1>
+  <p class="sub">Paste messy JSON or CSV to validate, format, and convert between the two — or compare two versions and see exactly what changed.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="mode-switch">
+    <div class="segmented" id="modeSeg">
+      <button type="button" class="seg-btn active" data-mode="convert">Format &amp; Convert</button>
+      <button type="button" class="seg-btn" data-mode="compare">Compare Versions</button>
+    </div>
+  </div>
+
+  <!-- ============ FORMAT & CONVERT MODE ============ -->
+  <section id="convertMode" class="mode-panel">
+
+    <div class="panel toolbar">
+      <div class="tb-group">
+        <span class="tb-label">Input is</span>
+        <div class="segmented" id="inputTypeSeg">
+          <button type="button" class="seg-btn active" data-val="auto">Auto-detect</button>
+          <button type="button" class="seg-btn" data-val="json">JSON</button>
+          <button type="button" class="seg-btn" data-val="csv">CSV</button>
+        </div>
+      </div>
+      <div class="tb-group">
+        <span class="tb-label">Output as</span>
+        <div class="segmented" id="outputTypeSeg">
+          <button type="button" class="seg-btn active" data-val="json">JSON</button>
+          <button type="button" class="seg-btn" data-val="csv">CSV</button>
+        </div>
+      </div>
+      <div class="tb-group actions">
+        <button type="button" id="sampleBtn">Try example</button>
+        <button type="button" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel toolbar toolbar-2">
+      <div class="tb-group" id="jsonOptsGroup">
+        <span class="tb-label">Indent</span>
+        <select id="indentSelect" class="tb-select">
+          <option value="2">2 spaces</option>
+          <option value="4">4 spaces</option>
+          <option value="tab">Tab</option>
+          <option value="min">Minified</option>
+        </select>
+        <label class="tb-check"><input type="checkbox" id="sortKeys"> Sort keys</label>
+      </div>
+      <div class="tb-group" id="csvInOptsGroup">
+        <span class="tb-label">CSV delimiter</span>
+        <select id="delimiterSelect" class="tb-select">
+          <option value="auto">Auto</option>
+          <option value=",">Comma</option>
+          <option value=";">Semicolon</option>
+          <option value="\t">Tab</option>
+        </select>
+        <label class="tb-check"><input type="checkbox" id="headerRow" checked> First row is header</label>
+        <label class="tb-check"><input type="checkbox" id="typeCoerce" checked> Detect number/boolean values</label>
+      </div>
+      <div class="tb-group" id="csvOutOptsGroup">
+        <span class="tb-label">Output delimiter</span>
+        <select id="outDelimiterSelect" class="tb-select">
+          <option value=",">Comma</option>
+          <option value=";">Semicolon</option>
+          <option value="\t">Tab</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-grid">
+      <div class="input-col">
+        <div class="input-head">
+          <span>Input</span>
+          <span class="type-badge" id="detectedBadge">—</span>
+          <span class="input-meta" id="metaIn">0 lines · 0 chars</span>
+          <label class="file-btn">Load file<input type="file" id="fileIn" accept=".json,.csv,.txt" hidden></label>
+        </div>
+        <textarea id="inputArea" class="diff-input" spellcheck="false" placeholder="Paste JSON or CSV here…"></textarea>
+      </div>
+      <div class="input-col">
+        <div class="input-head">
+          <span>Output</span>
+          <span class="input-meta" id="metaOut">0 lines · 0 chars</span>
+          <button type="button" class="file-btn" id="downloadBtn">Download</button>
+          <button type="button" class="file-btn" id="copyBtn">Copy</button>
+        </div>
+        <textarea id="outputArea" class="diff-input" spellcheck="false" readonly placeholder="Formatted output appears here…"></textarea>
+      </div>
+    </div>
+
+    <div class="panel status-bar" id="statusBar">
+      <span class="status-pill status-idle" id="statusPill">Paste some input to get started.</span>
+    </div>
+  </section>
+
+  <!-- ============ COMPARE VERSIONS MODE ============ -->
+  <section id="compareMode" class="mode-panel" hidden>
+
+    <div class="panel toolbar">
+      <div class="tb-group">
+        <span class="tb-label">Compare as</span>
+        <div class="segmented" id="cmpTypeSeg">
+          <button type="button" class="seg-btn active" data-val="auto">Auto-detect</button>
+          <button type="button" class="seg-btn" data-val="json">JSON</button>
+          <button type="button" class="seg-btn" data-val="csv">CSV</button>
+        </div>
+      </div>
+      <div class="tb-group checks">
+        <label><input type="checkbox" id="cmpSortKeys" checked> Sort JSON keys before comparing</label>
+        <label><input type="checkbox" id="cmpCollapse" checked> Collapse unchanged lines</label>
+      </div>
+      <div class="tb-group actions">
+        <button type="button" id="cmpSwapBtn" title="Swap version A and B">⇄ Swap</button>
+        <button type="button" id="cmpSampleBtn">Try example</button>
+        <button type="button" id="cmpClearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="input-grid">
+      <div class="input-col">
+        <div class="input-head">
+          <span>Version A</span>
+          <span class="input-meta" id="cmpMetaA">0 lines · 0 chars</span>
+          <label class="file-btn">Load file<input type="file" id="cmpFileA" accept=".json,.csv,.txt" hidden></label>
+        </div>
+        <textarea id="cmpInputA" class="diff-input" spellcheck="false" placeholder="Paste the original JSON or CSV…"></textarea>
+      </div>
+      <div class="input-col">
+        <div class="input-head">
+          <span>Version B</span>
+          <span class="input-meta" id="cmpMetaB">0 lines · 0 chars</span>
+          <label class="file-btn">Load file<input type="file" id="cmpFileB" accept=".json,.csv,.txt" hidden></label>
+        </div>
+        <textarea id="cmpInputB" class="diff-input" spellcheck="false" placeholder="Paste the changed JSON or CSV…"></textarea>
+      </div>
+    </div>
+
+    <div class="panel result-bar">
+      <div class="stats" id="cmpStatsBar"></div>
+      <div class="legend">
+        <span class="lg"><i class="sw sw-del"></i>Removed</span>
+        <span class="lg"><i class="sw sw-ins"></i>Added</span>
+      </div>
+      <button type="button" id="cmpCopyBtn">Copy diff</button>
+    </div>
+
+    <div class="panel diff-panel" id="cmpDiffPanel">
+      <table class="diff-table" id="cmpDiffTable">
+        <colgroup>
+          <col class="col-num">
+          <col class="col-content">
+          <col class="col-num">
+          <col class="col-content">
+        </colgroup>
+        <tbody id="cmpDiffBody"></tbody>
+      </table>
+      <div class="diff-empty-state" id="cmpEmptyState">Paste JSON or CSV on both sides to see the diff.</div>
+    </div>
+  </section>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

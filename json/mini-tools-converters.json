@@ -8,6 +8,17 @@
     "path": "projects/mini-tools/unit-currency-timezone-converter/index.html",
     "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/unit-currency-timezone-converter",
     "codepen": "",
-    "featured": false
+    "featured": true
+  },
+  {
+    "id": "json-csv-converter",
+    "title": "JSON/CSV Converter",
+    "category": "mini-tools",
+    "icon": "🔁",
+    "description": "Validate and format messy JSON or CSV with clear syntax-error locations, convert between the two, and compare two versions with a line- and word-level diff.",
+    "path": "projects/mini-tools/json-csv-converter/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/json-csv-converter",
+    "codepen": "",
+    "featured": true
   }
 ]
