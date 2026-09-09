@@ -63,5 +63,17 @@
     "live": "",
     "codepen": "",
     "company": "Freelance"
+  },
+  {
+    "id": "touristguide",
+    "title": "Rio Tourist Guide",
+    "category": "landing-pages",
+    "icon": "🗺️",
+    "year": 2016,
+    "description": "A personal website I built while working as a tourist guide in Rio de Janeiro, presenting myself as a helper for visitors exploring the city.",
+    "path": "projects/brunovidasi.com/touristguide/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi",
+    "live": "",
+    "codepen": ""
   }
 ]
