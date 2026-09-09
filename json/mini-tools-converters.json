@@ -1,0 +1,13 @@
+[
+  {
+    "id": "unit-currency-timezone-converter",
+    "title": "Unit / Currency / Timezone Converter",
+    "category": "mini-tools",
+    "icon": "⇄",
+    "description": "Three converters in one: length/weight/temperature/volume/area/speed/data/time units, live currency exchange rates, and a DST-aware timezone converter for comparing times across cities.",
+    "path": "projects/mini-tools/unit-currency-timezone-converter/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/unit-currency-timezone-converter",
+    "codepen": "",
+    "featured": false
+  }
+]

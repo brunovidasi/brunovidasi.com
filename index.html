@@ -594,14 +594,51 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- MINI TOOLS -->
         <div class="panel" id="panel-mini-tools">
-          <h2 class="sect"><span class="brk">&lt;</span>mini-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools">0</span>"</span> <span class="attr">type</span>=<span class="str">"standalone"</span><span class="brk"> /&gt;</span></h2>
+          <h2 class="sect"><span class="brk">&lt;</span>mini-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-dev,mini-tools-converters,mini-tools-media,mini-tools-generators,mini-tools-personal">0</span>"</span> <span class="attr">type</span>=<span class="str">"standalone"</span><span class="brk"> /&gt;</span></h2>
+
+          <div class="skill-label">Dev Utilities</div>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
-            <div class="sect-intro kinetic-intro">Small standalone tools I've built for everyday dev and production tasks. View them inline or check the source.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <div class="sect-intro kinetic-intro">Everyday tools for testing and debugging — cron expressions, regex, and text diffs.</div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-dev', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
-          <div class="tools-grid" id="toolsGrid-mini-tools" data-category="mini-tools"></div>
+          <div class="tools-grid" id="toolsGrid-mini-tools-dev" data-category="mini-tools-dev"></div>
+
+          <div class="skill-label mt-30">Converters</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">Unit, currency, and timezone conversions in one place.</div>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-mini-tools-converters" data-category="mini-tools-converters"></div>
+
+          <div class="skill-label mt-30">Image & Media Tools</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">Client-side tools for working with images and photo metadata — nothing ever gets uploaded.</div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-media', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-mini-tools-media" data-category="mini-tools-media"></div>
+
+          <div class="skill-label mt-30">Generators</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">Quick generators for passwords and test data.</div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-generators', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-mini-tools-generators" data-category="mini-tools-generators"></div>
+
+          <div class="skill-label mt-30">Personal Projects</div>
+
+          <div class="tools-toolbar tools-toolbar--kinetic">
+            <div class="sect-intro kinetic-intro">Small personal projects and social/data utilities I built for myself.</div>
+            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-personal', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+          </div>
+
+          <div class="tools-grid" id="toolsGrid-mini-tools-personal" data-category="mini-tools-personal"></div>
         </div>
 
         <!-- EDM TOOLS -->

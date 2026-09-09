@@ -1,0 +1,23 @@
+[
+  {
+    "id": "password-generator",
+    "title": "Password Generator",
+    "category": "mini-tools",
+    "icon": "🔑",
+    "description": "Generate strong random passwords or memorable passphrases with a live entropy breakdown — bits, total combinations, and estimated crack time — all computed client-side.",
+    "path": "projects/mini-tools/password-generator/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/password-generator",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "gerador-de-cpf",
+    "title": "Gerador de CPF",
+    "category": "mini-tools",
+    "icon": "🪪",
+    "description": "Generates mathematically valid Brazilian CPF numbers (correct check digits) for software testing, with a fiscal-region selector.",
+    "path": "projects/mini-tools/gerador-de-cpf/index.html",
+    "github": "https://github.com/brunovidasi/Gerador-de-CPF",
+    "codepen": ""
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "cron-builder",
+    "title": "Cron Builder",
+    "category": "mini-tools",
+    "icon": "⏰",
+    "description": "A visual cron expression builder: set minute/hour/day/month/weekday rules with buttons and chips, get a plain-English explanation, and preview the next 5 run times.",
+    "path": "projects/mini-tools/cron-builder/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/cron-builder",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "regex-tester",
+    "title": "Regex Tester",
+    "category": "mini-tools",
+    "icon": "🔎",
+    "description": "A regex tester with live match highlighting (including nested capture groups), named groups broken out per match, and a clickable cheat sheet plus a library of common patterns.",
+    "path": "projects/mini-tools/regex-tester/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/regex-tester",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "text-diff-checker",
+    "title": "Text Diff Checker",
+    "category": "mini-tools",
+    "icon": "🔀",
+    "description": "Compare two blocks of text side-by-side with word- or character-level highlighting, ignore-case/whitespace options, collapsible unchanged lines, and one-click copy of the diff.",
+    "path": "projects/mini-tools/text-diff-checker/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/text-diff-checker",
+    "codepen": "",
+    "featured": true
+  }
+]

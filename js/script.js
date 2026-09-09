@@ -1117,8 +1117,8 @@ Promise.all(projectCategories.map(category =>
     }).join('');
   });
   document.querySelectorAll('.tool-count').forEach(el=>{
-    const category = el.dataset.countCategory;
-    el.textContent = (byCategory[category] || []).length;
+    const categories = el.dataset.countCategory.split(',');
+    el.textContent = categories.reduce((sum, category) => sum + (byCategory[category] || []).length, 0);
   });
   setupWebsiteHoverGifs();
   WEBSITE_STYLE_CATEGORIES.forEach(category => {
@@ -1169,8 +1169,17 @@ function renderFreelanceProjects(allProjects){
 }
 
 // ---- jump from an experience mini box to the matching project card ----
-// (edm-kinetic-modules and edm-html-builder cards live nested inside the edm-tools tab, not their own tab)
-const PROJECT_TAB_OVERRIDES = { 'edm-kinetic-modules': 'edm-tools', 'edm-html-builder': 'edm-tools' };
+// (edm-kinetic-modules/edm-html-builder and the mini-tools-* subcategories live nested inside
+// the edm-tools/mini-tools tabs respectively, not their own tabs)
+const PROJECT_TAB_OVERRIDES = {
+  'edm-kinetic-modules': 'edm-tools',
+  'edm-html-builder': 'edm-tools',
+  'mini-tools-dev': 'mini-tools',
+  'mini-tools-converters': 'mini-tools',
+  'mini-tools-media': 'mini-tools',
+  'mini-tools-generators': 'mini-tools',
+  'mini-tools-personal': 'mini-tools'
+};
 function goToProject(category, id, companySlug){
   openFile(PROJECT_TAB_OVERRIDES[category] || category);
   if(WEBSITE_STYLE_CATEGORIES.includes(category) && companySlug) filterWebsitesToCompany(category, companySlug);
