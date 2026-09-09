@@ -1,5 +1,17 @@
 [
   {
+    "id": "social-links",
+    "title": "Social Links",
+    "category": "landing-pages",
+    "icon": "📱",
+    "year": 2025,
+    "description": "I wanted to create a simple website that brought all my social links together, essentially working like a personal Linktree that I could share on my social profiles and make it easy for people to find me online.",
+    "path": "social/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/social",
+    "live": "https://follow.brunovidasi.com",
+    "codepen": ""
+  },
+  {
     "id": "flowparty",
     "title": "Flow Party Sydney",
     "category": "landing-pages",
