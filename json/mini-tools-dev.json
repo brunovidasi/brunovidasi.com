@@ -24,6 +24,18 @@
     "featured": false
   },
   {
+    "id": "js-minifier",
+    "title": "JS Minifier",
+    "category": "mini-tools",
+    "icon": "🗜️",
+    "glyph": "JS",
+    "description": "A byte-safe JavaScript minifier with a built-in verification pass: comments, indentation, and blank lines stripped only — no renaming, no line-joining, no semicolon insertion, so ASI-sensitive code never changes behavior.",
+    "path": "projects/mini-tools/js-minifier/index.html",
+    "github": "https://github.com/brunovidasi/js-minifier",
+    "codepen": "",
+    "featured": false
+  },
+  {
     "id": "regex-tester",
     "title": "Regex Tester",
     "category": "mini-tools",

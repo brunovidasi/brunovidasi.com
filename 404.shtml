@@ -371,6 +371,7 @@ var ROUTES = {
   'gerador-de-cpf': '/gerador-de-cpf',
   'ig-relationship-checker': '/ig-relationship-checker',
   'image-compressor': '/image-compressor',
+  'js-minifier': '/js-minifier',
   'json-csv-converter': '/json-csv-converter',
   'password-generator': '/password-generator',
   'pdf-compressor': '/pdf-compressor',

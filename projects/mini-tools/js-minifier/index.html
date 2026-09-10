@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Minifier</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>JS Minifier</h1>
+  <p class="sub">Paste JavaScript and get a byte-safe minified version back — comments, indentation, and blank lines only. No renaming, no line-joining, no semicolon insertion, so behavior (including ASI-sensitive code) never changes.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="panel toolbar">
+    <div class="tb-group checks">
+      <label><input type="checkbox" id="stripComments"> Strip comments</label>
+      <label><input type="checkbox" id="preserveBangComments" checked> Keep <code>/*! ... */</code>, <code>@license</code> &amp; <code>@preserve</code> comments</label>
+    </div>
+    <div class="tb-group actions">
+      <label class="file-btn">Load file<input type="file" id="fileInput" accept=".js,.mjs,.cjs,text/javascript" hidden></label>
+      <button type="button" id="sampleBtn">Try example</button>
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="input-grid">
+    <div class="input-col">
+      <div class="input-head">
+        <span>Input JS</span>
+        <span class="input-meta" id="metaIn">0 B</span>
+      </div>
+      <textarea id="input" class="code-input" spellcheck="false" placeholder="Paste your JavaScript here…"></textarea>
+    </div>
+    <div class="input-col">
+      <div class="input-head">
+        <span>Minified output</span>
+        <span class="input-meta" id="metaOut">0 B</span>
+        <button type="button" class="file-btn" id="copyBtn">Copy</button>
+      </div>
+      <textarea id="output" class="code-input" spellcheck="false" placeholder="Minified JS will appear here…" readonly></textarea>
+    </div>
+  </div>
+
+  <div class="panel result-bar">
+    <div class="stats" id="statsBar"></div>
+    <div class="verify-msg" id="verifyMsg"></div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
