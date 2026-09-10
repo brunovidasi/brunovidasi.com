@@ -2962,4 +2962,17 @@ body.mobile-nav-locked {
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* a tool tab has no content inside .editor (see updateToolTabFrames) — with the
+     rules above, its height collapses to ~0, so the fixed-position tool-tab-frame
+     that's sized off .editor's rect gets pinned to a tiny box. Restore the fixed
+     full-viewport layout for as long as a tool tab keeps the page scroll-locked. */
+  body.tool-tab-lock #app {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  body.tool-tab-lock .editor {
+    overflow-y: hidden;
+  }
 }
