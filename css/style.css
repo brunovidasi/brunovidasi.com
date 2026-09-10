@@ -1553,10 +1553,24 @@ h2.sect .brk {
   z-index: 40;
   background: var(--bg);
   overflow: hidden;
+  transition: opacity .8s ease, transform .35s ease;
 }
 
 .tool-tab-frame.active {
   display: block;
+}
+
+/* .tool-tab-frame is appended straight to <body>, outside #app, so minimizing
+   #app (the yellow dot) doesn't animate it on its own — mirror #app/#app.minimized's
+   own shrink/grow transform+opacity here so the iframe moves in lockstep with the
+   rest of the app instead of just popping away. The transform-origin is computed in
+   JS (see positionToolTabFrame) to aim at the same on-screen point as #app's, since
+   this frame's own box only covers the editor area, not the full viewport. */
+#app.minimized ~ .tool-tab-frame {
+  transform: scale(.02);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .4s cubic-bezier(.6,0,.35,1), opacity .3s ease .1s;
 }
 
 .tool-tab-frame iframe {

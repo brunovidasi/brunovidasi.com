@@ -570,6 +570,10 @@ function positionToolTabFrame(frame){
   frame.style.left = rect.left + 'px';
   frame.style.width = rect.width + 'px';
   frame.style.height = rect.height + 'px';
+  // #app's minimize/restore transform-origin (130px, calc(100% - 34px)) is in its own
+  // full-viewport box — translate that same on-screen point into this frame's local
+  // coordinates so the iframe shrinks/grows toward it too (see #app.minimized ~ .tool-tab-frame)
+  frame.style.transformOrigin = `${130 - rect.left}px ${(window.innerHeight - 34) - rect.top}px`;
 }
 
 function repositionActiveToolTabFrame(){
