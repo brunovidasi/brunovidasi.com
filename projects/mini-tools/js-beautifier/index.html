@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Beautifier</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>JS Beautifier</h1>
+  <p class="sub">Paste minified JavaScript and get it reformatted with consistent indentation and line breaks — every token kept exactly as written, nothing renamed, joined, or reordered, so behavior (including ASI-sensitive code) never changes.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="panel toolbar">
+    <div class="tb-group checks">
+      <span class="tb-label">Indent</span>
+      <select id="indentSize">
+        <option value="2" selected>2 spaces</option>
+        <option value="4">4 spaces</option>
+        <option value="tab">Tab</option>
+      </select>
+    </div>
+    <div class="tb-group actions">
+      <label class="file-btn">Load file<input type="file" id="fileInput" accept=".js,.mjs,.cjs,text/javascript" hidden></label>
+      <button type="button" id="sampleBtn">Try example</button>
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="input-grid">
+    <div class="input-col">
+      <div class="input-head">
+        <span>Input JS</span>
+        <span class="input-meta" id="metaIn">0 B</span>
+      </div>
+      <textarea id="input" class="code-input" spellcheck="false" placeholder="Paste minified JavaScript here…"></textarea>
+    </div>
+    <div class="input-col">
+      <div class="input-head">
+        <span>Formatted output</span>
+        <span class="input-meta" id="metaOut">0 B</span>
+        <button type="button" class="file-btn" id="copyBtn">Copy</button>
+      </div>
+      <textarea id="output" class="code-input" spellcheck="false" placeholder="Formatted JS will appear here…" readonly></textarea>
+    </div>
+  </div>
+
+  <div class="panel result-bar">
+    <div class="stats" id="statsBar"></div>
+    <div class="verify-msg" id="verifyMsg"></div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

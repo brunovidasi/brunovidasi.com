@@ -12,6 +12,18 @@
     "featured": false
   },
   {
+    "id": "css-beautifier",
+    "title": "CSS Beautifier",
+    "category": "mini-tools",
+    "icon": "✨",
+    "glyph": "{ }",
+    "description": "The inverse of the CSS Minifier: reformats minified or messy CSS with consistent indentation, one declaration per line, and one selector per line — with a built-in verification pass confirming only whitespace changed.",
+    "path": "projects/mini-tools/css-beautifier/index.html",
+    "github": "https://github.com/brunovidasi/css-beautifier",
+    "codepen": "",
+    "featured": false
+  },
+  {
     "id": "css-minifier",
     "title": "CSS Minifier",
     "category": "mini-tools",
@@ -20,6 +32,18 @@
     "description": "A byte-safe CSS minifier with a built-in verification pass: whitespace and (optionally) comments stripped only, no value rewriting or semicolon dropping, so the output always matches the input.",
     "path": "projects/mini-tools/css-minifier/index.html",
     "github": "https://github.com/brunovidasi/css-minifier",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "js-beautifier",
+    "title": "JS Beautifier",
+    "category": "mini-tools",
+    "icon": "✨",
+    "glyph": "JS",
+    "description": "The inverse of the JS Minifier: reformats minified JavaScript with consistent indentation and line breaks using the same tokenizer, with a built-in verification pass confirming only whitespace changed.",
+    "path": "projects/mini-tools/js-beautifier/index.html",
+    "github": "https://github.com/brunovidasi/js-beautifier",
     "codepen": "",
     "featured": false
   },
