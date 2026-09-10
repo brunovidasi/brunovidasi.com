@@ -21,3 +21,10 @@ RewriteRule ^/?$ "https\:\/\/flowparty\.com\.au\/sydney" [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(about|intro|experience|education|skills|websites|web-systems|landing-pages|mini-tools|edm-tools|mini-games|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
+
+# brunovida.si mini-tool/mini-game tab deep-links (e.g. /cron-builder), opened via each
+# card's "Open in New Tab" button — same as above, but for tool/game ids instead of the
+# main section ids. Add new ids here when a mini-tool or mini-game is added.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(campo-minado|color-palette-generator|cron-builder|css-visual-builder|exif-viewer|gerador-de-cpf|ig-relationship-checker|image-compressor|json-csv-converter|password-generator|pdf-compressor|pdf-metadata-tool|pdf-password-protector|pdf-password-remover|pdf-word-converter|pong|qr-code-generator-reader|regex-tester|site-2012|site-2012-2|site-2014|site-2016|site-2018|site-2025|snake|tetris|text-diff-checker|unit-currency-timezone-converter)/?$ /index.html [L]

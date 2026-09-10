@@ -145,8 +145,14 @@ function updatePath(id){
   }
 }
 
-const enteredViaDeepLink = applyPath(currentRouteId());
+const initialRouteId = currentRouteId();
+const enteredViaDeepLink = applyPath(initialRouteId);
 if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) websiteDetailIds[activeId] = readWebsiteDetailFromUrl();
+// a tool/game tab's id (e.g. /cron-builder) isn't in the static `files` model, so
+// applyPath() above can't resolve it yet — TOOL_TAB_REGISTRY only exists once the
+// project JSON has loaded, so stash it and finish resolving once that data is in
+// (see the Promise.all(...) below, and handleRouteChange for back/forward nav)
+let pendingToolRouteId = enteredViaDeepLink ? null : (initialRouteId || null);
 
 function renderExplorer(){
   const tree = document.getElementById('fileTree');
@@ -433,15 +439,27 @@ function closeAllTabs(){
 }
 
 // ---- open a mini-tool as its own website tab (not a real browser tab): registers a
-// throwaway entry in the files/tabs model, then reuses the normal tab-open flow ----
+// throwaway entry in the files/tabs model, keyed by the tool's own id (so its URL is
+// just e.g. /cron-builder), then reuses the normal tab-open flow ----
 function openToolTab(id){
+  if(!tryOpenToolTabRoute(id)) return;
+  setActive(id);
+  document.getElementById('shell').classList.remove('mobile-nav-open');
+  setMobileNavLock(false);
+}
+
+// ---- registers the tool tab into the files/tabs model and marks it active, without
+// touching history/URL — shared by openToolTab (user click) and route resolution
+// (initial deep link + back/forward nav), which manage the URL themselves ----
+function tryOpenToolTabRoute(id){
   const info = TOOL_TAB_REGISTRY[id];
-  if(!info) return;
-  const virtualId = 'tool-' + id;
-  if(!files[virtualId]){
-    files[virtualId] = { label: info.title, icon: 'html', folder: null, isToolTab: true, toolPath: info.path };
+  if(!info) return false;
+  if(!files[id]){
+    files[id] = { label: info.title, icon: 'html', folder: null, isToolTab: true, toolPath: info.path };
   }
-  openFile(virtualId);
+  if(!openTabs.includes(id)) openTabs.push(id);
+  activeId = id;
+  return true;
 }
 
 // ---- the fixed-position iframe that stands in for a tool tab's "panel" — it lives
@@ -528,7 +546,7 @@ function handleRouteChange(){
     showActivePanel();
     return;
   }
-  if(applyPath(id)){
+  if(applyPath(id) || tryOpenToolTabRoute(id)){
     resetWebsiteDetailIds();
     if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) websiteDetailIds[activeId] = readWebsiteDetailFromUrl();
     renderTabs();
@@ -1230,6 +1248,14 @@ Promise.all(projectCategories.map(category =>
   renderExperienceProjects(chipProjects);
   renderFreelanceProjects(chipProjects);
   renderIntroProjectPreview(byCategory);
+  // resolve a tool/game deep link (e.g. a page load or refresh landing on /cron-builder)
+  // now that TOOL_TAB_REGISTRY is finally populated — see pendingToolRouteId above
+  if(pendingToolRouteId && tryOpenToolTabRoute(pendingToolRouteId)){
+    pendingToolRouteId = null;
+    renderTabs();
+    renderExplorer();
+    showActivePanel();
+  }
 });
 
 // ---- little clickable box that jumps to a project's card in its own tab ----
