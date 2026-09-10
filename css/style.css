@@ -1532,6 +1532,32 @@ h2.sect .brk {
   background: #e9e9e9;
 }
 
+.tool-tab-frame {
+  display: none;
+  position: fixed;
+  z-index: 40;
+  background: var(--bg);
+}
+
+.tool-tab-frame.active {
+  display: block;
+}
+
+.tool-tab-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #e9e9e9;
+}
+
+body.tool-tab-lock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
 .tools-grid {
   display: flex;
   flex-wrap: wrap;

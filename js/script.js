@@ -365,8 +365,11 @@ function humanTypeSect(container, speed, onComplete){
 function showActivePanel(){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const empty = document.getElementById('emptyState');
+  const isToolTab = activeId && files[activeId] && files[activeId].isToolTab;
+  updateToolTabFrames(isToolTab ? activeId : null);
   if(activeId && openTabs.includes(activeId)){
     empty.classList.remove('show');
+    if(isToolTab) return;
     const el = document.getElementById('panel-'+activeId);
     if(el){
       el.classList.add('active');
@@ -404,6 +407,7 @@ function closeTab(id){
   if(idx === -1) return;
   resetWebsiteDetailIds();
   openTabs.splice(idx,1);
+  removeToolTabFrame(id);
   if(activeId === id){
     if(openTabs.length){
       activeId = openTabs[Math.max(0, idx-1)];
@@ -418,6 +422,7 @@ function closeTab(id){
 }
 
 function closeAllTabs(){
+  openTabs.forEach(removeToolTabFrame);
   openTabs = [];
   activeId = null;
   resetWebsiteDetailIds();
@@ -425,6 +430,88 @@ function closeAllTabs(){
   renderExplorer();
   showActivePanel();
   updatePath(null);
+}
+
+// ---- open a mini-tool as its own website tab (not a real browser tab): registers a
+// throwaway entry in the files/tabs model, then reuses the normal tab-open flow ----
+function openToolTab(id){
+  const info = TOOL_TAB_REGISTRY[id];
+  if(!info) return;
+  const virtualId = 'tool-' + id;
+  if(!files[virtualId]){
+    files[virtualId] = { label: info.title, icon: 'html', folder: null, isToolTab: true, toolPath: info.path };
+  }
+  openFile(virtualId);
+}
+
+// ---- the fixed-position iframe that stands in for a tool tab's "panel" — it lives
+// outside #editorArea (appended to body) since it must sit above the app shell at the
+// exact screen position #editorArea currently occupies, tracked as that area resizes ----
+let toolTabResizeObserver = null;
+let toolTabScrollLockY = 0;
+let toolTabLocked = false;
+
+function positionToolTabFrame(frame){
+  const editorArea = document.getElementById('editorArea');
+  if(!editorArea) return;
+  const rect = editorArea.getBoundingClientRect();
+  frame.style.top = rect.top + 'px';
+  frame.style.left = rect.left + 'px';
+  frame.style.width = rect.width + 'px';
+  frame.style.height = rect.height + 'px';
+}
+
+function repositionActiveToolTabFrame(){
+  const active = document.querySelector('.tool-tab-frame.active');
+  if(active) positionToolTabFrame(active);
+}
+window.addEventListener('resize', repositionActiveToolTabFrame);
+
+function ensureToolTabFrame(id){
+  let frame = document.getElementById('toolTabFrame-' + id);
+  if(!frame){
+    const info = files[id];
+    frame = document.createElement('div');
+    frame.className = 'tool-tab-frame';
+    frame.id = 'toolTabFrame-' + id;
+    frame.innerHTML = `<iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
+    document.body.appendChild(frame);
+  }
+  return frame;
+}
+
+function removeToolTabFrame(id){
+  const frame = document.getElementById('toolTabFrame-' + id);
+  if(frame) frame.remove();
+  if(files[id] && files[id].isToolTab) delete files[id];
+}
+
+// ---- shows the given tool tab's frame (creating it on first use) and hides the rest;
+// pass null when the active tab isn't a tool tab, to hide/unlock everything ----
+function updateToolTabFrames(activeToolId){
+  document.querySelectorAll('.tool-tab-frame').forEach(f => f.classList.remove('active'));
+  if(activeToolId){
+    const frame = ensureToolTabFrame(activeToolId);
+    frame.classList.add('active');
+    positionToolTabFrame(frame);
+    if(!toolTabResizeObserver && window.ResizeObserver){
+      // follows the explorer sidebar's collapse/expand animation frame-by-frame, since
+      // that resizes #editorArea itself without firing a window 'resize' event
+      toolTabResizeObserver = new ResizeObserver(repositionActiveToolTabFrame);
+      toolTabResizeObserver.observe(document.getElementById('editorArea'));
+    }
+    if(!toolTabLocked){
+      toolTabScrollLockY = window.scrollY;
+      document.body.style.top = `-${toolTabScrollLockY}px`;
+      document.body.classList.add('tool-tab-lock');
+      toolTabLocked = true;
+    }
+  } else if(toolTabLocked){
+    document.body.classList.remove('tool-tab-lock');
+    document.body.style.top = '';
+    window.scrollTo(0, toolTabScrollLockY);
+    toolTabLocked = false;
+  }
 }
 
 function handleRouteChange(){
@@ -494,6 +581,12 @@ const ICON_LIVE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" str
 const ICON_EYE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>';
 const ICON_EYE_OFF_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>';
 const ICON_PDF_SVG = '<svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>';
+const ICON_FULLSCREEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>';
+
+// ---- a mini-tool's "Fullscreen" button opens it as its own tab (see openToolTab)
+// rather than a real browser tab — this registry keys the raw (unescaped) path/title
+// by project id so openToolTab can look them up without round-tripping through HTML ----
+const TOOL_TAB_REGISTRY = {};
 
 function escapeHtml(str){
   if(str == null) return '';
@@ -521,7 +614,9 @@ function renderToolCard(project){
   const viewHtml = project.noView ? '' : `<button class="doc-btn" onclick="toggleDoc('${project.id}')">${ICON_EYE_SVG}View</button>`;
   const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
   const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
-  const openWindowHtml = (project.noView || project.live || !['site-history', 'mini-tools'].includes(project.category)) ? '' : `<button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>`;
+  const showOpenTab = !project.noView && !project.live && ['site-history', 'mini-tools'].includes(project.category);
+  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title };
+  const openTabHtml = showOpenTab ? `<button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open in New Tab</button>` : '';
   const embedHtml = project.noView ? '' : `
       <div class="doc-embed" id="embed-${project.id}">
         <iframe data-src="${path}" title="${title}"></iframe>
@@ -544,7 +639,7 @@ function renderToolCard(project){
         ${descHtml}
         <div class="doc-actions">
           ${viewHtml}
-          ${openWindowHtml}
+          ${openTabHtml}
           ${liveHtml}
           ${codepenHtml}
           ${prototypeBtnsHtml}
@@ -717,12 +812,12 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
 
 // ---- mini-games: same "browser window" chrome as a website-card, but the body is a
 // live, playable iframe instead of a screenshot — no lazy-loading, it's the whole point ----
-const ICON_FULLSCREEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>';
 
 function renderMiniGameCard(project){
   const title = escapeHtml(project.title);
   const path = escapeHtml(project.path);
   const github = escapeHtml(project.github);
+  TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title };
   const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
   const githubLabel = escapeHtml(project.githubLabel || 'GitHub (2013 Java)');
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}${githubLabel}</a>` : '';
@@ -750,7 +845,7 @@ function renderMiniGameCard(project){
           </div>
         </div>
         <div class="doc-actions">
-          <button class="doc-btn" onclick="openInNewWindow('${path}')">${ICON_LIVE_SVG}Open in New Tab</button>
+          <button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open in New Tab</button>
           ${campaignHtml}
           ${githubHtml}
           ${githubHtml2026}
