@@ -29,6 +29,105 @@ function formatNumber(n) {
   return rounded.toLocaleString('en-US', { maximumFractionDigits: decimals });
 }
 
+// A typeable dropdown: a text input filters a floating list of options as you
+// type (matching whatever `searchTextFor` returns), with arrow-key navigation
+// and Enter/click to select. Exposes `.value` so callers can treat it like a
+// plain <select>. Used for the currency, unit, and timezone pickers, all of
+// which have lists too long to scan by eye.
+class SearchCombo {
+  constructor(rootId, inputId, listId, { labelFor, searchTextFor, onChange }) {
+    this.root = document.getElementById(rootId);
+    this.input = document.getElementById(inputId);
+    this.list = document.getElementById(listId);
+    this.labelFor = labelFor;
+    this.searchTextFor = searchTextFor || labelFor;
+    this.onChange = onChange || null;
+    this.options = [];
+    this.filtered = [];
+    this.activeIndex = -1;
+    this._value = '';
+
+    this.input.addEventListener('input', () => {
+      this.activeIndex = -1;
+      this.renderList(this.input.value);
+    });
+    this.input.addEventListener('focus', () => {
+      this.input.select();
+      this.renderList('');
+    });
+    this.input.addEventListener('keydown', (e) => this.handleKeydown(e));
+    this.input.addEventListener('blur', () => {
+      // Let a mousedown on an option register before we close/reset the field.
+      setTimeout(() => this.close(), 150);
+    });
+    this.list.addEventListener('mousedown', (e) => {
+      const item = e.target.closest('.search-combo-item');
+      if (!item) return;
+      e.preventDefault();
+      this.select(item.dataset.value);
+    });
+  }
+
+  setOptions(values) {
+    this.options = values;
+  }
+
+  get value() { return this._value; }
+  set value(v) {
+    this._value = v;
+    this.input.value = this.labelFor(v);
+  }
+
+  renderList(query) {
+    const q = query.trim().toLowerCase();
+    this.filtered = !q
+      ? this.options
+      : this.options.filter(v => this.searchTextFor(v).toLowerCase().includes(q));
+
+    this.list.innerHTML = this.filtered.length
+      ? this.filtered.map(v => `<div class="search-combo-item${v === this._value ? ' selected' : ''}" data-value="${v}">${this.labelFor(v)}</div>`).join('')
+      : '<div class="search-combo-empty">No match</div>';
+    this.list.hidden = false;
+    this.root.classList.add('open');
+  }
+
+  close() {
+    this.list.hidden = true;
+    this.root.classList.remove('open');
+    this.input.value = this.labelFor(this._value);
+  }
+
+  handleKeydown(e) {
+    if (e.key === 'Escape') {
+      this.close();
+      this.input.blur();
+      return;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (this.list.hidden) { this.renderList(''); return; }
+      const delta = e.key === 'ArrowDown' ? 1 : -1;
+      this.activeIndex = Math.max(0, Math.min(this.activeIndex + delta, this.filtered.length - 1));
+      const items = this.list.querySelectorAll('.search-combo-item');
+      items.forEach((el, i) => el.classList.toggle('active', i === this.activeIndex));
+      if (items[this.activeIndex]) items[this.activeIndex].scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const v = this.filtered[this.activeIndex] ?? (this.filtered.length === 1 ? this.filtered[0] : null);
+      if (v != null) this.select(v);
+    }
+  }
+
+  select(v) {
+    this.value = v;
+    this.close();
+    this.input.blur();
+    if (this.onChange) this.onChange(v);
+  }
+}
+
 /* =========================================================================
    Tabs
    ========================================================================= */
@@ -194,10 +293,22 @@ Object.keys(UNIT_CATEGORIES).forEach(key => {
 
 const unitFromValueEl = document.getElementById('unitFromValue');
 const unitToValueEl = document.getElementById('unitToValue');
-const unitFromUnitEl = document.getElementById('unitFromUnit');
-const unitToUnitEl = document.getElementById('unitToUnit');
 const unitRateLineEl = document.getElementById('unitRateLine');
 const unitAllGridEl = document.getElementById('unitAllGrid');
+
+function unitLabel(u) {
+  const unit = UNIT_CATEGORIES[unitState.category].units[u];
+  return unit ? unit.label : u;
+}
+
+const unitFromCombo = new SearchCombo('unitFromCombo', 'unitFromUnit', 'unitFromList', {
+  labelFor: unitLabel,
+  onChange: computeUnit,
+});
+const unitToCombo = new SearchCombo('unitToCombo', 'unitToUnit', 'unitToList', {
+  labelFor: unitLabel,
+  onChange: computeUnit,
+});
 
 function selectUnitCategory(key) {
   unitState.category = key;
@@ -209,18 +320,18 @@ function selectUnitCategory(key) {
   const savedFrom = unitState.from && cat.units[unitState.from] ? unitState.from : cat.default[0];
   const savedTo = unitState.to && cat.units[unitState.to] ? unitState.to : cat.default[1];
 
-  unitFromUnitEl.innerHTML = unitKeys.map(u => `<option value="${u}">${cat.units[u].label}</option>`).join('');
-  unitToUnitEl.innerHTML = unitKeys.map(u => `<option value="${u}">${cat.units[u].label}</option>`).join('');
-  unitFromUnitEl.value = savedFrom;
-  unitToUnitEl.value = savedTo;
+  unitFromCombo.setOptions(unitKeys);
+  unitToCombo.setOptions(unitKeys);
+  unitFromCombo.value = savedFrom;
+  unitToCombo.value = savedTo;
 
   computeUnit();
 }
 
 function computeUnit() {
   const cat = UNIT_CATEGORIES[unitState.category];
-  const from = unitFromUnitEl.value;
-  const to = unitToUnitEl.value;
+  const from = unitFromCombo.value;
+  const to = unitToCombo.value;
   unitState.from = from;
   unitState.to = to;
   lsSet('conv.unit.from', from);
@@ -257,8 +368,8 @@ function syncFromGridInput(sourceUnit, sourceEl) {
   const raw = parseFloat(sourceEl.value);
   if (isNaN(raw)) return;
 
-  const fromU = unitFromUnitEl.value;
-  const toU = unitToUnitEl.value;
+  const fromU = unitFromCombo.value;
+  const toU = unitToCombo.value;
   unitFromValueEl.value = formatNumber(convertUnit(unitState.category, raw, sourceUnit, fromU));
   unitToValueEl.value = formatNumber(convertUnit(unitState.category, raw, sourceUnit, toU));
 
@@ -276,14 +387,12 @@ unitAllGridEl.addEventListener('input', (e) => {
 });
 
 document.getElementById('unitSwap').addEventListener('click', () => {
-  const f = unitFromUnitEl.value;
-  unitFromUnitEl.value = unitToUnitEl.value;
-  unitToUnitEl.value = f;
+  const f = unitFromCombo.value;
+  unitFromCombo.value = unitToCombo.value;
+  unitToCombo.value = f;
   computeUnit();
 });
 unitFromValueEl.addEventListener('input', computeUnit);
-unitFromUnitEl.addEventListener('change', computeUnit);
-unitToUnitEl.addEventListener('change', computeUnit);
 
 selectUnitCategory(unitState.category);
 
@@ -331,31 +440,42 @@ const curState = {
 
 const curFromValueEl = document.getElementById('curFromValue');
 const curToValueEl = document.getElementById('curToValue');
-const curFromUnitEl = document.getElementById('curFromUnit');
-const curToUnitEl = document.getElementById('curToUnit');
 const curRateLineEl = document.getElementById('curRateLine');
 const curQuickAmountsEl = document.getElementById('curQuickAmounts');
 
-function currencyOptionsHtml(codes) {
-  const ordered = [
+function orderedCurrencyCodes(codes) {
+  return [
     ...CURRENCY_PRIORITY.filter(c => codes.includes(c)),
     ...codes.filter(c => !CURRENCY_PRIORITY.includes(c)).sort(),
   ];
-  return ordered.map(c => `<option value="${c}">${c} — ${CURRENCY_META[c] || c}</option>`).join('');
 }
 
+function currencyLabel(code) {
+  return `${code} — ${CURRENCY_META[code] || code}`;
+}
+function currencySearchText(code) {
+  return `${code} ${CURRENCY_META[code] || ''}`;
+}
+
+const curFromCombo = new SearchCombo('curFromCombo', 'curFromUnit', 'curFromList', {
+  labelFor: currencyLabel, searchTextFor: currencySearchText, onChange: computeCurrency,
+});
+const curToCombo = new SearchCombo('curToCombo', 'curToUnit', 'curToList', {
+  labelFor: currencyLabel, searchTextFor: currencySearchText, onChange: computeCurrency,
+});
+
 function populateCurrencySelects() {
-  const codes = Object.keys(curState.rates);
-  curFromUnitEl.innerHTML = currencyOptionsHtml(codes);
-  curToUnitEl.innerHTML = currencyOptionsHtml(codes);
-  curFromUnitEl.value = codes.includes(curState.from) ? curState.from : 'USD';
-  curToUnitEl.value = codes.includes(curState.to) ? curState.to : 'EUR';
+  const codes = orderedCurrencyCodes(Object.keys(curState.rates));
+  curFromCombo.setOptions(codes);
+  curToCombo.setOptions(codes);
+  curFromCombo.value = codes.includes(curState.from) ? curState.from : 'USD';
+  curToCombo.value = codes.includes(curState.to) ? curState.to : 'EUR';
 }
 
 function computeCurrency() {
   if (!curState.rates) return;
-  const from = curFromUnitEl.value;
-  const to = curToUnitEl.value;
+  const from = curFromCombo.value;
+  const to = curToCombo.value;
   curState.from = from;
   curState.to = to;
   lsSet('conv.cur.from', from);
@@ -403,12 +523,10 @@ async function loadCurrencyRates() {
 }
 
 curFromValueEl.addEventListener('input', computeCurrency);
-curFromUnitEl.addEventListener('change', computeCurrency);
-curToUnitEl.addEventListener('change', computeCurrency);
 document.getElementById('curSwap').addEventListener('click', () => {
-  const f = curFromUnitEl.value;
-  curFromUnitEl.value = curToUnitEl.value;
-  curToUnitEl.value = f;
+  const f = curFromCombo.value;
+  curFromCombo.value = curToCombo.value;
+  curToCombo.value = f;
   computeCurrency();
 });
 
@@ -484,18 +602,28 @@ if (!Array.isArray(tzState.zones)) {
 tzState.zones = tzState.zones.filter(z => z && ALL_ZONES.includes(z));
 
 const tzDateTimeEl = document.getElementById('tzDateTime');
-const tzFromZoneEl = document.getElementById('tzFromZone');
-const tzAddZoneEl = document.getElementById('tzAddZone');
 const tzListEl = document.getElementById('tzList');
 
-function buildZoneOptionsHtml() {
-  const sorted = [...ALL_ZONES].sort((a, b) => zoneLabel(a).localeCompare(zoneLabel(b)));
-  return sorted.map(z => `<option value="${z}">${zoneRegion(z)} — ${zoneLabel(z)}</option>`).join('');
+function zoneFullLabel(zone) {
+  return `${zoneRegion(zone)} — ${zoneLabel(zone)}`;
+}
+function zoneSearchText(zone) {
+  return `${zone} ${zoneFullLabel(zone)}`;
 }
 
-tzFromZoneEl.innerHTML = buildZoneOptionsHtml();
-tzAddZoneEl.innerHTML = buildZoneOptionsHtml();
-tzFromZoneEl.value = tzState.fromZone;
+const SORTED_ZONES = [...ALL_ZONES].sort((a, b) => zoneFullLabel(a).localeCompare(zoneFullLabel(b)));
+
+const tzFromCombo = new SearchCombo('tzFromCombo', 'tzFromZone', 'tzFromList', {
+  labelFor: zoneFullLabel, searchTextFor: zoneSearchText, onChange: handleFromZoneChange,
+});
+const tzAddCombo = new SearchCombo('tzAddCombo', 'tzAddZone', 'tzAddList', {
+  labelFor: zoneFullLabel, searchTextFor: zoneSearchText,
+});
+
+tzFromCombo.setOptions(SORTED_ZONES);
+tzAddCombo.setOptions(SORTED_ZONES);
+tzFromCombo.value = tzState.fromZone;
+tzAddCombo.value = SORTED_ZONES[0];
 
 function getZoneOffsetMinutes(zone, date) {
   const dtf = new Intl.DateTimeFormat('en-US', {
@@ -590,27 +718,27 @@ tzListEl.addEventListener('click', (e) => {
 });
 
 document.getElementById('tzAddBtn').addEventListener('click', () => {
-  const zone = tzAddZoneEl.value;
+  const zone = tzAddCombo.value;
   if (!zone || zone === tzState.fromZone || tzState.zones.includes(zone)) return;
   tzState.zones.push(zone);
   persistTzState();
   renderTzList();
 });
 
-tzFromZoneEl.addEventListener('change', () => {
+function handleFromZoneChange(newZone) {
   const prevZone = tzState.fromZone;
   const utcInstant = tzDateTimeEl.value ? zonedInputToUtc(tzDateTimeEl.value, prevZone) : new Date();
-  tzState.fromZone = tzFromZoneEl.value;
+  tzState.fromZone = newZone;
   tzDateTimeEl.value = toDateTimeLocalValue(utcInstant, tzState.fromZone);
   persistTzState();
   renderTzList();
-});
+}
 
 tzDateTimeEl.addEventListener('input', renderTzList);
 
 document.getElementById('tzNowBtn').addEventListener('click', () => {
   tzState.fromZone = detectedZone;
-  tzFromZoneEl.value = detectedZone;
+  tzFromCombo.value = detectedZone;
   tzDateTimeEl.value = toDateTimeLocalValue(new Date(), detectedZone);
   persistTzState();
   renderTzList();

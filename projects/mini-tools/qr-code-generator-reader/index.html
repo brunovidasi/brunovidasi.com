@@ -42,17 +42,78 @@
           <input type="range" id="margin" min="0" max="8" value="4">
           <span class="length-value" id="marginValue">4</span>
         </div>
-        <div class="option-block color-block">
-          <span class="ctrl-label-inline">Colors</span>
-          <input type="color" id="darkColor" value="#000000" title="Module color">
-          <input type="color" id="lightColor" value="#ffffff" title="Background color">
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-head"><span>Style</span></div>
+
+      <div class="options-grid">
+        <div class="option-block">
+          <span class="ctrl-label-inline">Dot style</span>
+          <div class="seg-control" id="dotStyle">
+            <button data-value="square" class="active">Square</button>
+            <button data-value="rounded">Rounded</button>
+            <button data-value="dots">Dots</button>
+          </div>
+        </div>
+        <div class="option-block">
+          <span class="ctrl-label-inline">Corner style</span>
+          <div class="seg-control" id="cornerStyle">
+            <button data-value="square" class="active">Square</button>
+            <button data-value="rounded">Rounded</button>
+            <button data-value="dots">Dots</button>
+          </div>
         </div>
       </div>
+
+      <div class="options-grid" style="margin-top: 14px;">
+        <div class="option-block">
+          <span class="ctrl-label-inline">Fill</span>
+          <div class="seg-control" id="fillMode">
+            <button data-value="solid" class="active">Solid</button>
+            <button data-value="gradient">Gradient</button>
+          </div>
+        </div>
+        <div class="option-block" id="gradientTypeBlock" hidden>
+          <span class="ctrl-label-inline">Gradient</span>
+          <div class="seg-control" id="gradientType">
+            <button data-value="linear" class="active">Linear</button>
+            <button data-value="radial">Radial</button>
+          </div>
+        </div>
+        <div class="option-block" id="gradientAngleBlock" hidden>
+          <span class="ctrl-label-inline">Angle</span>
+          <input type="range" id="gradientAngle" min="0" max="359" value="90">
+          <span class="length-value" id="gradientAngleValue">90°</span>
+        </div>
+      </div>
+
+      <div class="color-fields" style="margin-top: 14px;">
+        <div class="color-field">
+          <span class="ctrl-label-inline" id="darkColorLabel">Dot color</span>
+          <input type="color" id="darkColor" value="#000000" title="Dot color">
+          <input type="text" class="hex-input" id="darkColorHex" value="#000000" maxlength="7" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="color-field" id="darkColor2Field" hidden>
+          <span class="ctrl-label-inline">Dot color 2</span>
+          <input type="color" id="darkColor2" value="#4ecdc4" title="Second gradient color">
+          <input type="text" class="hex-input" id="darkColor2Hex" value="#4ecdc4" maxlength="7" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="color-field" id="lightColorField">
+          <span class="ctrl-label-inline">Background</span>
+          <input type="color" id="lightColor" value="#ffffff" title="Background color">
+          <input type="text" class="hex-input" id="lightColorHex" value="#ffffff" maxlength="7" spellcheck="false" autocomplete="off">
+          <label class="transparent-toggle"><input type="checkbox" id="transparentBg"><span>Transparent</span></label>
+        </div>
+      </div>
+
+      <p class="qr-warning" id="contrastWarning" hidden></p>
     </div>
 
     <div class="panel result-panel">
       <div class="section-head"><span>Result</span><span class="qr-meta" id="qrMeta">—</span></div>
-      <div class="canvas-wrap">
+      <div class="canvas-wrap" id="canvasWrap">
         <canvas id="qrCanvas"></canvas>
         <p class="qr-error" id="qrError" hidden></p>
       </div>

@@ -24,8 +24,26 @@
   const moduleSizeValue = document.getElementById('moduleSizeValue');
   const margin = document.getElementById('margin');
   const marginValue = document.getElementById('marginValue');
+  const dotStyleCtrl = document.getElementById('dotStyle');
+  const cornerStyleCtrl = document.getElementById('cornerStyle');
+  const fillModeCtrl = document.getElementById('fillMode');
+  const gradientTypeCtrl = document.getElementById('gradientType');
+  const gradientTypeBlock = document.getElementById('gradientTypeBlock');
+  const gradientAngleBlock = document.getElementById('gradientAngleBlock');
+  const gradientAngle = document.getElementById('gradientAngle');
+  const gradientAngleValue = document.getElementById('gradientAngleValue');
   const darkColor = document.getElementById('darkColor');
+  const darkColorHex = document.getElementById('darkColorHex');
+  const darkColorLabel = document.getElementById('darkColorLabel');
+  const darkColor2Field = document.getElementById('darkColor2Field');
+  const darkColor2 = document.getElementById('darkColor2');
+  const darkColor2Hex = document.getElementById('darkColor2Hex');
+  const lightColorField = document.getElementById('lightColorField');
   const lightColor = document.getElementById('lightColor');
+  const lightColorHex = document.getElementById('lightColorHex');
+  const transparentBg = document.getElementById('transparentBg');
+  const contrastWarning = document.getElementById('contrastWarning');
+  const canvasWrap = document.getElementById('canvasWrap');
   const qrCanvas = document.getElementById('qrCanvas');
   const qrMeta = document.getElementById('qrMeta');
   const qrError = document.getElementById('qrError');
@@ -34,11 +52,94 @@
   const copyPngBtn = document.getElementById('copyPng');
 
   let level = 'M';
+  let dotStyle = 'square';
+  let cornerStyle = 'square';
+  let fillMode = 'solid';
+  let gradientType = 'linear';
   let currentResult = null;
+
+  // ---- color swatch <-> hex text input syncing ----
+  function normalizeHex(value) {
+    let v = value.trim();
+    if (!v.startsWith('#')) v = '#' + v;
+    if (/^#[0-9a-fA-F]{3}$/.test(v)) {
+      v = '#' + v[1] + v[1] + v[2] + v[2] + v[3] + v[3];
+    }
+    return /^#[0-9a-fA-F]{6}$/.test(v) ? v.toLowerCase() : null;
+  }
+
+  function linkColorInputs(swatch, hexInput) {
+    swatch.addEventListener('input', () => {
+      hexInput.value = swatch.value;
+      hexInput.classList.remove('invalid');
+      regenerate();
+    });
+    hexInput.addEventListener('input', () => {
+      const normalized = normalizeHex(hexInput.value);
+      if (normalized) {
+        hexInput.classList.remove('invalid');
+        swatch.value = normalized;
+        regenerate();
+      } else {
+        hexInput.classList.add('invalid');
+      }
+    });
+    hexInput.addEventListener('blur', () => {
+      const normalized = normalizeHex(hexInput.value);
+      hexInput.value = normalized || swatch.value;
+      hexInput.classList.remove('invalid');
+    });
+  }
+
+  linkColorInputs(darkColor, darkColorHex);
+  linkColorInputs(darkColor2, darkColor2Hex);
+  linkColorInputs(lightColor, lightColorHex);
+
+  function luminance(hex) {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  function updateContrastWarning() {
+    const bgLum = transparentBg.checked ? 1 : luminance(lightColor.value); // assume a light backdrop when transparent
+    const darkLums = fillMode === 'gradient' ? [luminance(darkColor.value), luminance(darkColor2.value)] : [luminance(darkColor.value)];
+    const worstDiff = Math.min(...darkLums.map((l) => Math.abs(bgLum - l)));
+    if (worstDiff < 0.28) {
+      contrastWarning.textContent = '⚠ Low contrast between dot and background colors — this code may not scan reliably. Try a bigger difference in lightness.';
+      contrastWarning.hidden = false;
+    } else {
+      contrastWarning.hidden = true;
+    }
+  }
+
+  function currentStyleOptions() {
+    const opts = {
+      moduleSize: parseInt(moduleSize.value, 10),
+      margin: parseInt(margin.value, 10),
+      dotStyle,
+      cornerStyle,
+      dark: darkColor.value,
+      light: lightColor.value,
+      transparentBackground: transparentBg.checked,
+    };
+    if (fillMode === 'gradient') {
+      opts.gradient = {
+        color1: darkColor.value,
+        color2: darkColor2.value,
+        type: gradientType,
+        angle: parseInt(gradientAngle.value, 10),
+      };
+    }
+    return opts;
+  }
 
   function regenerate() {
     const text = genText.value;
     qrError.hidden = true;
+    updateContrastWarning();
+    canvasWrap.classList.toggle('transparent-preview', transparentBg.checked);
     if (!text) {
       qrCanvas.hidden = true;
       qrMeta.textContent = '—';
@@ -49,12 +150,7 @@
     try {
       const result = QREncoder.generateMatrix(text, level);
       currentResult = result;
-      QREncoder.renderToCanvas(qrCanvas, result.matrix, {
-        moduleSize: parseInt(moduleSize.value, 10),
-        margin: parseInt(margin.value, 10),
-        dark: darkColor.value,
-        light: lightColor.value,
-      });
+      QREncoder.renderToCanvas(qrCanvas, result.matrix, currentStyleOptions());
       qrCanvas.hidden = false;
       qrMeta.textContent = `v${result.version} · ${result.level} · ${result.matrix.length}×${result.matrix.length}`;
     } catch (err) {
@@ -74,11 +170,35 @@
     copyPngBtn.disabled = !has;
   }
 
-  ecLevel.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    level = btn.dataset.value;
-    ecLevel.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn));
+  function bindSegControl(el, onChange) {
+    el.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      el.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn));
+      onChange(btn.dataset.value);
+      regenerate();
+    });
+  }
+
+  bindSegControl(ecLevel, (v) => { level = v; });
+  bindSegControl(dotStyleCtrl, (v) => { dotStyle = v; });
+  bindSegControl(cornerStyleCtrl, (v) => { cornerStyle = v; });
+  bindSegControl(fillModeCtrl, (v) => {
+    fillMode = v;
+    const isGradient = v === 'gradient';
+    gradientTypeBlock.hidden = !isGradient;
+    gradientAngleBlock.hidden = !isGradient || gradientType !== 'linear';
+    darkColor2Field.hidden = !isGradient;
+    darkColorLabel.textContent = isGradient ? 'Dot color 1' : 'Dot color';
+  });
+  bindSegControl(gradientTypeCtrl, (v) => {
+    gradientType = v;
+    gradientAngleBlock.hidden = fillMode !== 'gradient' || v !== 'linear';
+  });
+
+  transparentBg.addEventListener('change', () => {
+    lightColor.disabled = transparentBg.checked;
+    lightColorHex.disabled = transparentBg.checked;
     regenerate();
   });
 
@@ -90,8 +210,10 @@
     marginValue.textContent = margin.value;
     regenerate();
   });
-  darkColor.addEventListener('input', regenerate);
-  lightColor.addEventListener('input', regenerate);
+  gradientAngle.addEventListener('input', () => {
+    gradientAngleValue.textContent = gradientAngle.value + '°';
+    regenerate();
+  });
   genText.addEventListener('input', regenerate);
 
   function triggerDownload(url, filename) {
@@ -114,11 +236,7 @@
 
   downloadSvgBtn.addEventListener('click', () => {
     if (!currentResult) return;
-    const svg = QREncoder.renderToSvg(currentResult.matrix, {
-      margin: parseInt(margin.value, 10),
-      dark: darkColor.value,
-      light: lightColor.value,
-    });
+    const svg = QREncoder.renderToSvg(currentResult.matrix, currentStyleOptions());
     const blob = new Blob([svg], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
     triggerDownload(url, 'qrcode.svg');

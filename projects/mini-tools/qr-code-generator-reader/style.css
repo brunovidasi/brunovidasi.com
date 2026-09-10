@@ -310,6 +310,76 @@ input[type="range"] {
   cursor: pointer;
 }
 
+/* ---- color fields (swatch + hex text input) ---- */
+
+.color-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+}
+
+.color-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-field input[type="color"] {
+  width: 28px;
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  flex: none;
+}
+
+.hex-input {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 5px 8px;
+  width: 84px;
+}
+
+.hex-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.hex-input.invalid {
+  border-color: var(--err);
+  color: var(--err);
+}
+
+.transparent-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  user-select: none;
+  margin-left: 4px;
+}
+
+.transparent-toggle input {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.qr-warning {
+  color: var(--warn);
+  font-size: 12px;
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
 /* ---- result / canvas ---- */
 
 .canvas-wrap {
@@ -322,6 +392,16 @@ input[type="range"] {
   padding: 20px;
   margin-bottom: 14px;
   min-height: 160px;
+}
+
+.canvas-wrap.transparent-preview {
+  background-image:
+    linear-gradient(45deg, #ccc 25%, transparent 25%),
+    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ccc 75%),
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
 }
 
 #qrCanvas {

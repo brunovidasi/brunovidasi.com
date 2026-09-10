@@ -16,7 +16,7 @@ Generate QR codes from any text or URL, and decode QR codes from an uploaded pho
 
 Open `index.html` in any modern browser. No build step, no server, no network calls.
 
-**Generate**: type text or a URL, pick an error-correction level (L/M/Q/H — higher survives more damage but needs a bigger code), and tweak module size, quiet zone, and colors. Download as PNG or SVG, or copy the image directly.
+**Generate**: type text or a URL, pick an error-correction level (L/M/Q/H — higher survives more damage but needs a bigger code), and tweak module size and quiet zone. Style it with dot and corner (finder-eye) shapes — square, rounded, or dots — solid or gradient (linear/radial) fill, and an optional transparent background; colors can be set from either the swatch or a typed hex code. A contrast warning appears if the chosen colors are too close in lightness to scan reliably. Download as PNG or SVG, or copy the image directly.
 
 **Scan**: upload an image file, or use your camera (scans continuously until it finds a code). Decoded text shows with a copy button, and a direct "Open" link if it's a URL.
 
@@ -28,7 +28,9 @@ Open `index.html` in any modern browser. No build step, no server, no network ca
 
 The encoder and decoder share their module-placement logic (`qr-common.js`) rather than reimplementing it twice, specifically so the write order and read order can never quietly disagree.
 
-**Correctness**: the encoder was cross-validated byte-for-byte against an independent reference implementation across versions, error-correction levels, and encoding modes, and its output decodes correctly with an independent QR reader (OpenCV). The decoder was fuzz-tested against thousands of Reed-Solomon error patterns and damaged matrices, and against photos with rotation, noise, and scale variation.
+**Styling** never changes the encoded structure — a "rounded" module still covers its whole cell (just with clipped corners), and "dots" shrink it by a bounded, scanner-tolerant amount. Finder eyes are drawn as one clean shape (an even-odd "ring" plus a solid core) rather than per-module, so they stay structurally identical to a normal finder pattern under any style.
+
+**Correctness**: the encoder was cross-validated byte-for-byte against an independent reference implementation across versions, error-correction levels, and encoding modes, and its output decodes correctly with an independent QR reader (OpenCV). The decoder was fuzz-tested against thousands of Reed-Solomon error patterns and damaged matrices, against photos with rotation, noise, and scale variation, and against every dot/corner/gradient/transparency style combination.
 
 ## Privacy
 

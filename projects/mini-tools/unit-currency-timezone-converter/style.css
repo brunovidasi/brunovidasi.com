@@ -251,6 +251,63 @@ h1::before {
   border-color: var(--accent);
 }
 
+.search-combo {
+  position: relative;
+}
+
+.search-combo-input {
+  cursor: text;
+}
+
+.search-combo.open .search-combo-input {
+  border-color: var(--accent);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.search-combo-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 3px 6px 12px rgba(52,49,43,0.12);
+}
+
+.search-combo-item {
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-combo-item:hover,
+.search-combo-item.active {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+}
+
+.search-combo-item.selected {
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.search-combo-empty {
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
 .swap-btn {
   flex: none;
   width: 40px;
@@ -400,7 +457,7 @@ h1::before {
   margin-bottom: 16px;
 }
 
-.tz-add-row .tz-select {
+.tz-add-row .search-combo {
   flex: 1;
 }
 

@@ -27,7 +27,10 @@
         <label class="convert-label">From</label>
         <div class="convert-field">
           <input type="text" inputmode="decimal" class="convert-input" id="unitFromValue" value="1">
-          <select class="convert-select" id="unitFromUnit"></select>
+          <div class="search-combo" id="unitFromCombo">
+            <input type="text" class="convert-select search-combo-input" id="unitFromUnit" autocomplete="off" spellcheck="false" placeholder="Search unit…">
+            <div class="search-combo-list" id="unitFromList" hidden></div>
+          </div>
         </div>
       </div>
 
@@ -37,7 +40,10 @@
         <label class="convert-label">To</label>
         <div class="convert-field">
           <input type="text" inputmode="decimal" class="convert-input" id="unitToValue" readonly>
-          <select class="convert-select" id="unitToUnit"></select>
+          <div class="search-combo" id="unitToCombo">
+            <input type="text" class="convert-select search-combo-input" id="unitToUnit" autocomplete="off" spellcheck="false" placeholder="Search unit…">
+            <div class="search-combo-list" id="unitToList" hidden></div>
+          </div>
         </div>
       </div>
     </div>
@@ -57,7 +63,10 @@
         <label class="convert-label">Amount</label>
         <div class="convert-field">
           <input type="text" inputmode="decimal" class="convert-input" id="curFromValue" value="1">
-          <select class="convert-select" id="curFromUnit"></select>
+          <div class="search-combo" id="curFromCombo">
+            <input type="text" class="convert-select search-combo-input" id="curFromUnit" autocomplete="off" spellcheck="false" placeholder="Search currency…">
+            <div class="search-combo-list" id="curFromList" hidden></div>
+          </div>
         </div>
       </div>
 
@@ -67,7 +76,10 @@
         <label class="convert-label">Converted</label>
         <div class="convert-field">
           <input type="text" inputmode="decimal" class="convert-input" id="curToValue" readonly>
-          <select class="convert-select" id="curToUnit"></select>
+          <div class="search-combo" id="curToCombo">
+            <input type="text" class="convert-select search-combo-input" id="curToUnit" autocomplete="off" spellcheck="false" placeholder="Search currency…">
+            <div class="search-combo-list" id="curToList" hidden></div>
+          </div>
         </div>
       </div>
     </div>
@@ -90,14 +102,20 @@
         </div>
         <div class="convert-col">
           <label class="convert-label">In timezone</label>
-          <select class="convert-select tz-select" id="tzFromZone"></select>
+          <div class="search-combo" id="tzFromCombo">
+            <input type="text" class="convert-select tz-select search-combo-input" id="tzFromZone" autocomplete="off" spellcheck="false" placeholder="Search timezone…">
+            <div class="search-combo-list" id="tzFromList" hidden></div>
+          </div>
         </div>
         <button class="expr-btn secondary" id="tzNowBtn" title="Set to current time">Now</button>
       </div>
     </div>
 
     <div class="tz-add-row">
-      <select class="convert-select tz-select" id="tzAddZone"></select>
+      <div class="search-combo" id="tzAddCombo">
+        <input type="text" class="convert-select tz-select search-combo-input" id="tzAddZone" autocomplete="off" spellcheck="false" placeholder="Search timezone…">
+        <div class="search-combo-list" id="tzAddList" hidden></div>
+      </div>
       <button class="expr-btn" id="tzAddBtn">Add city</button>
     </div>
 

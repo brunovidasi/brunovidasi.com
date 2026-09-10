@@ -348,12 +348,28 @@
       const runs = runLengths((y) => binary[y * width + cx], height);
       const vCandidates = findRatioCandidates(runs);
       const match = vCandidates.find((v) => Math.abs(v.center - c.y) < c.moduleSize * 3);
-      if (match) verified.push({ x: c.x, y: match.center, moduleSize: (c.moduleSize + match.moduleSize) / 2 });
+      if (match) verified.push({ x: c.x, y: match.center, moduleSize: (c.moduleSize + match.moduleSize) / 2, hits: c.hits });
     }
     return verified;
   }
 
-  function pickBestTriple(points) {
+  function angleAt(o, a, b) {
+    const v1x = a.x - o.x, v1y = a.y - o.y;
+    const v2x = b.x - o.x, v2y = b.y - o.y;
+    const mag = Math.hypot(v1x, v1y) * Math.hypot(v2x, v2y);
+    if (mag === 0) return 0;
+    const cos = Math.max(-1, Math.min(1, (v1x * v2x + v1y * v2y) / mag));
+    return (Math.acos(cos) * 180) / Math.PI;
+  }
+
+  function pickBestTriple(allPoints) {
+    if (allPoints.length < 3) return null;
+    // A real finder pattern gets confirmed by far more scanlines than a
+    // stray data-area look-alike — drop clearly-weaker candidates before
+    // the geometric search so a low-confidence point can't out-compete
+    // real finders just by chance.
+    const maxHits = Math.max(...allPoints.map((p) => p.hits || 1));
+    const points = allPoints.filter((p) => (p.hits || 1) >= maxHits * 0.4);
     if (points.length < 3) return null;
     if (points.length === 3) return orderTriple(points[0], points[1], points[2]);
     let best = null;
@@ -366,7 +382,14 @@
           const { topLeft, topRight, bottomLeft } = ordered;
           const dTR = Math.hypot(topRight.x - topLeft.x, topRight.y - topLeft.y);
           const dBL = Math.hypot(bottomLeft.x - topLeft.x, bottomLeft.y - topLeft.y);
-          const score = Math.abs(dTR - dBL) / Math.max(dTR, dBL);
+          const isoscelesScore = Math.abs(dTR - dBL) / Math.max(dTR, dBL);
+          // the three finder centers of a real QR code always meet at a
+          // right angle at topLeft — two equal-length sides alone (the
+          // isosceles check above) isn't enough, a stray point can land
+          // equidistant from two real finders without forming that angle
+          const angleScore = Math.abs(angleAt(topLeft, topRight, bottomLeft) - 90) / 90;
+          if (angleScore > 0.35) continue; // more than ~32deg off 90deg: not a real match
+          const score = isoscelesScore + angleScore;
           if (score < bestScore) {
             bestScore = score;
             best = ordered;

@@ -353,6 +353,119 @@
   }
 
   // ---- Rendering ----
+  //
+  // Styling (dot/corner shape, gradients) is purely cosmetic: every style
+  // below keeps each module's full nominal dark/light area intact (a
+  // "rounded" module still covers its whole cell, just with clipped
+  // corners) or, for "dots", shrinks it by a bounded amount (to ~82%)
+  // that real-world QR scanners tolerate fine — the encoded structure
+  // (finder ratios, module grid) never changes, only how each cell is
+  // painted.
+
+  // True for any module inside one of the 3 finder-pattern 7x7 blocks —
+  // those are drawn as one combined eye shape, not per-module, so the
+  // per-module loop skips them.
+  function isEyeModule(size, row, col) {
+    if (row < 7 && col < 7) return true;
+    if (row < 7 && col >= size - 7) return true;
+    if (row >= size - 7 && col < 7) return true;
+    return false;
+  }
+
+  function pathRoundedSquare(cx, cy, half, radius) {
+    const r = Math.min(radius, half);
+    const x0 = cx - half, y0 = cy - half, x1 = cx + half, y1 = cy + half;
+    return `M${x0 + r},${y0} L${x1 - r},${y0} Q${x1},${y0} ${x1},${y0 + r} L${x1},${y1 - r} Q${x1},${y1} ${x1 - r},${y1} L${x0 + r},${y1} Q${x0},${y1} ${x0},${y1 - r} L${x0},${y0 + r} Q${x0},${y0} ${x0 + r},${y0} Z`;
+  }
+
+  // A circle expressed as two arcs, so it can be combined with another
+  // subpath under an evenodd fill rule (SVG has no single-element "circle
+  // with a hole" otherwise).
+  function pathCircle(cx, cy, r) {
+    return `M${cx + r},${cy} A${r},${r} 0 1,0 ${cx - r},${cy} A${r},${r} 0 1,0 ${cx + r},${cy} Z`;
+  }
+
+  function shapePath(cx, cy, half, style) {
+    return style === 'dots' || style === 'circle' ? pathCircle(cx, cy, half) : pathRoundedSquare(cx, cy, half, half * (STYLE_RADIUS[style] || 0));
+  }
+
+  // These add a subpath to the context's CURRENT path (rather than a
+  // Path2D object) so multiple shapes can be combined under one
+  // ctx.fill('evenodd') call — Path2D works in browsers, but this form
+  // also runs unchanged under node-canvas, which the test suite uses.
+  function addRoundedSquareToCtx(ctx, cx, cy, half, radius) {
+    const r = Math.min(radius, half);
+    const x0 = cx - half, y0 = cy - half, x1 = cx + half, y1 = cy + half;
+    ctx.moveTo(x0 + r, y0);
+    ctx.arcTo(x1, y0, x1, y1, r);
+    ctx.arcTo(x1, y1, x0, y1, r);
+    ctx.arcTo(x0, y1, x0, y0, r);
+    ctx.arcTo(x0, y0, x1, y0, r);
+    ctx.closePath();
+  }
+
+  function addShapeToCtx(ctx, cx, cy, half, style) {
+    if (style === 'dots' || style === 'circle') {
+      ctx.moveTo(cx + half, cy);
+      ctx.arc(cx, cy, half, 0, Math.PI * 2);
+    } else {
+      addRoundedSquareToCtx(ctx, cx, cy, half, half * (STYLE_RADIUS[style] || 0));
+    }
+  }
+
+  // radius/shape factor per style: 0 = sharp square, ~.35 = rounded, 1 = circle
+  const STYLE_RADIUS = { square: 0, rounded: 0.35, dots: 1, circle: 1 };
+
+  function drawModuleCanvas(ctx, cx, cy, half, style) {
+    ctx.beginPath();
+    if (style === 'dots' || style === 'circle') {
+      ctx.arc(cx, cy, half * 0.82, 0, Math.PI * 2);
+    } else {
+      addRoundedSquareToCtx(ctx, cx, cy, half, half * (STYLE_RADIUS[style] || 0) * 2);
+    }
+    ctx.fill();
+  }
+
+  // One finder pattern rendered as a dark 7×7 ring (an evenodd "donut" with
+  // a 5×5 hole, so whatever is behind — the page background, transparent
+  // canvas, or an opaque fill — shows through the hole correctly either
+  // way) plus a solid dark 3×3 core. Structurally identical to the
+  // per-module finder pattern, just drawn as one clean shape.
+  function drawEyeCanvas(ctx, originX, originY, moduleSizePx, style, darkFill) {
+    const cx = originX + moduleSizePx * 3.5;
+    const cy = originY + moduleSizePx * 3.5;
+    ctx.fillStyle = darkFill;
+
+    ctx.beginPath();
+    addShapeToCtx(ctx, cx, cy, 3.5 * moduleSizePx, style);
+    addShapeToCtx(ctx, cx, cy, 2.5 * moduleSizePx, style);
+    ctx.fill('evenodd');
+
+    ctx.beginPath();
+    addShapeToCtx(ctx, cx, cy, 1.5 * moduleSizePx, style);
+    ctx.fill();
+  }
+
+  function buildCanvasGradient(ctx, gradient, widthPx, heightPx) {
+    if (!gradient) return null;
+    const { color1, color2, type = 'linear', angle = 90 } = gradient;
+    if (type === 'radial') {
+      const cx = widthPx / 2, cy = heightPx / 2;
+      const r = Math.hypot(widthPx, heightPx) / 2;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, color1);
+      g.addColorStop(1, color2);
+      return g;
+    }
+    const rad = (angle * Math.PI) / 180;
+    const dx = Math.cos(rad), dy = Math.sin(rad);
+    const cx = widthPx / 2, cy = heightPx / 2;
+    const half = (Math.abs(dx) * widthPx + Math.abs(dy) * heightPx) / 2;
+    const g = ctx.createLinearGradient(cx - dx * half, cy - dy * half, cx + dx * half, cy + dy * half);
+    g.addColorStop(0, color1);
+    g.addColorStop(1, color2);
+    return g;
+  }
 
   function renderToCanvas(canvas, matrix, options) {
     options = options || {};
@@ -360,20 +473,41 @@
     const margin = options.margin != null ? options.margin : 4;
     const dark = options.dark || '#000000';
     const light = options.light || '#ffffff';
+    const dotStyle = options.dotStyle || 'square';
+    const cornerStyle = options.cornerStyle || dotStyle;
+    const transparentBackground = !!options.transparentBackground;
     const size = matrix.length;
     const total = size + margin * 2;
     canvas.width = total * moduleSize;
     canvas.height = total * moduleSize;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = light;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = dark;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!transparentBackground) {
+      ctx.fillStyle = light;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    const darkFill = buildCanvasGradient(ctx, options.gradient, canvas.width, canvas.height) || dark;
+
+    ctx.fillStyle = darkFill;
+    const half = moduleSize / 2;
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
-        if (matrix[r][c]) {
-          ctx.fillRect((c + margin) * moduleSize, (r + margin) * moduleSize, moduleSize, moduleSize);
-        }
+        if (!matrix[r][c] || isEyeModule(size, r, c)) continue;
+        const cx = (c + margin) * moduleSize + half;
+        const cy = (r + margin) * moduleSize + half;
+        drawModuleCanvas(ctx, cx, cy, half, dotStyle);
       }
+    }
+
+    const eyeOrigins = [
+      [margin, margin],
+      [margin, margin + size - 7],
+      [margin + size - 7, margin],
+    ];
+    for (const [er, ec] of eyeOrigins) {
+      drawEyeCanvas(ctx, ec * moduleSize, er * moduleSize, moduleSize, cornerStyle, darkFill);
     }
   }
 
@@ -382,17 +516,60 @@
     const margin = options.margin != null ? options.margin : 4;
     const dark = options.dark || '#000000';
     const light = options.light || '#ffffff';
+    const dotStyle = options.dotStyle || 'square';
+    const cornerStyle = options.cornerStyle || dotStyle;
+    const transparentBackground = !!options.transparentBackground;
     const size = matrix.length;
     const total = size + margin * 2;
-    let path = '';
+
+    let defs = '';
+    let fillRef = `fill="${dark}"`;
+    if (options.gradient) {
+      const { color1, color2, type = 'linear', angle = 90 } = options.gradient;
+      const id = 'qrGrad';
+      if (type === 'radial') {
+        defs = `<radialGradient id="${id}" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="${color1}"/><stop offset="100%" stop-color="${color2}"/></radialGradient>`;
+      } else {
+        const rad = (angle * Math.PI) / 180;
+        const dx = Math.cos(rad) * 50, dy = Math.sin(rad) * 50;
+        defs = `<linearGradient id="${id}" x1="${50 - dx}%" y1="${50 - dy}%" x2="${50 + dx}%" y2="${50 + dy}%"><stop offset="0%" stop-color="${color1}"/><stop offset="100%" stop-color="${color2}"/></linearGradient>`;
+      }
+      fillRef = `fill="url(#${id})"`;
+    }
+
+    let shapes = '';
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
-        if (matrix[r][c]) path += `M${c + margin},${r + margin}h1v1h-1z`;
+        if (!matrix[r][c] || isEyeModule(size, r, c)) continue;
+        const cx = c + margin + 0.5, cy = r + margin + 0.5;
+        if (dotStyle === 'dots' || dotStyle === 'circle') {
+          shapes += `<circle cx="${cx}" cy="${cy}" r="0.41"/>`;
+        } else if (dotStyle === 'rounded') {
+          shapes += `<path d="${pathRoundedSquare(cx, cy, 0.5, 0.5 * STYLE_RADIUS.rounded * 2)}"/>`;
+        } else {
+          shapes += `<rect x="${c + margin}" y="${r + margin}" width="1" height="1"/>`;
+        }
       }
     }
+
+    // each eye: an evenodd "donut" (7-wide outer minus 5-wide hole) plus a
+    // solid 3-wide core — the hole naturally reveals the background (or
+    // transparency) behind it, no blend-mode tricks needed
+    const eyeOrigins = [[margin, margin], [margin, margin + size - 7], [margin + size - 7, margin]];
+    let eyeShapes = '';
+    for (const [er, ec] of eyeOrigins) {
+      const cx = ec + 3.5, cy = er + 3.5;
+      const ringPath = shapePath(cx, cy, 3.5, cornerStyle) + ' ' + shapePath(cx, cy, 2.5, cornerStyle);
+      eyeShapes += `<path fill-rule="evenodd" d="${ringPath}"/>`;
+      eyeShapes += `<path d="${shapePath(cx, cy, 1.5, cornerStyle)}"/>`;
+    }
+
+    const bg = transparentBackground ? '' : `<rect width="${total}" height="${total}" fill="${light}"/>`;
+    const defsBlock = defs ? `<defs>${defs}</defs>` : '';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}">` +
-      `<rect width="${total}" height="${total}" fill="${light}"/>` +
-      `<path d="${path}" fill="${dark}"/></svg>`;
+      defsBlock + bg +
+      `<g ${fillRef}>${shapes}${eyeShapes}</g>` +
+      `</svg>`;
   }
 
   const Encoder = { generateMatrix, renderToCanvas, renderToSvg, detectMode, chooseVersion, buildCodewords, BitBuffer };
