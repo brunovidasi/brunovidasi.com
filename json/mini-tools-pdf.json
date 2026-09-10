@@ -6,7 +6,7 @@
     "icon": "🔓",
     "description": "Unlock a password-protected PDF and download a clean, password-free copy — decrypted and rebuilt entirely in the browser, nothing ever uploaded.",
     "path": "projects/mini-tools/pdf-password-remover/index.html",
-    "github": "",
+    "github": "https://github.com/brunovidasi/pdf-password-remover",
     "codepen": "",
     "featured": false
   },
@@ -17,7 +17,7 @@
     "icon": "📄",
     "description": "See what's hiding in a PDF's metadata — author, software, custom tracking fields, embedded XMP — then edit, delete, or strip it all out, entirely in the browser.",
     "path": "projects/mini-tools/pdf-metadata-tool/index.html",
-    "github": "",
+    "github": "https://github.com/brunovidasi/pdf-metadata-tool",
     "codepen": "",
     "featured": false
   }
