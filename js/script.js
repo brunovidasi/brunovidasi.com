@@ -71,7 +71,7 @@ const folders = {
 const rootOrder = ['intro','about','projects','mini-tools','freelance','documents','contact'];
 
 // default-open tabs, as requested
-const DEFAULT_OPEN_TABS = ['intro', 'about', 'experience','education','skills','contact'];
+const DEFAULT_OPEN_TABS = ['intro'];
 let openTabs = DEFAULT_OPEN_TABS.slice();
 let activeId = 'intro';
 let openFolders = { about:true };
@@ -178,6 +178,10 @@ let pendingToolRouteId = enteredViaDeepLink ? null : (initialRouteId || null);
 function renderExplorer(){
   const tree = document.getElementById('fileTree');
   tree.innerHTML = '';
+  // a tool tab (e.g. a mini-tool opened in its own tab) has no entry of its own in
+  // this tree, so fall back to highlighting its parent category/tab instead
+  const activeFile = activeId && files[activeId];
+  const highlightId = (activeFile && activeFile.isToolTab && activeFile.parentId) ? activeFile.parentId : activeId;
   rootOrder.forEach(key=>{
     if(folders[key]){
       const f = folders[key];
@@ -192,7 +196,7 @@ function renderExplorer(){
       f.children.forEach(fileId=>{
         const item = document.createElement('div');
         item.style.paddingLeft = '20px';
-        item.className = 'tree-item' + (activeId===fileId ? ' active' : '');
+        item.className = 'tree-item' + (highlightId===fileId ? ' active' : '');
         item.innerHTML = '<span class="left">' + fileIconHtml(files[fileId].icon) + files[fileId].label + '</span>';
         item.onclick = ()=> openFile(fileId);
         kids.appendChild(item);
@@ -200,7 +204,7 @@ function renderExplorer(){
       tree.appendChild(kids);
     } else {
       const item = document.createElement('div');
-      item.className = 'tree-item' + (activeId===key ? ' active' : '');
+      item.className = 'tree-item' + (highlightId===key ? ' active' : '');
       item.innerHTML = '<span class="left">' + fileIconHtml(files[key].icon) + files[key].label + '</span>';
       item.onclick = ()=> openFile(key);
       tree.appendChild(item);
@@ -481,8 +485,10 @@ function tryOpenToolTabRoute(id){
   const info = TOOL_TAB_REGISTRY[id];
   if(!info) return false;
   if(!files[id]){
-    files[id] = { label: info.title, toolIcon: info.icon, fileIconType: info.fileIcon, folder: null, isToolTab: true, toolPath: info.path };
+    files[id] = { label: info.title, toolIcon: info.icon, fileIconType: info.fileIcon, folder: null, isToolTab: true, toolPath: info.path, parentId: info.category || null };
   }
+  const parent = files[id].parentId && files[files[id].parentId];
+  if(parent && parent.folder) openFolders[parent.folder] = true;
   if(!openTabs.includes(id)) openTabs.push(id);
   activeId = id;
   return true;
@@ -641,7 +647,7 @@ function escapeHtml(str){
     .replace(/"/g, '&quot;');
 }
 
-function renderToolCard(project){
+function renderToolCard(project, sameYearAsPrevious, category){
   const title = escapeHtml(project.title);
   const description = escapeHtml(project.description);
   const path = escapeHtml(project.path);
@@ -660,7 +666,10 @@ function renderToolCard(project){
   const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
   const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
   const showOpenTab = !project.noView && !project.live && ['site-history', 'mini-tools'].includes(project.category);
-  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, fileIcon: project.fileIcon };
+  // `project.category` is the item's own generic JSON field (e.g. "mini-tools" for every
+  // mini-tool, regardless of which sub-category tab it's grouped under) — the explorer's
+  // parent-tab lookup needs the actual grouping category instead (e.g. "mini-tools-media")
+  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, fileIcon: project.fileIcon, category: category || project.category };
   const openTabHtml = showOpenTab ? `<button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open</button>` : '';
   const embedHtml = project.noView ? '' : `
       <div class="doc-embed" id="embed-${project.id}">
@@ -694,10 +703,10 @@ function renderToolCard(project){
     </div>`;
 }
 
-function renderTimelineCard(project, sameYearAsPrevious){
+function renderTimelineCard(project, sameYearAsPrevious, category){
   const yearHtml = (project.year && !sameYearAsPrevious) ? `<div class="year">${escapeHtml(String(project.year))}</div>` : '';
   const { year, ...rest } = project;
-  const cardHtml = renderToolCard({ ...rest, featured: true });
+  const cardHtml = renderToolCard({ ...rest, featured: true }, sameYearAsPrevious, category);
   return `
     <div class="commit timeline-commit">
       <div class="commit-body">
@@ -858,11 +867,11 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
 // ---- mini-games: same "browser window" chrome as a website-card, but the body is a
 // live, playable iframe instead of a screenshot — no lazy-loading, it's the whole point ----
 
-function renderMiniGameCard(project){
+function renderMiniGameCard(project, sameYearAsPrevious, category){
   const title = escapeHtml(project.title);
   const path = escapeHtml(project.path);
   const github = escapeHtml(project.github);
-  TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon };
+  TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, category: category || project.category };
   const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
   const githubLabel = escapeHtml(project.githubLabel || 'GitHub (2013 Java)');
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}${githubLabel}</a>` : '';
