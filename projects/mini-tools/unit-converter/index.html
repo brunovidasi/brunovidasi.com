@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Convert</h1>
+  <p class="sub">Length, weight, temperature, volume, area, speed, data, and time — one unit converter.</p>
+  <p class="privacy" id="privacyNote">All math runs entirely in your browser. Nothing is ever sent anywhere.</p>
+
+  <section class="panel active" id="panel-units">
+    <div class="category-row" id="unitCategories"></div>
+
+    <div class="convert-card">
+      <div class="convert-col">
+        <label class="convert-label">From</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="unitFromValue" value="1">
+          <div class="search-combo" id="unitFromCombo">
+            <input type="text" class="convert-select search-combo-input" id="unitFromUnit" autocomplete="off" spellcheck="false" placeholder="Search unit…">
+            <div class="search-combo-list" id="unitFromList" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="swap-btn" id="unitSwap" title="Swap units">⇄</button>
+
+      <div class="convert-col">
+        <label class="convert-label">To</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="unitToValue" readonly>
+          <div class="search-combo" id="unitToCombo">
+            <input type="text" class="convert-select search-combo-input" id="unitToUnit" autocomplete="off" spellcheck="false" placeholder="Search unit…">
+            <div class="search-combo-list" id="unitToList" hidden></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-line" id="unitRateLine"></div>
+
+    <div class="all-units">
+      <div class="all-units-head">All units in this category</div>
+      <div class="all-units-grid" id="unitAllGrid"></div>
+    </div>
+  </section>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timezone Converter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Convert</h1>
+  <p class="sub">Pick a date/time in one zone and see it translated into a list of other cities.</p>
+  <p class="privacy" id="privacyNote">All math runs entirely in your browser. Nothing is ever sent anywhere.</p>
+
+  <section class="panel active" id="panel-timezone">
+    <div class="tz-source-card">
+      <div class="tz-source-row">
+        <div class="convert-col">
+          <label class="convert-label">Date &amp; time</label>
+          <input type="datetime-local" class="convert-input tz-datetime" id="tzDateTime">
+        </div>
+        <div class="convert-col">
+          <label class="convert-label">In timezone</label>
+          <div class="search-combo" id="tzFromCombo">
+            <input type="text" class="convert-select tz-select search-combo-input" id="tzFromZone" autocomplete="off" spellcheck="false" placeholder="Search timezone…">
+            <div class="search-combo-list" id="tzFromList" hidden></div>
+          </div>
+        </div>
+        <button class="expr-btn secondary" id="tzNowBtn" title="Set to current time">Now</button>
+      </div>
+    </div>
+
+    <div class="tz-add-row">
+      <div class="search-combo" id="tzAddCombo">
+        <input type="text" class="convert-select tz-select search-combo-input" id="tzAddZone" autocomplete="off" spellcheck="false" placeholder="Search timezone…">
+        <div class="search-combo-list" id="tzAddList" hidden></div>
+      </div>
+      <button class="expr-btn" id="tzAddBtn">Add city</button>
+    </div>
+
+    <div class="tz-list" id="tzList"></div>
+  </section>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

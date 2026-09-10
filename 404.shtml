@@ -368,6 +368,7 @@ var ROUTES = {
   'css-beautifier': '/css-beautifier',
   'css-minifier': '/css-minifier',
   'css-visual-builder': '/css-visual-builder',
+  'currency-converter': '/currency-converter',
   'exif-viewer': '/exif-viewer',
   'gerador-de-cpf': '/gerador-de-cpf',
   'ig-relationship-checker': '/ig-relationship-checker',
@@ -393,7 +394,8 @@ var ROUTES = {
   'snake': '/snake',
   'tetris': '/tetris',
   'text-diff-checker': '/text-diff-checker',
-  'unit-currency-timezone-converter': '/unit-currency-timezone-converter'
+  'timezone-converter': '/timezone-converter',
+  'unit-converter': '/unit-converter'
 };
 
 function focusInput(){

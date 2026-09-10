@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Currency Converter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Convert</h1>
+  <p class="sub">40+ currencies, converted at a live exchange rate.</p>
+  <p class="privacy" id="privacyNote">Needs a live exchange rate, fetched from a free public API. Nothing else is sent anywhere.</p>
+
+  <section class="panel active" id="panel-currency">
+    <div class="convert-card">
+      <div class="convert-col">
+        <label class="convert-label">Amount</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="curFromValue" value="1">
+          <div class="search-combo" id="curFromCombo">
+            <input type="text" class="convert-select search-combo-input" id="curFromUnit" autocomplete="off" spellcheck="false" placeholder="Search currency…">
+            <div class="search-combo-list" id="curFromList" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="swap-btn" id="curSwap" title="Swap currencies">⇄</button>
+
+      <div class="convert-col">
+        <label class="convert-label">Converted</label>
+        <div class="convert-field">
+          <input type="text" inputmode="decimal" class="convert-input" id="curToValue" readonly>
+          <div class="search-combo" id="curToCombo">
+            <input type="text" class="convert-select search-combo-input" id="curToUnit" autocomplete="off" spellcheck="false" placeholder="Search currency…">
+            <div class="search-combo-list" id="curToList" hidden></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-line" id="curRateLine">Fetching live rates…</div>
+
+    <div class="all-units">
+      <div class="all-units-head">Quick amounts</div>
+      <div class="chip-row" id="curQuickAmounts"></div>
+    </div>
+  </section>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
