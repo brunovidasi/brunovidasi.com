@@ -26,6 +26,16 @@ function fileIconHtml(type){
   return '<span class="file-icon glyph" style="color:' + g.color + '">' + g.char + '</span>';
 }
 
+// ---- a tool/game tab shows the same glyph/emoji the tool itself uses as its icon
+// (its h1::before, see mini-tools JSON "glyph"), instead of a generic file icon —
+// except tools that opt into a specific file-type glyph instead (see JSON "fileIcon"),
+// e.g. the PDF tools use the same PDF glyph as the documents.pdf explorer entry ----
+function tabIconHtml(file){
+  if(file.fileIconType) return fileIconHtml(file.fileIconType);
+  if(file.toolIcon) return '<span class="file-icon" style="font-family:var(--mono,monospace);font-size:13px;color:#519aba">' + file.toolIcon + '</span>';
+  return fileIconHtml(file.icon);
+}
+
 function folderIconHtml(open){
   return '<span class="file-icon" style="color:' + FOLDER_COLOR + '">' + (open ? FOLDER_OPEN_SVG : FOLDER_CLOSED_SVG) + '</span>';
 }
@@ -40,25 +50,31 @@ const files = {
   websites:          { label:'websites.html',       icon:'html', folder:'projects' },
   'web-systems':     { label:'web-systems.php',     icon:'php',  folder:'projects' },
   'landing-pages':   { label:'landing-pages.html',  icon:'html', folder:'projects' },
-  'mini-tools':      { label:'mini-tools.html',     icon:'html', folder:'projects' },
   'edm-tools':       { label:'eDM-tools.html',      icon:'html', folder:'projects' },
   'mini-games':      { label:'mini-games.html',     icon:'html', folder:'projects' },
   'site-history':    { label:'site-history.html',   icon:'html', folder:'projects' },
+  'mini-tools-readme':      { label:'mini-tools.md',        icon:'md',   folder:'mini-tools' },
+  'mini-tools-dev':         { label:'dev-utilities.js',      icon:'js',   folder:'mini-tools' },
+  'mini-tools-media':       { label:'media-tools.js',        icon:'js',   folder:'mini-tools' },
+  'mini-tools-converters':  { label:'converters.js',         icon:'js',   folder:'mini-tools' },
+  'mini-tools-generators':  { label:'generators.js',         icon:'js',   folder:'mini-tools' },
+  'mini-tools-pdf':         { label:'pdf-tools.js',          icon:'js',   folder:'mini-tools' },
   freelance:         { label:'freelance.css',       icon:'css',  folder:null },
   contact:           { label:'contact.sh',          icon:'sh',   folder:null },
   documents:         { label:'documents.pdf',       icon:'pdf',  folder:null }
 };
 const folders = {
-  about:    { label:'about/', children:['about','experience','education','skills'] },
-  projects: { label:'projects/', children:['websites','web-systems','landing-pages','mini-tools','edm-tools','mini-games','site-history'] }
+  about:      { label:'about/', children:['about','experience','education','skills'] },
+  projects:   { label:'projects/', children:['websites','web-systems','landing-pages','edm-tools','mini-games','site-history'] },
+  'mini-tools': { label:'mini-tools/', children:['mini-tools-readme','mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf'] }
 };
-const rootOrder = ['intro','about','projects','freelance','documents','contact'];
+const rootOrder = ['intro','about','projects','mini-tools','freelance','documents','contact'];
 
 // default-open tabs, as requested
 const DEFAULT_OPEN_TABS = ['intro', 'about', 'experience','education','skills','contact'];
 let openTabs = DEFAULT_OPEN_TABS.slice();
 let activeId = 'intro';
-let openFolders = { about:true, projects:true };
+let openFolders = { about:true };
 
 // ---- website-style panels: "websites" and "web-systems" share the exact same
 // list/filter/detail mechanics (see renderWebsiteCard / renderWebsiteDetail below),
@@ -107,7 +123,12 @@ function currentRouteId(){
     : decodeURIComponent(location.pathname.replace(/^\/+|\/+$/g, ''));
 }
 
+// legacy/folder-index routes: mini-tools.html used to be one big page, now split into
+// a folder — keep the old bare URL working by pointing it at the folder's README
+const ROUTE_ALIASES = { 'mini-tools': 'mini-tools-readme' };
+
 function applyPath(id){
+  id = ROUTE_ALIASES[id] || id;
   if(!id || !files[id]) return false;
   if(files[id].folder) openFolders[files[id].folder] = true;
   if(!openTabs.includes(id)) openTabs.push(id);
@@ -187,6 +208,11 @@ function renderExplorer(){
   });
 }
 
+function setAllFolders(open){
+  Object.keys(folders).forEach(key=> openFolders[key] = open);
+  renderExplorer();
+}
+
 let draggedTabId = null;
 
 function renderTabs(){
@@ -203,7 +229,7 @@ function renderTabs(){
     const tab = document.createElement('div');
     tab.className = 'tab' + (activeId===id ? ' active' : '');
     tab.draggable = true;
-    tab.innerHTML = fileIconHtml(files[id].icon) + files[id].label + '<span class="close-x">✕</span>';
+    tab.innerHTML = tabIconHtml(files[id]) + files[id].label + '<span class="close-x">✕</span>';
     tab.addEventListener('click', (e)=>{
       if(e.target.classList.contains('close-x')){
         closeTab(id);
@@ -455,7 +481,7 @@ function tryOpenToolTabRoute(id){
   const info = TOOL_TAB_REGISTRY[id];
   if(!info) return false;
   if(!files[id]){
-    files[id] = { label: info.title, icon: 'html', folder: null, isToolTab: true, toolPath: info.path };
+    files[id] = { label: info.title, toolIcon: info.icon, fileIconType: info.fileIcon, folder: null, isToolTab: true, toolPath: info.path };
   }
   if(!openTabs.includes(id)) openTabs.push(id);
   activeId = id;
@@ -629,12 +655,13 @@ function renderToolCard(project){
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}GitHub</a>` : '';
   const codepenHtml = project.codepen ? `<a class="doc-btn" href="${codepen}" target="_blank" rel="noopener">${ICON_CODEPEN_SVG}CodePen</a>` : '';
   const fullWidthClass = project.featured ? ' tool-card-full' : '';
-  const viewHtml = project.noView ? '' : `<button class="doc-btn" onclick="toggleDoc('${project.id}')">${ICON_EYE_SVG}View</button>`;
+  const viewLabel = project.category === 'mini-tools' ? 'Quick View' : 'View';
+  const viewHtml = project.noView ? '' : `<button class="doc-btn" data-view-label="${viewLabel}" onclick="toggleDoc('${project.id}')">${ICON_EYE_SVG}${viewLabel}</button>`;
   const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
   const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
   const showOpenTab = !project.noView && !project.live && ['site-history', 'mini-tools'].includes(project.category);
-  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title };
-  const openTabHtml = showOpenTab ? `<button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open in New Tab</button>` : '';
+  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, fileIcon: project.fileIcon };
+  const openTabHtml = showOpenTab ? `<button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open</button>` : '';
   const embedHtml = project.noView ? '' : `
       <div class="doc-embed" id="embed-${project.id}">
         <iframe data-src="${path}" title="${title}"></iframe>
@@ -835,7 +862,7 @@ function renderMiniGameCard(project){
   const title = escapeHtml(project.title);
   const path = escapeHtml(project.path);
   const github = escapeHtml(project.github);
-  TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title };
+  TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon };
   const descHtml = project.description ? `<div class="tool-desc">${escapeHtml(project.description)}</div>` : '';
   const githubLabel = escapeHtml(project.githubLabel || 'GitHub (2013 Java)');
   const githubHtml = project.github ? `<a class="doc-btn" href="${github}" target="_blank" rel="noopener">${ICON_GITHUB_SVG}${githubLabel}</a>` : '';
@@ -863,7 +890,7 @@ function renderMiniGameCard(project){
           </div>
         </div>
         <div class="doc-actions">
-          <button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open in New Tab</button>
+          <button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open</button>
           ${campaignHtml}
           ${githubHtml}
           ${githubHtml2026}
@@ -1297,7 +1324,7 @@ const INTRO_PROJECT_GROUPS = {
   websites: ['websites'],
   'web-systems': ['web-systems'],
   'landing-pages': ['landing-pages'],
-  'mini-tools': ['mini-tools-dev', 'mini-tools-media', 'mini-tools-converters', 'mini-tools-generators', 'mini-tools-pdf', 'mini-tools-personal'],
+  'mini-tools-readme': ['mini-tools-dev', 'mini-tools-media', 'mini-tools-converters', 'mini-tools-generators', 'mini-tools-pdf', 'mini-tools-personal'],
   'edm-tools': ['edm-html-builder', 'edm-kinetic-modules', 'edm-tools'],
   'mini-games': ['mini-games']
 };
@@ -1321,17 +1348,13 @@ function renderIntroProjectPreview(byCategory){
 }
 
 // ---- jump from an experience mini box to the matching project card ----
-// (edm-kinetic-modules/edm-html-builder and the mini-tools-* subcategories live nested inside
-// the edm-tools/mini-tools tabs respectively, not their own tabs)
+// (edm-kinetic-modules/edm-html-builder live nested inside the edm-tools tab, not their
+// own tab; mini-tools-* categories are each their own tab now, so no override needed —
+// except mini-tools-personal, which has no tab of its own while it's hidden)
 const PROJECT_TAB_OVERRIDES = {
   'edm-kinetic-modules': 'edm-tools',
   'edm-html-builder': 'edm-tools',
-  'mini-tools-dev': 'mini-tools',
-  'mini-tools-converters': 'mini-tools',
-  'mini-tools-media': 'mini-tools',
-  'mini-tools-generators': 'mini-tools',
-  'mini-tools-pdf': 'mini-tools',
-  'mini-tools-personal': 'mini-tools'
+  'mini-tools-personal': 'mini-tools-readme'
 };
 function goToProject(category, id, companySlug){
   openFile(PROJECT_TAB_OVERRIDES[category] || category);
@@ -1378,15 +1401,15 @@ function toggleAllDocs(category, btn){
   if(btn) btn.innerHTML = shouldOpen ? `${ICON_EYE_OFF_SVG}Collapse all` : `${ICON_EYE_SVG}View all`;
 }
 
-// ---- swap a "View" button's icon (and, when its label is literally "View"/"Hide", its text) to reflect open state ----
+// ---- swap a "View"/"Quick View" button's icon (and, when it carries a data-view-label, its text) to reflect open state ----
 function setViewButtonState(btn, isOpen){
   if(!btn) return;
   const icon = btn.querySelector('svg.btn-icon');
   if(icon) icon.outerHTML = isOpen ? ICON_EYE_OFF_SVG : ICON_EYE_SVG;
+  const viewLabel = btn.dataset.viewLabel;
+  if(!viewLabel) return;
   const textNode = Array.from(btn.childNodes).find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
-  if(textNode && (textNode.textContent.trim() === 'View' || textNode.textContent.trim() === 'Hide')){
-    textNode.textContent = isOpen ? 'Hide' : 'View';
-  }
+  if(textNode) textNode.textContent = isOpen ? 'Hide' : viewLabel;
 }
 
 // ---- contact page interactions ----
@@ -1581,6 +1604,7 @@ function toggleExplorer(){
   }
 }
 document.getElementById('dotGreen').addEventListener('click', toggleExplorer);
+document.getElementById('titlebarLogoBtn').addEventListener('click', ()=> openFile('intro'));
 
 // ---- mobile explorer overlay ----
 document.getElementById('mobileMenuBtn').addEventListener('click', toggleExplorer);
@@ -1596,6 +1620,16 @@ explorerMore.addEventListener('click', (e)=>{
   e.stopPropagation();
   explorerMenu.classList.toggle('show');
   explorerMore.classList.toggle('active');
+});
+document.getElementById('expandAllFoldersBtn').addEventListener('click', ()=>{
+  setAllFolders(true);
+  explorerMenu.classList.remove('show');
+  explorerMore.classList.remove('active');
+});
+document.getElementById('collapseAllFoldersBtn').addEventListener('click', ()=>{
+  setAllFolders(false);
+  explorerMenu.classList.remove('show');
+  explorerMore.classList.remove('active');
 });
 document.getElementById('closeAllTabsBtn').addEventListener('click', ()=>{
   closeAllTabs();

@@ -20,7 +20,7 @@ RewriteRule ^/?$ "https\:\/\/flowparty\.com\.au\/sydney" [R=301,L]
 # for a direct visit/refresh so client-side JS can render the right tab.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(about|intro|experience|education|skills|websites|web-systems|landing-pages|mini-tools|edm-tools|mini-games|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
+RewriteRule ^(about|intro|experience|education|skills|websites|web-systems|landing-pages|mini-tools|mini-tools-readme|mini-tools-dev|mini-tools-media|mini-tools-converters|mini-tools-generators|mini-tools-pdf|edm-tools|mini-games|edm-work|site-history|freelance|contact|documents)/?$ /index.html [L]
 
 # brunovida.si mini-tool/mini-game tab deep-links (e.g. /cron-builder), opened via each
 # card's "Open in New Tab" button — same as above, but for tool/game ids instead of the

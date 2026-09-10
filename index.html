@@ -79,7 +79,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="dot y" id="dotYellow" title="Minimize"></button>
     <button class="dot g" id="dotGreen" title="Toggle sidebar"></button>
     <span class="path">bruno-vieira — dev-portfolio</span>
-    <img class="titlebar-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
+    <button class="titlebar-logo-btn" id="titlebarLogoBtn" title="Go to intro.js">
+      <img class="titlebar-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
+    </button>
     <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu">
       <svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-menu"></use></svg>
     </button>
@@ -95,6 +97,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
       <div class="explorer-menu" id="explorerMenu">
+        <button class="explorer-menu-item" id="expandAllFoldersBtn">Expand All Folders</button>
+        <button class="explorer-menu-item" id="collapseAllFoldersBtn">Collapse All Folders</button>
+        <div class="explorer-menu-divider"></div>
         <button class="explorer-menu-item" id="closeAllTabsBtn">Close All Tabs</button>
       </div>
       <div id="fileTree"></div>
@@ -158,7 +163,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="meta">Flow Party Sydney · Fearless Pong · +4 more</div>
             </div>
           </div>
-          <div class="commit clickable" data-open="mini-tools">
+          <div class="commit clickable" data-open="mini-tools-readme">
             <div class="commit-body">
               <div class="msg">Mini Tools</div>
               <div class="meta">Gerador de CPF · PDF Password Remover · +16 more</div>
@@ -593,12 +598,46 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <!-- MINI TOOLS -->
-        <div class="panel" id="panel-mini-tools">
+        <div class="panel" id="panel-mini-tools-readme">
           <h2 class="sect"><span class="brk">&lt;</span>mini-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-dev,mini-tools-converters,mini-tools-media,mini-tools-generators,mini-tools-pdf">0</span>"</span> <span class="attr">type</span>=<span class="str">"standalone"</span><span class="brk"> /&gt;</span></h2>
 
-          <div class="sect-intro">Mini-tools I've built for my everyday tasks and to automate repetitive processes.</div>
+          <div class="sect-intro">Mini-tools I've built for my everyday tasks and to automate repetitive processes — all client-side, nothing ever uploaded. Pick a category below, or from the file tree.</div>
 
-          <div class="skill-label">Dev Utilities</div>
+          <div class="commit clickable" data-open="mini-tools-dev">
+            <div class="commit-body">
+              <div class="msg">Dev Utilities</div>
+              <div class="meta">Cron Builder · Regex Tester · +2 more</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="mini-tools-media">
+            <div class="commit-body">
+              <div class="msg">Image & Media Tools</div>
+              <div class="meta">Image Compressor · Color Palette Generator · +1 more</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="mini-tools-converters">
+            <div class="commit-body">
+              <div class="msg">Converters</div>
+              <div class="meta">Unit/Currency/Timezone Converter · JSON/CSV Converter</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="mini-tools-generators">
+            <div class="commit-body">
+              <div class="msg">Generators</div>
+              <div class="meta">Password Generator · QR Code Generator/Reader · +1 more</div>
+            </div>
+          </div>
+          <div class="commit clickable" data-open="mini-tools-pdf">
+            <div class="commit-body">
+              <div class="msg">PDF Tools</div>
+              <div class="meta">PDF Password Remover · PDF Compressor · +3 more</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MINI-TOOLS / DEV UTILITIES -->
+        <div class="panel" id="panel-mini-tools-dev">
+          <h2 class="sect"><span class="brk">&lt;</span>dev-utilities <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-dev">0</span>"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Everyday tools for testing and debugging — cron expressions, regex, and text diffs.</div>
@@ -606,8 +645,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-dev" data-category="mini-tools-dev"></div>
+        </div>
 
-          <div class="skill-label mt-30">Image & Media Tools</div>
+        <!-- MINI-TOOLS / IMAGE & MEDIA TOOLS -->
+        <div class="panel" id="panel-mini-tools-media">
+          <h2 class="sect"><span class="brk">&lt;</span>media-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-media">0</span>"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Client-side tools for working with images and photo metadata — nothing ever gets uploaded.</div>
@@ -615,8 +657,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-media" data-category="mini-tools-media"></div>
+        </div>
 
-          <div class="skill-label mt-30">Converters</div>
+        <!-- MINI-TOOLS / CONVERTERS -->
+        <div class="panel" id="panel-mini-tools-converters">
+          <h2 class="sect"><span class="brk">&lt;</span>converters <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-converters">0</span>"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Unit, currency, timezone, and data-format conversions in one place.</div>
@@ -624,8 +669,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-converters" data-category="mini-tools-converters"></div>
+        </div>
 
-          <div class="skill-label mt-30">Generators</div>
+        <!-- MINI-TOOLS / GENERATORS -->
+        <div class="panel" id="panel-mini-tools-generators">
+          <h2 class="sect"><span class="brk">&lt;</span>generators <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-generators">0</span>"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Quick generators for passwords and test data.</div>
@@ -633,8 +681,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-generators" data-category="mini-tools-generators"></div>
+        </div>
 
-          <div class="skill-label mt-30">PDF Tools</div>
+        <!-- MINI-TOOLS / PDF TOOLS -->
+        <div class="panel" id="panel-mini-tools-pdf">
+          <h2 class="sect"><span class="brk">&lt;</span>pdf-tools <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-pdf">0</span>"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Client-side PDF utilities — nothing ever gets uploaded.</div>
@@ -642,9 +693,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-pdf" data-category="mini-tools-pdf"></div>
+        </div>
 
-          <!-- Personal Projects — hidden for now, re-enable by uncommenting
-          <div class="skill-label mt-30">Personal Projects</div>
+        <!-- MINI-TOOLS / PERSONAL PROJECTS — hidden for now: add 'mini-tools-personal' back to
+        folders['mini-tools'].children in js/script.js to re-enable
+        <div class="panel" id="panel-mini-tools-personal">
+          <h2 class="sect"><span class="brk">&lt;</span>personal-projects <span class="attr">count</span>=<span class="str">"<span class="tool-count" data-count-category="mini-tools-personal">0</span>"</span><span class="brk"> /&gt;</span></h2>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Small personal projects and social/data utilities I built for myself.</div>
@@ -652,8 +706,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-personal" data-category="mini-tools-personal"></div>
-          -->
         </div>
+        -->
 
         <!-- EDM TOOLS -->
         <div class="panel" id="panel-edm-tools">
