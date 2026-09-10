@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Visual Builder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>CSS Visual Builder</h1>
+  <p class="sub">Build <code>clip-path</code>, gradients, and <code>box-shadow</code> with sliders and live preview, then copy the generated CSS.</p>
+  <p class="privacy">Everything runs in your browser — nothing is uploaded anywhere.</p>
+
+  <div class="tool-tabs" id="toolTabs">
+    <button class="tool-tab active" data-tool="clip">Clip-path</button>
+    <button class="tool-tab" data-tool="gradient">Gradient</button>
+    <button class="tool-tab" data-tool="shadow">Box-shadow</button>
+  </div>
+
+  <!-- ================= CLIP-PATH ================= -->
+  <div class="tool-panel" id="panel-clip">
+    <div class="grid">
+      <div class="panel controls-panel">
+        <div class="section-head"><span>Shape</span></div>
+        <div class="seg" id="clipShapeSeg">
+          <button class="seg-btn active" data-shape="inset">Inset</button>
+          <button class="seg-btn" data-shape="circle">Circle</button>
+          <button class="seg-btn" data-shape="ellipse">Ellipse</button>
+          <button class="seg-btn" data-shape="polygon">Polygon</button>
+        </div>
+
+        <div class="shape-controls" id="insetControls">
+          <label class="range-label">Top <span class="range-val" id="insetTopVal">10%</span>
+            <input type="range" id="insetTop" min="0" max="50" step="1" value="10">
+          </label>
+          <label class="range-label">Right <span class="range-val" id="insetRightVal">10%</span>
+            <input type="range" id="insetRight" min="0" max="50" step="1" value="10">
+          </label>
+          <label class="range-label">Bottom <span class="range-val" id="insetBottomVal">10%</span>
+            <input type="range" id="insetBottom" min="0" max="50" step="1" value="10">
+          </label>
+          <label class="range-label">Left <span class="range-val" id="insetLeftVal">10%</span>
+            <input type="range" id="insetLeft" min="0" max="50" step="1" value="10">
+          </label>
+          <label class="range-label">Corner radius <span class="range-val" id="insetRoundVal">0px</span>
+            <input type="range" id="insetRound" min="0" max="80" step="1" value="0">
+          </label>
+        </div>
+
+        <div class="shape-controls" id="circleControls" hidden>
+          <label class="range-label">Radius <span class="range-val" id="circleRadiusVal">40%</span>
+            <input type="range" id="circleRadius" min="0" max="100" step="1" value="40">
+          </label>
+          <label class="range-label">Position X <span class="range-val" id="circleXVal">50%</span>
+            <input type="range" id="circleX" min="0" max="100" step="1" value="50">
+          </label>
+          <label class="range-label">Position Y <span class="range-val" id="circleYVal">50%</span>
+            <input type="range" id="circleY" min="0" max="100" step="1" value="50">
+          </label>
+        </div>
+
+        <div class="shape-controls" id="ellipseControls" hidden>
+          <label class="range-label">Radius X <span class="range-val" id="ellipseRxVal">40%</span>
+            <input type="range" id="ellipseRx" min="0" max="100" step="1" value="40">
+          </label>
+          <label class="range-label">Radius Y <span class="range-val" id="ellipseRyVal">30%</span>
+            <input type="range" id="ellipseRy" min="0" max="100" step="1" value="30">
+          </label>
+          <label class="range-label">Position X <span class="range-val" id="ellipseXVal">50%</span>
+            <input type="range" id="ellipseX" min="0" max="100" step="1" value="50">
+          </label>
+          <label class="range-label">Position Y <span class="range-val" id="ellipseYVal">50%</span>
+            <input type="range" id="ellipseY" min="0" max="100" step="1" value="50">
+          </label>
+        </div>
+
+        <div class="shape-controls" id="polygonControls" hidden>
+          <div class="preset-grid" id="polygonPresets"></div>
+          <label class="ta-label">Points
+            <textarea id="polygonPoints" class="points-input" spellcheck="false"></textarea>
+          </label>
+          <div class="input-error" id="polygonError"></div>
+        </div>
+      </div>
+
+      <div class="panel preview-panel">
+        <div class="section-head"><span>Preview</span></div>
+        <div class="checker-stage">
+          <div class="clip-shape" id="clipPreview"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel export-panel">
+      <div class="section-head">
+        <span>CSS</span>
+        <button class="btn secondary copy-btn" id="clipCopyBtn">Copy CSS</button>
+      </div>
+      <pre class="code-block"><code id="clipCode"></code></pre>
+    </div>
+  </div>
+
+  <!-- ================= GRADIENT ================= -->
+  <div class="tool-panel" id="panel-gradient" hidden>
+    <div class="grid">
+      <div class="panel controls-panel">
+        <div class="section-head"><span>Type</span></div>
+        <div class="seg" id="gradientTypeSeg">
+          <button class="seg-btn active" data-type="linear">Linear</button>
+          <button class="seg-btn" data-type="radial">Radial</button>
+          <button class="seg-btn" data-type="conic">Conic</button>
+        </div>
+
+        <div class="shape-controls" id="linearControls">
+          <label class="range-label">Angle <span class="range-val" id="linearAngleVal">135deg</span>
+            <input type="range" id="linearAngle" min="0" max="360" step="1" value="135">
+          </label>
+        </div>
+
+        <div class="shape-controls" id="radialControls" hidden>
+          <div class="setting-label">Shape</div>
+          <div class="seg" id="radialShapeSeg">
+            <button class="seg-btn active" data-rshape="circle">Circle</button>
+            <button class="seg-btn" data-rshape="ellipse">Ellipse</button>
+          </div>
+          <label class="range-label">Position X <span class="range-val" id="radialXVal">50%</span>
+            <input type="range" id="radialX" min="0" max="100" step="1" value="50">
+          </label>
+          <label class="range-label">Position Y <span class="range-val" id="radialYVal">50%</span>
+            <input type="range" id="radialY" min="0" max="100" step="1" value="50">
+          </label>
+          <label class="ta-label">Size
+            <select id="radialSize" class="select-input">
+              <option value="farthest-corner">farthest-corner</option>
+              <option value="closest-side">closest-side</option>
+              <option value="closest-corner">closest-corner</option>
+              <option value="farthest-side">farthest-side</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="shape-controls" id="conicControls" hidden>
+          <label class="range-label">From angle <span class="range-val" id="conicAngleVal">0deg</span>
+            <input type="range" id="conicAngle" min="0" max="360" step="1" value="0">
+          </label>
+          <label class="range-label">Position X <span class="range-val" id="conicXVal">50%</span>
+            <input type="range" id="conicX" min="0" max="100" step="1" value="50">
+          </label>
+          <label class="range-label">Position Y <span class="range-val" id="conicYVal">50%</span>
+            <input type="range" id="conicY" min="0" max="100" step="1" value="50">
+          </label>
+        </div>
+
+        <label class="check-label"><input type="checkbox" id="gradientRepeat"> Repeating</label>
+
+        <div class="section-head stops-head"><span>Color stops</span>
+          <button class="btn secondary" id="addStopBtn">+ Add stop</button>
+        </div>
+        <div class="stops-list" id="stopsList"></div>
+      </div>
+
+      <div class="panel preview-panel">
+        <div class="section-head"><span>Preview</span></div>
+        <div class="gradient-stage" id="gradientPreview"></div>
+      </div>
+    </div>
+
+    <div class="panel export-panel">
+      <div class="section-head">
+        <span>CSS</span>
+        <button class="btn secondary copy-btn" id="gradientCopyBtn">Copy CSS</button>
+      </div>
+      <pre class="code-block"><code id="gradientCode"></code></pre>
+    </div>
+  </div>
+
+  <!-- ================= BOX-SHADOW ================= -->
+  <div class="tool-panel" id="panel-shadow" hidden>
+    <div class="grid">
+      <div class="panel controls-panel">
+        <div class="section-head"><span>Shadow layers</span>
+          <button class="btn secondary" id="addShadowBtn">+ Add layer</button>
+        </div>
+        <div class="shadow-list" id="shadowList"></div>
+      </div>
+
+      <div class="panel preview-panel">
+        <div class="section-head"><span>Preview</span></div>
+        <div class="shadow-stage">
+          <div class="shadow-card" id="shadowPreview"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel export-panel">
+      <div class="section-head">
+        <span>CSS</span>
+        <button class="btn secondary copy-btn" id="shadowCopyBtn">Copy CSS</button>
+      </div>
+      <pre class="code-block"><code id="shadowCode"></code></pre>
+    </div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

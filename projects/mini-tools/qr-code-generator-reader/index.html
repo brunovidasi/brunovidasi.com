@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Generator / Reader</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>QR Code Generator / Reader</h1>
+  <p class="sub">Generate QR codes from any text or URL, or scan one from a photo or your camera — built from scratch on canvas, following the QR spec directly (encoding, error correction, masking, and decoding).</p>
+  <p class="privacy">Everything runs in your browser. Nothing is uploaded — camera frames and images never leave your device.</p>
+
+  <div class="tabs" id="modeTabs">
+    <button class="tab active" data-mode="generate">Generate</button>
+    <button class="tab" data-mode="scan">Scan</button>
+  </div>
+
+  <div class="mode-view" id="generateView">
+    <div class="panel">
+      <div class="section-head"><span>Content</span></div>
+      <textarea id="genText" placeholder="Type text, a URL, or anything else to encode…" rows="3">https://brunovida.si</textarea>
+
+      <div class="options-grid">
+        <div class="option-block">
+          <span class="ctrl-label-inline">Error correction</span>
+          <div class="seg-control" id="ecLevel">
+            <button data-value="L" title="~7% recovery">L</button>
+            <button data-value="M" class="active" title="~15% recovery">M</button>
+            <button data-value="Q" title="~25% recovery">Q</button>
+            <button data-value="H" title="~30% recovery">H</button>
+          </div>
+        </div>
+        <div class="option-block">
+          <span class="ctrl-label-inline">Module size</span>
+          <input type="range" id="moduleSize" min="2" max="16" value="8">
+          <span class="length-value" id="moduleSizeValue">8px</span>
+        </div>
+        <div class="option-block">
+          <span class="ctrl-label-inline">Quiet zone</span>
+          <input type="range" id="margin" min="0" max="8" value="4">
+          <span class="length-value" id="marginValue">4</span>
+        </div>
+        <div class="option-block color-block">
+          <span class="ctrl-label-inline">Colors</span>
+          <input type="color" id="darkColor" value="#000000" title="Module color">
+          <input type="color" id="lightColor" value="#ffffff" title="Background color">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel result-panel">
+      <div class="section-head"><span>Result</span><span class="qr-meta" id="qrMeta">—</span></div>
+      <div class="canvas-wrap">
+        <canvas id="qrCanvas"></canvas>
+        <p class="qr-error" id="qrError" hidden></p>
+      </div>
+      <div class="output-row">
+        <button class="btn secondary" id="downloadPng">Download PNG</button>
+        <button class="btn secondary" id="downloadSvg">Download SVG</button>
+        <button class="btn secondary" id="copyPng">Copy image</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mode-view" id="scanView" hidden>
+    <div class="panel">
+      <div class="section-head"><span>Source</span></div>
+      <div class="scan-source-row">
+        <label class="btn secondary file-btn">
+          Upload image
+          <input type="file" id="fileInput" accept="image/*" hidden>
+        </label>
+        <button class="btn secondary" id="cameraBtn">Use camera</button>
+        <button class="btn secondary" id="stopCameraBtn" hidden>Stop camera</button>
+      </div>
+
+      <div class="scan-preview" id="scanPreview" hidden>
+        <video id="video" playsinline muted></video>
+        <canvas id="scanCanvas" hidden></canvas>
+        <div class="scan-frame"></div>
+      </div>
+      <p class="scan-status" id="scanStatus">Upload an image or start your camera to scan a QR code.</p>
+    </div>
+
+    <div class="panel result-panel" id="scanResultPanel" hidden>
+      <div class="section-head"><span>Decoded</span><span class="qr-meta" id="scanMeta">—</span></div>
+      <div class="output-row">
+        <div class="output-box" id="scanOutputBox"><span id="scanOutputText"></span></div>
+        <button class="btn secondary" id="copyScanText">Copy</button>
+        <a class="btn" id="openScanLink" href="#" target="_blank" rel="noopener" hidden>Open</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="qr-common.js"></script>
+<script src="qr-encoder.js"></script>
+<script src="qr-decoder.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

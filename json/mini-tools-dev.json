@@ -22,6 +22,17 @@
     "featured": false
   },
   {
+    "id": "css-visual-builder",
+    "title": "CSS Visual Builder",
+    "category": "mini-tools",
+    "icon": "🎛️",
+    "description": "Build clip-path, gradients (linear/radial/conic), and box-shadow with sliders and a live preview, then copy the generated CSS.",
+    "path": "projects/mini-tools/css-visual-builder/index.html",
+    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/css-visual-builder",
+    "codepen": "",
+    "featured": false
+  },
+  {
     "id": "text-diff-checker",
     "title": "Text Diff Checker",
     "category": "mini-tools",
