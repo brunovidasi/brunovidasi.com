@@ -66,8 +66,25 @@ const files = {
 const folders = {
   about:      { label:'about/', children:['about','experience','education','skills'] },
   projects:   { label:'projects/', children:['websites','web-systems','landing-pages','edm-tools','mini-games','site-history'] },
-  'mini-tools': { label:'mini-tools/', children:['mini-tools-readme','mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf'] }
+  'mini-tools': { label:'mini-tools/', children:['mini-tools-readme','mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf'] },
+  // each mini-tools category doubles as a folder: its header still opens the category's
+  // own tab page (see the "openable" check in renderTreeNode), but now also expands to
+  // list the individual tools inside, populated once TOOL_TAB_REGISTRY loads (see
+  // folderChildren/MINI_TOOL_CATEGORY_IDS below)
+  'mini-tools-dev':         { label:'dev-utilities/' },
+  'mini-tools-media':       { label:'media-tools/' },
+  'mini-tools-converters':  { label:'converters/' },
+  'mini-tools-generators':  { label:'generators/' },
+  'mini-tools-pdf':         { label:'pdf-tools/' }
 };
+const MINI_TOOL_CATEGORY_IDS = new Set(['mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf']);
+
+// ---- a mini-tool's "Fullscreen" button opens it as its own tab (see openToolTab)
+// rather than a real browser tab — this registry keys the raw (unescaped) path/title
+// by project id so openToolTab can look them up without round-tripping through HTML.
+// Declared here (ahead of the initial renderExplorer() call below) since the mini-tools
+// category folders read it while building their tool leaves ----
+const TOOL_TAB_REGISTRY = {};
 const rootOrder = ['intro','about','projects','mini-tools','freelance','documents','contact'];
 
 // default-open tabs, as requested
@@ -175,41 +192,81 @@ if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) websiteDetailIds[activeId] = rea
 // (see the Promise.all(...) below, and handleRouteChange for back/forward nav)
 let pendingToolRouteId = enteredViaDeepLink ? null : (initialRouteId || null);
 
+// mini-tools category folders have no static child list (unlike the other folders
+// above) — their tools come from TOOL_TAB_REGISTRY, keyed by the tool's grouping
+// category, once the project JSON has loaded (see the Promise.all(...) below)
+function toolIdsForCategory(categoryId){
+  return Object.keys(TOOL_TAB_REGISTRY).filter(id => TOOL_TAB_REGISTRY[id].category === categoryId);
+}
+
+function folderChildren(key){
+  return MINI_TOOL_CATEGORY_IDS.has(key) ? toolIdsForCategory(key) : folders[key].children;
+}
+
+// a mini-tool's tree leaf always reads as "<id>.js" with a plain JS file icon —
+// deliberately not the tool's own emoji/glyph (see tabIconHtml) or its opened-tab
+// title, so the label stays stable whether or not the tab has ever been opened
+function leafDisplay(id){
+  if(TOOL_TAB_REGISTRY[id]) return { label: id + '.js', iconHtml: fileIconHtml('js') };
+  const f = files[id];
+  return { label: f.label, iconHtml: fileIconHtml(f.icon) };
+}
+
+function openTreeItem(id){
+  if(TOOL_TAB_REGISTRY[id]) openToolTab(id); else openFile(id);
+}
+
+// a key is only rendered as a folder node when it's genuinely nested that way: root
+// entries (depth 0) are folders iff `folders[key]` exists, and mini-tools categories
+// are folders only one level below the mini-tools root — this excludes cases like
+// 'about', whose folder id doubles as its own README child (`folders.about.children`
+// includes 'about' itself), from being mistaken for a folder and recursing forever
+function isFolderNode(key, depth){
+  return depth===0 ? !!folders[key] : MINI_TOOL_CATEGORY_IDS.has(key);
+}
+
+function renderTreeNode(key, depth, container, highlightId){
+  if(isFolderNode(key, depth)){
+    const folder = folders[key];
+    // a category folder (e.g. mini-tools-dev) also has a `files` entry for its own
+    // overview tab — clicking its header both toggles the folder and opens that tab
+    const openable = !!files[key];
+    const head = document.createElement('div');
+    head.className = 'tree-item' + (openFolders[key] ? ' folder-open' : '') + (openable && highlightId===key ? ' active' : '');
+    if(depth>0) head.style.paddingLeft = (depth*20)+'px';
+    head.innerHTML = '<span class="left">' + folderIconHtml(!!openFolders[key]) + folder.label + '</span><span class="caret">▸</span>';
+    head.onclick = ()=>{
+      openFolders[key] = !openFolders[key];
+      if(openable) openFile(key); else renderExplorer();
+    };
+    container.appendChild(head);
+
+    const kids = document.createElement('div');
+    kids.className = 'folder-children' + (openFolders[key] ? '' : ' collapsed');
+    folderChildren(key).forEach(childId => renderTreeNode(childId, depth+1, kids, highlightId));
+    container.appendChild(kids);
+  } else {
+    const { label, iconHtml } = leafDisplay(key);
+    const item = document.createElement('div');
+    if(depth>0) item.style.paddingLeft = (depth*20)+'px';
+    item.className = 'tree-item' + (highlightId===key ? ' active' : '');
+    item.innerHTML = '<span class="left">' + iconHtml + label + '</span>';
+    item.onclick = ()=> openTreeItem(key);
+    container.appendChild(item);
+  }
+}
+
 function renderExplorer(){
   const tree = document.getElementById('fileTree');
   tree.innerHTML = '';
-  // a tool tab (e.g. a mini-tool opened in its own tab) has no entry of its own in
-  // this tree, so fall back to highlighting its parent category/tab instead
+  // a tool tab whose category has no per-tool tree leaves of its own (e.g. mini-games)
+  // falls back to highlighting its parent tab instead; mini-tools categories do have
+  // per-tool leaves (see MINI_TOOL_CATEGORY_IDS), so those highlight the tool itself
   const activeFile = activeId && files[activeId];
-  const highlightId = (activeFile && activeFile.isToolTab && activeFile.parentId) ? activeFile.parentId : activeId;
-  rootOrder.forEach(key=>{
-    if(folders[key]){
-      const f = folders[key];
-      const head = document.createElement('div');
-      head.className = 'tree-item' + (openFolders[key] ? ' folder-open' : '');
-      head.innerHTML = '<span class="left">' + folderIconHtml(!!openFolders[key]) + f.label + '</span><span class="caret">▸</span>';
-      head.onclick = ()=>{ openFolders[key] = !openFolders[key]; renderExplorer(); };
-      tree.appendChild(head);
-
-      const kids = document.createElement('div');
-      kids.className = 'folder-children' + (openFolders[key] ? '' : ' collapsed');
-      f.children.forEach(fileId=>{
-        const item = document.createElement('div');
-        item.style.paddingLeft = '20px';
-        item.className = 'tree-item' + (highlightId===fileId ? ' active' : '');
-        item.innerHTML = '<span class="left">' + fileIconHtml(files[fileId].icon) + files[fileId].label + '</span>';
-        item.onclick = ()=> openFile(fileId);
-        kids.appendChild(item);
-      });
-      tree.appendChild(kids);
-    } else {
-      const item = document.createElement('div');
-      item.className = 'tree-item' + (highlightId===key ? ' active' : '');
-      item.innerHTML = '<span class="left">' + fileIconHtml(files[key].icon) + files[key].label + '</span>';
-      item.onclick = ()=> openFile(key);
-      tree.appendChild(item);
-    }
-  });
+  const highlightId = (activeFile && activeFile.isToolTab && activeFile.parentId && !MINI_TOOL_CATEGORY_IDS.has(activeFile.parentId))
+    ? activeFile.parentId
+    : activeId;
+  rootOrder.forEach(key => renderTreeNode(key, 0, tree, highlightId));
 }
 
 function setAllFolders(open){
@@ -487,8 +544,12 @@ function tryOpenToolTabRoute(id){
   if(!files[id]){
     files[id] = { label: info.title, toolIcon: info.icon, fileIconType: info.fileIcon, folder: null, isToolTab: true, toolPath: info.path, parentId: info.category || null };
   }
-  const parent = files[id].parentId && files[files[id].parentId];
-  if(parent && parent.folder) openFolders[parent.folder] = true;
+  const parentId = files[id].parentId;
+  if(parentId){
+    openFolders[parentId] = true; // expands the category folder itself (e.g. mini-tools-dev)
+    const parent = files[parentId];
+    if(parent && parent.folder) openFolders[parent.folder] = true; // and its parent (mini-tools)
+  }
   if(!openTabs.includes(id)) openTabs.push(id);
   activeId = id;
   return true;
@@ -526,8 +587,40 @@ function ensureToolTabFrame(id){
     frame.id = 'toolTabFrame-' + id;
     frame.innerHTML = `<iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
     document.body.appendChild(frame);
+    playToolCompileAnimation(frame, id);
   }
   return frame;
+}
+
+// ---- a one-time "compiling" terminal strip that slides up from the bottom of a
+// mini-tool's fullscreen frame the first time it's opened, echoing the boot sequence's
+// typing effect (see bootLines) so loading a tool feels like part of the same "IDE" ----
+function playToolCompileAnimation(frame, id){
+  const bar = document.createElement('div');
+  bar.className = 'tool-compile-bar';
+  const line = document.createElement('span');
+  bar.appendChild(line);
+  frame.appendChild(bar);
+
+  requestAnimationFrame(() => bar.classList.add('show'));
+
+  const text = `$ compiling ${id}.module ... ok`;
+  let i = 0;
+  function typeNext(){
+    if(!document.body.contains(bar)) return;
+    if(i >= text.length){
+      line.insertAdjacentHTML('beforeend', '<span class="boot-cursor">_</span>');
+      setTimeout(() => {
+        bar.classList.remove('show');
+        bar.addEventListener('transitionend', () => bar.remove(), { once: true });
+      }, 2000);
+      return;
+    }
+    line.textContent += text[i];
+    setTimeout(typeNext, typingDelay(text[i], 0.3));
+    i++;
+  }
+  typeNext();
 }
 
 function removeToolTabFrame(id){
@@ -632,11 +725,6 @@ const ICON_EYE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/i
 const ICON_EYE_OFF_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>';
 const ICON_PDF_SVG = '<svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>';
 const ICON_FULLSCREEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>';
-
-// ---- a mini-tool's "Fullscreen" button opens it as its own tab (see openToolTab)
-// rather than a real browser tab — this registry keys the raw (unescaped) path/title
-// by project id so openToolTab can look them up without round-tripping through HTML ----
-const TOOL_TAB_REGISTRY = {};
 
 function escapeHtml(str){
   if(str == null) return '';
@@ -1270,6 +1358,9 @@ Promise.all(projectCategories.map(category =>
     el.textContent = categories.reduce((sum, category) => sum + (byCategory[category] || []).length, 0);
   });
   setupWebsiteHoverGifs();
+  // TOOL_TAB_REGISTRY is now fully populated — re-render so the mini-tools category
+  // folders pick up their tool leaves (see folderChildren/MINI_TOOL_CATEGORY_IDS)
+  renderExplorer();
   WEBSITE_STYLE_CATEGORIES.forEach(category => {
     websiteItemsByCategory[category] = byCategory[category] || [];
     renderWebsiteCompanyFilters(category, websiteItemsByCategory[category]);

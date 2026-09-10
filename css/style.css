@@ -1552,6 +1552,7 @@ h2.sect .brk {
   position: fixed;
   z-index: 40;
   background: var(--bg);
+  overflow: hidden;
 }
 
 .tool-tab-frame.active {
@@ -1564,6 +1565,30 @@ h2.sect .brk {
   height: 100%;
   border: none;
   background: #e9e9e9;
+}
+
+.tool-compile-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 8px 14px;
+  background: var(--panel-2);
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ok);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(100%);
+  transition: transform .3s ease;
+  pointer-events: none;
+}
+
+.tool-compile-bar.show {
+  transform: translateY(0);
 }
 
 body.tool-tab-lock {
@@ -2884,6 +2909,15 @@ body.mobile-nav-locked {
 
   .shell.mobile-nav-open .explorer {
     display: block;
+  }
+
+  /* .explorer's z-index only wins within #app's own stacking context (#app sets
+     position:relative + z-index:1) — but .tool-tab-frame is appended straight to
+     <body>, outside #app, at z-index:40, so it always painted over the whole of
+     #app (explorer included) regardless of the explorer's higher local z-index.
+     Lift #app itself above the frame while the mobile nav overlay is open. */
+  #app:has(.shell.mobile-nav-open) {
+    z-index: 47;
   }
 
   .explorer-close {
