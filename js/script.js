@@ -1134,6 +1134,7 @@ Promise.all(projectCategories.map(category =>
   const chipProjects = allProjects.filter(p => !p.linkTo);
   renderExperienceProjects(chipProjects);
   renderFreelanceProjects(chipProjects);
+  renderIntroProjectPreview(byCategory);
 });
 
 // ---- little clickable box that jumps to a project's card in its own tab ----
@@ -1166,6 +1167,36 @@ function renderFreelanceProjects(allProjects){
   if(!row) return;
   const matches = allProjects.filter(p => p.company === 'Freelance');
   row.innerHTML = matches.map(projectChipHtml).join('');
+}
+
+// ---- intro.js "Recent projects" preview: each row summarises one or more
+// project-tab categories (mini-tools/edm-tools fan out into several json files,
+// same as their PROJECT_TAB_OVERRIDES/data-count-category groupings above) ----
+const INTRO_PROJECT_GROUPS = {
+  websites: ['websites'],
+  'web-systems': ['web-systems'],
+  'landing-pages': ['landing-pages'],
+  'mini-tools': ['mini-tools-dev', 'mini-tools-media', 'mini-tools-converters', 'mini-tools-generators', 'mini-tools-pdf', 'mini-tools-personal'],
+  'edm-tools': ['edm-html-builder', 'edm-kinetic-modules', 'edm-tools'],
+  'mini-games': ['mini-games']
+};
+function introGroupMetaText(items){
+  if(!items.length) return '';
+  const featured = items.filter(p => p.featured);
+  const rest = items.filter(p => !p.featured);
+  const highlights = [...featured, ...rest].slice(0, 2);
+  const names = highlights.map(p => p.title).join(' · ');
+  const remaining = items.length - highlights.length;
+  return remaining > 0 ? `${names} · +${remaining} more` : names;
+}
+function renderIntroProjectPreview(byCategory){
+  document.querySelectorAll('#panel-intro .commit[data-open]').forEach(commit => {
+    const groups = INTRO_PROJECT_GROUPS[commit.dataset.open];
+    const meta = commit.querySelector('.meta');
+    if(!groups || !meta) return;
+    const items = groups.flatMap(category => (byCategory[category] || []).filter(p => !p.linkTo));
+    if(items.length) meta.textContent = introGroupMetaText(items);
+  });
 }
 
 // ---- jump from an experience mini box to the matching project card ----
