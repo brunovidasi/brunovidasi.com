@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF ⇄ Word Converter</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/docx.umd.js"></script>
+<script src="vendor/mammoth.browser.min.js"></script>
+<script src="vendor/html2canvas.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>PDF ⇄ Word Converter</h1>
+  <p class="sub">Convert a PDF to an editable Word document, or a Word document to PDF — both directions, done entirely in your browser.</p>
+  <p class="privacy">Everything runs locally — nothing is uploaded anywhere.</p>
+
+  <div class="mode-switch">
+    <div class="segmented" id="modeSeg">
+      <button type="button" class="seg-btn active" data-mode="pdf2word">PDF → Word</button>
+      <button type="button" class="seg-btn" data-mode="word2pdf">Word → PDF</button>
+    </div>
+  </div>
+
+  <!-- ============ PDF TO WORD ============ -->
+  <section id="pdf2word" class="mode-panel">
+
+    <div class="dropzone" id="dropzonePdf">
+      <div><strong>Click to choose a PDF</strong> or drag &amp; drop it here</div>
+      <div class="dropzone-hint">One file at a time · PDF only</div>
+      <input type="file" id="fileInputPdf" accept="application/pdf,.pdf">
+    </div>
+
+    <div class="panel" id="panelPdf" hidden>
+      <div class="file-row">
+        <span class="file-name" id="fileNamePdf"></span>
+        <button class="secondary small" id="changeFileBtnPdf">Change file</button>
+      </div>
+
+      <div class="error" id="errorMsgPdf" hidden></div>
+
+      <div class="progress" id="progressPdf" hidden>
+        <div class="progress-label" id="progressLabelPdf">Reading page 1…</div>
+        <div class="progress-track"><div class="progress-fill" id="progressFillPdf"></div></div>
+      </div>
+
+      <div class="result" id="resultPdf" hidden>
+        <div class="result-ok" id="resultTextPdf">Converted.</div>
+        <a class="dl-link" id="downloadLinkPdf" download>Download .docx</a>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>How this works:</strong> each page's text is extracted with its on-page position, regrouped into lines and paragraphs, and rebuilt as a real, editable <code>.docx</code> file — one Word page per original PDF page. This preserves reading order and paragraph breaks, but not exact visual layout: columns, tables, and images are not reconstructed, and fonts/styling are normalized to a standard document look.
+    </div>
+  </section>
+
+  <!-- ============ WORD TO PDF ============ -->
+  <section id="word2pdf" class="mode-panel" hidden>
+
+    <div class="dropzone" id="dropzoneDocx">
+      <div><strong>Click to choose a Word document</strong> or drag &amp; drop it here</div>
+      <div class="dropzone-hint">One file at a time · .docx only</div>
+      <input type="file" id="fileInputDocx" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    </div>
+
+    <div class="panel" id="panelDocx" hidden>
+      <div class="file-row">
+        <span class="file-name" id="fileNameDocx"></span>
+        <button class="secondary small" id="changeFileBtnDocx">Change file</button>
+      </div>
+
+      <div class="error" id="errorMsgDocx" hidden></div>
+
+      <div class="progress" id="progressDocx" hidden>
+        <div class="progress-label" id="progressLabelDocx">Converting document…</div>
+        <div class="progress-track"><div class="progress-fill" id="progressFillDocx"></div></div>
+      </div>
+
+      <div class="result" id="resultDocx" hidden>
+        <div class="result-ok" id="resultTextDocx">Converted.</div>
+        <a class="dl-link" id="downloadLinkDocx" download>Download .pdf</a>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>How this works:</strong> the document's paragraphs, headings, lists, basic formatting (bold/italic), tables, and inline images are converted to HTML, then rendered onto A4 pages and exported as a PDF. Complex layouts — headers/footers, footnotes, multi-column sections, precise pagination — aren't reproduced exactly, but standard text documents come through cleanly.
+    </div>
+
+    <div id="renderTarget" class="render-target"></div>
+  </section>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

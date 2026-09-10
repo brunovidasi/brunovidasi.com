@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Compressor</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="compress.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>PDF Compressor</h1>
+  <p class="sub">Shrink a PDF by recompressing its embedded photos and scans — the rest of the file is left alone.</p>
+  <p class="privacy">Everything runs in your browser — the file is compressed locally, never uploaded anywhere.</p>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose a PDF</strong> or drag &amp; drop it here</div>
+    <div class="dropzone-hint">One file at a time · PDF only</div>
+    <input type="file" id="fileInput" accept="application/pdf,.pdf">
+  </div>
+
+  <div class="panel" id="formPanel" hidden>
+    <div class="file-row">
+      <span class="file-name" id="fileName"></span>
+      <span class="file-size" id="fileSize"></span>
+      <button class="secondary small" id="changeFileBtn">Change file</button>
+    </div>
+
+    <div class="field-row">
+      <label for="levelSelect">Compression level</label>
+      <select id="levelSelect">
+        <option value="light">Light — best quality</option>
+        <option value="recommended" selected>Recommended</option>
+        <option value="strong">Strong — smallest file</option>
+      </select>
+    </div>
+
+    <button id="compressBtn">Compress PDF</button>
+
+    <div class="error" id="errorMsg" hidden></div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progress-label" id="progressLabel">Compressing…</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <div class="result-stats" id="resultStats"></div>
+      <a class="dl-link" id="downloadLink" download>Download compressed PDF</a>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>How this works:</strong> the photos and scanned pages embedded in a PDF are almost always what make it large. This finds every JPEG image inside, decodes it, redraws it at a lower quality (and, past a size threshold, a lower resolution), and swaps it back in — only keeping the result where it's actually smaller. Text, fonts, and vector graphics are never touched, so the file stays crisp and searchable.
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

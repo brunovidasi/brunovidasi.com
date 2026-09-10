@@ -1,0 +1,390 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --paper: #eeebe4;
+  --paper-raised: #f8f6f1;
+  --ink: #34312b;
+  --ink-soft: #7a7468;
+  --line: #ddd7c8;
+  --line-strong: #c7bea8;
+  --accent: #3d6b8a;
+  --accent-dark: #2c4f66;
+  --ok: #6f8f6a;
+  --err: #ab5142;
+  --surface: #fdfcf9;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.02), transparent 140px),
+    var(--paper);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 28px 20px 100px;
+}
+
+.wrap {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 21px;
+  margin: 0 0 5px;
+  letter-spacing: -.2px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+h1::before {
+  content: '⇄';
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+.sub {
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin: 0 0 8px;
+  line-height: 1.5;
+  padding-left: 14px;
+  border-left: 2px solid var(--line);
+}
+
+.privacy {
+  color: var(--ok);
+  font-size: 12px;
+  margin: 0 0 20px;
+  padding-left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.privacy::before {
+  content: '●';
+  font-size: 8px;
+}
+
+/* ---- mode switch ---- */
+
+.mode-switch {
+  margin-bottom: 20px;
+}
+
+.segmented {
+  display: flex;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.seg-btn {
+  flex: 1;
+  background: var(--surface);
+  border: none;
+  border-right: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.seg-btn:last-child {
+  border-right: none;
+}
+
+.seg-btn:hover {
+  color: var(--ink);
+}
+
+.seg-btn.active {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+/* ---- buttons ---- */
+
+button {
+  background: var(--accent);
+  color: var(--surface);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: transform .1s ease, background .15s ease;
+}
+
+button:hover {
+  background: var(--accent-dark);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+button.secondary:hover {
+  background: rgba(61,107,138,0.08);
+}
+
+button.small {
+  padding: 7px 11px;
+  font-size: 11.5px;
+}
+
+/* ---- dropzone ---- */
+
+.dropzone {
+  position: relative;
+  border: 2px dashed var(--line-strong);
+  border-radius: 14px;
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  background: var(--paper-raised);
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.dropzone.drag {
+  border-color: var(--accent);
+  background: #eaf0f4;
+}
+
+.dropzone strong {
+  color: var(--ink);
+}
+
+.dropzone-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dropzone input {
+  display: none;
+}
+
+/* ---- panel ---- */
+
+.panel {
+  padding: 16px 18px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 rgba(52,49,43,0.05);
+  margin-bottom: 20px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.error {
+  margin-top: 12px;
+  color: var(--err);
+  font-size: 12.5px;
+  background: rgba(171,81,66,0.1);
+  border: 1px solid rgba(171,81,66,0.3);
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+
+/* ---- progress ---- */
+
+.progress {
+  margin-top: 14px;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.progress-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .15s ease;
+}
+
+/* ---- result ---- */
+
+.result {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.result-ok {
+  font-size: 12.5px;
+  color: var(--ok);
+  flex: 1;
+}
+
+.dl-link {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--surface);
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dl-link:hover {
+  background: var(--accent-dark);
+}
+
+/* ---- note ---- */
+
+.note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  padding: 14px 16px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.note strong {
+  color: var(--ink);
+}
+
+.note code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+/* ---- offscreen render target for Word->PDF ---- */
+
+.render-target {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 794px;
+  background: #ffffff;
+  color: #111111;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 48px;
+}
+
+.render-target img {
+  max-width: 100%;
+}
+
+.render-target table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.render-target table td,
+.render-target table th {
+  border: 1px solid #999;
+  padding: 4px 8px;
+}
+
+/* ---- credit ---- */
+
+.credit {
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 40px;
+}
+
+.credit a {
+  color: var(--accent-dark);
+  text-decoration: none;
+}
+
+.credit a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .file-row {
+    flex-wrap: wrap;
+  }
+}

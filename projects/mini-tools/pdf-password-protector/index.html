@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Password Protector</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="vendor/pdf.min.js"></script>
+<script src="encrypt.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>PDF Password Protector</h1>
+  <p class="sub">Add a password to a PDF — anyone opening it will need it, with AES-256 encryption behind the scenes.</p>
+  <p class="privacy">Everything runs in your browser — the file is encrypted locally, never uploaded anywhere.</p>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose a PDF</strong> or drag &amp; drop it here</div>
+    <div class="dropzone-hint">One file at a time · PDF only</div>
+    <input type="file" id="fileInput" accept="application/pdf,.pdf">
+  </div>
+
+  <div class="panel" id="formPanel" hidden>
+    <div class="file-row">
+      <span class="file-name" id="fileName"></span>
+      <button class="secondary small" id="changeFileBtn">Change file</button>
+    </div>
+
+    <div class="field-row">
+      <label for="pwInput">Password</label>
+      <input type="password" id="pwInput" autocomplete="new-password" placeholder="Choose a password">
+    </div>
+    <div class="field-row">
+      <label for="pwConfirmInput">Confirm</label>
+      <input type="password" id="pwConfirmInput" autocomplete="new-password" placeholder="Type it again">
+    </div>
+
+    <div class="perms">
+      <div class="perms-title">Also allow, once unlocked</div>
+      <label class="opt"><input type="checkbox" id="permPrint" checked> Printing</label>
+      <label class="opt"><input type="checkbox" id="permCopy" checked> Copying text &amp; images</label>
+      <label class="opt"><input type="checkbox" id="permEdit" checked> Editing &amp; annotating</label>
+    </div>
+
+    <button id="protectBtn">Add password</button>
+
+    <div class="error" id="errorMsg" hidden></div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progress-label" id="progressLabel">Encrypting…</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <div class="result-ok" id="resultText">Password added.</div>
+      <a class="dl-link" id="downloadLink" download>Download protected PDF</a>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>How this works:</strong> a random encryption key is generated, your password is used to lock it (AES-256, the modern PDF standard — supported by Acrobat, Preview, Chrome, and every current PDF reader), and every stream and string in the file is encrypted with that key. Keep the password somewhere safe — there's no recovery if you lose it.
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

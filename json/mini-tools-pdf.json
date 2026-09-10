@@ -11,6 +11,39 @@
     "featured": false
   },
   {
+    "id": "pdf-password-protector",
+    "title": "PDF Password Protector",
+    "category": "mini-tools",
+    "icon": "🔒",
+    "description": "Add a password to a PDF with AES-256 encryption — generated and applied entirely in the browser, nothing ever uploaded.",
+    "path": "projects/mini-tools/pdf-password-protector/index.html",
+    "github": "https://github.com/brunovidasi/pdf-password-protector",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "pdf-word-converter",
+    "title": "PDF ⇄ Word Converter",
+    "category": "mini-tools",
+    "icon": "📃",
+    "description": "Convert a PDF to an editable Word document, or a Word document to PDF — both directions, done entirely in the browser, nothing ever uploaded.",
+    "path": "projects/mini-tools/pdf-word-converter/index.html",
+    "github": "https://github.com/brunovidasi/pdf-word-converter",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "pdf-compressor",
+    "title": "PDF Compressor",
+    "category": "mini-tools",
+    "icon": "🗜️",
+    "description": "Shrink a PDF by recompressing its embedded photos and scans — done entirely in the browser, nothing ever uploaded.",
+    "path": "projects/mini-tools/pdf-compressor/index.html",
+    "github": "https://github.com/brunovidasi/pdf-compressor",
+    "codepen": "",
+    "featured": false
+  },
+  {
     "id": "pdf-metadata-tool",
     "title": "PDF Metadata Viewer & Stripper",
     "category": "mini-tools",
