@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Minifier</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>CSS Minifier</h1>
+  <p class="sub">Paste CSS and get a byte-safe minified version back — whitespace and (optionally) comments only. No value rewriting, no semicolon dropping, no color shortening, so the output always matches the input rule-for-rule.</p>
+  <p class="privacy">Everything runs in your browser — nothing is sent anywhere.</p>
+
+  <div class="panel toolbar">
+    <div class="tb-group checks">
+      <label><input type="checkbox" id="stripComments"> Strip comments</label>
+      <label><input type="checkbox" id="preserveBangComments" checked> Keep <code>/*! ... */</code> &amp; conditional/MSO comments</label>
+    </div>
+    <div class="tb-group actions">
+      <label class="file-btn">Load file<input type="file" id="fileInput" accept=".css,text/css" hidden></label>
+      <button type="button" id="sampleBtn">Try example</button>
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="input-grid">
+    <div class="input-col">
+      <div class="input-head">
+        <span>Input CSS</span>
+        <span class="input-meta" id="metaIn">0 B</span>
+      </div>
+      <textarea id="input" class="code-input" spellcheck="false" placeholder="Paste your CSS here…"></textarea>
+    </div>
+    <div class="input-col">
+      <div class="input-head">
+        <span>Minified output</span>
+        <span class="input-meta" id="metaOut">0 B</span>
+        <button type="button" class="file-btn" id="copyBtn">Copy</button>
+      </div>
+      <textarea id="output" class="code-input" spellcheck="false" placeholder="Minified CSS will appear here…" readonly></textarea>
+    </div>
+  </div>
+
+  <div class="panel result-bar">
+    <div class="stats" id="statsBar"></div>
+    <div class="verify-msg" id="verifyMsg"></div>
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
