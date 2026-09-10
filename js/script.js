@@ -1178,6 +1178,7 @@ const PROJECT_TAB_OVERRIDES = {
   'mini-tools-converters': 'mini-tools',
   'mini-tools-media': 'mini-tools',
   'mini-tools-generators': 'mini-tools',
+  'mini-tools-pdf': 'mini-tools',
   'mini-tools-personal': 'mini-tools'
 };
 function goToProject(category, id, companySlug){

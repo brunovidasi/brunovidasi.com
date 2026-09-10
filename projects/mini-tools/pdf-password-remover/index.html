@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Password Remover</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="decrypt.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>PDF Password Remover</h1>
+  <p class="sub">Unlock a password-protected PDF and download a clean, password-free copy — no email, no upload, no waiting on a server.</p>
+  <p class="privacy">Everything runs in your browser — the file is decrypted and rebuilt locally, never uploaded anywhere.</p>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose a PDF</strong> or drag &amp; drop it here</div>
+    <div class="dropzone-hint">One file at a time · PDF only</div>
+    <input type="file" id="fileInput" accept="application/pdf,.pdf">
+  </div>
+
+  <div class="panel" id="passwordPanel" hidden>
+    <div class="file-row">
+      <span class="file-name" id="fileName"></span>
+      <button class="secondary small" id="changeFileBtn">Change file</button>
+    </div>
+
+    <div class="pw-row" id="pwRow">
+      <label for="pwInput">Password</label>
+      <input type="password" id="pwInput" autocomplete="off" placeholder="Enter the PDF's password">
+      <button id="unlockBtn">Unlock</button>
+    </div>
+
+    <label class="mode-row" for="keepVectorToggle">
+      <input type="checkbox" id="keepVectorToggle" checked>
+      Keep the original PDF as-is (recommended) — falls back to flattened images only if that's not possible
+    </label>
+
+    <div class="error" id="errorMsg" hidden></div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progress-label" id="progressLabel">Rendering page 1…</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <div class="result-ok" id="resultText">Password removed.</div>
+      <a class="dl-link" id="downloadLink" download>Download unlocked PDF</a>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>How this works:</strong> with "Keep the original PDF as-is" on, your password is used to derive the file's real encryption key, every stream and string in the PDF is decrypted in place, and the password is removed — the result is the exact same PDF, just unlocked. If that isn't possible for a given file, it automatically falls back to re-rendering each page as a high-resolution image and reassembling those into a new, unencrypted PDF — that always works, but text won't be selectable or searchable in the result.
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
