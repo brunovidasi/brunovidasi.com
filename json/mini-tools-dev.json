@@ -12,6 +12,18 @@
     "featured": false
   },
   {
+    "id": "css-minifier",
+    "title": "CSS Minifier",
+    "category": "mini-tools",
+    "icon": "🗜️",
+    "glyph": "{}",
+    "description": "A byte-safe CSS minifier with a built-in verification pass: whitespace and (optionally) comments stripped only, no value rewriting or semicolon dropping, so the output always matches the input.",
+    "path": "projects/mini-tools/css-minifier/index.html",
+    "github": "https://github.com/brunovidasi/css-minifier",
+    "codepen": "",
+    "featured": false
+  },
+  {
     "id": "regex-tester",
     "title": "Regex Tester",
     "category": "mini-tools",

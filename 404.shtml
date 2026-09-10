@@ -365,6 +365,7 @@ var ROUTES = {
   'campo-minado': '/campo-minado',
   'color-palette-generator': '/color-palette-generator',
   'cron-builder': '/cron-builder',
+  'css-minifier': '/css-minifier',
   'css-visual-builder': '/css-visual-builder',
   'exif-viewer': '/exif-viewer',
   'gerador-de-cpf': '/gerador-de-cpf',
