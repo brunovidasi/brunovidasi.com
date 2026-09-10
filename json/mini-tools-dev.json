@@ -6,7 +6,7 @@
     "icon": "⏰",
     "description": "A visual cron expression builder: set minute/hour/day/month/weekday rules with buttons and chips, get a plain-English explanation, and preview the next 5 run times.",
     "path": "projects/mini-tools/cron-builder/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/cron-builder",
+    "github": "https://github.com/brunovidasi/cron-builder",
     "codepen": "",
     "featured": false
   },
@@ -17,7 +17,7 @@
     "icon": "🔎",
     "description": "A regex tester with live match highlighting (including nested capture groups), named groups broken out per match, and a clickable cheat sheet plus a library of common patterns.",
     "path": "projects/mini-tools/regex-tester/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/regex-tester",
+    "github": "https://github.com/brunovidasi/regex-tester",
     "codepen": "",
     "featured": false
   },
@@ -28,7 +28,7 @@
     "icon": "🎛️",
     "description": "Build clip-path, gradients (linear/radial/conic), and box-shadow with sliders and a live preview, then copy the generated CSS.",
     "path": "projects/mini-tools/css-visual-builder/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/css-visual-builder",
+    "github": "https://github.com/brunovidasi/css-visual-builder",
     "codepen": "",
     "featured": false
   },
@@ -39,7 +39,7 @@
     "icon": "🔀",
     "description": "Compare two blocks of text side-by-side with word- or character-level highlighting, ignore-case/whitespace options, collapsible unchanged lines, and one-click copy of the diff.",
     "path": "projects/mini-tools/text-diff-checker/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/text-diff-checker",
+    "github": "https://github.com/brunovidasi/text-diff-checker",
     "codepen": "",
     "featured": true
   }

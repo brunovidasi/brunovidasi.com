@@ -6,7 +6,8 @@
     "icon": "🐍",
     "description": "A classic Snake game. Arrow keys to move, with walls, pause, and it speeds up as you go.",
     "path": "projects/mini-games/snake/index.html",
-    "github": "https://github.com/brunovidasi/Snake-Game"
+    "github": "https://github.com/brunovidasi/Snake-Game",
+    "github2026": "https://github.com/brunovidasi/snake"
   },
   {
     "id": "campo-minado",
@@ -15,7 +16,8 @@
     "icon": "💣",
     "description": "My take on Minesweeper. Left click to reveal a square; right click or Shift+click, to flag it as a mine — with a difficulty picker.",
     "path": "projects/mini-games/campo-minado/index.html",
-    "github": "https://github.com/brunovidasi/Campo-Minado"
+    "github": "https://github.com/brunovidasi/Campo-Minado",
+    "github2026": "https://github.com/brunovidasi/minesweeper"
   },
   {
     "id": "pong",
@@ -24,9 +26,10 @@
     "icon": "🏓",
     "description": "A Pong game I originally built for a 2020 online campaign at The Hallway. Arrow keys to move your paddle against the CPU, first to 5 wins — with a difficulty picker.",
     "path": "projects/mini-games/pong/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/landing-pages/pong-game",
+    "github": "https://github.com/brunovidasi/Prototype-Pong-Game-Fearless-Play",
     "githubLabel": "GitHub (2020)",
     "githubLabel2026": "GitHub (2026)",
+    "github2026": "https://github.com/brunovidasi/pong",
     "campaign": "projects/landing-pages/pong-game/index.html",
     "campaignLabel": "Open Campaign"
   },
@@ -37,6 +40,7 @@
     "icon": "🧱",
     "description": "My take on Tetris. Arrow keys to move and rotate, space to hard drop — with ghost piece, next-piece preview, and levels that speed up as you clear lines.",
     "path": "projects/mini-games/tetris/index.html",
-    "githubLabel2026": "GitHub (2026)"
+    "githubLabel2026": "GitHub (2026)",
+    "github2026": "https://github.com/brunovidasi/tetris"
   }
 ]

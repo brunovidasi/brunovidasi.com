@@ -6,7 +6,7 @@
     "icon": "⇄",
     "description": "Three converters in one: length/weight/temperature/volume/area/speed/data/time units, live currency exchange rates, and a DST-aware timezone converter for comparing times across cities.",
     "path": "projects/mini-tools/unit-currency-timezone-converter/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/unit-currency-timezone-converter",
+    "github": "https://github.com/brunovidasi/unit-currency-timezone-converter",
     "codepen": "",
     "featured": true
   },
@@ -17,7 +17,7 @@
     "icon": "🔁",
     "description": "Validate and format messy JSON or CSV with clear syntax-error locations, convert between the two, and compare two versions with a line- and word-level diff.",
     "path": "projects/mini-tools/json-csv-converter/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/json-csv-converter",
+    "github": "https://github.com/brunovidasi/json-csv-converter",
     "codepen": "",
     "featured": true
   }

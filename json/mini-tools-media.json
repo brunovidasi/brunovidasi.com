@@ -6,7 +6,7 @@
     "icon": "🗜️",
     "description": "A browser-based image compressor: drag in photos or screenshots, tune quality/format/size, and download the result — all client-side, nothing ever gets uploaded.",
     "path": "projects/mini-tools/image-compressor/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/image-compressor",
+    "github": "https://github.com/brunovidasi/image-compressor",
     "codepen": "",
     "featured": true
   },
@@ -17,7 +17,7 @@
     "icon": "🎨",
     "description": "Generate an accessible tonal palette from a base color or an uploaded image's dominant colors, with live WCAG contrast-ratio checks for every shade.",
     "path": "projects/mini-tools/color-palette-generator/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/color-palette-generator",
+    "github": "https://github.com/brunovidasi/color-palette-generator",
     "codepen": "",
     "featured": true
   },
@@ -28,7 +28,7 @@
     "icon": "🔍",
     "description": "View every EXIF/metadata field hiding in your JPEG and PNG photos — camera, exposure, timestamps, GPS location — then edit, delete, or add fields, or strip it all out losslessly, straight from the raw file bytes, with nothing ever uploaded.",
     "path": "projects/mini-tools/exif-viewer/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/exif-viewer",
+    "github": "https://github.com/brunovidasi/exif-viewer",
     "codepen": "",
     "featured": false
   }

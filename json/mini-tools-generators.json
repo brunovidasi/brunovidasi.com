@@ -6,7 +6,7 @@
     "icon": "🔑",
     "description": "Generate strong random passwords or memorable passphrases with a live entropy breakdown — bits, total combinations, and estimated crack time — all computed client-side.",
     "path": "projects/mini-tools/password-generator/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/password-generator",
+    "github": "https://github.com/brunovidasi/password-generator",
     "codepen": "",
     "featured": false
   },
@@ -27,7 +27,7 @@
     "icon": "▦",
     "description": "Generate QR codes from text or a URL, or decode one from a photo or live camera — a from-scratch implementation of the QR spec (encoding, Reed-Solomon error correction, masking, and decoding), no library.",
     "path": "projects/mini-tools/qr-code-generator-reader/index.html",
-    "github": "https://github.com/brunovidasi/brunovidasi.com/tree/main/projects/mini-tools/qr-code-generator-reader",
+    "github": "https://github.com/brunovidasi/qr-code-generator-reader",
     "codepen": "",
     "featured": false
   }
