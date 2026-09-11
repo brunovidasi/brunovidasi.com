@@ -30,7 +30,7 @@ Open `index.html` in any modern browser. No build step, no server, no network ca
 
 - Only recompresses images already stored as JPEG (`/DCTDecode`) — the overwhelming majority of what makes real-world PDFs large (photos, scanned pages). Other image encodings (raw bitmaps, JPEG2000, CCITT fax) are left as-is.
 - Recompression is lossy — pick "Light" for anything you'll print or need to zoom into.
-- A password-protected PDF must have its password removed first, with [Unlock PDF](../pdf-password-remover/index.html).
+- A password-protected PDF must have its password removed first, with [Unlock PDF](../unlock-pdf/index.html).
 
 ## Privacy
 

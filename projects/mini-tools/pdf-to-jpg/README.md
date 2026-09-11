@@ -27,7 +27,7 @@ pdf.js renders each page onto an off-screen `<canvas>` at the chosen resolution 
 
 - This rasterizes each page — the output is a picture of the page, not selectable text. Use the [PDF ⇄ Word Converter](../pdf-word-converter/index.html) if you need the text itself.
 - Very high resolution on a PDF with many pages uses more memory and takes longer, since every rendered page is kept in memory until you leave or replace the file.
-- A password-protected PDF must have its password removed first, with [Unlock PDF](../pdf-password-remover/index.html).
+- A password-protected PDF must have its password removed first, with [Unlock PDF](../unlock-pdf/index.html).
 
 ## Privacy
 

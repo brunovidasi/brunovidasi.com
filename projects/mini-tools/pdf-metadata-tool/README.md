@@ -30,7 +30,7 @@ Open `index.html` in any modern browser. No build step, no server, no network ca
 
 ## Limitations
 
-- **Password-protected PDFs aren't supported.** pdf-lib can't decrypt them, so metadata can't be read or edited while a PDF is locked — unlock it first with this site's [Unlock PDF](../pdf-password-remover/index.html), then drop the result back in here.
+- **Password-protected PDFs aren't supported.** pdf-lib can't decrypt them, so metadata can't be read or edited while a PDF is locked — unlock it first with this site's [Unlock PDF](../unlock-pdf/index.html), then drop the result back in here.
 - Metadata that can live *inside* embedded files, form fields, or page-level annotations isn't covered — this tool only handles the document-level Info dictionary and the XMP metadata stream, which is where the overwhelming majority of author/software/tracking metadata actually lives.
 - The XMP metadata block can be viewed and removed, but not edited field-by-field — it's a raw XML packet, not a simple key/value list.
 

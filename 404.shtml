@@ -380,11 +380,10 @@ var ROUTES = {
   'password-generator': '/password-generator',
   'pdf-compressor': '/pdf-compressor',
   'pdf-metadata-tool': '/pdf-metadata-tool',
-  'pdf-password-protector': '/pdf-password-protector',
-  'pdf-password-remover': '/pdf-password-remover',
   'pdf-to-jpg': '/pdf-to-jpg',
   'pdf-word-converter': '/pdf-word-converter',
   'pong': '/pong',
+  'protect-pdf': '/protect-pdf',
   'qr-code-generator-reader': '/qr-code-generator-reader',
   'regex-tester': '/regex-tester',
   'site-2012': '/site-2012',
@@ -397,7 +396,8 @@ var ROUTES = {
   'tetris': '/tetris',
   'text-diff-checker': '/text-diff-checker',
   'timezone-converter': '/timezone-converter',
-  'unit-converter': '/unit-converter'
+  'unit-converter': '/unit-converter',
+  'unlock-pdf': '/unlock-pdf'
 };
 
 function focusInput(){

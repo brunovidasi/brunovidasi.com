@@ -29,10 +29,10 @@ SPA_ROUTES = re.compile(
     r"|campo-minado|color-palette-generator|cron-builder|css-beautifier|css-minifier"
     r"|css-visual-builder|currency-converter|exif-viewer|gerador-de-cpf|ig-relationship-checker"
     r"|image-compressor|image-to-pdf|js-beautifier|js-minifier|json-csv-converter|password-generator"
-    r"|pdf-compressor|pdf-metadata-tool|pdf-password-protector|pdf-password-remover|pdf-to-jpg"
-    r"|pdf-word-converter|pong|qr-code-generator-reader|regex-tester|site-2012|site-2013"
+    r"|pdf-compressor|pdf-metadata-tool|pdf-to-jpg"
+    r"|pdf-word-converter|pong|protect-pdf|qr-code-generator-reader|regex-tester|site-2012|site-2013"
     r"|site-2014|site-2016|site-2018|site-2025|snake|tetris|text-diff-checker"
-    r"|timezone-converter|unit-converter)/?$"
+    r"|timezone-converter|unit-converter|unlock-pdf)/?$"
 )
 
 WATCH_EXTS = {".html", ".css", ".js", ".json"}

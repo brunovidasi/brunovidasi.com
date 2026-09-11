@@ -1,25 +1,25 @@
 [
   {
-    "id": "pdf-password-remover",
+    "id": "unlock-pdf",
     "title": "Unlock PDF",
     "category": "mini-tools",
     "icon": "🔓",
     "fileIcon": "pdf",
     "description": "Unlock a password-protected PDF and download a clean, password-free copy — decrypted and rebuilt entirely in the browser, nothing ever uploaded.",
-    "path": "projects/mini-tools/pdf-password-remover/index.html",
-    "github": "https://github.com/brunovidasi/pdf-password-remover",
+    "path": "projects/mini-tools/unlock-pdf/index.html",
+    "github": "https://github.com/brunovidasi/unlock-pdf",
     "codepen": "",
     "featured": false
   },
   {
-    "id": "pdf-password-protector",
+    "id": "protect-pdf",
     "title": "Protect PDF",
     "category": "mini-tools",
     "icon": "🔒",
     "fileIcon": "pdf",
     "description": "Add a password to a PDF with AES-256 encryption — generated and applied entirely in the browser, nothing ever uploaded.",
-    "path": "projects/mini-tools/pdf-password-protector/index.html",
-    "github": "https://github.com/brunovidasi/pdf-password-protector",
+    "path": "projects/mini-tools/protect-pdf/index.html",
+    "github": "https://github.com/brunovidasi/protect-pdf",
     "codepen": "",
     "featured": false
   },

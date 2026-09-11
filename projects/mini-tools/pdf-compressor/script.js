@@ -113,7 +113,7 @@ async function submitCompress() {
   } catch (e) {
     progress.hidden = true;
     if (e && e.message === 'ALREADY_ENCRYPTED') {
-      showError('This PDF is password-protected. Remove the password first with <a href="../pdf-password-remover/index.html">Unlock PDF</a>, then compress it here.');
+      showError('This PDF is password-protected. Remove the password first with <a href="../unlock-pdf/index.html">Unlock PDF</a>, then compress it here.');
     } else {
       showError('Something went wrong while compressing the PDF' + (e && e.message ? ': ' + e.message : '.'));
     }
