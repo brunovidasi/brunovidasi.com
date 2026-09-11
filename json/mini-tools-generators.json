@@ -12,17 +12,6 @@
     "featured": false
   },
   {
-    "id": "gerador-de-cpf",
-    "title": "Gerador de CPF",
-    "category": "mini-tools",
-    "icon": "🪪",
-    "glyph": "№",
-    "description": "Generates mathematically valid Brazilian CPF numbers (correct check digits) for software testing, with a fiscal-region selector.",
-    "path": "projects/mini-tools/gerador-de-cpf/index.html",
-    "github": "https://github.com/brunovidasi/Gerador-de-CPF",
-    "codepen": ""
-  },
-  {
     "id": "qr-code-generator-reader",
     "title": "QR Code Generator / Reader",
     "category": "mini-tools",
@@ -33,5 +22,16 @@
     "github": "https://github.com/brunovidasi/qr-code-generator-reader",
     "codepen": "",
     "featured": false
+  },
+  {
+    "id": "gerador-de-cpf",
+    "title": "Gerador de CPF",
+    "category": "mini-tools",
+    "icon": "🪪",
+    "glyph": "№",
+    "description": "Generates mathematically valid Brazilian CPF numbers (correct check digits) for software testing, with a fiscal-region selector.",
+    "path": "projects/mini-tools/gerador-de-cpf/index.html",
+    "github": "https://github.com/brunovidasi/Gerador-de-CPF",
+    "codepen": ""
   }
 ]

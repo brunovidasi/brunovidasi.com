@@ -54,11 +54,11 @@ const files = {
   'mini-games':      { label:'mini-games.html',     icon:'html', folder:'projects' },
   'site-history':    { label:'site-history.html',   icon:'html', folder:'projects' },
   'mini-tools-readme':      { label:'mini-tools.md',        icon:'md',   folder:'mini-tools' },
-  'mini-tools-dev':         { label:'dev-utilities.js',      icon:'js',   folder:'mini-tools' },
-  'mini-tools-media':       { label:'media-tools.js',        icon:'js',   folder:'mini-tools' },
-  'mini-tools-converters':  { label:'converters.js',         icon:'js',   folder:'mini-tools' },
-  'mini-tools-generators':  { label:'generators.js',         icon:'js',   folder:'mini-tools' },
-  'mini-tools-pdf':         { label:'pdf-tools.js',          icon:'js',   folder:'mini-tools' },
+  'mini-tools-dev':         { label:'dev-utilities.md',      icon:'md',   folder:'mini-tools' },
+  'mini-tools-media':       { label:'media-tools.md',        icon:'md',   folder:'mini-tools' },
+  'mini-tools-converters':  { label:'converters.md',         icon:'md',   folder:'mini-tools' },
+  'mini-tools-generators':  { label:'generators.md',         icon:'md',   folder:'mini-tools' },
+  'mini-tools-pdf':         { label:'pdf-tools.md',          icon:'md',   folder:'mini-tools' },
   freelance:         { label:'freelance.css',       icon:'css',  folder:null },
   contact:           { label:'contact.sh',          icon:'sh',   folder:null },
   documents:         { label:'documents.pdf',       icon:'pdf',  folder:null }
@@ -78,6 +78,11 @@ const folders = {
   'mini-tools-pdf':         { label:'pdf-tools/' }
 };
 const MINI_TOOL_CATEGORY_IDS = new Set(['mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf']);
+
+// folders whose header, on click, also opens a default file (like a folder's README) —
+// 'about' doubles as its own child id (see isFolderNode below), while 'mini-tools' and
+// 'projects' point at a different id since their overview file has its own name
+const FOLDER_DEFAULT_FILE = { about: 'about', 'mini-tools': 'mini-tools-readme', projects: 'websites' };
 
 // ---- a mini-tool's "Fullscreen" button opens it as its own tab (see openToolTab)
 // rather than a real browser tab — this registry keys the raw (unescaped) path/title
@@ -199,8 +204,24 @@ function toolIdsForCategory(categoryId){
   return Object.keys(TOOL_TAB_REGISTRY).filter(id => TOOL_TAB_REGISTRY[id].category === categoryId);
 }
 
+// a mini-tools category folder doubles as its own overview child too (same pattern as
+// 'about', see isFolderNode below) — its own id goes first, ahead of the actual tools
 function folderChildren(key){
-  return MINI_TOOL_CATEGORY_IDS.has(key) ? toolIdsForCategory(key) : folders[key].children;
+  return MINI_TOOL_CATEGORY_IDS.has(key) ? [key, ...toolIdsForCategory(key)] : folders[key].children;
+}
+
+// walks a folder id up through its own ancestor folders (e.g. mini-tools-generators ->
+// mini-tools) so every folder above the open file, not just its immediate parent, can
+// be shown as selected — stops once it loops back to an id already collected, which
+// happens for 'about' (its own `folder` points at itself, see files.about)
+function ancestorFolderIds(folderId){
+  const ids = new Set();
+  let cur = folderId;
+  while(cur && !ids.has(cur)){
+    ids.add(cur);
+    cur = files[cur] ? files[cur].folder : null;
+  }
+  return ids;
 }
 
 // a mini-tool's tree leaf always reads as "<id>.js" with a plain JS file icon —
@@ -218,32 +239,40 @@ function openTreeItem(id){
 
 // a key is only rendered as a folder node when it's genuinely nested that way: root
 // entries (depth 0) are folders iff `folders[key]` exists, and mini-tools categories
-// are folders only one level below the mini-tools root — this excludes cases like
-// 'about', whose folder id doubles as its own README child (`folders.about.children`
-// includes 'about' itself), from being mistaken for a folder and recursing forever
+// are folders only one level below the mini-tools root (depth 1) — this excludes cases
+// like 'about' (whose folder id doubles as its own README child, `folders.about.children`
+// includes 'about' itself) and a category's own self-reference at depth 2 (see
+// folderChildren above) from being mistaken for a folder and recursing forever
 function isFolderNode(key, depth){
-  return depth===0 ? !!folders[key] : MINI_TOOL_CATEGORY_IDS.has(key);
+  return depth===0 ? !!folders[key] : depth===1 && MINI_TOOL_CATEGORY_IDS.has(key);
 }
 
-function renderTreeNode(key, depth, container, highlightId){
+function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
   if(isFolderNode(key, depth)){
     const folder = folders[key];
     // a category folder (e.g. mini-tools-dev) also has a `files` entry for its own
-    // overview tab — clicking its header both toggles the folder and opens that tab
-    const openable = !!files[key];
+    // overview tab, keyed by the category id itself — root folders instead look up
+    // their default file via FOLDER_DEFAULT_FILE — either way, clicking the header
+    // both toggles the folder and opens that tab
+    const defaultFile = FOLDER_DEFAULT_FILE[key] || (files[key] ? key : null);
+    const openable = !!defaultFile;
+    // besides opening its own default file, a folder also stays selected whenever the
+    // currently open file/tool lives inside it, or inside one of its subfolders (see
+    // activeFolderIds in renderExplorer)
+    const selected = (openable && highlightId===defaultFile) || activeFolderIds.has(key);
     const head = document.createElement('div');
-    head.className = 'tree-item' + (openFolders[key] ? ' folder-open' : '') + (openable && highlightId===key ? ' active' : '');
+    head.className = 'tree-item' + (openFolders[key] ? ' folder-open' : '') + (selected ? ' active' : '');
     if(depth>0) head.style.paddingLeft = (depth*20)+'px';
     head.innerHTML = '<span class="left">' + folderIconHtml(!!openFolders[key]) + folder.label + '</span><span class="caret">▸</span>';
     head.onclick = ()=>{
       openFolders[key] = !openFolders[key];
-      if(openable) openFile(key); else renderExplorer();
+      if(openable) openFile(defaultFile); else renderExplorer();
     };
     container.appendChild(head);
 
     const kids = document.createElement('div');
     kids.className = 'folder-children' + (openFolders[key] ? '' : ' collapsed');
-    folderChildren(key).forEach(childId => renderTreeNode(childId, depth+1, kids, highlightId));
+    folderChildren(key).forEach(childId => renderTreeNode(childId, depth+1, kids, highlightId, activeFolderIds));
     container.appendChild(kids);
   } else {
     const { label, iconHtml } = leafDisplay(key);
@@ -266,7 +295,12 @@ function renderExplorer(){
   const highlightId = (activeFile && activeFile.isToolTab && activeFile.parentId && !MINI_TOOL_CATEGORY_IDS.has(activeFile.parentId))
     ? activeFile.parentId
     : activeId;
-  rootOrder.forEach(key => renderTreeNode(key, 0, tree, highlightId));
+  // every folder the open file lives under stays selected too — starting from a static
+  // file's own `folder`, or a tool tab's grouping category (`parentId`), then walking up
+  // through any folders above that (see ancestorFolderIds)
+  const immediateFolderId = activeFile ? (activeFile.isToolTab ? activeFile.parentId : activeFile.folder) : null;
+  const activeFolderIds = immediateFolderId ? ancestorFolderIds(immediateFolderId) : new Set();
+  rootOrder.forEach(key => renderTreeNode(key, 0, tree, highlightId, activeFolderIds));
 }
 
 function setAllFolders(open){
