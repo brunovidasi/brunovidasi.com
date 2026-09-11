@@ -1866,7 +1866,7 @@ function startCyclingTagline(){
 
 if(activeId === 'about') startBioTyping();
 
-if(isDevMode() || enteredViaDeepLink){
+if(isDevMode() || enteredViaDeepLink || pendingToolRouteId){
   document.getElementById('boot').remove();
   document.getElementById('app').classList.add('show');
   startCyclingTagline();

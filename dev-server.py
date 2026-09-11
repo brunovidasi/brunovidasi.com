@@ -20,11 +20,19 @@ import time
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
 
-# Keep this route list in sync with the RewriteRule in .htaccess.
+# Keep this route list in sync with the RewriteRules in .htaccess.
 SPA_ROUTES = re.compile(
-    r"^/(bio|experience|education|skills|websites|web-systems|landing-pages"
-    r"|mini-tools|edm-tools|mini-games|edm-work|site-history|freelance"
-    r"|contact|documents)/?$"
+    r"^/(about|intro|experience|education|skills|websites|web-systems|landing-pages"
+    r"|mini-tools|mini-tools-readme|mini-tools-dev|mini-tools-media|mini-tools-converters"
+    r"|mini-tools-generators|mini-tools-pdf|edm-tools|mini-games|edm-work|site-history"
+    r"|freelance|contact|documents"
+    r"|campo-minado|color-palette-generator|cron-builder|css-beautifier|css-minifier"
+    r"|css-visual-builder|currency-converter|exif-viewer|gerador-de-cpf|ig-relationship-checker"
+    r"|image-compressor|js-beautifier|js-minifier|json-csv-converter|password-generator"
+    r"|pdf-compressor|pdf-metadata-tool|pdf-password-protector|pdf-password-remover"
+    r"|pdf-word-converter|pong|qr-code-generator-reader|regex-tester|site-2012|site-2012-2"
+    r"|site-2014|site-2016|site-2018|site-2025|snake|tetris|text-diff-checker"
+    r"|timezone-converter|unit-converter)/?$"
 )
 
 WATCH_EXTS = {".html", ".css", ".js", ".json"}
