@@ -1,10 +1,8 @@
-// ---------------- experience counter ----------------
 const CAREER_START_YEAR = 2012;
 const yearsExperience = new Date().getFullYear() - CAREER_START_YEAR;
 document.querySelectorAll('.years-exp').forEach(el=> el.textContent = yearsExperience);
 document.querySelectorAll('.current-year').forEach(el=> el.textContent = new Date().getFullYear());
 
-// ---------------- explorer icons (VS Code "Seti" file-icon-theme glyphs) ----------------
 const ICON_GLYPHS = {
   js:   { char: '', color: '#cbcb41' },
   md:   { char: '', color: '#ffb454' },
@@ -13,6 +11,7 @@ const ICON_GLYPHS = {
   html: { char: '', color: '#ffb454' },
   php:  { char: '', color: '#a074c4' },
   sh:   { char: '', color: '#8dc149' },
+  eml:  { char: '', color: '#6d8086' },
   pdf:  { char: '', color: '#cc3e44' },
   css:  { char: '', color: '#519aba' }
 };
@@ -26,10 +25,6 @@ function fileIconHtml(type){
   return '<span class="file-icon glyph" style="color:' + g.color + '">' + g.char + '</span>';
 }
 
-// ---- a tool/game tab shows the same glyph/emoji the tool itself uses as its icon
-// (its h1::before, see mini-tools JSON "glyph"), instead of a generic file icon —
-// except tools that opt into a specific file-type glyph instead (see JSON "fileIcon"),
-// e.g. the PDF tools use the same PDF glyph as the documents.pdf explorer entry ----
 function tabIconHtml(file){
   if(file.fileIconType) return fileIconHtml(file.fileIconType);
   if(file.toolIcon) return '<span class="file-icon" style="font-family:var(--mono,monospace);font-size:13px;color:#519aba">' + file.toolIcon + '</span>';
@@ -40,7 +35,6 @@ function folderIconHtml(open){
   return '<span class="file-icon" style="color:' + FOLDER_COLOR + '">' + (open ? FOLDER_OPEN_SVG : FOLDER_CLOSED_SVG) + '</span>';
 }
 
-// ---------------- file/folder model ----------------
 const files = {
   intro:            { label:'intro.js',            icon:'js',   folder:null },
   about:             { label:'README.md',           icon:'info', folder:'about' },
@@ -60,17 +54,13 @@ const files = {
   'mini-tools-generators':  { label:'generators.md',         icon:'md',   folder:'mini-tools' },
   'mini-tools-pdf':         { label:'pdf-tools.md',          icon:'md',   folder:'mini-tools' },
   freelance:         { label:'freelance.css',       icon:'css',  folder:null },
-  contact:           { label:'contact.sh',          icon:'sh',   folder:null },
+  contact:           { label:'contact.eml',          icon:'eml',  folder:null },
   documents:         { label:'documents.pdf',       icon:'pdf',  folder:null }
 };
 const folders = {
   about:      { label:'about/', children:['about','experience','education','skills'] },
   projects:   { label:'projects/', children:['websites','web-systems','landing-pages','edm-tools','mini-games','site-history'] },
   'mini-tools': { label:'mini-tools/', children:['mini-tools-readme','mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf'] },
-  // each mini-tools category doubles as a folder: its header still opens the category's
-  // own tab page (see the "openable" check in renderTreeNode), but now also expands to
-  // list the individual tools inside, populated once TOOL_TAB_REGISTRY loads (see
-  // folderChildren/MINI_TOOL_CATEGORY_IDS below)
   'mini-tools-dev':         { label:'dev-utilities/' },
   'mini-tools-media':       { label:'media-tools/' },
   'mini-tools-converters':  { label:'converters/' },
@@ -79,74 +69,49 @@ const folders = {
 };
 const MINI_TOOL_CATEGORY_IDS = new Set(['mini-tools-dev','mini-tools-media','mini-tools-converters','mini-tools-generators','mini-tools-pdf']);
 
-// folders whose header, on click, also opens a default file (like a folder's README) —
-// 'about' doubles as its own child id (see isFolderNode below), while 'mini-tools' and
-// 'projects' point at a different id since their overview file has its own name
 const FOLDER_DEFAULT_FILE = { about: 'about', 'mini-tools': 'mini-tools-readme', projects: 'websites' };
 
-// ---- a mini-tool's "Fullscreen" button opens it as its own tab (see openToolTab)
-// rather than a real browser tab — this registry keys the raw (unescaped) path/title
-// by project id so openToolTab can look them up without round-tripping through HTML.
-// Declared here (ahead of the initial renderExplorer() call below) since the mini-tools
-// category folders read it while building their tool leaves ----
 const TOOL_TAB_REGISTRY = {};
 const rootOrder = ['intro','about','projects','mini-tools','freelance','documents','contact'];
 
-// default-open tabs, as requested
 const DEFAULT_OPEN_TABS = ['intro'];
 let openTabs = DEFAULT_OPEN_TABS.slice();
 let activeId = 'intro';
 let openFolders = { about:true };
 
-// ---- website-style panels: "websites" and "web-systems" share the exact same
-// list/filter/detail mechanics (see renderWebsiteCard / renderWebsiteDetail below),
-// keyed by category so both panels can run through the same generic functions ----
 const WEBSITE_STYLE_CATEGORIES = ['websites', 'web-systems'];
 const WEBSITE_CATEGORY_LABELS = { websites: 'websites', 'web-systems': 'web systems' };
 const WEBSITE_CATEGORY_TAGS = { websites: { plural: 'websites', singular: 'website' }, 'web-systems': { plural: 'web-systems', singular: 'web-system' } };
 
-// ---- website detail page state (declared early — same TDZ reason as bioTypedOnce
-// below: a direct /websites/<id> visit resolves this via applyPath() during the
-// initial render, before code further down the file has run) ----
 let websiteDetailIds = { websites: null, 'web-systems': null };
 let websiteItemsByCategory = { websites: [], 'web-systems': [] };
-let websiteSectKeys = { websites: '', 'web-systems': '' }; // tracks what each website-style panel's <h2 class="sect"> currently shows, so it only retypes when that actually changes
-let websiteDetailWasOpen = { websites: false, 'web-systems': false }; // tracks the previous render, so the list only replays its enter transition on an actual detail->list switch
+let websiteSectKeys = { websites: '', 'web-systems': '' };
+let websiteDetailWasOpen = { websites: false, 'web-systems': false };
 
 function resetWebsiteDetailIds(){
   WEBSITE_STYLE_CATEGORIES.forEach(c => websiteDetailIds[c] = null);
 }
 
-// ---- bio.md: shows once, no typing animation (declared early so the initial
-// render — which may land straight on the about tab via deep link — can use it) ----
 let bioTypedOnce = false;
 const bioText = `Hi, I'm Bruno — a Brazilian-born, Sydney-based developer with ${yearsExperience}+ years of experience across full-stack and front-end development. I specialise in building reliable, well-structured systems — from custom PHP/Node back-ends to pixel-perfect front-ends.\n\nI'm 32, originally from Rio de Janeiro, Brazil, and I've called Sydney home since 2017. \nI'm an Australian citizen, fluent in English, Portuguese and Spanish.\n\nRather than a typical portfolio, this website is built like a developer tool — a file explorer, tabs, even a boot-up sequence — so browsing it feels less like reading a resume and more like poking around a codebase, getting a real sense of how I think and build.`;
 
-// ---- terminal-style "decrypt" reveal for the email address (declared early — same
-// TDZ reason as bioTypedOnce above: a direct /contact visit calls startEmailReveal()
-// during the initial render, before code further down the file has run) ----
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*+=?';
 let emailScrambleTimer = null;
 const emailRowEl = document.getElementById('emailRow');
 const emailTextEl = document.getElementById('emailText');
 let emailRevealedOnce = false;
 
-// ---------------- dev mode (localhost only: skips boot animation, uses #hash deep-links
-// instead of clean paths so local static servers without .htaccess rewrite support still work) ----------------
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
 function isDevMode(){
   return isLocalhost && localStorage.getItem('devMode') === 'true';
 }
 
-// ---------------- URL deep-linking (e.g. brunovida.si/experience, or brunovida.si/#experience in dev mode) ----------------
 function currentRouteId(){
   return isDevMode()
     ? decodeURIComponent(location.hash.replace(/^#/, ''))
     : decodeURIComponent(location.pathname.replace(/^\/+|\/+$/g, ''));
 }
 
-// legacy/folder-index routes: mini-tools.html used to be one big page, now split into
-// a folder — keep the old bare URL working by pointing it at the folder's README
 const ROUTE_ALIASES = { 'mini-tools': 'mini-tools-readme' };
 
 function applyPath(id){
@@ -158,9 +123,6 @@ function applyPath(id){
   return true;
 }
 
-// ---- website detail id travels as a ?p= query param (not a path segment) so a direct
-// visit to a project page never breaks this document's relative asset paths, which
-// resolve against whatever the pathname's directory depth happens to be ----
 function readWebsiteDetailFromUrl(){
   return new URLSearchParams(location.search).get('p');
 }
@@ -191,29 +153,16 @@ function updatePath(id){
 const initialRouteId = currentRouteId();
 const enteredViaDeepLink = applyPath(initialRouteId);
 if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) websiteDetailIds[activeId] = readWebsiteDetailFromUrl();
-// a tool/game tab's id (e.g. /cron-builder) isn't in the static `files` model, so
-// applyPath() above can't resolve it yet — TOOL_TAB_REGISTRY only exists once the
-// project JSON has loaded, so stash it and finish resolving once that data is in
-// (see the Promise.all(...) below, and handleRouteChange for back/forward nav)
 let pendingToolRouteId = enteredViaDeepLink ? null : (initialRouteId || null);
 
-// mini-tools category folders have no static child list (unlike the other folders
-// above) — their tools come from TOOL_TAB_REGISTRY, keyed by the tool's grouping
-// category, once the project JSON has loaded (see the Promise.all(...) below)
 function toolIdsForCategory(categoryId){
   return Object.keys(TOOL_TAB_REGISTRY).filter(id => TOOL_TAB_REGISTRY[id].category === categoryId);
 }
 
-// a mini-tools category folder doubles as its own overview child too (same pattern as
-// 'about', see isFolderNode below) — its own id goes first, ahead of the actual tools
 function folderChildren(key){
   return MINI_TOOL_CATEGORY_IDS.has(key) ? [key, ...toolIdsForCategory(key)] : folders[key].children;
 }
 
-// walks a folder id up through its own ancestor folders (e.g. mini-tools-generators ->
-// mini-tools) so every folder above the open file, not just its immediate parent, can
-// be shown as selected — stops once it loops back to an id already collected, which
-// happens for 'about' (its own `folder` points at itself, see files.about)
 function ancestorFolderIds(folderId){
   const ids = new Set();
   let cur = folderId;
@@ -224,9 +173,6 @@ function ancestorFolderIds(folderId){
   return ids;
 }
 
-// a mini-tool's tree leaf always reads as "<id>.js" with a plain JS file icon —
-// deliberately not the tool's own emoji/glyph (see tabIconHtml) or its opened-tab
-// title, so the label stays stable whether or not the tab has ever been opened
 function leafDisplay(id){
   if(TOOL_TAB_REGISTRY[id]) return { label: id + '.js', iconHtml: fileIconHtml('js') };
   const f = files[id];
@@ -237,12 +183,6 @@ function openTreeItem(id){
   if(TOOL_TAB_REGISTRY[id]) openToolTab(id); else openFile(id);
 }
 
-// a key is only rendered as a folder node when it's genuinely nested that way: root
-// entries (depth 0) are folders iff `folders[key]` exists, and mini-tools categories
-// are folders only one level below the mini-tools root (depth 1) — this excludes cases
-// like 'about' (whose folder id doubles as its own README child, `folders.about.children`
-// includes 'about' itself) and a category's own self-reference at depth 2 (see
-// folderChildren above) from being mistaken for a folder and recursing forever
 function isFolderNode(key, depth){
   return depth===0 ? !!folders[key] : depth===1 && MINI_TOOL_CATEGORY_IDS.has(key);
 }
@@ -250,23 +190,17 @@ function isFolderNode(key, depth){
 function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
   if(isFolderNode(key, depth)){
     const folder = folders[key];
-    // a category folder (e.g. mini-tools-dev) also has a `files` entry for its own
-    // overview tab, keyed by the category id itself — root folders instead look up
-    // their default file via FOLDER_DEFAULT_FILE — either way, clicking the header
-    // both toggles the folder and opens that tab
     const defaultFile = FOLDER_DEFAULT_FILE[key] || (files[key] ? key : null);
     const openable = !!defaultFile;
-    // besides opening its own default file, a folder also stays selected whenever the
-    // currently open file/tool lives inside it, or inside one of its subfolders (see
-    // activeFolderIds in renderExplorer)
     const selected = (openable && highlightId===defaultFile) || activeFolderIds.has(key);
     const head = document.createElement('div');
     head.className = 'tree-item' + (openFolders[key] ? ' folder-open' : '') + (selected ? ' active' : '');
     if(depth>0) head.style.paddingLeft = (depth*20)+'px';
     head.innerHTML = '<span class="left">' + folderIconHtml(!!openFolders[key]) + folder.label + '</span><span class="caret">▸</span>';
     head.onclick = ()=>{
-      openFolders[key] = !openFolders[key];
-      if(openable) openFile(defaultFile); else renderExplorer();
+      const nextOpen = !openFolders[key];
+      openFolders[key] = nextOpen;
+      if(openable && nextOpen) openFile(defaultFile); else renderExplorer();
     };
     container.appendChild(head);
 
@@ -288,16 +222,10 @@ function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
 function renderExplorer(){
   const tree = document.getElementById('fileTree');
   tree.innerHTML = '';
-  // a tool tab whose category has no per-tool tree leaves of its own (e.g. mini-games)
-  // falls back to highlighting its parent tab instead; mini-tools categories do have
-  // per-tool leaves (see MINI_TOOL_CATEGORY_IDS), so those highlight the tool itself
   const activeFile = activeId && files[activeId];
   const highlightId = (activeFile && activeFile.isToolTab && activeFile.parentId && !MINI_TOOL_CATEGORY_IDS.has(activeFile.parentId))
     ? activeFile.parentId
     : activeId;
-  // every folder the open file lives under stays selected too — starting from a static
-  // file's own `folder`, or a tool tab's grouping category (`parentId`), then walking up
-  // through any folders above that (see ancestorFolderIds)
   const immediateFolderId = activeFile ? (activeFile.isToolTab ? activeFile.parentId : activeFile.folder) : null;
   const activeFolderIds = immediateFolderId ? ancestorFolderIds(immediateFolderId) : new Set();
   rootOrder.forEach(key => renderTreeNode(key, 0, tree, highlightId, activeFolderIds));
@@ -375,10 +303,6 @@ function renderTabs(){
   if(activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 
-// ---- human-style typing effect for panel title tags (e.g. <work-experience role="..." years="..." />) ----
-// Types the tag out char-by-char like a real person: occasional typo, a brief pause,
-// a backspace, then the correct character. Once fully typed it never backspaces again —
-// only the cursor keeps blinking (via the existing .cursor-caret animation).
 const QWERTY_NEIGHBOURS = {
   a:'sq', b:'vn', c:'xv', d:'sf', e:'wr', f:'dg', g:'fh', h:'gj', i:'uo', j:'hk',
   k:'jl', l:'k', m:'n', n:'bm', o:'ip', p:'o', q:'wa', r:'et', s:'ad', t:'ry',
@@ -400,12 +324,6 @@ function typingDelay(char, speed){
   return delay * speed;
 }
 
-// Clones the container's children so the typing animation can rebuild the same
-// markup (and thus keep syntax-highlight colors) while revealing it char-by-char.
-// .tool-count holds async, live data (fetched separately) rather than static text —
-// its content is left untouched (so the async update code can still safely set it
-// whenever it resolves) but hidden until the typing sequence reaches its position,
-// then revealed in one go, so the count doesn't pop in ahead of the text before it.
 function buildTypingPlan(container){
   const frag = document.createDocumentFragment();
   Array.from(container.childNodes).forEach(node => frag.appendChild(node.cloneNode(true)));
@@ -559,9 +477,6 @@ function closeAllTabs(){
   updatePath(null);
 }
 
-// ---- open a mini-tool as its own website tab (not a real browser tab): registers a
-// throwaway entry in the files/tabs model, keyed by the tool's own id (so its URL is
-// just e.g. /cron-builder), then reuses the normal tab-open flow ----
 function openToolTab(id){
   if(!tryOpenToolTabRoute(id)) return;
   setActive(id);
@@ -569,9 +484,6 @@ function openToolTab(id){
   setMobileNavLock(false);
 }
 
-// ---- registers the tool tab into the files/tabs model and marks it active, without
-// touching history/URL — shared by openToolTab (user click) and route resolution
-// (initial deep link + back/forward nav), which manage the URL themselves ----
 function tryOpenToolTabRoute(id){
   const info = TOOL_TAB_REGISTRY[id];
   if(!info) return false;
@@ -580,18 +492,15 @@ function tryOpenToolTabRoute(id){
   }
   const parentId = files[id].parentId;
   if(parentId){
-    openFolders[parentId] = true; // expands the category folder itself (e.g. mini-tools-dev)
+    openFolders[parentId] = true;
     const parent = files[parentId];
-    if(parent && parent.folder) openFolders[parent.folder] = true; // and its parent (mini-tools)
+    if(parent && parent.folder) openFolders[parent.folder] = true;
   }
   if(!openTabs.includes(id)) openTabs.push(id);
   activeId = id;
   return true;
 }
 
-// ---- the fixed-position iframe that stands in for a tool tab's "panel" — it lives
-// outside #editorArea (appended to body) since it must sit above the app shell at the
-// exact screen position #editorArea currently occupies, tracked as that area resizes ----
 let toolTabResizeObserver = null;
 let toolTabScrollLockY = 0;
 let toolTabLocked = false;
@@ -604,9 +513,6 @@ function positionToolTabFrame(frame){
   frame.style.left = rect.left + 'px';
   frame.style.width = rect.width + 'px';
   frame.style.height = rect.height + 'px';
-  // #app's minimize/restore transform-origin (130px, calc(100% - 34px)) is in its own
-  // full-viewport box — translate that same on-screen point into this frame's local
-  // coordinates so the iframe shrinks/grows toward it too (see #app.minimized ~ .tool-tab-frame)
   frame.style.transformOrigin = `${130 - rect.left}px ${(window.innerHeight - 34) - rect.top}px`;
 }
 
@@ -630,9 +536,6 @@ function ensureToolTabFrame(id){
   return frame;
 }
 
-// ---- a one-time "compiling" terminal strip that slides up from the bottom of a
-// mini-tool's fullscreen frame the first time it's opened, echoing the boot sequence's
-// typing effect (see bootLines) so loading a tool feels like part of the same "IDE" ----
 function playToolCompileAnimation(frame, id){
   const bar = document.createElement('div');
   bar.className = 'tool-compile-bar';
@@ -667,8 +570,6 @@ function removeToolTabFrame(id){
   if(files[id] && files[id].isToolTab) delete files[id];
 }
 
-// ---- shows the given tool tab's frame (creating it on first use) and hides the rest;
-// pass null when the active tab isn't a tool tab, to hide/unlock everything ----
 function updateToolTabFrames(activeToolId){
   document.querySelectorAll('.tool-tab-frame').forEach(f => f.classList.remove('active'));
   if(activeToolId){
@@ -676,8 +577,6 @@ function updateToolTabFrames(activeToolId){
     frame.classList.add('active');
     positionToolTabFrame(frame);
     if(!toolTabResizeObserver && window.ResizeObserver){
-      // follows the explorer sidebar's collapse/expand animation frame-by-frame, since
-      // that resizes #editorArea itself without firing a window 'resize' event
       toolTabResizeObserver = new ResizeObserver(repositionActiveToolTabFrame);
       toolTabResizeObserver.observe(document.getElementById('editorArea'));
     }
@@ -698,9 +597,6 @@ function updateToolTabFrames(activeToolId){
 function handleRouteChange(){
   const id = currentRouteId();
   if(!id){
-    // back/forward landed on root "/" -- restore the default intro tab state,
-    // since applyPath('') is a no-op and would otherwise leave the previous
-    // tab showing on screen
     activeId = 'intro';
     openTabs = DEFAULT_OPEN_TABS.slice();
     resetWebsiteDetailIds();
@@ -724,7 +620,6 @@ document.querySelectorAll('[data-open]').forEach(el=>{
   el.addEventListener('click', ()=> openFile(el.dataset.open));
 });
 
-// ---- title-click toggles the job description (details) ----
 document.querySelectorAll('.commit').forEach(c=>{
   const details = c.querySelector('.details');
   if(!details) return;
@@ -738,7 +633,6 @@ document.querySelectorAll('.commit').forEach(c=>{
   if(logo) logo.addEventListener('click', ()=> c.classList.toggle('open'));
 });
 
-// ---- experience panel: toggle all job details at once ----
 function toggleAllJobDetails(){
   const commits = document.querySelectorAll('#panel-experience .commit');
   const btn = document.getElementById('toggleJobDetailsBtn');
@@ -755,7 +649,6 @@ renderExplorer();
 renderTabs();
 showActivePanel();
 
-// ---- projects: data-driven tool cards (see json/<category>.json) ----
 const ICON_GITHUB_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>';
 const ICON_CODEPEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.5 22 9v6l-10 6.5L2 15V9z"/><path d="M12 2.5v6.2M12 22v-6.2M2 9l10 6.2M22 9 12 15.2M2 15l10-6.2M22 15 12 8.8"/></svg>';
 const ICON_LIVE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
@@ -792,9 +685,6 @@ function renderToolCard(project, sameYearAsPrevious, category){
   const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
   const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
   const showOpenTab = !project.noView && !project.live && ['site-history', 'mini-tools'].includes(project.category);
-  // `project.category` is the item's own generic JSON field (e.g. "mini-tools" for every
-  // mini-tool, regardless of which sub-category tab it's grouped under) — the explorer's
-  // parent-tab lookup needs the actual grouping category instead (e.g. "mini-tools-media")
   if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, fileIcon: project.fileIcon, category: category || project.category };
   const openTabHtml = showOpenTab ? `<button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open</button>` : '';
   const embedHtml = project.noView ? '' : `
@@ -990,8 +880,6 @@ function renderWebsiteCard(project, _sameYearAsPrevious, category){
     </div>`;
 }
 
-// ---- mini-games: same "browser window" chrome as a website-card, but the body is a
-// live, playable iframe instead of a screenshot — no lazy-loading, it's the whole point ----
 
 function renderMiniGameCard(project, sameYearAsPrevious, category){
   const title = escapeHtml(project.title);
@@ -1034,21 +922,15 @@ function renderMiniGameCard(project, sameYearAsPrevious, category){
     </div>`;
 }
 
-// ---- size every game's box to the tallest game's content height (same-origin iframes),
-// so all the game boxes line up instead of each floating at its own natural height ----
 function measureGameHeight(iframe){
   try{
     const doc = iframe.contentDocument;
     if(!doc || !doc.body) return 0;
-    // body/html usually carry min-height:100vh (so a game looks right opened standalone),
-    // which makes their own scrollHeight just echo the iframe's current (fallback) height —
-    // measure how far the actual content reaches instead, via its top-level children
     const bottoms = Array.from(doc.body.children)
       .map(el => el.getBoundingClientRect().bottom)
       .filter(v => v > 0);
     return bottoms.length ? Math.max(...bottoms) : doc.body.scrollHeight;
   } catch(e){
-    // cross-origin or otherwise unreadable
     return 0;
   }
 }
@@ -1057,8 +939,6 @@ function fitGameFrame(){
   const wraps = Array.from(document.querySelectorAll('.game-frame-wrap'));
   const heights = wraps.map(wrap => measureGameHeight(wrap.querySelector('iframe')));
   const naturalHeight = Math.max(0, ...heights);
-  // a wrap still hidden behind an inactive tab measures 0 — skip and retry once its
-  // panel becomes active (see showActivePanel), rather than locking in a bogus height
   if(!naturalHeight) return;
   const sharedHeight = Math.min(Math.max(Math.ceil(naturalHeight), 320), 640) + 'px';
   wraps.forEach(wrap => { wrap.style.height = sharedHeight; });
@@ -1071,8 +951,6 @@ function openGameFullscreen(id){
   else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
 }
 
-// ---- a game card's own traffic lights: red reloads the iframe, yellow minimizes
-// the card (collapses the frame + body, leaving just the chrome bar), green fullscreens ----
 function reloadGameFrame(id){
   const wrap = document.getElementById('gameFrame-' + id);
   const iframe = wrap && wrap.querySelector('iframe');
@@ -1080,22 +958,16 @@ function reloadGameFrame(id){
   iframe.src = iframe.src;
 }
 
-// ---- shared minimize toggle for any card that uses the "browser window" chrome
-// (game cards and website/web-system cards alike) ----
 function toggleCardMinimize(id){
   const card = document.getElementById('project-' + id);
   if(card) card.classList.toggle('minimized');
 }
 
-// ---- a website/web-system detail page's yellow dot: hide the description column
-// so the screenshot gets the full width instead of sharing it 50/50 ----
 function toggleWebsiteDetailFocus(id){
   const card = document.getElementById('websiteDetail-' + id);
   if(card) card.classList.toggle('focus-media');
 }
 
-// ---- the eDM Builder case-card's yellow dot: hide just the screenshot, keeping
-// the description/tech/GitHub info below it visible (red minimizes the whole card) ----
 function toggleCaseMediaHidden(id){
   const card = document.getElementById('project-' + id);
   if(card) card.classList.toggle('media-hidden');
@@ -1105,8 +977,6 @@ function slugify(str){
   return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'personal';
 }
 
-// ---- personal projects (no company set) are grouped into "Freelance" for company
-// filtering — there's no separate "Personal" option in the dropdown ----
 function websiteFilterCompany(company){
   return (!company || company === 'Personal') ? 'Freelance' : company;
 }
@@ -1116,8 +986,6 @@ function applyWebsiteFilters(category){
   if(!grid) return;
   const status = grid.dataset.filter || 'all';
   const company = grid.dataset.companyFilter || 'all';
-  // filtering re-shuffles which cards are visible, so any card left minimized would
-  // be easy to lose track of — always come back maximised when a filter changes
   grid.querySelectorAll('.website-card.minimized').forEach(card => card.classList.remove('minimized'));
   let visibleCount = 0;
   grid.querySelectorAll('.website-card').forEach(card => {
@@ -1167,17 +1035,12 @@ function renderWebsiteCompanyFilters(category, items){
   select.innerHTML = options.join('');
 }
 
-// ---- jump here from an experience/freelance project chip: pre-filter to that
-// project's own company, resetting any lingering Live/Offline filter so the
-// target card can't be hidden by a stale status filter ----
 function filterWebsitesToCompany(category, companySlug){
   const allStatusBtn = document.querySelector('#webStatusFilters-' + category + ' .filter-pill');
   if(allStatusBtn) filterWebsites(category, 'all', allStatusBtn);
   filterWebsitesByCompany(category, companySlug);
 }
 
-// ---- website detail page: opened from a card's screenshot, own /websites?p=<id> URL
-// (query param rather than a path segment — see stripWebsiteDetailParam above) ----
 function openWebsiteDetail(category, id){
   websiteDetailIds[category] = id;
   showActivePanel();
@@ -1276,9 +1139,6 @@ function renderWebsiteDetailHtml(project, category){
     </div>`;
 }
 
-// ---- a website-style panel's top <h2 class="sect"> switches between the tab-level
-// "<websites count=... />" tag and a per-project "<website name=... year=... />" tag,
-// retyping (like every other section header) only when that content actually changes ----
 function websitesSectHtml(category){
   const detailId = websiteDetailIds[category];
   const items = websiteItemsByCategory[category] || [];
@@ -1320,11 +1180,8 @@ function renderWebsiteDetail(category){
   if(!detailId){
     listView.style.display = '';
     if(wasOpen){
-      // a lingering animation class would replay the moment this panel's ancestor
-      // is re-shown from display:none by an unrelated tab switch — remove it once
-      // the transition finishes so it only ever plays for a genuine detail->list close
       listView.classList.remove('pane-enter');
-      void listView.offsetWidth; // restart the CSS animation
+      void listView.offsetWidth;
       listView.classList.add('pane-enter');
       listView.addEventListener('animationend', () => listView.classList.remove('pane-enter'), { once: true });
     }
@@ -1355,7 +1212,6 @@ const CATEGORY_RENDERERS = {
   'mini-games': renderMiniGameCard
 };
 
-// categories rendered as a year-descending timeline (most recent first)
 const TIMELINE_CATEGORIES = new Set(['landing-pages', 'site-history', 'websites', 'web-systems']);
 
 const projectGrids = document.querySelectorAll('[id^="toolsGrid-"]');
@@ -1396,8 +1252,6 @@ Promise.all(projectCategories.map(category =>
     el.textContent = categories.reduce((sum, category) => sum + (byCategory[category] || []).length, 0);
   });
   setupWebsiteHoverGifs();
-  // TOOL_TAB_REGISTRY is now fully populated — re-render so the mini-tools category
-  // folders pick up their tool leaves (see folderChildren/MINI_TOOL_CATEGORY_IDS)
   renderExplorer();
   WEBSITE_STYLE_CATEGORIES.forEach(category => {
     websiteItemsByCategory[category] = byCategory[category] || [];
@@ -1407,14 +1261,10 @@ Promise.all(projectCategories.map(category =>
   if(WEBSITE_STYLE_CATEGORIES.includes(activeId)) renderWebsiteDetail(activeId);
   const allProjects = Object.entries(byCategory).flatMap(([category, items]) =>
     (items || []).map(item => ({ ...item, category })));
-  // projects with a `linkTo` are aliases shown on another page's card — skip them here
-  // so the aliased project only shows up once as a "related project" chip
   const chipProjects = allProjects.filter(p => !p.linkTo);
   renderExperienceProjects(chipProjects);
   renderFreelanceProjects(chipProjects);
   renderIntroProjectPreview(byCategory);
-  // resolve a tool/game deep link (e.g. a page load or refresh landing on /cron-builder)
-  // now that TOOL_TAB_REGISTRY is finally populated — see pendingToolRouteId above
   if(pendingToolRouteId && tryOpenToolTabRoute(pendingToolRouteId)){
     pendingToolRouteId = null;
     renderTabs();
@@ -1423,7 +1273,6 @@ Promise.all(projectCategories.map(category =>
   }
 });
 
-// ---- little clickable box that jumps to a project's card in its own tab ----
 function projectChipHtml(p){
   const companySlug = WEBSITE_STYLE_CATEGORIES.includes(p.category) ? slugify(websiteFilterCompany(p.company)) : '';
   return `
@@ -1432,7 +1281,6 @@ function projectChipHtml(p){
     </button>`;
 }
 
-// ---- experience: mini boxes on each role linking to that company's related projects ----
 function renderExperienceProjects(allProjects){
   document.querySelectorAll('#panel-experience .commit[data-company]').forEach(commit => {
     const matches = allProjects.filter(p => p.company === commit.dataset.company);
@@ -1447,7 +1295,6 @@ function renderExperienceProjects(allProjects){
   });
 }
 
-// ---- freelance tab: mini boxes for every project done outside full-time roles ----
 function renderFreelanceProjects(allProjects){
   const row = document.getElementById('freelanceProjectsRow');
   if(!row) return;
@@ -1455,9 +1302,6 @@ function renderFreelanceProjects(allProjects){
   row.innerHTML = matches.map(projectChipHtml).join('');
 }
 
-// ---- intro.js "Recent projects" preview: each row summarises one or more
-// project-tab categories (mini-tools/edm-tools fan out into several json files,
-// same as their PROJECT_TAB_OVERRIDES/data-count-category groupings above) ----
 const INTRO_PROJECT_GROUPS = {
   websites: ['websites'],
   'web-systems': ['web-systems'],
@@ -1485,10 +1329,6 @@ function renderIntroProjectPreview(byCategory){
   });
 }
 
-// ---- jump from an experience mini box to the matching project card ----
-// (edm-kinetic-modules/edm-html-builder live nested inside the edm-tools tab, not their
-// own tab; mini-tools-* categories are each their own tab now, so no override needed —
-// except mini-tools-personal, which has no tab of its own while it's hidden)
 const PROJECT_TAB_OVERRIDES = {
   'edm-kinetic-modules': 'edm-tools',
   'edm-html-builder': 'edm-tools',
@@ -1506,7 +1346,6 @@ function goToProject(category, id, companySlug){
   });
 }
 
-// ---- swap a website thumbnail from its static screenshot to its live-motion GIF on hover ----
 function setupWebsiteHoverGifs(root){
   (root || document).querySelectorAll('.website-thumb-img[data-gif-src]').forEach(img => {
     const thumb = img.closest('.website-thumb');
@@ -1516,7 +1355,6 @@ function setupWebsiteHoverGifs(root){
   });
 }
 
-// ---- lazy-load an embed's iframe the first time it's opened ----
 function loadEmbedIframe(embed){
   const iframe = embed.querySelector('iframe[data-src]');
   if(!iframe) return;
@@ -1524,7 +1362,6 @@ function loadEmbedIframe(embed){
   iframe.removeAttribute('data-src');
 }
 
-// ---- "View all" toggle for a tools grid: opens/closes every doc-embed at once ----
 function toggleAllDocs(category, btn){
   const grid = document.querySelector(`[data-category="${category}"]`);
   if(!grid) return;
@@ -1539,7 +1376,6 @@ function toggleAllDocs(category, btn){
   if(btn) btn.innerHTML = shouldOpen ? `${ICON_EYE_OFF_SVG}Collapse all` : `${ICON_EYE_SVG}View all`;
 }
 
-// ---- swap a "View"/"Quick View" button's icon (and, when it carries a data-view-label, its text) to reflect open state ----
 function setViewButtonState(btn, isOpen){
   if(!btn) return;
   const icon = btn.querySelector('svg.btn-icon');
@@ -1550,7 +1386,6 @@ function setViewButtonState(btn, isOpen){
   if(textNode) textNode.textContent = isOpen ? 'Hide' : viewLabel;
 }
 
-// ---- contact page interactions ----
 function toggleDoc(id){
   const embed = document.getElementById('embed-'+id);
   if(!embed) return;
@@ -1566,7 +1401,6 @@ function toggleDoc(id){
     });
   }
 }
-// ---- like toggleDoc, but closes sibling embeds sharing the same group first (e.g. prototype variants) ----
 function toggleExclusiveDoc(id, group){
   document.querySelectorAll(`.doc-embed[data-group="${group}"]`).forEach(e => {
     if(e.id !== 'embed-'+id) e.classList.remove('open');
@@ -1670,7 +1504,6 @@ document.getElementById('contactFormReset').addEventListener('click', function(e
   document.getElementById('contactForm').hidden = false;
 });
 
-// ---- traffic light buttons ----
 document.getElementById('dotRed').addEventListener('click', ()=>{
   location.href = '/' + location.search;
 });
@@ -1690,7 +1523,6 @@ document.getElementById('dockRestore').addEventListener('click', ()=>{
   document.getElementById('dockRestore').style.display = 'none';
 });
 
-// ---- background matrix rain (revealed behind the app when minimized) ----
 (function(){
   var canvas = document.getElementById('bgRain');
   var ctx = canvas.getContext('2d');
@@ -1744,14 +1576,12 @@ function toggleExplorer(){
 document.getElementById('dotGreen').addEventListener('click', toggleExplorer);
 document.getElementById('titlebarLogoBtn').addEventListener('click', ()=> openFile('intro'));
 
-// ---- mobile explorer overlay ----
 document.getElementById('mobileMenuBtn').addEventListener('click', toggleExplorer);
 document.getElementById('explorerClose').addEventListener('click', ()=>{
   document.getElementById('shell').classList.remove('mobile-nav-open');
   setMobileNavLock(false);
 });
 
-// ---- explorer "..." menu ----
 const explorerMore = document.getElementById('explorerMore');
 const explorerMenu = document.getElementById('explorerMenu');
 explorerMore.addEventListener('click', (e)=>{
@@ -1781,7 +1611,6 @@ document.addEventListener('click', (e)=>{
   explorerMore.classList.remove('active');
 });
 
-// ---- dev mode toggle button (isLocalhost/isDevMode defined earlier, near the routing code) ----
 const devModeToggle = document.getElementById('devModeToggle');
 if(isLocalhost){
   devModeToggle.classList.toggle('on', isDevMode());
@@ -1789,9 +1618,6 @@ if(isLocalhost){
   devModeToggle.addEventListener('click', ()=>{
     const turningOn = !isDevMode();
     localStorage.setItem('devMode', turningOn ? 'true' : 'false');
-    // Switching into hash mode while on a clean deep-link path (e.g. /experience)
-    // would 404 on reload against a local server with no rewrite support, so
-    // route back through '/' with the id carried over as a hash instead.
     if(turningOn && location.pathname !== '/'){
       location.href = '/' + location.search + (activeId ? '#' + activeId : '');
     } else {
@@ -1802,7 +1628,6 @@ if(isLocalhost){
   devModeToggle.remove();
 }
 
-// ---- boot sequence ----
 const bootLines = [
   "$ initializing brunovida.si...",
   "$ mounting /experience ... ok",
@@ -1875,7 +1700,6 @@ function startBioTyping(){
   after.classList.add('show');
 }
 
-// ---- cycling typewriter tagline (slower + balanced typing/deleting + longer read pause) ----
 let taglines = [];
 const taglinesPromise = fetch('json/taglines.json')
   .then(res => res.json())
@@ -1884,19 +1708,17 @@ const taglinesPromise = fetch('json/taglines.json')
     console.error('Could not load json/taglines.json', err);
     taglines = ["I build things that work — and look good doing it."];
   });
-let tlOrder = [];  // shuffled indices into `taglines`, consumed one at a time
+let tlOrder = [];
 let tlPos = 0;
 let tlIndex = 0;
 let tlChar = 0;
 let tlDeleting = false;
-let tlMistakeCooldown = 0;  // chars to wait before another typo can occur (see typoFor)
-const TYPE_SPEED = 65;     // ms per character while typing
-const DELETE_SPEED = 65;   // same speed while deleting
-const READ_PAUSE = 3800;   // pause once fully typed, so it can be read
-const NEXT_PAUSE = 500;    // pause once fully deleted, before next phrase
+let tlMistakeCooldown = 0;
+const TYPE_SPEED = 65;
+const DELETE_SPEED = 65;
+const READ_PAUSE = 3800;
+const NEXT_PAUSE = 500;
 
-// Fisher-Yates shuffle of [0, count) indices; keeps the new run's first
-// phrase from matching the last one shown, so back-to-back repeats can't happen.
 function shuffleTaglineOrder(avoidFirst){
   const order = [...Array(taglines.length).keys()];
   for(let i = order.length - 1; i > 0; i--){
@@ -1970,7 +1792,6 @@ function startCyclingTagline(){
 
 if(activeId === 'about') startBioTyping();
 
-// ---- kick off the boot sequence (skipped in DEV mode, and on direct tab-link visits) ----
 if(isDevMode() || enteredViaDeepLink){
   document.getElementById('boot').remove();
   document.getElementById('app').classList.add('show');
