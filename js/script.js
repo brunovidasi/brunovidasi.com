@@ -198,13 +198,9 @@ function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
     if(depth>0) head.style.paddingLeft = (depth*20)+'px';
     head.innerHTML = '<span class="left">' + folderIconHtml(!!openFolders[key]) + folder.label + '</span><span class="caret">▸</span>';
     head.onclick = ()=>{
-      if(openable && window.matchMedia('(max-width: 720px)').matches){
-        openFile(defaultFile);
-        return;
-      }
       const nextOpen = !openFolders[key];
       openFolders[key] = nextOpen;
-      if(openable && nextOpen) openFile(defaultFile); else renderExplorer();
+      if(openable && nextOpen && !window.matchMedia('(max-width: 720px)').matches) openFile(defaultFile); else renderExplorer();
     };
     container.appendChild(head);
 
