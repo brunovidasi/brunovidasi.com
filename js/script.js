@@ -1676,6 +1676,11 @@ document.getElementById('closeAllTabsBtn').addEventListener('click', ()=>{
   explorerMenu.classList.remove('show');
   explorerMore.classList.remove('active');
 });
+document.getElementById('hideExplorerBtn').addEventListener('click', ()=>{
+  toggleExplorer();
+  explorerMenu.classList.remove('show');
+  explorerMore.classList.remove('active');
+});
 document.addEventListener('click', (e)=>{
   if(!explorerMenu.classList.contains('show')) return;
   if(explorerMenu.contains(e.target) || explorerMore.contains(e.target)) return;
