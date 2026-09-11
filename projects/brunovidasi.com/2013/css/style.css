@@ -1,0 +1,521 @@
+/*
+
+STYLE.CSS DO SITE BRUNOVIDASI
+
+Customizado por Bruno Vieira 
+ID brunovidasi
+
+*/
+
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+
+* html .clearfix             { zoom: 1; } /* IE6 */
+*:first-child+html .clearfix { zoom: 1; } /* IE7 */
+
+/* GERAL */
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: simllhpregular, Tahoma, Geneva, sans-serif;
+  background-color: #000000;
+  color: #1a1a1a;
+}
+::-moz-selection{background:#33B5E5;color:#fff;text-shadow:none}
+::selection{background:#33B5E5;color:#fff;text-shadow:none}
+
+.hidden {
+  display: none;
+}
+
+.wrapper {
+  position: relative;
+  width: 980px;
+  margin: 0 auto 0 auto;
+}
+
+body {
+  overflow: hidden;
+  position: relative;
+}
+
+
+/* FONTES */
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 30px;
+}
+
+h2 {
+  font-size: 40px;
+}
+
+h3 {
+
+}
+
+p a{
+  color: #9a9a9a;
+  text-decoration: none;
+}
+p a:hover{
+  text-decoration: underline;
+}
+#preload-container {
+  display: block;
+  width: 1px;
+  z-index: 10;
+  position: absolute;
+  height: 1px;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+
+/* APLICAÇÃO */
+
+#loading {
+  display: block;
+  height: 200px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+  text-align: center;
+  margin-top: 13%;
+  font-size: 22px;
+  line-height: 0;
+}
+#loading img {
+  background-color: transparent;
+  padding: 15px 180px;
+}
+#loading p img {
+  background-color: transparent;
+  padding: 0px;
+}
+
+#loading-background {
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 999998;
+  background: url('../images/loading_background_new.jpg') 40% 70% no-repeat #000;
+}
+
+#social-container {
+  position: absolute;
+  display: none;
+  top: 1%;
+  right: 1%;
+  width: 350px;
+  z-index: 999991;
+}
+
+.twitter-share-button.twitter-count-horizontal {
+  float: left !important;
+  width: 113px !important;
+}
+
+#___plusone_0 {
+  float: left !important;
+  width: 88px !important;
+}
+.fb-like {
+  float: left !important;
+}
+
+#header-parallax.parallax {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* PÁGINA INÍCIO */
+
+#handy {
+  width: 100%;
+  height: 100%;
+}
+#handy .background {
+  background: url("../images/background_new.jpg") bottom center no-repeat transparent;
+  height: 1704px;
+  width: 2476px;
+  position: absolute;
+  bottom: -190px;
+  left: -150px;
+}
+
+#handy .device {
+  background: url("../images/handy_hand_new.png") top center no-repeat transparent;
+  height: 914px;
+  width: 1089px;
+  position: absolute;
+  left: -300px;
+  bottom: -100px;
+}
+
+#handy .text {
+  background: url('../images/corner_inverted.png') 0% 3% no-repeat;
+  padding-left: 26px;
+  height: 350px;
+  width: 520px;
+  bottom: 340px;
+  left: 850px;
+  position: absolute;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  color: #fff;
+  font-family: simllhp, Tahoma, Geneva, sans-serif;
+}
+
+#handy .text p{
+  background-color: #222222;
+  padding: 5px 16px 9px;
+  display: inline-block;
+  font-size: 24px;
+  line-height: 1.6em;
+}
+#handy .text h2 {
+  background-color: #222222;
+  color: #f9f9f9;
+  padding: 5px 16px 11px;
+  font-size: 45px;
+  line-height: 1.4em;
+  display: inline-block;
+}
+#handy .text h2 a{
+  color: #f9f9f9;
+  outline: none;
+}
+#handy .text h2 a:hover{
+  text-decoration: underline;
+}
+#handy .device-content {
+  height: 425px;
+  margin-left: 729px;
+  margin-top: 145px;
+  width: 240px;
+}
+#handy #andro-clock {
+  width: 220px;
+  margin: 0 auto 20px;
+  padding: 35px 0 0 0;
+  height: 50px;
+  position: relative;
+  color: white;
+  text-shadow: 0px 1px 1px rgba(0,0,0,0.7);
+}
+#handy #time {
+  position: absolute;
+  right: 0;
+  top: 33px;
+  font-size: 42px;
+}
+#handy #date {
+  padding: 5px 0 0 0;
+  line-height: 1.4em;
+  font-size: 12px;
+}
+#search {
+  color: #fdfdfd;
+  border: 2px solid rgba(255,255,255,0.8);
+  text-shadow: 0px 1px 1px rgba(0,0,0,0.7);
+  background: url("../images/search.png") 97% 50% no-repeat transparent;
+  font-size: 12px;
+  line-height: 12px;
+  padding: 5px 20px 5px 5px;
+  margin: 0 0 25px 7px;
+  width: 198px;
+}
+#handy ul#nav {
+  padding: 0 0 0 10px;
+}
+#handy ul#nav li{
+  float: left;
+  width: 59px;
+  height: 72px;
+  margin: 0 22px 15px 0;
+  text-align: center;
+  cursor: pointer;
+}
+#handy ul#nav li.odd {
+  margin: 0 0 15px 0;
+}
+#handy ul#nav li a.nav-button{
+  width: 59px;
+  height: 59px;
+  display: block;
+  background-position: top left;
+  background-repeat: no-repeat;
+}
+#handy ul#nav li:hover a.nav-button,
+#handy ul#nav li a.nav-button.active{
+  background-position: bottom left;
+}
+#handy ul#nav li h3{
+  color: #b0b0b0;
+  font-size: 11px;
+  text-shadow: 0px 1px 1px rgba(0,0,0,0.7);
+}
+#handy ul#nav li h3.active, #handy ul#nav li:hover h3{
+  color: #fafafa;
+}
+#home-button {
+  display: block;
+  height: 19px;
+  position: absolute;
+  left: 818px;
+  top: 596px;
+  width: 64px;
+}
+
+#twitter{
+  display: none;
+}
+#twitter a{
+  background-image: url("../images/twitter.png");
+}
+
+#googleplus {
+  display: none;
+}
+#googleplus a{
+  background-image: url("../images/googleplus.png");
+}
+
+#linkedin{
+  display: none;
+}
+#linkedin a{
+  background-image: url("../images/linkedin.png");
+}
+
+#facebook{
+  display: none;
+}
+#facebook a{
+  background-image: url("../images/facebook.png");
+}
+
+#youtube {
+  display: none;
+}
+#youtube a{
+  background-image: url("../images/youtube.png");
+}
+
+#mail{
+  display: none;
+}
+#mail a{
+  background-image: url("../images/mail.png");
+}
+
+#vidasi{
+  display: none;
+}
+#vidasi a{
+  background-image: url("../images/vidasico.png");
+}
+
+#maps{
+  display: none;
+}
+#maps a{
+  background-image: url("../images/maps.png");
+}
+#more{
+  display: none;
+}
+#more a{
+  background-image: url("../images/more.png");
+}
+.content img, .content iframe, .bordabranca{
+  border: 8px solid white;
+}  
+
+#home-container p,
+#vidasi-container p,
+#maps-container p{
+  padding: 0 16px;
+  margin-top: -2px;
+}
+#fb-container h2 {
+  position: relative;
+}
+#twitter-container p#tweet {
+  font-style: italic;
+  line-height: 2.1em;
+}
+#twitter-container p#tweet .meta{
+  display: none;
+}
+img#help_three {
+  position: absolute;
+  height: 94px;
+  width: 220px;
+  display: block;
+  top: 559px;
+  left: 819px;
+  display: none;
+  z-index: 9999;
+}
+/* CLAIM */
+
+
+/* line 1, ../../../app/stylesheets/_claim.sass */
+#claim-container {
+  margin: 1em 0;
+  font-weight: bold;
+  line-height: 0.85;
+  word-wrap: break-word;
+}
+
+/* line 6, ../../../app/stylesheets/_claim.sass */
+#claim {
+  letter-spacing: -0.06em;
+  font-size: 1.5em;
+}
+/* line 8, ../../../app/stylesheets/_claim.sass */
+#claim .off {
+  visibility: hidden;
+}
+@media screen and (min-width: 40em) {
+  /* line 6, ../../../app/stylesheets/_claim.sass */
+  #claim {
+    font-size: 20px;
+  }
+}
+@media screen and (min-width: 60em) {
+  /* line 6, ../../../app/stylesheets/_claim.sass */
+  #claim {
+    font-size: 40px;
+  }
+}
+/* AWWWARDS */
+
+#awwwards{
+  position: absolute;
+  top: 37px;
+  right: 0px;
+  z-index: 9999999;
+}
+
+/* COPYRIGHT */
+
+#copyright {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  font-size: 10px;
+  color: #eeeeee;
+  z-index: 99999;
+}
+#copyright a {
+  color: #EEEEEE;
+}
+
+/* MINIMENU */
+
+#minimenu {
+	position:absolute; bottom:1; left:1%; top: 1%;
+	z-index:16;
+}
+#minimenu li {
+	float:left; margin:0 1px 0 0;
+}
+#minimenu .link-container {
+	display:table; height:60px;
+}
+#minimenu a {
+	display:table-cell; padding:0 12px; vertical-align:middle;
+	background:#transparent; cursor:pointer;
+	color:white; font:16px/1 'Futura Medium Condensed'; text-align:center; text-transform:uppercase;
+}
+#minimenu a b {
+	display:block;
+	color:#blue; font-weight:normal;
+}
+#minimenu a,
+#minimenua b {
+	-moz-transition:0.5s all ease;
+	-ms-transition:0.5s all ease;
+	-o-transition:0.5s all ease;
+	-webkit-transition:0.5s all ease;
+	transition:0.5s all ease;
+}
+#minimenu a:hover,
+#minimenu a:focus,
+#minimenu .current a {
+	color: #0d0d0d;
+	background-color: transparent;
+}
+#minimenu a:hover b,
+#minimenu a:focus b,
+#minimenu .current a b {
+	color:#0077bb;
+}
+
+.description1{
+    background-color: #0d0d0d;
+	color:white;
+	opacity: 0.65;
+}
+
+.description2{
+    background-color: white;
+	opacity: 0.65;
+	color:black;
+}
+.description2 a{
+    color: white;
+}
+
+.description2 a:hover{
+    color: white;
+}
+
+.description2:hover{
+    background-color: #0d0d0d;
+	color:white;
+	opacity: 0.65;
+}
+
+/*
+#minimenu {
+  position: relative;
+  left: 10px;
+  bottom: -5px;
+  font-size: 12px;
+  color: #eeeeee;
+  z-index: 99999;
+
+}
+#minimenu a {
+  color: #EEEEEE;
+  font-weight:bold;
+}
+#minimenu a:hover {
+  color: #000000;
+  font-weight:bold;
+}*/

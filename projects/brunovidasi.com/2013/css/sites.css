@@ -1,0 +1,312 @@
+/*
+
+SITES.CSS DO SITE BRUNOVIDASI
+
+Customizado por Bruno Vieira 
+ID brunovidasi
+
+CSS da Página Sites
+
+*/
+
+
+
+/* 2.2) obsah
+------------------------------------------------------------------------------*/
+.red{
+  color: red;
+  font-weight:bold;
+}
+
+#loadp.loading {
+  background-color: #transparent;
+  background: url(../img/preloader.gif) no-repeat center center;
+  height: 100%;
+  width: 100%;
+}
+
+#contentp {
+  color: #transparent;
+  font-size: 1.8em;
+  text-align: left;
+}
+#contentp strong {
+  color: #fff;
+}
+
+/* kontakt - hp */
+#contact #contentp {
+  background: url(../img/pinky.png) no-repeat 31px top;
+  height: 367px;
+  left: 50%;
+  margin: -183px 0 0 -347px;
+  padding-left: 435px;
+  position: absolute;
+  top: 50%;
+  width: 259px;
+}
+* html #contact #contentp {
+  width: 694px;
+}
+
+#contentp h2, #contentp h3, #contact #contentp ul li, .btn span {
+  overflow: hidden;
+  text-indent: -99999px;
+}
+
+#contentp h2 {
+  background: url(../img/txt-david.png) no-repeat left top;
+  height: 31px;
+  margin-top: 94px;
+  width: 188px;
+}
+#contentp h3 {
+  background: url(../img/txt-graphic.png) no-repeat left top;
+  height: 18px;
+  margin-top: 10px;
+  width: 192px;
+}
+#contentp ul {
+  margin: 23px 0;
+}
+#contentp ul li {
+  display: block;
+  margin-top: 7px;
+}
+#contentp .live {
+  background: url(../img/txt-live.png) no-repeat left top;
+  height: 18px;
+  width: 192px;
+}
+#contentp .skills {
+  background: url(../img/txt-skills.png) no-repeat left top;
+  height: 18px;
+  width: 92px;
+}
+#contentp .mail {
+  background: url(../img/txt-email.png) no-repeat left top;
+  height: 18px;
+  margin-top: 32px;
+  overflow: visible !important;
+  width: 195px;
+}
+#contentp .mail a {
+  display: block;
+  height: 18px;
+  margin: -22px -135px 0 60px;
+  position: relative;
+  width: 135px;
+}
+#contentp p {
+  font-size: 0.83em;
+  width: 300px;
+}
+#contentp p a {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  overflow: hidden;
+}
+#contentp p a strong {
+  float: left;
+}
+#contentp p a span {
+  background-position: left top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  display: block;
+  float: left;
+  margin-top: 5px;
+  text-indent: 100px;
+}
+#contentp .mail span {
+  background-image: url(../img/txt-mail.png);
+  height: 14px;
+  width: 27px;
+}
+#contentp .facebook span {
+  background-image: url(../img/txt-facebook.png);
+  height: 14px;
+  width: 60px;
+}
+#contentp .twitter span {
+  background-image: url(../img/txt-twitter.png);
+  height: 14px;
+  width: 44px;
+}
+#contentp p a:hover span, #contentp p a:active span, #contentp p a:focus span {
+  background-position: left -14px;
+}
+
+/* sipky */
+#arrows {
+  background-color: #transparent;
+  background: url(../images/preloader.gif) no-repeat center center;
+}
+#arrows li {
+  height: 34px;
+  position: absolute;
+  margin-top: -17px;
+  top: 50%;
+}
+#galleryp #arrows li {
+  background-color: #transparent;
+  margin-top: -25px;
+}
+#arrows a {
+  float: left;
+  height: 17px;
+  margin-top: 8px;
+  overflow: hidden;
+  text-indent: -999px;
+}
+#arrows .offline {
+  background: url(../images/arrow-left.png) no-repeat left top;
+  left: 67px;
+}
+#arrows .offline a {
+  background: url(../img/navi-offline.png) no-repeat left top;
+  margin-left: 28px;
+  width: 44px;
+}
+#arrows .online {
+  background: url(../images/arrow-right.png) no-repeat right top;
+  right: 67px;
+}
+#arrows .online a {
+  background: url(../img/navi-online.png) no-repeat left top;
+  margin-right: 28px;
+  width: 42px;
+}
+#arrows .offlineActive {
+  background-position: left bottom;
+}
+#arrows .onlineActive {
+  background-position: right bottom;
+}
+#arrows .prev {
+  top:80%;
+  left: 67px;
+}
+#arrows .prev a {
+  background: url(../images/arrow-left.png) no-repeat left top;
+  height: 34px;
+  width: 20px;
+}
+#arrows .next {
+  top:80%;
+  right: 67px;
+}
+#arrows .next a {
+  background: url(../images/arrow-right.png) no-repeat left top;
+  height: 34px;
+  width: 20px;
+}
+#arrows a:hover {
+background-color: #transparent;
+  background-position: left bottom;
+}
+
+/* galerie */
+#galleryp #contentp {
+  background-color: #transparent;
+  left: 50%;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+}
+#galleryp #contentp img {
+  background-color: #transparent;
+  display: block;
+  position: relative;
+}
+
+#thumbs {
+  background:url('../images/background-black.jpg');
+  cursor: default;
+  bottom: -115px;
+  height: 115px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+}
+#thumbs ul {
+  margin: 18px 39px 18px 36px;
+  position: relative;
+  width: 30000px;
+}
+#thumbs ul li {
+  background: url(../images/preloader.gif) no-repeat center center;
+  float: left;
+  height: 80px;
+  margin-left: 23px;
+  position: relative;
+  width: 120px;
+}
+#thumbs ul li a span {
+  filter: alpha(opacity=36); 
+  opacity: 0.36;
+  -moz-opacity: 0.36;
+  -khtml-opacity: 0.36;
+  border: 0 #0077bb solid;
+  display: block;
+  height: 80px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 120px;
+}
+#thumbs ul li a:hover span {
+  border: 10px #0077bb solid;
+  height: 60px;
+  width: 100px;
+}
+* html #thumbs ul li a span {
+  height: 80px !important;
+  width: 120px !important;
+}
+#thumbs ul li a.active span {
+  border: 10px #0077bb solid !important;
+  height: 60px !important;
+  width: 100px !important;
+}
+* html #thumbs ul li a.active span {
+  height: 80px !important;
+  width: 120px !important;
+}
+
+#thumbs .thumbsLeft, #thumbs .thumbsRight {
+  
+  border: 43px background-color: #0077bb solid;
+  border-width: 43px 20px;
+  display: block;
+  left: 0;
+  font-size: 2em;
+  position: absolute;
+  height: 28px;
+  line-height: 28px;
+  text-decoration: none;
+  top: 0;
+  width: 17px;
+  z-index: 2;
+}
+* html #thumbs .thumbsLeft, * html #thumbs .thumbsRight {
+
+  height: 114px;
+  width: 57px;
+}
+#thumbs .thumbsRight {
+  left: auto;
+  right: 0;
+}
+#thumbs .thumbsLeft span {
+  background-image: url(../images/thumbs-left.gif);
+}
+#thumbs .thumbsRight span {
+  background-image: url(../images/thumbs-right.gif);
+}
+#thumbs .thumbsLeft:hover span, #thumbs .thumbsRight:hover span {
+  background-position: left bottom;
+}
+

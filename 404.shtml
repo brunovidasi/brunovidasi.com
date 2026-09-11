@@ -388,7 +388,7 @@ var ROUTES = {
   'qr-code-generator-reader': '/qr-code-generator-reader',
   'regex-tester': '/regex-tester',
   'site-2012': '/site-2012',
-  'site-2012-2': '/site-2012-2',
+  'site-2013': '/site-2013',
   'site-2014': '/site-2014',
   'site-2016': '/site-2016',
   'site-2018': '/site-2018',

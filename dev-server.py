@@ -30,7 +30,7 @@ SPA_ROUTES = re.compile(
     r"|css-visual-builder|currency-converter|exif-viewer|gerador-de-cpf|ig-relationship-checker"
     r"|image-compressor|image-to-pdf|js-beautifier|js-minifier|json-csv-converter|password-generator"
     r"|pdf-compressor|pdf-metadata-tool|pdf-password-protector|pdf-password-remover|pdf-to-jpg"
-    r"|pdf-word-converter|pong|qr-code-generator-reader|regex-tester|site-2012|site-2012-2"
+    r"|pdf-word-converter|pong|qr-code-generator-reader|regex-tester|site-2012|site-2013"
     r"|site-2014|site-2016|site-2018|site-2025|snake|tetris|text-diff-checker"
     r"|timezone-converter|unit-converter)/?$"
 )

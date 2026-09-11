@@ -1,0 +1,10 @@
+body{
+	background: url('background-black.jpg');
+}
+
+.error{
+	text-align: center;
+	color: white;
+	position: relative;
+	top: 30%;
+}

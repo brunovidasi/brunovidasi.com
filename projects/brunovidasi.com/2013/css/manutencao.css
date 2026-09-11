@@ -1,0 +1,62 @@
+
+@import url(css/reset.css);
+@import url(css/fontface.css);
+
+header,nav,article,footer,address{
+	display:block;
+}
+
+html{
+	height:100%;
+	background:#000;
+}
+
+a{
+	outline:none;
+}
+
+body{
+	height:98%;
+	font-family:HelveticaNeueRegular, Helvetiva, Geneva, sans-serif;
+	font-weight:lighter;
+	font-size:14px;
+	background:#000 url(http://www.brunovidasi.com/images/forest.jpg) no-repeat center center fixed;
+	background-size:cover;
+	-moz-background-size:cover;
+	-o-background-size:cover;
+}
+#wrapper{
+	width:100%;
+	background:url(http://www.brunovidasi.com/images/dot.png) repeat;
+	height:100%;
+	margin-bottom:-30px;
+	min-height:100%;
+}
+
+#topheader h1#logo{
+	width:250px;
+	height:135px;
+	float:left;
+	background:url(http://www.brunovidasi.com/images/header_bg.png) no-repeat right top;
+	position:relative;
+	z-index:5;
+}
+
+#topheader h2#manutencao{
+	width:550px;
+	height:500px;
+	top:200px;
+	float:left;
+	background:url(http://www.brunovidasi.com/images/manutencao.png) no-repeat right top;
+	position:relative;
+	z-index:5;
+}
+
+#topheader h1#logo a{
+	display:block;
+	width:250px;
+	height:135px;
+	background:url(http://www.brunovidasi.com/images/logo.jpg) no-repeat center 10px;
+	text-indent:-9999px;
+	margin:0 auto;
+}

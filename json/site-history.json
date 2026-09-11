@@ -68,20 +68,20 @@
     "codepen": ""
   },
   {
-    "id": "site-2012-2",
-    "title": "brunovidasi.com — 2012.2",
+    "id": "site-2013",
+    "title": "brunovidasi.com — 2013",
     "category": "site-history",
     "icon": "🌐",
-    "year": 2012,
+    "year": 2013,
     "description": "I added some pages and features that were part of my first version of personal website, started using PHP for making the website more dynamic.",
-    "path": "projects/brunovidasi.com/2012.2/index.html",
+    "path": "projects/brunovidasi.com/2013/index.html",
     "github": "https://github.com/brunovidasi/brunovidasi",
     "live": "",
     "codepen": ""
   },
   {
     "id": "site-2012",
-    "title": "brunovidasi.com — 2012.1",
+    "title": "brunovidasi.com — 2012",
     "category": "site-history",
     "icon": "🌐",
     "year": 2012,

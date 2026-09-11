@@ -1,0 +1,75 @@
+/*
+
+MOBILE.CSS DO SITE BRUNOVIDASI
+
+Criado por Bruno Vieira 
+ID brunovidasi
+
+CSS da Página Móvel
+
+*/
+
+.background-mobile{
+  background: url("../images/bg-mobile.png") bottom center no-repeat transparent;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+
+#iniciomobile{
+
+}
+
+#contatosmobile{
+  position: absolute;
+  top: 30%;
+  left: 0.5%;
+  right: 0.5%;
+  width: 100%;
+  height: 80%;
+  background-color: #transparent;
+}
+
+.containermobile{
+  float: left;
+  width: 32%;
+  height: 25%;
+  border: 1px solid black;
+  background-color: #transparent;
+  color: white;
+  font-size:100%;
+}
+
+.containermobile a{
+  color: white;
+}
+
+.gallerym {
+
+}
+
+.gallerym .defaultm a:hover .image0m {
+	box-shadow:5px 5px 15px rgba(0,0,0,0.3); z-index:2;
+}
+
+.gallerym  .defaultm .image0m {
+
+	border:8px solid #fff;
+	-moz-transition:0.3s all ease;
+	-ms-transition:0.3s all ease;
+	-o-transition:0.3s all ease;
+	-webkit-transition:0.3s all ease;
+	transition:0.3s all ease;
+}
+
+.gallerym  .image40m {
+	top:80%; right:0;
+	width:80%;
+}
+
+.gallerym  .mobile {
+	display:none;
+}
+
+
