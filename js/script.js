@@ -242,6 +242,7 @@ function renderTabs(){
   const bar = document.getElementById('tabBar');
   bar.innerHTML = '';
   if(openTabs.length === 0){
+    document.getElementById('shell').classList.remove('sidebar-hidden');
     const note = document.createElement('div');
     note.className = 'tabs-empty-note';
     note.textContent = 'No tabs open';
@@ -475,6 +476,16 @@ function closeAllTabs(){
   renderExplorer();
   showActivePanel();
   updatePath(null);
+}
+
+function closeOtherTabs(){
+  if(!activeId) return;
+  openTabs.filter(id => id !== activeId).forEach(removeToolTabFrame);
+  openTabs = [activeId];
+  resetWebsiteDetailIds();
+  renderTabs();
+  renderExplorer();
+  showActivePanel();
 }
 
 function openToolTab(id){
@@ -1674,6 +1685,11 @@ document.getElementById('collapseAllFoldersBtn').addEventListener('click', ()=>{
 });
 document.getElementById('closeAllTabsBtn').addEventListener('click', ()=>{
   closeAllTabs();
+  explorerMenu.classList.remove('show');
+  explorerMore.classList.remove('active');
+});
+document.getElementById('closeOtherTabsBtn').addEventListener('click', ()=>{
+  closeOtherTabs();
   explorerMenu.classList.remove('show');
   explorerMore.classList.remove('active');
 });
