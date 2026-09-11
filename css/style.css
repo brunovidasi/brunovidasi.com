@@ -340,8 +340,8 @@ a {
 
 .explorer {
   position: relative;
-  flex: 0 0 230px;
-  width: 230px;
+  flex: 0 0 var(--explorer-width, 230px);
+  width: var(--explorer-width, 230px);
   background: var(--panel);
   border-right: 1px solid var(--line);
   padding: 14px 10px;
@@ -351,6 +351,10 @@ a {
   transition: flex-basis .25s ease, width .25s ease, opacity .2s ease, padding .25s ease, border-color .25s ease;
 }
 
+.explorer.no-resize-transition {
+  transition: opacity .2s ease, padding .25s ease, border-color .25s ease;
+}
+
 .shell.sidebar-hidden .explorer {
   flex-basis: 0;
   width: 0;
@@ -358,6 +362,49 @@ a {
   padding-right: 0;
   opacity: 0;
   border-right-color: transparent;
+}
+
+.explorer-resize-handle {
+  flex: 0 0 6px;
+  width: 6px;
+  margin-left: -6px;
+  cursor: col-resize;
+  position: relative;
+  z-index: 5;
+}
+
+.explorer-resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: transparent;
+  transition: background .15s ease;
+}
+
+.explorer-resize-handle:hover::after,
+.explorer-resize-handle.dragging::after {
+  background: var(--ok);
+  transition-delay: .1s;
+}
+
+.explorer-resize-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  cursor: col-resize;
+}
+
+.explorer-resize-overlay.active {
+  display: block;
+}
+
+.shell.sidebar-hidden .explorer-resize-handle {
+  display: none;
 }
 
 .explorer .label-row {
@@ -2923,6 +2970,10 @@ body.mobile-nav-locked {
 
   .shell.mobile-nav-open .explorer {
     display: block;
+  }
+
+  .explorer-resize-handle {
+    display: none;
   }
 
   /* .explorer's z-index only wins within #app's own stacking context (#app sets

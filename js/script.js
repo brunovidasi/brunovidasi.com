@@ -1576,6 +1576,78 @@ function toggleExplorer(){
 document.getElementById('dotGreen').addEventListener('click', toggleExplorer);
 document.getElementById('titlebarLogoBtn').addEventListener('click', ()=> openFile('intro'));
 
+(function initExplorerResize(){
+  const explorer = document.querySelector('.explorer');
+  const handle = document.getElementById('explorerResizeHandle');
+  const overlay = document.getElementById('explorerResizeOverlay');
+  if(!explorer || !handle || !overlay) return;
+
+  const MIN_WIDTH = 170;
+  const MAX_WIDTH = 480;
+  const DEFAULT_WIDTH = 230;
+
+  function applyWidth(width){
+    explorer.style.setProperty('--explorer-width', width + 'px');
+  }
+
+  const savedWidth = parseInt(localStorage.getItem('explorerWidth'), 10);
+  if(!isNaN(savedWidth)){
+    applyWidth(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, savedWidth)));
+  }
+
+  let dragging = false;
+  let startX = 0;
+  let startWidth = 0;
+  let pendingWidth = null;
+  let rafId = null;
+
+  function flushWidth(){
+    rafId = null;
+    if(pendingWidth !== null) applyWidth(pendingWidth);
+  }
+
+  handle.addEventListener('mousedown', (e)=>{
+    if(window.matchMedia('(max-width: 720px)').matches) return;
+    dragging = true;
+    startX = e.clientX;
+    startWidth = explorer.getBoundingClientRect().width;
+    explorer.classList.add('no-resize-transition');
+    handle.classList.add('dragging');
+    overlay.classList.add('active');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  // The overlay (rather than the iframes/panels underneath) receives the
+  // drag's mousemove/mouseup — without it, crossing into an open iframe
+  // (mini-tools, résumé, games) stops delivering mouse events to the page
+  // and the drag stalls until the cursor returns over non-iframe content.
+  overlay.addEventListener('mousemove', (e)=>{
+    if(!dragging) return;
+    pendingWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidth + (e.clientX - startX)));
+    if(rafId === null) rafId = requestAnimationFrame(flushWidth);
+  });
+
+  overlay.addEventListener('mouseup', ()=>{
+    if(!dragging) return;
+    dragging = false;
+    if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+    if(pendingWidth !== null){ applyWidth(pendingWidth); pendingWidth = null; }
+    explorer.classList.remove('no-resize-transition');
+    handle.classList.remove('dragging');
+    overlay.classList.remove('active');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    localStorage.setItem('explorerWidth', Math.round(explorer.getBoundingClientRect().width));
+  });
+
+  handle.addEventListener('dblclick', ()=>{
+    applyWidth(DEFAULT_WIDTH);
+    localStorage.setItem('explorerWidth', DEFAULT_WIDTH);
+  });
+})();
+
 document.getElementById('mobileMenuBtn').addEventListener('click', toggleExplorer);
 document.getElementById('explorerClose').addEventListener('click', ()=>{
   document.getElementById('shell').classList.remove('mobile-nav-open');
