@@ -1,7 +1,7 @@
 [
   {
     "id": "pdf-password-remover",
-    "title": "PDF Password Remover",
+    "title": "Unlock PDF",
     "category": "mini-tools",
     "icon": "🔓",
     "fileIcon": "pdf",
@@ -13,7 +13,7 @@
   },
   {
     "id": "pdf-password-protector",
-    "title": "PDF Password Protector",
+    "title": "Protect PDF",
     "category": "mini-tools",
     "icon": "🔒",
     "fileIcon": "pdf",
@@ -56,6 +56,30 @@
     "description": "See what's hiding in a PDF's metadata — author, software, custom tracking fields, embedded XMP — then edit, delete, or strip it all out, entirely in the browser.",
     "path": "projects/mini-tools/pdf-metadata-tool/index.html",
     "github": "https://github.com/brunovidasi/pdf-metadata-tool",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "pdf-to-jpg",
+    "title": "PDF to JPG",
+    "category": "mini-tools",
+    "icon": "🖼️",
+    "fileIcon": "pdf",
+    "description": "Turn every page of a PDF into a JPG image — rendered entirely in the browser, nothing ever uploaded.",
+    "path": "projects/mini-tools/pdf-to-jpg/index.html",
+    "github": "https://github.com/brunovidasi/pdf-to-jpg",
+    "codepen": "",
+    "featured": false
+  },
+  {
+    "id": "image-to-pdf",
+    "title": "Image to PDF",
+    "category": "mini-tools",
+    "icon": "📚",
+    "fileIcon": "pdf",
+    "description": "Combine one or more images into a single PDF, in whatever order you like — built entirely in the browser, nothing ever uploaded.",
+    "path": "projects/mini-tools/image-to-pdf/index.html",
+    "github": "https://github.com/brunovidasi/image-to-pdf",
     "codepen": "",
     "featured": false
   }

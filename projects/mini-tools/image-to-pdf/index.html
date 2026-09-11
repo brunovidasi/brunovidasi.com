@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image to PDF</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/pdf-lib.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Image to PDF</h1>
+  <p class="sub">Combine one or more images into a single PDF, in whatever order you like — built entirely in your browser, nothing ever uploaded.</p>
+  <p class="privacy">Everything runs locally — nothing is uploaded anywhere.</p>
+
+  <div class="toolbar">
+    <div class="field">
+      <label for="pageSize">Page size</label>
+      <select id="pageSize">
+        <option value="fit" selected>Fit to each image</option>
+        <option value="a4">A4 (auto orientation)</option>
+      </select>
+    </div>
+    <div class="spacer"></div>
+    <button class="secondary" id="clearBtn">Clear all</button>
+  </div>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose images</strong> or drag &amp; drop them here</div>
+    <div class="dropzone-hint">JPG, PNG, WebP, GIF, BMP · added in the order you pick them</div>
+    <input type="file" id="fileInput" accept="image/*" multiple>
+  </div>
+
+  <div class="error" id="errorMsg" hidden></div>
+
+  <div class="empty" id="emptyState">No images yet — add some above.</div>
+  <div class="grid" id="grid"></div>
+
+  <div class="summary" id="summary" hidden>
+    <div class="stat"><span class="label">Images</span><span class="value" id="sumCount">0</span></div>
+    <div class="spacer"></div>
+    <div class="progress" id="progress" hidden>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <a class="dl-link" id="downloadLink" download hidden>Download PDF</a>
+    <button id="convertBtn">Convert to PDF</button>
+  </div>
+
+  <div class="note">
+    <strong>How this works:</strong> each image becomes its own page, added in the order shown above (use ↑/↓ to reorder). "Fit to each image" makes every page the same shape as its image; "A4" centers each image on a standard A4 page, portrait or landscape depending on the image.
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

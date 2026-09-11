@@ -242,7 +242,7 @@ function cardHTML(item) {
           <div class="card-name" title="${escHtml(item.name)}">${escHtml(item.name)}</div>
           <div class="card-meta">${formatBytes(item.size)}${item.pageCount ? ' · ' + item.pageCount + ' page' + (item.pageCount === 1 ? '' : 's') : ''}</div>
           <div class="card-badges"><span class="badge encrypted">🔒 encrypted</span></div>
-          <div class="card-encrypted-msg">Password-protected — metadata can't be read or edited while it's locked. Unlock it first with <a href="../pdf-password-remover/index.html" target="_blank" rel="noopener">PDF Password Remover</a>, then drop the result back in here.</div>
+          <div class="card-encrypted-msg">Password-protected — metadata can't be read or edited while it's locked. Unlock it first with <a href="../pdf-password-remover/index.html" target="_blank" rel="noopener">Unlock PDF</a>, then drop the result back in here.</div>
         </div>
       </div>`;
   }

@@ -1,4 +1,4 @@
-# PDF Password Remover
+# Unlock PDF
 
 Unlock a password-protected PDF and download a clean, password-free copy — entirely in the browser, no upload, no server round trip.
 

@@ -1,4 +1,4 @@
-# PDF Password Protector
+# Protect PDF
 
 Add a password to a PDF — entirely in the browser, no upload, no server round trip.
 
@@ -27,7 +27,7 @@ Open `index.html` in any modern browser. No build step, no server, no network ca
 - A random 32-byte file key is generated, then `/O`, `/U`, `/OE`, and `/UE` are derived from your password per spec (the password doubles as both the "user" and "owner" password, since this tool only exposes one password field), plus a `/Perms` integrity block encoding the permission checkboxes.
 - Every stream and string in the document is then AES-256-CBC encrypted in place (via the browser's native `SubtleCrypto`, with a fresh random IV each time), the resulting `/Encrypt` dictionary is attached to the trailer, and pdf-lib re-saves the file.
 - Before the download link appears, the result is handed to pdf.js with an empty password purely as a self-check — confirming it actually throws (i.e. genuinely requires the real password) rather than silently shipping something unprotected.
-- If the input file already has a password, this tool won't touch it — remove the existing password first with the [PDF Password Remover](../pdf-password-remover/index.html), then add a new one here.
+- If the input file already has a password, this tool won't touch it — remove the existing password first with [Unlock PDF](../pdf-password-remover/index.html), then add a new one here.
 
 ## Limitations
 

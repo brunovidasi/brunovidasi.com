@@ -120,7 +120,7 @@ async function submitProtect() {
   } catch (e) {
     progress.hidden = true;
     if (e && e.message === 'ALREADY_ENCRYPTED') {
-      showError('This PDF already has a password. Remove it first with the <a href="../pdf-password-remover/index.html">PDF Password Remover</a>, then add a new one here.');
+      showError('This PDF already has a password. Remove it first with <a href="../pdf-password-remover/index.html">Unlock PDF</a>, then add a new one here.');
     } else {
       showError('Something went wrong while encrypting the PDF' + (e && e.message ? ': ' + e.message : '.'));
     }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF to JPG</title>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/jszip.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>PDF to JPG</h1>
+  <p class="sub">Turn every page of a PDF into a JPG image — rendered entirely in your browser, nothing ever uploaded.</p>
+  <p class="privacy">Everything runs locally — nothing is uploaded anywhere.</p>
+
+  <div class="dropzone" id="dropzone">
+    <div><strong>Click to choose a PDF</strong> or drag &amp; drop it here</div>
+    <div class="dropzone-hint">One file at a time · PDF only</div>
+    <input type="file" id="fileInput" accept="application/pdf,.pdf">
+  </div>
+
+  <div class="panel" id="filePanel" hidden>
+    <div class="file-row">
+      <span class="file-name" id="fileName"></span>
+      <button class="secondary small" id="changeFileBtn">Change file</button>
+    </div>
+
+    <div class="options-row">
+      <div class="field">
+        <label for="quality">Quality</label>
+        <div class="quality-row">
+          <input type="range" id="quality" min="1" max="100" value="90">
+          <span class="quality-val" id="qualityVal">90%</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="resolution">Resolution</label>
+        <select id="resolution">
+          <option value="1">Standard (1x)</option>
+          <option value="2" selected>High (2x)</option>
+          <option value="3">Very high (3x)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="error" id="errorMsg" hidden></div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progress-label" id="progressLabel">Rendering page 1…</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="summary" id="summary" hidden>
+      <div class="stat"><span class="label">Pages</span><span class="value" id="sumCount">0</span></div>
+      <div class="spacer"></div>
+      <button id="downloadAllBtn" hidden>Download all (.zip)</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="note">
+    <strong>How this works:</strong> each page is rendered onto a canvas with pdf.js at the chosen resolution, then encoded as a JPG right there in the browser. Vector text and graphics are rasterized in the process, same as any "export to image" — the result is a picture of the page, not the original searchable text.
+  </div>
+
+  <footer class="credit">Made by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

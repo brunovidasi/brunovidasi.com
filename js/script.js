@@ -1255,6 +1255,14 @@ Promise.all(projectCategories.map(category =>
     const categories = el.dataset.countCategory.split(',');
     el.textContent = categories.reduce((sum, category) => sum + (byCategory[category] || []).length, 0);
   });
+  document.querySelectorAll('.meta[data-meta-category]').forEach(el=>{
+    const categories = el.dataset.metaCategory.split(',');
+    const titles = categories.flatMap(category => (byCategory[category] || []).map(item => item.title));
+    if(!titles.length) return;
+    el.textContent = titles.length <= 2
+      ? titles.join(' · ')
+      : `${titles[0]} · ${titles[1]} · +${titles.length - 2} more`;
+  });
   setupWebsiteHoverGifs();
   renderExplorer();
   WEBSITE_STYLE_CATEGORIES.forEach(category => {
