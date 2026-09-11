@@ -1594,11 +1594,6 @@ document.getElementById('titlebarLogoBtn').addEventListener('click', ()=> openFi
     explorer.style.setProperty('--explorer-width', width + 'px');
   }
 
-  const savedWidth = parseInt(localStorage.getItem('explorerWidth'), 10);
-  if(!isNaN(savedWidth)){
-    applyWidth(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, savedWidth)));
-  }
-
   let dragging = false;
   let startX = 0;
   let startWidth = 0;
@@ -1643,12 +1638,10 @@ document.getElementById('titlebarLogoBtn').addEventListener('click', ()=> openFi
     overlay.classList.remove('active');
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
-    localStorage.setItem('explorerWidth', Math.round(explorer.getBoundingClientRect().width));
   });
 
   handle.addEventListener('dblclick', ()=>{
     applyWidth(DEFAULT_WIDTH);
-    localStorage.setItem('explorerWidth', DEFAULT_WIDTH);
   });
 })();
 
