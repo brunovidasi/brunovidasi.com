@@ -1799,11 +1799,19 @@ function closeTabContextMenu(){
   tabContextMenuId = null;
 }
 
+function isSidebarHidden(){
+  const shell = document.getElementById('shell');
+  return window.matchMedia('(max-width: 720px)').matches
+    ? !shell.classList.contains('mobile-nav-open')
+    : shell.classList.contains('sidebar-hidden');
+}
+
 function openTabContextMenu(x, y, id){
   tabContextMenuId = id;
   const idx = openTabs.indexOf(id);
   document.getElementById('ctxCloseOthers').toggleAttribute('disabled', openTabs.length < 2);
   document.getElementById('ctxCloseRight').toggleAttribute('disabled', idx === -1 || idx >= openTabs.length - 1);
+  document.getElementById('ctxFullscreen').textContent = isSidebarHidden() ? 'Show Explorer' : 'Fullscreen';
   tabContextMenu.classList.add('show');
   const menuRect = tabContextMenu.getBoundingClientRect();
   const maxX = window.innerWidth - menuRect.width - 4;
@@ -1826,6 +1834,10 @@ document.getElementById('ctxCloseRight').addEventListener('click', ()=>{
 });
 document.getElementById('ctxCloseAll').addEventListener('click', ()=>{
   closeAllTabs();
+  closeTabContextMenu();
+});
+document.getElementById('ctxFullscreen').addEventListener('click', ()=>{
+  toggleExplorer();
   closeTabContextMenu();
 });
 document.getElementById('ctxOpenNewWindow').addEventListener('click', ()=>{
