@@ -1334,7 +1334,10 @@ Promise.all(projectCategories.map(category =>
     renderTabs();
     renderExplorer();
     showActivePanel();
+  } else {
+    pendingToolRouteId = null;
   }
+  revealAfterToolRoute();
 });
 
 function projectChipHtml(p){
@@ -1934,10 +1937,30 @@ function startCyclingTagline(){
 
 if(activeId === 'about') startBioTyping();
 
-if(isDevMode() || enteredViaDeepLink || pendingToolRouteId){
+let awaitingToolReveal = false;
+
+if(isDevMode() || enteredViaDeepLink){
   document.getElementById('boot').remove();
   document.getElementById('app').classList.add('show');
   startCyclingTagline();
+} else if(pendingToolRouteId){
+  // Tool deep-link: the tool tab can't be created yet (it needs the project
+  // JSON, still loading below), so keep the boot mask up instead of revealing
+  // the default intro panel/explorer first and swapping to the tool after.
+  // revealAfterToolRoute() fades it out once the tool tab is actually ready.
+  awaitingToolReveal = true;
 } else {
   typeBootLine();
+}
+
+function revealAfterToolRoute(){
+  if(!awaitingToolReveal) return;
+  awaitingToolReveal = false;
+  const boot = document.getElementById('boot');
+  if(boot){
+    boot.classList.add('hide');
+    boot.addEventListener('transitionend', () => boot.remove(), { once: true });
+  }
+  document.getElementById('app').classList.add('show');
+  startCyclingTagline();
 }
