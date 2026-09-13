@@ -302,6 +302,10 @@ function renderTabs(){
     tab.addEventListener('dragleave', ()=>{
       tab.classList.remove('drag-over-before','drag-over-after');
     });
+    tab.addEventListener('contextmenu', (e)=>{
+      e.preventDefault();
+      openTabContextMenu(e.clientX, e.clientY, id);
+    });
     tab.addEventListener('drop', (e)=>{
       e.preventDefault();
       tab.classList.remove('drag-over-before','drag-over-after');
@@ -497,14 +501,37 @@ function closeAllTabs(){
   updatePath(null);
 }
 
-function closeOtherTabs(){
-  if(!activeId) return;
-  openTabs.filter(id => id !== activeId).forEach(removeToolTabFrame);
-  openTabs = [activeId];
+function closeOtherTabs(keepId){
+  keepId = keepId || activeId;
+  if(!keepId) return;
+  openTabs.filter(id => id !== keepId).forEach(removeToolTabFrame);
+  openTabs = [keepId];
+  activeId = keepId;
   resetWebsiteDetailIds();
   renderTabs();
   renderExplorer();
   showActivePanel();
+  updatePath(activeId);
+}
+
+function closeTabsToTheRight(id){
+  const idx = openTabs.indexOf(id);
+  if(idx === -1) return;
+  const toClose = openTabs.slice(idx + 1);
+  if(!toClose.length) return;
+  toClose.forEach(removeToolTabFrame);
+  openTabs = openTabs.slice(0, idx + 1);
+  resetWebsiteDetailIds();
+  if(!openTabs.includes(activeId)) activeId = id;
+  renderTabs();
+  renderExplorer();
+  showActivePanel();
+  updatePath(activeId);
+}
+
+function urlForTabId(id){
+  const path = isDevMode() ? (location.pathname + '#' + id) : ('/' + id);
+  return location.origin + path;
 }
 
 function openToolTab(id){
@@ -1762,6 +1789,65 @@ document.addEventListener('click', (e)=>{
   if(explorerMenu.contains(e.target) || explorerMore.contains(e.target)) return;
   explorerMenu.classList.remove('show');
   explorerMore.classList.remove('active');
+});
+
+const tabContextMenu = document.getElementById('tabContextMenu');
+let tabContextMenuId = null;
+
+function closeTabContextMenu(){
+  tabContextMenu.classList.remove('show');
+  tabContextMenuId = null;
+}
+
+function openTabContextMenu(x, y, id){
+  tabContextMenuId = id;
+  const idx = openTabs.indexOf(id);
+  document.getElementById('ctxCloseOthers').toggleAttribute('disabled', openTabs.length < 2);
+  document.getElementById('ctxCloseRight').toggleAttribute('disabled', idx === -1 || idx >= openTabs.length - 1);
+  tabContextMenu.classList.add('show');
+  const menuRect = tabContextMenu.getBoundingClientRect();
+  const maxX = window.innerWidth - menuRect.width - 4;
+  const maxY = window.innerHeight - menuRect.height - 4;
+  tabContextMenu.style.left = Math.max(4, Math.min(x, maxX)) + 'px';
+  tabContextMenu.style.top = Math.max(4, Math.min(y, maxY)) + 'px';
+}
+
+document.getElementById('ctxCloseTab').addEventListener('click', ()=>{
+  if(tabContextMenuId) closeTab(tabContextMenuId);
+  closeTabContextMenu();
+});
+document.getElementById('ctxCloseOthers').addEventListener('click', ()=>{
+  if(tabContextMenuId) closeOtherTabs(tabContextMenuId);
+  closeTabContextMenu();
+});
+document.getElementById('ctxCloseRight').addEventListener('click', ()=>{
+  if(tabContextMenuId) closeTabsToTheRight(tabContextMenuId);
+  closeTabContextMenu();
+});
+document.getElementById('ctxCloseAll').addEventListener('click', ()=>{
+  closeAllTabs();
+  closeTabContextMenu();
+});
+document.getElementById('ctxOpenNewWindow').addEventListener('click', ()=>{
+  if(tabContextMenuId) window.open(urlForTabId(tabContextMenuId), '_blank');
+  closeTabContextMenu();
+});
+document.addEventListener('click', (e)=>{
+  if(!tabContextMenu.classList.contains('show')) return;
+  if(tabContextMenu.contains(e.target)) return;
+  closeTabContextMenu();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeTabContextMenu();
+});
+document.getElementById('tabBar').addEventListener('scroll', closeTabContextMenu);
+window.addEventListener('resize', closeTabContextMenu);
+// A click inside a tool tab's iframe never bubbles to this document, so the
+// outside-click handler above can't see it; catch it via the focus shift instead.
+window.addEventListener('blur', ()=>{
+  setTimeout(()=>{
+    if(document.activeElement && document.activeElement.tagName === 'IFRAME') closeTabContextMenu();
+  }, 0);
 });
 
 const devModeToggle = document.getElementById('devModeToggle');

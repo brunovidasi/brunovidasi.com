@@ -506,6 +506,29 @@ a {
   background: var(--line);
 }
 
+.tab-context-menu {
+  display: none;
+  position: fixed;
+  min-width: 180px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+  z-index: 9998;
+}
+
+.tab-context-menu.show {
+  display: block;
+}
+
+.tab-context-menu .explorer-menu-item[disabled] {
+  color: var(--muted);
+  opacity: .45;
+  cursor: default;
+  pointer-events: none;
+}
+
 .tree-item {
   padding: 5px 8px;
   border-radius: 4px;
