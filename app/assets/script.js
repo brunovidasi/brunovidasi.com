@@ -23,3 +23,12 @@ appList.addEventListener('click', (e) => {
   card.classList.add('shake');
   setTimeout(() => card.classList.remove('shake'), 300);
 });
+
+const toggleAllBtn = document.getElementById('toggleAllBtn');
+const toolCategories = document.querySelectorAll('.tool-category');
+
+toggleAllBtn.addEventListener('click', () => {
+  const expand = toggleAllBtn.textContent === 'Expand all';
+  toolCategories.forEach((cat) => { cat.open = expand; });
+  toggleAllBtn.textContent = expand ? 'Collapse all' : 'Expand all';
+});
