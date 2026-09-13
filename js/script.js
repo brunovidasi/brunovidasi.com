@@ -499,17 +499,26 @@ function openToolTab(id){
   setMobileNavLock(false);
 }
 
-function tryOpenToolTabRoute(id){
+function registerToolFile(id){
+  if(files[id]) return;
   const info = TOOL_TAB_REGISTRY[id];
-  if(!info) return false;
-  if(!files[id]){
-    files[id] = { label: info.title, toolIcon: info.icon, fileIconType: info.fileIcon, folder: null, isToolTab: true, toolPath: info.path, parentId: info.category || null };
-  }
+  files[id] = { label: info.title, toolIcon: info.icon, fileIconType: info.fileIcon, folder: null, isToolTab: true, toolPath: info.path, parentId: info.category || null };
+}
+
+function tryOpenToolTabRoute(id){
+  if(!TOOL_TAB_REGISTRY[id]) return false;
+  registerToolFile(id);
   const parentId = files[id].parentId;
   if(parentId){
     openFolders[parentId] = true;
     const parent = files[parentId];
     if(parent && parent.folder) openFolders[parent.folder] = true;
+    if(MINI_TOOL_CATEGORY_IDS.has(parentId)){
+      toolIdsForCategory(parentId).forEach(siblingId => {
+        registerToolFile(siblingId);
+        if(!openTabs.includes(siblingId)) openTabs.push(siblingId);
+      });
+    }
   }
   if(!openTabs.includes(id)) openTabs.push(id);
   activeId = id;
