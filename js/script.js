@@ -591,17 +591,24 @@ function repositionActiveToolTabFrame(){
 }
 window.addEventListener('resize', repositionActiveToolTabFrame);
 
-// Mobile Safari can suspend a background tab and later restore it (from
-// bfcache, or a fresh reload) with the DOM in a stale state — we've seen a
-// tool tab come back showing a different tool's iframe than the one its own
-// tab bar/label still say is active. Re-assert which .tool-tab-frame should
-// actually be visible whenever the tab becomes visible again, instead of
-// trusting whatever survived the suspend.
+// Mobile Safari can suspend a backgrounded tab and, on restore, repaint a
+// position:fixed tool-tab-frame with a stale/wrong compositor layer (a
+// different tool's iframe) even though the underlying .active class was never
+// actually wrong — re-adding the same class to the same element is a no-op
+// and doesn't force WebKit to recomposite. So instead of just re-asserting
+// state, force every tool-tab-frame through a real display:none -> reflow ->
+// restore cycle whenever the tab becomes visible again, to make Safari
+// actually repaint from scratch rather than trust whatever pixels it kept
+// around from before the suspend.
 function resyncActiveToolTabFrame(){
   const isToolTab = activeId && files[activeId] && files[activeId].isToolTab;
+  const frames = document.querySelectorAll('.tool-tab-frame');
+  frames.forEach(f => { f.style.display = 'none'; });
+  void document.body.offsetHeight;
   updateToolTabFrames(isToolTab ? activeId : null);
+  frames.forEach(f => { f.style.display = ''; });
 }
-window.addEventListener('pageshow', e => { if(e.persisted) resyncActiveToolTabFrame(); });
+window.addEventListener('pageshow', resyncActiveToolTabFrame);
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') resyncActiveToolTabFrame(); });
 
 function ensureToolTabFrame(id){
