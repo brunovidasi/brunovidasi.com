@@ -110,6 +110,16 @@ function wantsFullscreenView(){
   return new URLSearchParams(location.search).get('fs') === '1';
 }
 
+// Every route otherwise shares the same static <title>, so same-origin tabs
+// (e.g. several mini-tools opened via the app page's "Open" links) are
+// indistinguishable in Safari's tab switcher. Give each active tab/tool its
+// own title so they can actually be told apart.
+const BASE_DOCUMENT_TITLE = document.title;
+function updateDocumentTitle(){
+  const label = activeId && files[activeId] && files[activeId].label;
+  document.title = label ? `${label} • Bruno Vieira` : BASE_DOCUMENT_TITLE;
+}
+
 function currentRouteId(){
   return isDevMode()
     ? decodeURIComponent(location.hash.replace(/^#/, ''))
@@ -417,6 +427,7 @@ function showActivePanel(){
   const empty = document.getElementById('emptyState');
   const isToolTab = activeId && files[activeId] && files[activeId].isToolTab;
   updateToolTabFrames(isToolTab ? activeId : null);
+  updateDocumentTitle();
   if(activeId && openTabs.includes(activeId)){
     empty.classList.remove('show');
     if(isToolTab) return;
@@ -546,6 +557,19 @@ function repositionActiveToolTabFrame(){
 }
 window.addEventListener('resize', repositionActiveToolTabFrame);
 
+// Mobile Safari can suspend a background tab and later restore it (from
+// bfcache, or a fresh reload) with the DOM in a stale state — we've seen a
+// tool tab come back showing a different tool's iframe than the one its own
+// tab bar/label still say is active. Re-assert which .tool-tab-frame should
+// actually be visible whenever the tab becomes visible again, instead of
+// trusting whatever survived the suspend.
+function resyncActiveToolTabFrame(){
+  const isToolTab = activeId && files[activeId] && files[activeId].isToolTab;
+  updateToolTabFrames(isToolTab ? activeId : null);
+}
+window.addEventListener('pageshow', e => { if(e.persisted) resyncActiveToolTabFrame(); });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') resyncActiveToolTabFrame(); });
+
 function ensureToolTabFrame(id){
   let frame = document.getElementById('toolTabFrame-' + id);
   if(!frame){
@@ -553,9 +577,16 @@ function ensureToolTabFrame(id){
     frame = document.createElement('div');
     frame.className = 'tool-tab-frame';
     frame.id = 'toolTabFrame-' + id;
-    frame.innerHTML = `<iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
+    frame.innerHTML = `<div class="tool-tab-mask"></div><iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
     document.body.appendChild(frame);
     playToolCompileAnimation(frame, id);
+    const mask = frame.querySelector('.tool-tab-mask');
+    frame.querySelector('iframe').addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        mask.classList.add('hide');
+        mask.addEventListener('transitionend', () => mask.remove(), { once: true });
+      });
+    }, { once: true });
   }
   return frame;
 }
