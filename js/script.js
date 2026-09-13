@@ -110,6 +110,10 @@ function wantsFullscreenView(){
   return new URLSearchParams(location.search).get('fs') === '1';
 }
 
+function wantsAllToolsInCategory(){
+  return new URLSearchParams(location.search).get('all') === '1';
+}
+
 // Every route otherwise shares the same static <title>, so same-origin tabs
 // (e.g. several mini-tools opened via the app page's "Open" links) are
 // indistinguishable in Safari's tab switcher. Give each active tab/tool its
@@ -524,16 +528,19 @@ function tryOpenToolTabRoute(id){
     openFolders[parentId] = true;
     const parent = files[parentId];
     if(parent && parent.folder) openFolders[parent.folder] = true;
-    if(MINI_TOOL_CATEGORY_IDS.has(parentId)){
-      toolIdsForCategory(parentId).forEach(siblingId => {
-        registerToolFile(siblingId);
-        if(!openTabs.includes(siblingId)) openTabs.push(siblingId);
-      });
-    }
   }
   if(!openTabs.includes(id)) openTabs.push(id);
   activeId = id;
   return true;
+}
+
+function openCategorySiblings(id){
+  const parentId = files[id] && files[id].parentId;
+  if(!parentId || !MINI_TOOL_CATEGORY_IDS.has(parentId)) return;
+  toolIdsForCategory(parentId).forEach(siblingId => {
+    registerToolFile(siblingId);
+    if(!openTabs.includes(siblingId)) openTabs.push(siblingId);
+  });
 }
 
 let toolTabResizeObserver = null;
@@ -1330,6 +1337,7 @@ Promise.all(projectCategories.map(category =>
   renderFreelanceProjects(chipProjects);
   renderIntroProjectPreview(byCategory);
   if(pendingToolRouteId && tryOpenToolTabRoute(pendingToolRouteId)){
+    if(wantsAllToolsInCategory()) openCategorySiblings(pendingToolRouteId);
     pendingToolRouteId = null;
     renderTabs();
     renderExplorer();
