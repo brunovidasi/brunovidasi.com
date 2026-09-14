@@ -29,7 +29,7 @@
 
     <div class="dropzone" id="dropzonePdf">
       <div><strong>Click to choose a PDF</strong> or drag &amp; drop it here</div>
-      <div class="dropzone-hint">One file at a time · drop a .docx here and we'll switch tabs for you</div>
+      <div class="dropzone-hint">One file at a time · PDF only</div>
       <input type="file" id="fileInputPdf" accept="application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div class="note">
-      <strong>How this works:</strong> each page's text is extracted with its on-page position, regrouped into lines and paragraphs, and rebuilt as a real, editable <code>.docx</code> file — one Word page per original PDF page. This preserves reading order and paragraph breaks, but not exact visual layout: columns, tables, and images are not reconstructed, and fonts/styling are normalized to a standard document look.
+      <strong>How this works:</strong> each page's text is extracted with its on-page position, regrouped into lines and paragraphs, and rebuilt as a real, editable <code>.docx</code> file — one Word page per original PDF page. Larger/bold text is detected and turned into headings and bold runs, and grid-like text is reconstructed as real tables. This preserves reading order, paragraph breaks, and basic structure, but not exact visual layout: multi-column pages, complex tables, and images aren't always reconstructed perfectly, and fonts/styling are normalized to a standard document look.
     </div>
   </section>
 
@@ -62,7 +62,7 @@
 
     <div class="dropzone" id="dropzoneDocx">
       <div><strong>Click to choose a Word document</strong> or drag &amp; drop it here</div>
-      <div class="dropzone-hint">One file at a time · drop a PDF here and we'll switch tabs for you</div>
+      <div class="dropzone-hint">One file at a time · .docx only</div>
       <input type="file" id="fileInputDocx" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,.pdf">
     </div>
 
