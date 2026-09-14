@@ -318,20 +318,43 @@ function setupDropzone(dropzone, input, onFile) {
 
     const jsPdfDoc = new jspdf.jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
     const pageWidthPt = jsPdfDoc.internal.pageSize.getWidth();
+    const pageHeightPt = jsPdfDoc.internal.pageSize.getHeight();
     const marginPt = 36;
     const contentWidthPt = pageWidthPt - marginPt * 2;
+    const usableHeightPt = pageHeightPt - marginPt * 2;
     const windowWidthPx = renderTarget.offsetWidth;
+    const scale = contentWidthPt / windowWidthPx;
 
-    await new Promise((resolve, reject) => {
-      jsPdfDoc.html(renderTarget, {
-        x: marginPt,
-        y: marginPt,
-        width: contentWidthPt,
-        windowWidth: windowWidthPx,
-        html2canvas: { scale: contentWidthPt / windowWidthPx, useCORS: true, backgroundColor: '#ffffff' },
-        callback: () => resolve(),
-      }).catch(reject);
+    // jsPDF's own multi-page html() pagination is unreliable — with content
+    // taller than one page it has been observed to emit a blank first page
+    // and duplicate content onto the second. Render once to a single tall
+    // canvas instead and slice it into pages ourselves.
+    const fullCanvas = await html2canvas(renderTarget, {
+      scale,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      windowWidth: windowWidthPx,
     });
+
+    const pageHeightPx = Math.floor(usableHeightPt);
+    const totalPages = Math.max(1, Math.ceil(fullCanvas.height / pageHeightPx));
+
+    for (let i = 0; i < totalPages; i++) {
+      progressLabel.textContent = `Rendering page ${i + 1} of ${totalPages}…`;
+      progressFill.style.width = (45 + Math.round((i / totalPages) * 50)) + '%';
+
+      const sliceHeight = Math.min(pageHeightPx, fullCanvas.height - i * pageHeightPx);
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = fullCanvas.width;
+      sliceCanvas.height = sliceHeight;
+      sliceCanvas.getContext('2d').drawImage(
+        fullCanvas, 0, i * pageHeightPx, fullCanvas.width, sliceHeight,
+        0, 0, fullCanvas.width, sliceHeight
+      );
+
+      if (i > 0) jsPdfDoc.addPage();
+      jsPdfDoc.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', marginPt, marginPt, contentWidthPt, sliceHeight);
+    }
 
     progressFill.style.width = '100%';
     const blob = jsPdfDoc.output('blob');
