@@ -642,11 +642,16 @@ function ensureToolTabFrame(id){
     frame = document.createElement('div');
     frame.className = 'tool-tab-frame';
     frame.id = 'toolTabFrame-' + id;
-    frame.innerHTML = `<div class="tool-tab-mask"></div><iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
+    frame.innerHTML = `<div class="tool-tab-mask"><span class="tool-tab-mask-label">loading&hellip;</span></div><iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
     document.body.appendChild(frame);
     playToolCompileAnimation(frame, id);
     const mask = frame.querySelector('.tool-tab-mask');
+    const maskLabel = mask.querySelector('.tool-tab-mask-label');
+    // Only reveal the "loading..." label if the load is actually slow enough
+    // to notice, so fast loads keep the plain fade with no extra text/delay.
+    const maskLabelTimer = setTimeout(() => maskLabel.classList.add('show'), 500);
     frame.querySelector('iframe').addEventListener('load', () => {
+      clearTimeout(maskLabelTimer);
       requestAnimationFrame(() => {
         mask.classList.add('hide');
         mask.addEventListener('transitionend', () => mask.remove(), { once: true });
