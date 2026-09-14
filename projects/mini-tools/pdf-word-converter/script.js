@@ -8,15 +8,22 @@ const modePanels = {
   word2pdf: document.getElementById('word2pdf'),
 };
 
-modeSeg.addEventListener('click', (e) => {
-  const btn = e.target.closest('.seg-btn');
-  if (!btn) return;
-  modeSeg.querySelectorAll('.seg-btn').forEach((b) => b.classList.toggle('active', b === btn));
-  const mode = btn.dataset.mode;
+function switchMode(mode) {
+  modeSeg.querySelectorAll('.seg-btn').forEach((b) => b.classList.toggle('active', b.dataset.mode === mode));
   Object.entries(modePanels).forEach(([key, el]) => {
     el.hidden = key !== mode;
   });
+}
+
+modeSeg.addEventListener('click', (e) => {
+  const btn = e.target.closest('.seg-btn');
+  if (!btn) return;
+  switchMode(btn.dataset.mode);
 });
+
+// Lets each mode hand a misplaced file (a .docx dropped on the PDF side, or
+// vice versa) off to the other mode instead of just rejecting it.
+const converterHandlers = {};
 
 /* ============ shared helpers ============ */
 
@@ -182,6 +189,11 @@ function setupDropzone(dropzone, input, onFile) {
   function handleFile(file) {
     const looksLikePdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
     if (!looksLikePdf) {
+      if (file.name.toLowerCase().endsWith('.docx') && converterHandlers.docx) {
+        switchMode('word2pdf');
+        converterHandlers.docx(file);
+        return;
+      }
       resetState();
       panel.hidden = true;
       showError('Please choose a PDF file.');
@@ -197,6 +209,7 @@ function setupDropzone(dropzone, input, onFile) {
     });
   }
 
+  converterHandlers.pdf = handleFile;
   setupDropzone(dropzone, fileInput, handleFile);
   changeFileBtn.addEventListener('click', () => {
     resetState();
@@ -369,6 +382,12 @@ function setupDropzone(dropzone, input, onFile) {
   function handleFile(file) {
     const looksLikeDocx = file.name.toLowerCase().endsWith('.docx');
     if (!looksLikeDocx) {
+      const looksLikePdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      if (looksLikePdf && converterHandlers.pdf) {
+        switchMode('pdf2word');
+        converterHandlers.pdf(file);
+        return;
+      }
       resetState();
       panel.hidden = true;
       showError('Please choose a .docx file (older .doc files are not supported).');
@@ -384,6 +403,7 @@ function setupDropzone(dropzone, input, onFile) {
     });
   }
 
+  converterHandlers.docx = handleFile;
   setupDropzone(dropzone, fileInput, handleFile);
   changeFileBtn.addEventListener('click', () => {
     resetState();
