@@ -2394,9 +2394,14 @@ h2.sect .brk {
   transform: translate(-50%, -50%);
   font-family: var(--mono);
   font-size: 12.5px;
-  color: var(--muted);
+  color: var(--ok);
   opacity: 0;
   transition: opacity .4s ease;
+}
+
+.tool-tab-mask-dots {
+  display: inline-block;
+  width: 1.5em;
 }
 
 .tool-tab-mask-label.show {
