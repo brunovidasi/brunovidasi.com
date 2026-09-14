@@ -90,8 +90,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="shell" id="shell">
     <div class="explorer">
       <div class="label-row">
-        <div class="label">EXPLORER</div>
+        <div class="label" id="viewTabs">
+          <button type="button" class="view-tab active" data-view="explorer">EXPLORER</button>
+          <button type="button" class="view-tab" data-view="search">SEARCH</button>
+        </div>
         <div class="explorer-actions">
+          <button class="explorer-more" id="quickOpenBtn" title="Go to File... (Ctrl+P)" hidden>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
           <button class="explorer-more" id="explorerMore" title="More Actions...">⋯</button>
           <button class="explorer-close" id="explorerClose" title="Close">✕</button>
         </div>
@@ -106,6 +112,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="explorer-menu-item" id="hideExplorerBtn">Hide Explorer</button>
       </div>
       <div id="fileTree"></div>
+      <div id="searchPanel" class="search-panel" hidden>
+        <div class="search-input-row">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="searchPanelInput" placeholder="Search" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="search-summary" id="searchSummary"></div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
     </div>
     <div class="explorer-resize-handle" id="explorerResizeHandle"></div>
 
@@ -947,12 +961,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
       </div>
+
+      <div class="bottom-panel-resize-handle" id="bottomPanelResizeHandle" hidden></div>
+      <div class="bottom-panel" id="bottomPanel" hidden>
+        <div class="bottom-panel-tabs">
+          <button type="button" class="bottom-panel-tab active" data-panel="terminal">TERMINAL</button>
+          <button type="button" class="bottom-panel-tab" data-panel="problems">PROBLEMS</button>
+          <button type="button" class="bottom-panel-close" id="bottomPanelCloseBtn" title="Close Panel">✕</button>
+        </div>
+        <div class="bottom-panel-view" id="bottomPanelTerminal">
+          <div class="terminal-log" id="terminalLog"></div>
+          <div class="terminal-input-row">
+            <span class="terminal-prompt">visitor@bruno-dev:~$</span>
+            <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" autocapitalize="off">
+          </div>
+        </div>
+        <div class="bottom-panel-view" id="bottomPanelProblems" hidden>
+          <div class="problems-empty">
+            <span class="problems-check">✓</span> No problems detected in this workspace.
+            <div class="problems-sub">Spot a real one? <a href="#" onclick="openFile('contact'); return false;">let me know →</a></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="statusbar">
-    <span>⎇ bruno-vieira</span>
-    <span><b><span class="years-exp">13</span>+ yrs</b> experience in software development</span>
+    <span>⎇ <a href="/about" id="footerBrunoLink" onclick="openFile('about'); return false;">bruno-vieira</a></span>
+    <span class="statusbar-help" id="helpBtn" title="How to Use This Site (?)">guide</span>
+    <span class="statusbar-help" id="terminalBtn" title="Toggle Terminal (Ctrl+`)">terminal</span>
+    <span><a href="/experience" onclick="openFile('experience'); return false;"><b><span class="years-exp">13</span>+ yrs</b> experience in software development</a></span>
     <span class="statusbar-credit">© <span class="current-year">2026</span> - <a href="https://brunovida.si" target="_blank">brunovida.si</a></span>
     <span class="dev-toggle" id="devModeToggle" title="Toggle DEV mode — skips the boot/loading animation on page load">DEV: OFF</span>
   </div>
@@ -968,12 +1006,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <button class="explorer-menu-item" id="ctxOpenNewWindow">Open in New Window</button>
 </div>
 
+<div class="tab-context-menu" id="treeContextMenu">
+  <button class="explorer-menu-item" id="ctxTreeQuickView">Quick View</button>
+  <button class="explorer-menu-item" id="ctxTreeOpen">Open</button>
+  <button class="explorer-menu-item" id="ctxTreeOpenNewTab">Open in New Tab</button>
+  <div class="explorer-menu-divider" id="ctxTreeLinksDivider"></div>
+  <button class="explorer-menu-item" id="ctxTreeGithub">GitHub</button>
+  <button class="explorer-menu-item" id="ctxTreeCodepen">CodePen</button>
+</div>
+
+<div class="quick-open-backdrop" id="quickOpenBackdrop">
+  <div class="quick-open" id="quickOpen" role="dialog" aria-modal="true" aria-label="Go to File">
+    <div class="quick-open-input-row">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="quickOpenInput" placeholder="Go to file..." autocomplete="off" spellcheck="false">
+    </div>
+    <div class="quick-open-results" id="quickOpenResults"></div>
+  </div>
+</div>
+
+<div class="quick-open-backdrop" id="cmdPaletteBackdrop">
+  <div class="quick-open" id="cmdPalette" role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="quick-open-input-row">
+      <span class="cmd-palette-caret">&gt;</span>
+      <input type="text" id="cmdPaletteInput" placeholder="Type a command..." autocomplete="off" spellcheck="false">
+    </div>
+    <div class="quick-open-results" id="cmdPaletteResults"></div>
+  </div>
+</div>
+
+<div class="shortcuts-backdrop" id="shortcutsBackdrop">
+  <div class="shortcuts-modal" id="shortcutsModal" role="dialog" aria-modal="true" aria-label="Keyboard Shortcuts">
+    <div class="shortcuts-header">
+      <h3>How to Use This Site</h3>
+      <button type="button" class="shortcuts-close" id="shortcutsCloseBtn" title="Close">✕</button>
+    </div>
+    <div class="shortcuts-tabs" id="shortcutsTabs">
+      <button type="button" class="modal-tab active" data-shortcuts-tab="guide">GUIDE</button>
+      <button type="button" class="modal-tab" data-shortcuts-tab="shortcuts">SHORTCUTS</button>
+    </div>
+    <div class="shortcuts-guide" id="shortcutsGuide"></div>
+    <div class="shortcuts-body" id="shortcutsBody" hidden></div>
+  </div>
+</div>
+
 <div class="dock-restore" id="dockRestore">
   <span class="dot y"></span>
   <span>bruno-vieira — dev-portfolio</span>
 </div>
 
 <div class="explorer-resize-overlay" id="explorerResizeOverlay"></div>
+<div class="bottom-panel-resize-overlay" id="bottomPanelResizeOverlay"></div>
 
 <script src="js/script.js" defer></script>
 <script src="https://web3forms.com/client/script.js" async defer></script>

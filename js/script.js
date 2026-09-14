@@ -121,7 +121,7 @@ function wantsAllToolsInCategory(){
 const BASE_DOCUMENT_TITLE = document.title;
 function updateDocumentTitle(){
   const label = activeId && files[activeId] && files[activeId].label;
-  document.title = label ? `${label} • Bruno Vieira` : BASE_DOCUMENT_TITLE;
+  document.title = label ? `Bruno Vieira • ${label}` : BASE_DOCUMENT_TITLE;
 }
 
 function currentRouteId(){
@@ -233,6 +233,11 @@ function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
     item.className = 'tree-item' + (highlightId===key ? ' active' : '');
     item.innerHTML = '<span class="left">' + iconHtml + label + '</span>';
     item.onclick = ()=> openTreeItem(key);
+    item.addEventListener('contextmenu', (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      openTreeContextMenu(e.clientX, e.clientY, key);
+    });
     container.appendChild(item);
   }
 }
@@ -252,6 +257,13 @@ function renderExplorer(){
 function setAllFolders(open){
   Object.keys(folders).forEach(key=> openFolders[key] = open);
   renderExplorer();
+}
+
+function collapseFoldersExceptCurrent(id){
+  const file = files[id];
+  const parentId = file && (file.isToolTab ? file.parentId : file.folder);
+  const keepOpen = parentId ? ancestorFolderIds(parentId) : new Set();
+  Object.keys(folders).forEach(key => { openFolders[key] = keepOpen.has(key); });
 }
 
 let draggedTabId = null;
@@ -529,6 +541,18 @@ function closeTabsToTheRight(id){
   updatePath(activeId);
 }
 
+function cycleTabs(direction){
+  if(!openTabs.length) return;
+  const idx = openTabs.indexOf(activeId);
+  const nextIdx = idx === -1 ? 0 : (idx + direction + openTabs.length) % openTabs.length;
+  setActive(openTabs[nextIdx]);
+}
+
+function jumpToTabIndex(index){
+  if(index < 0 || index >= openTabs.length) return;
+  setActive(openTabs[index]);
+}
+
 function urlForTabId(id){
   const path = isDevMode() ? (location.pathname + '#' + id) : ('/' + id);
   return location.origin + path;
@@ -744,7 +768,10 @@ function toggleAllJobDetails(){
 renderExplorer();
 renderTabs();
 showActivePanel();
-if(wantsFullscreenView()) document.getElementById('shell').classList.add('sidebar-hidden');
+if(wantsFullscreenView()){
+  document.getElementById('shell').classList.add('sidebar-hidden');
+  hintGreenDot();
+}
 
 const ICON_GITHUB_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>';
 const ICON_CODEPEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.5 22 9v6l-10 6.5L2 15V9z"/><path d="M12 2.5v6.2M12 22v-6.2M2 9l10 6.2M22 9 12 15.2M2 15l10-6.2M22 15 12 8.8"/></svg>';
@@ -782,7 +809,7 @@ function renderToolCard(project, sameYearAsPrevious, category){
   const nameClickAttr = project.noView ? '' : ` onclick="toggleDoc('${project.id}')"`;
   const nameClass = project.noView ? 'doc-name' : 'doc-name doc-name-clickable';
   const showOpenTab = !project.noView && !project.live && ['site-history', 'mini-tools'].includes(project.category);
-  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, fileIcon: project.fileIcon, category: category || project.category };
+  if(showOpenTab) TOOL_TAB_REGISTRY[project.id] = { path: project.path, title: project.title, icon: project.glyph || project.icon, fileIcon: project.fileIcon, category: category || project.category, github: project.github || null, codepen: project.codepen || null };
   const openTabHtml = showOpenTab ? `<button class="doc-btn" onclick="openToolTab('${project.id}')">${ICON_LIVE_SVG}Open</button>` : '';
   const embedHtml = project.noView ? '' : `
       <div class="doc-embed" id="embed-${project.id}">
@@ -1370,8 +1397,12 @@ Promise.all(projectCategories.map(category =>
   renderExperienceProjects(chipProjects);
   renderFreelanceProjects(chipProjects);
   renderIntroProjectPreview(byCategory);
+  buildSearchIndex(allProjects);
   if(pendingToolRouteId && tryOpenToolTabRoute(pendingToolRouteId)){
-    if(wantsAllToolsInCategory()) openCategorySiblings(pendingToolRouteId);
+    if(wantsAllToolsInCategory()){
+      openCategorySiblings(pendingToolRouteId);
+      collapseFoldersExceptCurrent(pendingToolRouteId);
+    }
     pendingToolRouteId = null;
     renderTabs();
     renderExplorer();
@@ -1625,12 +1656,14 @@ document.getElementById('dotYellow').addEventListener('click', ()=>{
     document.getElementById('bgOverlaySign').classList.add('show');
   });
 });
-document.getElementById('dockRestore').addEventListener('click', ()=>{
+function restoreApp(){
+  if(!document.getElementById('app').classList.contains('minimized')) return;
   document.getElementById('app').classList.remove('minimized');
   document.getElementById('bgRain').classList.remove('show');
   document.querySelector('.bg-overlay').classList.remove('show');
   document.getElementById('dockRestore').style.display = 'none';
-});
+}
+document.getElementById('dockRestore').addEventListener('click', restoreApp);
 
 (function(){
   var canvas = document.getElementById('bgRain');
@@ -1682,9 +1715,20 @@ function toggleExplorer(){
     shell.classList.toggle('sidebar-hidden');
   }
 }
-document.getElementById('dotGreen').addEventListener('click', toggleExplorer);
+function hintGreenDot(){
+  const dotGreen = document.getElementById('dotGreen');
+  dotGreen.classList.add('pulse-hint');
+  setTimeout(()=> dotGreen.classList.remove('pulse-hint'), 8000);
+}
+document.getElementById('dotGreen').addEventListener('click', ()=>{
+  document.getElementById('dotGreen').classList.remove('pulse-hint');
+  toggleExplorer();
+});
 document.getElementById('titlebarLogoBtn').addEventListener('click', ()=>{
   openFile('intro');
+  document.getElementById('shell').classList.remove('sidebar-hidden');
+});
+document.getElementById('footerBrunoLink').addEventListener('click', ()=>{
   document.getElementById('shell').classList.remove('sidebar-hidden');
 });
 
@@ -1761,42 +1805,62 @@ document.getElementById('explorerClose').addEventListener('click', ()=>{
 
 const explorerMore = document.getElementById('explorerMore');
 const explorerMenu = document.getElementById('explorerMenu');
+const explorerLabelRow = document.querySelector('.explorer .label-row');
+function closeExplorerMenu(){
+  explorerMenu.classList.remove('show');
+  explorerMore.classList.remove('active');
+}
 explorerMore.addEventListener('click', (e)=>{
   e.stopPropagation();
-  explorerMenu.classList.toggle('show');
-  explorerMore.classList.toggle('active');
+  const opening = !explorerMenu.classList.contains('show');
+  closeTabContextMenu();
+  closeTreeContextMenu();
+  if(opening){
+    explorerMenu.classList.add('show');
+    explorerMore.classList.add('active');
+  }
+});
+explorerLabelRow.addEventListener('contextmenu', (e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  closeTabContextMenu();
+  closeTreeContextMenu();
+  explorerMenu.classList.add('show');
+  explorerMore.classList.add('active');
 });
 document.getElementById('expandAllFoldersBtn').addEventListener('click', ()=>{
   setAllFolders(true);
-  explorerMenu.classList.remove('show');
-  explorerMore.classList.remove('active');
+  closeExplorerMenu();
 });
 document.getElementById('collapseAllFoldersBtn').addEventListener('click', ()=>{
   setAllFolders(false);
-  explorerMenu.classList.remove('show');
-  explorerMore.classList.remove('active');
+  closeExplorerMenu();
 });
 document.getElementById('closeAllTabsBtn').addEventListener('click', ()=>{
   closeAllTabs();
-  explorerMenu.classList.remove('show');
-  explorerMore.classList.remove('active');
+  closeExplorerMenu();
 });
 document.getElementById('closeOtherTabsBtn').addEventListener('click', ()=>{
   closeOtherTabs();
-  explorerMenu.classList.remove('show');
-  explorerMore.classList.remove('active');
+  closeExplorerMenu();
 });
 document.getElementById('hideExplorerBtn').addEventListener('click', ()=>{
   toggleExplorer();
-  explorerMenu.classList.remove('show');
-  explorerMore.classList.remove('active');
+  closeExplorerMenu();
 });
 document.addEventListener('click', (e)=>{
   if(!explorerMenu.classList.contains('show')) return;
   if(explorerMenu.contains(e.target) || explorerMore.contains(e.target)) return;
-  explorerMenu.classList.remove('show');
-  explorerMore.classList.remove('active');
+  closeExplorerMenu();
 });
+// Capture phase runs before any element's own contextmenu handler, so any
+// menu left open from a previous right-click is closed before a new one
+// (or the browser's native menu, e.g. on empty body) takes its place.
+document.addEventListener('contextmenu', ()=>{
+  closeExplorerMenu();
+  closeTabContextMenu();
+  closeTreeContextMenu();
+}, true);
 
 const tabContextMenu = document.getElementById('tabContextMenu');
 let tabContextMenuId = null;
@@ -1856,8 +1920,157 @@ document.addEventListener('click', (e)=>{
   if(tabContextMenu.contains(e.target)) return;
   closeTabContextMenu();
 });
+
+const treeContextMenu = document.getElementById('treeContextMenu');
+let treeContextMenuId = null;
+
+function closeTreeContextMenu(){
+  treeContextMenu.classList.remove('show');
+  treeContextMenuId = null;
+}
+
+function openTreeContextMenu(x, y, id){
+  treeContextMenuId = id;
+  const tool = TOOL_TAB_REGISTRY[id];
+  document.getElementById('ctxTreeQuickView').hidden = !tool;
+  document.getElementById('ctxTreeGithub').hidden = !(tool && tool.github);
+  document.getElementById('ctxTreeCodepen').hidden = !(tool && tool.codepen);
+  document.getElementById('ctxTreeLinksDivider').hidden = !(tool && (tool.github || tool.codepen));
+  closeExplorerMenu();
+  closeTabContextMenu();
+  treeContextMenu.classList.add('show');
+  const menuRect = treeContextMenu.getBoundingClientRect();
+  const maxX = window.innerWidth - menuRect.width - 4;
+  const maxY = window.innerHeight - menuRect.height - 4;
+  treeContextMenu.style.left = Math.max(4, Math.min(x, maxX)) + 'px';
+  treeContextMenu.style.top = Math.max(4, Math.min(y, maxY)) + 'px';
+}
+
+function quickViewTreeItem(id){
+  const tool = TOOL_TAB_REGISTRY[id];
+  if(!tool) return;
+  if(tool.category) openFile(tool.category);
+  const embed = document.getElementById('embed-' + id);
+  if(embed && !embed.classList.contains('open')) toggleDoc(id);
+  requestAnimationFrame(()=>{
+    const card = document.getElementById('project-' + id);
+    if(card) card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+}
+
+document.getElementById('ctxTreeQuickView').addEventListener('click', ()=>{
+  if(treeContextMenuId) quickViewTreeItem(treeContextMenuId);
+  closeTreeContextMenu();
+});
+document.getElementById('ctxTreeOpen').addEventListener('click', ()=>{
+  if(treeContextMenuId) openTreeItem(treeContextMenuId);
+  closeTreeContextMenu();
+});
+document.getElementById('ctxTreeOpenNewTab').addEventListener('click', ()=>{
+  if(treeContextMenuId) window.open(urlForTabId(treeContextMenuId), '_blank');
+  closeTreeContextMenu();
+});
+document.getElementById('ctxTreeGithub').addEventListener('click', ()=>{
+  const tool = treeContextMenuId && TOOL_TAB_REGISTRY[treeContextMenuId];
+  if(tool && tool.github) window.open(tool.github, '_blank', 'noopener');
+  closeTreeContextMenu();
+});
+document.getElementById('ctxTreeCodepen').addEventListener('click', ()=>{
+  const tool = treeContextMenuId && TOOL_TAB_REGISTRY[treeContextMenuId];
+  if(tool && tool.codepen) window.open(tool.codepen, '_blank', 'noopener');
+  closeTreeContextMenu();
+});
+document.addEventListener('click', (e)=>{
+  if(!treeContextMenu.classList.contains('show')) return;
+  if(treeContextMenu.contains(e.target)) return;
+  closeTreeContextMenu();
+});
+document.getElementById('fileTree').addEventListener('scroll', closeTreeContextMenu);
+window.addEventListener('resize', closeTreeContextMenu);
+
+function toggleIntroCodeComment(){
+  const lines = document.querySelectorAll('#panel-intro .code-line');
+  if(!lines.length) return;
+  introCodeCommented = !introCodeCommented;
+  lines.forEach(line => {
+    if(line.querySelector('.com')) return;
+    line.classList.toggle('line-commented', introCodeCommented);
+  });
+}
+let introCodeCommented = false;
+
 document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape') closeTabContextMenu();
+  const mod = e.metaKey || e.ctrlKey;
+
+  if(e.key === '?' && !mod && !isTypingTarget(e.target)){
+    e.preventDefault();
+    openShortcutsModal();
+    return;
+  }
+  // VS Code's integrated-terminal toggle is Ctrl+` on every platform, Cmd included.
+  if(e.ctrlKey && !e.shiftKey && !e.altKey && e.key === '`'){
+    e.preventDefault();
+    toggleBottomPanel('terminal');
+    return;
+  }
+  if(mod && !e.shiftKey && e.key.toLowerCase() === 'p'){
+    e.preventDefault();
+    openQuickOpen();
+    return;
+  }
+  if(mod && e.shiftKey && e.key.toLowerCase() === 'p'){
+    e.preventDefault();
+    openCommandPalette();
+    return;
+  }
+  if(mod && e.shiftKey && e.key.toLowerCase() === 'f'){
+    e.preventDefault();
+    openWorkspaceSearch();
+    return;
+  }
+  if(mod && e.shiftKey && e.key.toLowerCase() === 'e'){
+    e.preventDefault();
+    focusExplorer();
+    return;
+  }
+  if(mod && e.shiftKey && e.key.toLowerCase() === 'm'){
+    e.preventDefault();
+    toggleBottomPanel('problems');
+    return;
+  }
+  if(mod && !e.shiftKey && e.key.toLowerCase() === 'b'){
+    e.preventDefault();
+    toggleExplorer();
+    return;
+  }
+  if(mod && !e.shiftKey && e.key.toLowerCase() === 'w'){
+    e.preventDefault();
+    if(activeId) closeTab(activeId);
+    return;
+  }
+  if(mod && e.key === 'Tab'){
+    e.preventDefault();
+    cycleTabs(e.shiftKey ? -1 : 1);
+    return;
+  }
+  if(mod && !e.shiftKey && /^[1-9]$/.test(e.key)){
+    e.preventDefault();
+    jumpToTabIndex(Number(e.key) - 1);
+    return;
+  }
+  if(mod && !e.shiftKey && e.key === '/'){
+    if(activeId === 'intro'){
+      e.preventDefault();
+      toggleIntroCodeComment();
+    }
+    return;
+  }
+  if(e.key === 'Escape'){
+    if(isQuickOpenOpen()) closeQuickOpen();
+    else if(isCommandPaletteOpen()) closeCommandPalette();
+    else if(isShortcutsModalOpen()) closeShortcutsModal();
+    else closeTabContextMenu();
+  }
 });
 document.getElementById('tabBar').addEventListener('scroll', closeTabContextMenu);
 window.addEventListener('resize', closeTabContextMenu);
@@ -1867,6 +2080,970 @@ window.addEventListener('blur', ()=>{
   setTimeout(()=>{
     if(document.activeElement && document.activeElement.tagName === 'IFRAME') closeTabContextMenu();
   }, 0);
+});
+
+// ==== Bottom Panel: Terminal (Ctrl+`) + Problems (Ctrl/Cmd+Shift+M) ====
+
+const bottomPanel = document.getElementById('bottomPanel');
+const bottomPanelTabs = document.querySelectorAll('.bottom-panel-tab');
+const bottomPanelTerminal = document.getElementById('bottomPanelTerminal');
+const bottomPanelProblems = document.getElementById('bottomPanelProblems');
+const terminalLog = document.getElementById('terminalLog');
+const terminalInput = document.getElementById('terminalInput');
+const terminalPromptEl = document.querySelector('.terminal-prompt');
+
+function isBottomPanelOpen(){
+  return !bottomPanel.hidden;
+}
+
+function activeBottomPanelTab(){
+  const active = document.querySelector('.bottom-panel-tab.active');
+  return active ? active.dataset.panel : 'terminal';
+}
+
+function switchBottomPanelTab(tab){
+  bottomPanelTabs.forEach(btn => btn.classList.toggle('active', btn.dataset.panel === tab));
+  bottomPanelTerminal.hidden = tab !== 'terminal';
+  bottomPanelProblems.hidden = tab !== 'problems';
+  if(tab === 'terminal'){
+    bootTerminal();
+    terminalInput.focus();
+  }
+}
+
+const bottomPanelResizeHandle = document.getElementById('bottomPanelResizeHandle');
+
+function openBottomPanel(tab){
+  bottomPanel.hidden = false;
+  bottomPanelResizeHandle.hidden = false;
+  switchBottomPanelTab(tab);
+  repositionActiveToolTabFrame();
+}
+
+function closeBottomPanel(){
+  bottomPanel.hidden = true;
+  bottomPanelResizeHandle.hidden = true;
+  repositionActiveToolTabFrame();
+}
+
+function toggleBottomPanel(tab){
+  if(isBottomPanelOpen() && activeBottomPanelTab() === tab) closeBottomPanel();
+  else openBottomPanel(tab);
+}
+
+bottomPanelTabs.forEach(btn => btn.addEventListener('click', ()=> switchBottomPanelTab(btn.dataset.panel)));
+document.getElementById('bottomPanelCloseBtn').addEventListener('click', closeBottomPanel);
+document.getElementById('terminalBtn').addEventListener('click', ()=> toggleBottomPanel('terminal'));
+
+(function initBottomPanelResize(){
+  const handle = bottomPanelResizeHandle;
+  const overlay = document.getElementById('bottomPanelResizeOverlay');
+  if(!bottomPanel || !handle || !overlay) return;
+
+  const MIN_HEIGHT = 120;
+  const MAX_HEIGHT = 560;
+  const DEFAULT_HEIGHT = 220;
+
+  function applyHeight(height){
+    bottomPanel.style.setProperty('--bottom-panel-height', height + 'px');
+    repositionActiveToolTabFrame();
+  }
+
+  let dragging = false;
+  let startY = 0;
+  let startHeight = 0;
+  let pendingHeight = null;
+  let rafId = null;
+
+  function flushHeight(){
+    rafId = null;
+    if(pendingHeight !== null) applyHeight(pendingHeight);
+  }
+
+  // Native dblclick can't be used to detect a double-click here: the overlay
+  // it activates on mousedown covers the handle, so the matching mouseup
+  // lands on the overlay instead of the handle and the browser never sees a
+  // same-target click/dblclick pair. Time consecutive mousedowns ourselves.
+  let lastDownTime = 0;
+  handle.addEventListener('mousedown', (e)=>{
+    if(window.matchMedia('(max-width: 720px)').matches) return;
+    const now = Date.now();
+    if(now - lastDownTime < 350){
+      lastDownTime = 0;
+      applyHeight(DEFAULT_HEIGHT);
+      e.preventDefault();
+      return;
+    }
+    lastDownTime = now;
+    dragging = true;
+    startY = e.clientY;
+    startHeight = bottomPanel.getBoundingClientRect().height;
+    handle.classList.add('dragging');
+    overlay.classList.add('active');
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  // Same reasoning as the explorer's resize overlay: without it, dragging
+  // across an open iframe (Terminal sits right above tool tabs) stops
+  // delivering mousemove/mouseup and the drag stalls.
+  overlay.addEventListener('mousemove', (e)=>{
+    if(!dragging) return;
+    pendingHeight = Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, startHeight - (e.clientY - startY)));
+    if(rafId === null) rafId = requestAnimationFrame(flushHeight);
+  });
+
+  function endDrag(){
+    if(!dragging) return;
+    dragging = false;
+    if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+    if(pendingHeight !== null){ applyHeight(pendingHeight); pendingHeight = null; }
+    handle.classList.remove('dragging');
+    overlay.classList.remove('active');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }
+  overlay.addEventListener('mouseup', endDrag);
+  // A fast drag released near the bottom edge of the window can put the
+  // cursor outside the viewport, where the overlay itself is no longer the
+  // event target — fall back to window's mouseup so the drag never gets
+  // stuck "on" with the resize cursor and overlay left intercepting clicks.
+  window.addEventListener('mouseup', endDrag);
+})();
+
+function printTerminalLine(html){
+  const line = document.createElement('div');
+  line.className = 't-line';
+  line.innerHTML = html;
+  terminalLog.appendChild(line);
+  terminalLog.scrollTop = terminalLog.scrollHeight;
+}
+
+function bootTerminal(){
+  if(terminalLog.dataset.booted) return;
+  terminalLog.dataset.booted = '1';
+  printTerminalLine(`<span class="t-out">Bruno's portfolio shell — type 'help' to see what's here.</span>`);
+}
+
+const TERMINAL_SOCIAL_LINKS = {
+  github: 'https://github.com/brunovidasi',
+  linkedin: 'https://www.linkedin.com/in/brunovidasi/?locale=en_US',
+  codepen: 'https://codepen.io/brunovidasi'
+};
+
+// Resolves a typed name to a real, currently-navigable id — driven entirely by
+// the live files/folders/TOOL_TAB_REGISTRY data (same source the Explorer and
+// Quick Open use), so it stays correct as pages/tools are added or renamed
+// instead of needing its own hardcoded route table.
+function resolveNavTarget(name){
+  if(!name) return null;
+  if(TOOL_TAB_REGISTRY[name]) return name;
+  if(files[name]) return name;
+  if(folders[name] && FOLDER_DEFAULT_FILE[name]) return FOLDER_DEFAULT_FILE[name];
+
+  const lower = name.toLowerCase();
+  const byFile = Object.keys(files).find(id => !files[id].isToolTab && files[id].label.replace(/\.[^.]+$/, '').toLowerCase() === lower);
+  if(byFile) return byFile;
+
+  const byFolder = Object.keys(folders).find(id => folders[id].label.replace(/\/$/, '').toLowerCase() === lower);
+  if(byFolder && FOLDER_DEFAULT_FILE[byFolder]) return FOLDER_DEFAULT_FILE[byFolder];
+
+  const byTool = Object.keys(TOOL_TAB_REGISTRY).find(id => (TOOL_TAB_REGISTRY[id].title || '').toLowerCase() === lower);
+  if(byTool) return byTool;
+
+  return null;
+}
+
+function openNavTarget(id){
+  if(TOOL_TAB_REGISTRY[id]){
+    const title = TOOL_TAB_REGISTRY[id].title;
+    openToolTab(id);
+    return files[id] ? files[id].label : title;
+  }
+  openFile(id);
+  return files[id].label;
+}
+
+function rootLabel(id){
+  return folders[id] ? folders[id].label : (files[id] ? files[id].label : id);
+}
+
+// Tracks which folder the terminal is "inside" so ls/cd can resolve names
+// relative to it (root = empty path). Only two levels deep exist (e.g.
+// mini-tools -> mini-tools-dev), so a plain array of folder ids is enough.
+let terminalCwdPath = [];
+
+function terminalCwdFolderId(){
+  return terminalCwdPath.length ? terminalCwdPath[terminalCwdPath.length - 1] : null;
+}
+
+function terminalDirChildren(){
+  const cur = terminalCwdFolderId();
+  return cur ? folderChildren(cur) : rootOrder;
+}
+
+function terminalPromptPath(){
+  if(!terminalCwdPath.length) return '~';
+  return '~/' + terminalCwdPath.map(id => folders[id].label.replace(/\/$/, '')).join('/');
+}
+
+function updateTerminalPromptEl(){
+  if(terminalPromptEl) terminalPromptEl.textContent = `visitor@bruno-dev:${terminalPromptPath()}$`;
+}
+
+function folderPathTo(folderId){
+  return MINI_TOOL_CATEGORY_IDS.has(folderId) ? ['mini-tools', folderId] : [folderId];
+}
+
+function folderDefaultFile(folderId){
+  return FOLDER_DEFAULT_FILE[folderId] || (files[folderId] ? folderId : null);
+}
+
+function findInChildren(children, name){
+  const lower = name.toLowerCase();
+  return children.find(id => {
+    if(id === name) return true;
+    if(folders[id]) return folders[id].label.replace(/\/$/, '').toLowerCase() === lower;
+    if(files[id]) return files[id].label.toLowerCase() === lower || files[id].label.replace(/\.[^.]+$/, '').toLowerCase() === lower;
+    if(TOOL_TAB_REGISTRY[id]) return (TOOL_TAB_REGISTRY[id].title || '').toLowerCase() === lower;
+    return false;
+  });
+}
+
+function resolveFolderId(name, scopeChildren){
+  const inScope = scopeChildren.find(id => folders[id] && (id === name || folders[id].label.replace(/\/$/, '').toLowerCase() === name.toLowerCase()));
+  if(inScope) return inScope;
+  return Object.keys(folders).find(id => id === name || folders[id].label.replace(/\/$/, '').toLowerCase() === name.toLowerCase()) || null;
+}
+
+function dirLabels(children){
+  return children.map(id => files[id] ? files[id].label : (TOOL_TAB_REGISTRY[id] ? TOOL_TAB_REGISTRY[id].title + '.js' : rootLabel(id)));
+}
+
+function runTerminalCommand(raw){
+  const input = raw.trim();
+  printTerminalLine(`<span class="t-prompt">visitor@bruno-dev:${escapeHtml(terminalPromptPath())}$</span> <span class="t-out">${escapeHtml(input)}</span>`);
+  if(!input) return;
+  const [cmd, ...rest] = input.split(/\s+/);
+  const arg = rest.join(' ');
+  const lower = cmd.toLowerCase();
+  switch(lower){
+    case 'help':
+      printTerminalLine(`<span class="t-out">Commands: help, ls [dir], cd/cat/open &lt;page&gt;, cd .., shortcuts, whoami, about, resume, contact, github, linkedin, codepen, echo &lt;text&gt;, date, clear, exit</span>`);
+      break;
+    case 'ls': {
+      if(!arg){
+        const labels = terminalCwdFolderId() ? dirLabels(terminalDirChildren()) : rootOrder.map(rootLabel);
+        printTerminalLine(`<span class="t-out">${escapeHtml(labels.join('  '))}</span>`);
+        break;
+      }
+      const folderId = resolveFolderId(arg, terminalDirChildren());
+      if(!folderId){
+        printTerminalLine(`<span class="t-err">ls: ${escapeHtml(arg)}: No such directory</span>`);
+        break;
+      }
+      printTerminalLine(`<span class="t-out">${escapeHtml(dirLabels(folderChildren(folderId)).join('  '))}</span>`);
+      break;
+    }
+    case 'cd': {
+      if(!arg || arg === '~' || arg === '/'){
+        terminalCwdPath = [];
+        printTerminalLine(`<span class="t-out">→ ${escapeHtml(files.intro.label)}</span>`);
+        openFile('intro');
+        break;
+      }
+      if(arg === '..'){
+        if(!terminalCwdPath.length){
+          printTerminalLine(`<span class="t-err">cd: already at top-level directory</span>`);
+          break;
+        }
+        terminalCwdPath.pop();
+        printTerminalLine(`<span class="t-out">→ ${escapeHtml(terminalPromptPath())}</span>`);
+        break;
+      }
+      const scopeChildren = terminalDirChildren();
+      const folderId = resolveFolderId(arg, scopeChildren);
+      if(folderId){
+        terminalCwdPath = folderPathTo(folderId);
+        const defaultFile = folderDefaultFile(folderId);
+        printTerminalLine(`<span class="t-out">→ ${escapeHtml(defaultFile ? openNavTarget(defaultFile) : terminalPromptPath())}</span>`);
+        break;
+      }
+      const target = findInChildren(scopeChildren, arg) || resolveNavTarget(arg);
+      if(target && (files[target] || TOOL_TAB_REGISTRY[target])){
+        printTerminalLine(`<span class="t-out">→ ${escapeHtml(openNavTarget(target))}</span>`);
+      } else {
+        printTerminalLine(`<span class="t-err">cd: ${escapeHtml(arg)}: No such file or directory</span>`);
+      }
+      break;
+    }
+    case 'cat':
+    case 'open': {
+      if(!arg){
+        printTerminalLine(`<span class="t-out">→ ${escapeHtml(files.intro.label)}</span>`);
+        openFile('intro');
+        break;
+      }
+      const target = findInChildren(terminalDirChildren(), arg) || resolveNavTarget(arg);
+      if(target && (files[target] || TOOL_TAB_REGISTRY[target])){
+        printTerminalLine(`<span class="t-out">→ ${escapeHtml(openNavTarget(target))}</span>`);
+      } else {
+        printTerminalLine(`<span class="t-err">${lower}: ${escapeHtml(arg)}: No such file or directory</span>`);
+      }
+      break;
+    }
+    case 'whoami':
+      printTerminalLine(`<span class="t-out">you: a curious visitor who found the hidden terminal. nice work 👀</span>`);
+      break;
+    case 'about':
+      printTerminalLine(`<span class="t-out">Sydney-based developer, ${yearsExperience}+ years experience. Run 'cat about' for the full page.</span>`);
+      break;
+    case 'resume':
+    case 'cv':
+      printTerminalLine(`<span class="t-out">opening documents.pdf...</span>`);
+      openFile('documents');
+      break;
+    case 'contact':
+      printTerminalLine(`<span class="t-out">opening contact.eml...</span>`);
+      openFile('contact');
+      break;
+    case 'shortcuts':
+      printTerminalLine(`<span class="t-out">opening keyboard shortcuts...</span>`);
+      openShortcutsModal('shortcuts');
+      break;
+    case 'github':
+    case 'linkedin':
+    case 'codepen':
+      printTerminalLine(`<span class="t-out">${TERMINAL_SOCIAL_LINKS[lower]}</span>`);
+      window.open(TERMINAL_SOCIAL_LINKS[lower], '_blank', 'noopener');
+      break;
+    case 'echo':
+      printTerminalLine(`<span class="t-out">${escapeHtml(arg)}</span>`);
+      break;
+    case 'date':
+      printTerminalLine(`<span class="t-out">${escapeHtml(new Date().toString())}</span>`);
+      break;
+    case 'sudo':
+      printTerminalLine(`<span class="t-err">Permission denied: nice try 😏</span>`);
+      break;
+    case 'coffee':
+      printTerminalLine(`<span class="t-out">☕ brewing... still faster than IE6.</span>`);
+      break;
+    case 'clear':
+      terminalLog.innerHTML = '';
+      break;
+    case 'exit':
+    case 'close':
+      closeBottomPanel();
+      break;
+    default:
+      printTerminalLine(`<span class="t-err">command not found: ${escapeHtml(cmd)}</span>`);
+  }
+  updateTerminalPromptEl();
+}
+
+terminalInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){
+    const value = terminalInput.value;
+    terminalInput.value = '';
+    runTerminalCommand(value);
+  }
+});
+
+// ==== Quick Open (Ctrl/Cmd+P) + workspace Search (Ctrl/Cmd+Shift+F) ====
+// One shared index built once the project JSON has loaded: QUICK_OPEN_INDEX
+// (coarse, title-only, fuzzy-matched) and CONTENT_INDEX (fine-grained text
+// blocks, substring-matched). Both resolve to the same navigateToHit(): open
+// the target's panel, then scroll/flash the specific element if there is one.
+
+const PROJECT_PANEL_OVERRIDES = { 'edm-html-builder': 'edm-tools', 'edm-kinetic-modules': 'edm-tools' };
+const PROJECT_TEXT_FIELDS = ['title', 'description', 'role', 'extendedDescription', 'company', 'challenge', 'technique', 'outcome'];
+
+let QUICK_OPEN_INDEX = [];
+let CONTENT_INDEX = [];
+
+function panelIdForCategory(category){
+  return PROJECT_PANEL_OVERRIDES[category] || category;
+}
+
+function addContentBlock(panelId, rawText, el){
+  const text = (rawText || '').replace(/\s+/g, ' ').trim();
+  if(!text) return;
+  CONTENT_INDEX.push({ panelId, text, textLower: text.toLowerCase(), el: el || null });
+}
+
+// Adjacent elements (e.g. back-to-back .stack-pill spans) have no whitespace
+// between them in the source HTML, so plain .textContent runs them together
+// ("HTML5CSS3jQuery"). Insert a separating space after each element's text.
+function extractText(el){
+  let out = '';
+  el.childNodes.forEach(node => {
+    if(node.nodeType === Node.TEXT_NODE) out += node.textContent;
+    else if(node.nodeType === Node.ELEMENT_NODE) out += extractText(node) + ' ';
+  });
+  return out;
+}
+
+function scrapeStaticContent(){
+  const experiencePanel = document.getElementById('panel-experience');
+  if(experiencePanel) experiencePanel.querySelectorAll(':scope > .commit').forEach(el => addContentBlock('experience', extractText(el), el));
+
+  const educationPanel = document.getElementById('panel-education');
+  if(educationPanel) educationPanel.querySelectorAll(':scope > .commit').forEach(el => addContentBlock('education', extractText(el), el));
+
+  const skillsPanel = document.getElementById('panel-skills');
+  if(skillsPanel) skillsPanel.querySelectorAll('.cv-skill-line').forEach(el => addContentBlock('skills', extractText(el), el));
+
+  const freelancePanel = document.getElementById('panel-freelance');
+  if(freelancePanel) freelancePanel.querySelectorAll('.bio-text, .bio-list li').forEach(el => addContentBlock('freelance', extractText(el), el));
+
+  const documentsPanel = document.getElementById('panel-documents');
+  if(documentsPanel) documentsPanel.querySelectorAll('.doc-card').forEach(el => addContentBlock('documents', extractText(el), el));
+
+  addContentBlock('about', bioText, document.getElementById('bioTypedText'));
+}
+
+function buildSearchIndex(allProjects){
+  CONTENT_INDEX = [];
+  QUICK_OPEN_INDEX = [];
+
+  Object.keys(files).forEach(id => {
+    const f = files[id];
+    if(f.isToolTab) return;
+    QUICK_OPEN_INDEX.push({
+      title: f.label,
+      meta: f.folder && folders[f.folder] ? folders[f.folder].label : '',
+      iconHtml: fileIconHtml(f.icon),
+      panelId: id,
+      el: null
+    });
+  });
+
+  scrapeStaticContent();
+
+  allProjects.forEach(project => {
+    const panelId = panelIdForCategory(project.category);
+    if(!files[panelId]) return;
+    const el = document.getElementById('project-' + project.id);
+    const text = PROJECT_TEXT_FIELDS.map(k => project[k]).filter(Boolean)
+      .concat(Array.isArray(project.tech) ? project.tech : [])
+      .join(' — ');
+    addContentBlock(panelId, text, el);
+
+    QUICK_OPEN_INDEX.push({
+      title: project.title,
+      meta: files[panelId].label,
+      iconHtml: project.icon ? `<span class="file-icon" style="font-family:var(--mono,monospace);font-size:13px;color:#519aba">${escapeHtml(project.icon)}</span>` : fileIconHtml('js'),
+      panelId,
+      el
+    });
+  });
+}
+
+function navigateToHit(hit){
+  restoreApp();
+  openFile(hit.panelId);
+  if(!hit.el) return;
+  setTimeout(()=>{
+    hit.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    hit.el.classList.remove('search-flash');
+    void hit.el.offsetWidth;
+    hit.el.classList.add('search-flash');
+    setTimeout(()=> hit.el.classList.remove('search-flash'), 1600);
+  }, 60);
+}
+
+// ---- Quick Open ----
+
+function fuzzyMatch(query, text){
+  const q = query.toLowerCase();
+  const t = text.toLowerCase();
+  let qi = 0, streak = 0, score = 0;
+  const indices = [];
+  for(let ti = 0; ti < t.length && qi < q.length; ti++){
+    if(t[ti] === q[qi]){
+      indices.push(ti);
+      streak++;
+      score += 2 + streak * 2 + (ti === 0 || t[ti - 1] === ' ' || t[ti - 1] === '-' ? 3 : 0);
+      qi++;
+    } else {
+      streak = 0;
+    }
+  }
+  if(qi < q.length) return null;
+  return { score: score - t.length * 0.01, indices };
+}
+
+function highlightIndices(text, indices){
+  if(!indices.length) return escapeHtml(text);
+  const idxSet = new Set(indices);
+  let out = '';
+  for(let i = 0; i < text.length; i++){
+    const ch = escapeHtml(text[i]);
+    out += idxSet.has(i) ? `<span class="quick-open-match">${ch}</span>` : ch;
+  }
+  return out;
+}
+
+const quickOpenBackdrop = document.getElementById('quickOpenBackdrop');
+const quickOpenInput = document.getElementById('quickOpenInput');
+const quickOpenResultsEl = document.getElementById('quickOpenResults');
+let quickOpenRows = [];
+let quickOpenSelected = 0;
+
+function isQuickOpenOpen(){
+  return quickOpenBackdrop.classList.contains('show');
+}
+
+function openQuickOpen(){
+  quickOpenBackdrop.classList.add('show');
+  quickOpenInput.value = '';
+  renderQuickOpenResults('');
+  quickOpenInput.focus();
+}
+
+function closeQuickOpen(){
+  quickOpenBackdrop.classList.remove('show');
+}
+
+function renderQuickOpenResults(query){
+  const q = query.trim();
+  let matches;
+  if(!q){
+    matches = QUICK_OPEN_INDEX.slice(0, 50).map(item => ({ item, indices: [] }));
+  } else {
+    matches = QUICK_OPEN_INDEX
+      .map(item => {
+        const m = fuzzyMatch(q, item.title);
+        return m ? { item, indices: m.indices, score: m.score } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 50);
+  }
+  quickOpenRows = matches;
+  quickOpenSelected = 0;
+  if(!matches.length){
+    quickOpenResultsEl.innerHTML = '<div class="quick-open-empty">No matching files found</div>';
+    return;
+  }
+  quickOpenResultsEl.innerHTML = matches.map((m, i) => `
+    <div class="quick-open-row${i === 0 ? ' selected' : ''}" data-index="${i}">
+      ${m.item.iconHtml}
+      <span class="quick-open-row-title">${highlightIndices(m.item.title, m.indices)}</span>
+      <span class="quick-open-row-meta">${escapeHtml(m.item.meta)}</span>
+    </div>`).join('');
+}
+
+function updateQuickOpenSelection(newIndex){
+  const rows = quickOpenResultsEl.querySelectorAll('.quick-open-row');
+  if(!rows.length) return;
+  quickOpenSelected = Math.max(0, Math.min(newIndex, rows.length - 1));
+  rows.forEach((r, i) => r.classList.toggle('selected', i === quickOpenSelected));
+  rows[quickOpenSelected].scrollIntoView({ block: 'nearest' });
+}
+
+function activateQuickOpenRow(index){
+  const row = quickOpenRows[index];
+  if(!row) return;
+  closeQuickOpen();
+  navigateToHit(row.item);
+}
+
+quickOpenInput.addEventListener('input', ()=> renderQuickOpenResults(quickOpenInput.value));
+quickOpenInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowDown'){ e.preventDefault(); updateQuickOpenSelection(quickOpenSelected + 1); }
+  else if(e.key === 'ArrowUp'){ e.preventDefault(); updateQuickOpenSelection(quickOpenSelected - 1); }
+  else if(e.key === 'Enter'){ e.preventDefault(); activateQuickOpenRow(quickOpenSelected); }
+  else if(e.key === 'Escape'){ e.preventDefault(); closeQuickOpen(); }
+});
+quickOpenResultsEl.addEventListener('mousemove', (e)=>{
+  const row = e.target.closest('.quick-open-row');
+  if(row) updateQuickOpenSelection(Number(row.dataset.index));
+});
+quickOpenResultsEl.addEventListener('click', (e)=>{
+  const row = e.target.closest('.quick-open-row');
+  if(row) activateQuickOpenRow(Number(row.dataset.index));
+});
+quickOpenBackdrop.addEventListener('mousedown', (e)=>{
+  if(e.target === quickOpenBackdrop) closeQuickOpen();
+});
+document.getElementById('quickOpenBtn').addEventListener('click', openQuickOpen);
+
+// ---- Command Palette (Ctrl/Cmd+Shift+P) ----
+
+const COMMAND_LIST = [
+  { label: 'Go to File...', meta: '⌘P', run: openQuickOpen },
+  { label: 'Find in Workspace', meta: '⇧⌘F', run: openWorkspaceSearch },
+  { label: 'View: Show Explorer', meta: '⇧⌘E', run: focusExplorer },
+  { label: 'View: Toggle Sidebar', meta: '⌘B', run: toggleExplorer },
+  { label: 'View: Toggle Terminal', meta: '^`', run: ()=> toggleBottomPanel('terminal') },
+  { label: 'View: Toggle Problems', meta: '⇧⌘M', run: ()=> toggleBottomPanel('problems') },
+  { label: 'Tab: Close Editor', meta: '⌘W', run: ()=> { if(activeId) closeTab(activeId); } },
+  { label: 'Tab: Close Others', run: ()=> closeOtherTabs() },
+  { label: 'Tab: Close All Editors', run: closeAllTabs },
+  { label: 'Help: How to Use This Site', meta: '?', run: ()=> openShortcutsModal('guide') },
+  { label: 'Help: Keyboard Shortcuts', run: ()=> openShortcutsModal('shortcuts') },
+  { label: 'Bruno: Open GitHub', run: ()=> window.open('https://github.com/brunovidasi', '_blank', 'noopener') },
+  { label: 'Bruno: Open LinkedIn', run: ()=> window.open('https://www.linkedin.com/in/brunovidasi/?locale=en_US', '_blank', 'noopener') },
+  { label: 'Bruno: Open CodePen', run: ()=> window.open('https://codepen.io/brunovidasi', '_blank', 'noopener') }
+];
+
+const cmdPaletteBackdrop = document.getElementById('cmdPaletteBackdrop');
+const cmdPaletteInput = document.getElementById('cmdPaletteInput');
+const cmdPaletteResultsEl = document.getElementById('cmdPaletteResults');
+let cmdPaletteRows = [];
+let cmdPaletteSelected = 0;
+
+function isCommandPaletteOpen(){
+  return cmdPaletteBackdrop.classList.contains('show');
+}
+
+function openCommandPalette(){
+  cmdPaletteBackdrop.classList.add('show');
+  cmdPaletteInput.value = '';
+  renderCommandPaletteResults('');
+  cmdPaletteInput.focus();
+}
+
+function closeCommandPalette(){
+  cmdPaletteBackdrop.classList.remove('show');
+}
+
+function renderCommandPaletteResults(query){
+  const q = query.trim();
+  let matches;
+  if(!q){
+    matches = COMMAND_LIST.map(item => ({ item, indices: [] }));
+  } else {
+    matches = COMMAND_LIST
+      .map(item => {
+        const m = fuzzyMatch(q, item.label);
+        return m ? { item, indices: m.indices, score: m.score } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.score - a.score);
+  }
+  cmdPaletteRows = matches;
+  cmdPaletteSelected = 0;
+  if(!matches.length){
+    cmdPaletteResultsEl.innerHTML = '<div class="quick-open-empty">No matching commands</div>';
+    return;
+  }
+  cmdPaletteResultsEl.innerHTML = matches.map((m, i) => `
+    <div class="quick-open-row${i === 0 ? ' selected' : ''}" data-index="${i}">
+      <span class="quick-open-row-title">${highlightIndices(m.item.label, m.indices)}</span>
+      ${m.item.meta ? `<span class="quick-open-row-meta">${escapeHtml(m.item.meta)}</span>` : ''}
+    </div>`).join('');
+}
+
+function updateCommandPaletteSelection(newIndex){
+  const rows = cmdPaletteResultsEl.querySelectorAll('.quick-open-row');
+  if(!rows.length) return;
+  cmdPaletteSelected = Math.max(0, Math.min(newIndex, rows.length - 1));
+  rows.forEach((r, i) => r.classList.toggle('selected', i === cmdPaletteSelected));
+  rows[cmdPaletteSelected].scrollIntoView({ block: 'nearest' });
+}
+
+function activateCommandPaletteRow(index){
+  const row = cmdPaletteRows[index];
+  if(!row) return;
+  closeCommandPalette();
+  row.item.run();
+}
+
+cmdPaletteInput.addEventListener('input', ()=> renderCommandPaletteResults(cmdPaletteInput.value));
+cmdPaletteInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowDown'){ e.preventDefault(); updateCommandPaletteSelection(cmdPaletteSelected + 1); }
+  else if(e.key === 'ArrowUp'){ e.preventDefault(); updateCommandPaletteSelection(cmdPaletteSelected - 1); }
+  else if(e.key === 'Enter'){ e.preventDefault(); activateCommandPaletteRow(cmdPaletteSelected); }
+  else if(e.key === 'Escape'){ e.preventDefault(); closeCommandPalette(); }
+});
+cmdPaletteResultsEl.addEventListener('mousemove', (e)=>{
+  const row = e.target.closest('.quick-open-row');
+  if(row) updateCommandPaletteSelection(Number(row.dataset.index));
+});
+cmdPaletteResultsEl.addEventListener('click', (e)=>{
+  const row = e.target.closest('.quick-open-row');
+  if(row) activateCommandPaletteRow(Number(row.dataset.index));
+});
+cmdPaletteBackdrop.addEventListener('mousedown', (e)=>{
+  if(e.target === cmdPaletteBackdrop) closeCommandPalette();
+});
+
+// ---- "How to Use This Site" help modal: Guide + Shortcuts tabs (footer link / "?") ----
+
+const IS_MAC = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+const MOD_KEY = IS_MAC ? '⌘' : 'Ctrl';
+const ALT_KEY = IS_MAC ? '⌥' : 'Alt';
+
+const GUIDE_GROUPS = [
+  {
+    title: 'Title Bar',
+    items: [
+      { dot: 'r', html: '<b>Red dot</b> — reloads the site from the start (boot sequence included).' },
+      { dot: 'y', html: '<b>Yellow dot</b> — minimizes the window; click the dock icon at the bottom of the screen to bring it back.' },
+      { dot: 'g', html: '<b>Green dot</b> — toggles the sidebar.' },
+      { html: 'The <b>bruno-vieira</b> logo jumps back to intro.js.' }
+    ]
+  },
+  {
+    title: 'Explorer (sidebar)',
+    items: [
+      { html: '<b>EXPLORER</b> / <b>SEARCH</b> tabs switch between the file tree and site-wide search.' },
+      { html: 'Click a <b>file</b> to open it in a tab; click a <b>folder</b> to expand or collapse it.' },
+      { html: 'The <b>···</b> button opens a menu to expand/collapse all folders, close tabs, or hide the explorer.' },
+      { html: 'Drag the sidebar\'s right edge to <b>resize</b> it.' }
+    ]
+  },
+  {
+    title: 'Tabs',
+    items: [
+      { html: 'Click a tab to switch to it; click its <b>✕</b> to close it.' },
+      { html: '<b>Drag</b> a tab left or right to reorder it.' },
+      { html: '<b>Right-click</b> a tab for more: close others, close to the right, close all, fullscreen, or open in a new window.' }
+    ]
+  },
+  {
+    title: 'Terminal & Problems',
+    items: [
+      { html: 'Click <b>Terminal</b> in the status bar (or see Shortcuts) to open the small working shell at the bottom of the editor.' },
+      { html: "Once it's open, try typing <b>help</b> — real commands like <b>ls</b> and <b>cd &lt;page&gt;</b> actually navigate the site." }
+    ]
+  },
+  {
+    title: 'Status Bar & Power Tools',
+    items: [
+      { html: '<b>Guide</b> reopens this manual any time.' },
+      { html: 'The Command Palette (see Shortcuts) lists every action the site supports, searchable by name.' }
+    ]
+  }
+];
+
+const shortcutsGuideEl = document.getElementById('shortcutsGuide');
+
+function renderGuide(){
+  shortcutsGuideEl.innerHTML = GUIDE_GROUPS.map(group => `
+    <div class="shortcuts-group-title">${escapeHtml(group.title)}</div>
+    ${group.items.map(item => `
+      <div class="guide-row">
+        <span class="guide-icon${item.dot ? ' ' + item.dot : ''}"></span>
+        <span>${item.html}</span>
+      </div>`).join('')}
+  `).join('');
+}
+renderGuide();
+
+const shortcutsTabButtons = document.querySelectorAll('.shortcuts-tabs .modal-tab');
+
+function switchShortcutsTab(tab){
+  shortcutsTabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.shortcutsTab === tab));
+  shortcutsGuideEl.hidden = tab !== 'guide';
+  shortcutsBodyEl.hidden = tab !== 'shortcuts';
+}
+
+shortcutsTabButtons.forEach(btn => btn.addEventListener('click', ()=> switchShortcutsTab(btn.dataset.shortcutsTab)));
+
+const SHORTCUT_GROUPS = [
+  {
+    title: 'Go To',
+    items: [
+      { keys: [MOD_KEY, 'P'], desc: 'Go to File...' },
+      { keys: [MOD_KEY, 'Shift', 'P'], desc: 'Command Palette' },
+      { keys: [MOD_KEY, 'Shift', 'F'], desc: 'Find in Workspace' },
+      { keys: ['?'], desc: 'Show this help' }
+    ]
+  },
+  {
+    title: 'View',
+    items: [
+      { keys: [MOD_KEY, 'B'], desc: 'Toggle Sidebar' },
+      { keys: [MOD_KEY, 'Shift', 'E'], desc: 'Show Explorer' },
+      { keys: ['Ctrl', '`'], desc: 'Toggle Terminal' },
+      { keys: [MOD_KEY, 'Shift', 'M'], desc: 'Toggle Problems' }
+    ]
+  },
+  {
+    title: 'Tabs',
+    items: [
+      { keys: [MOD_KEY, 'Tab'], desc: 'Next Tab' },
+      { keys: [MOD_KEY, 'Shift', 'Tab'], desc: 'Previous Tab' },
+      { keys: [MOD_KEY, '1'], through: '9', desc: 'Jump to Tab 1–9' },
+      { keys: [MOD_KEY, 'W'], desc: 'Close Tab' }
+    ]
+  },
+  {
+    title: 'Editor',
+    items: [
+      { keys: [MOD_KEY, '/'], desc: 'Toggle Comment (intro.js)' },
+      { keys: ['Esc'], desc: 'Close Dialog / Menu' }
+    ]
+  }
+];
+
+const SHORTCUTS_FOOTNOTE = `Right-click a tab for more actions (close others, close to the right, fullscreen). Some browsers reserve ${MOD_KEY}+Tab, ${MOD_KEY}+W and ${MOD_KEY}+1–9 for their own tab switching, so those may not always reach the page.`;
+
+const shortcutsBackdrop = document.getElementById('shortcutsBackdrop');
+const shortcutsBodyEl = document.getElementById('shortcutsBody');
+
+function renderShortcutsModal(){
+  const groupsHtml = SHORTCUT_GROUPS.map(group => `
+    <div class="shortcuts-group-title">${escapeHtml(group.title)}</div>
+    ${group.items.map(item => `
+      <div class="shortcut-row">
+        <span class="shortcut-desc">${escapeHtml(item.desc)}</span>
+        <span class="keycap-row">${item.keys.map(k => `<kbd>${escapeHtml(k)}</kbd>`).join('<span class="keycap-plus">+</span>')}${item.through ? `<span class="keycap-plus">–</span><kbd>${escapeHtml(item.through)}</kbd>` : ''}</span>
+      </div>`).join('')}
+  `).join('');
+  shortcutsBodyEl.innerHTML = groupsHtml + `<div class="shortcuts-footnote">${escapeHtml(SHORTCUTS_FOOTNOTE)}</div>`;
+}
+renderShortcutsModal();
+
+function isShortcutsModalOpen(){
+  return shortcutsBackdrop.classList.contains('show');
+}
+
+function openShortcutsModal(tab){
+  switchShortcutsTab(tab || 'guide');
+  shortcutsBackdrop.classList.add('show');
+}
+
+function closeShortcutsModal(){
+  shortcutsBackdrop.classList.remove('show');
+}
+
+document.getElementById('helpBtn').addEventListener('click', ()=> openShortcutsModal());
+document.getElementById('shortcutsCloseBtn').addEventListener('click', closeShortcutsModal);
+shortcutsBackdrop.addEventListener('mousedown', (e)=>{
+  if(e.target === shortcutsBackdrop) closeShortcutsModal();
+});
+
+function isTypingTarget(el){
+  return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+}
+
+// ---- Sidebar workspace search ----
+
+const viewTabButtons = document.querySelectorAll('.view-tab');
+const fileTreeEl = document.getElementById('fileTree');
+const searchPanelEl = document.getElementById('searchPanel');
+const searchPanelInput = document.getElementById('searchPanelInput');
+const searchSummaryEl = document.getElementById('searchSummary');
+const searchResultsEl = document.getElementById('searchResults');
+
+function switchSidebarView(view){
+  viewTabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
+  fileTreeEl.hidden = view !== 'explorer';
+  searchPanelEl.hidden = view !== 'search';
+  document.getElementById('quickOpenBtn').hidden = view !== 'search';
+}
+
+viewTabButtons.forEach(btn => btn.addEventListener('click', ()=> switchSidebarView(btn.dataset.view)));
+
+function openWorkspaceSearch(){
+  const shell = document.getElementById('shell');
+  if(window.matchMedia('(max-width: 720px)').matches){
+    if(!shell.classList.contains('mobile-nav-open')){
+      shell.classList.add('mobile-nav-open');
+      setMobileNavLock(true);
+    }
+  } else {
+    shell.classList.remove('sidebar-hidden');
+  }
+  switchSidebarView('search');
+  searchPanelInput.focus();
+}
+
+function focusExplorer(){
+  restoreApp();
+  const shell = document.getElementById('shell');
+  if(window.matchMedia('(max-width: 720px)').matches){
+    if(!shell.classList.contains('mobile-nav-open')){
+      shell.classList.add('mobile-nav-open');
+      setMobileNavLock(true);
+    }
+  } else {
+    shell.classList.remove('sidebar-hidden');
+  }
+  switchSidebarView('explorer');
+}
+
+function truncateSnippet(text, matchIndex, matchLen){
+  const RADIUS = 34;
+  const start = Math.max(0, matchIndex - RADIUS);
+  const end = Math.min(text.length, matchIndex + matchLen + RADIUS);
+  const prefixed = start > 0;
+  const snippet = (prefixed ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
+  return { snippet, offset: matchIndex - start + (prefixed ? 1 : 0) };
+}
+
+function highlightSubstring(text, offset, len){
+  return escapeHtml(text.slice(0, offset)) +
+    '<span class="search-match-text">' + escapeHtml(text.slice(offset, offset + len)) + '</span>' +
+    escapeHtml(text.slice(offset + len));
+}
+
+function renderSearchResults(query){
+  const q = query.trim().toLowerCase();
+  if(!q){
+    searchSummaryEl.textContent = '';
+    searchResultsEl.innerHTML = '';
+    return;
+  }
+  const hits = CONTENT_INDEX
+    .map(entry => ({ entry, matchAt: entry.textLower.indexOf(q) }))
+    .filter(h => h.matchAt !== -1);
+
+  if(!hits.length){
+    searchSummaryEl.textContent = 'No results found';
+    searchResultsEl.innerHTML = '';
+    return;
+  }
+
+  const order = [];
+  const groups = new Map();
+  hits.forEach(h => {
+    const panelId = h.entry.panelId;
+    if(!groups.has(panelId)){ groups.set(panelId, []); order.push(panelId); }
+    groups.get(panelId).push(h);
+  });
+
+  searchSummaryEl.textContent = `${hits.length} result${hits.length === 1 ? '' : 's'} in ${order.length} file${order.length === 1 ? '' : 's'}`;
+
+  const hitRegistry = [];
+  let html = '';
+  order.forEach(panelId => {
+    const f = files[panelId];
+    if(!f) return;
+    const groupHits = groups.get(panelId);
+    hitRegistry.push({ panelId, el: null });
+    html += `<div class="search-result-group">
+      <div class="search-result-head" data-hit="${hitRegistry.length - 1}">
+        ${fileIconHtml(f.icon)}<span class="search-result-label">${escapeHtml(f.label)}</span>
+        <span class="search-result-count">${groupHits.length}</span>
+      </div>`;
+    groupHits.slice(0, 6).forEach(h => {
+      const { snippet, offset } = truncateSnippet(h.entry.text, h.matchAt, q.length);
+      hitRegistry.push({ panelId, el: h.entry.el });
+      html += `<div class="search-result-snippet" data-hit="${hitRegistry.length - 1}">${highlightSubstring(snippet, offset, q.length)}</div>`;
+    });
+    html += `</div>`;
+  });
+
+  searchResultsEl.innerHTML = html;
+  searchResultsEl.querySelectorAll('[data-hit]').forEach(node => {
+    node.addEventListener('click', ()=>{
+      const hit = hitRegistry[Number(node.dataset.hit)];
+      if(hit) navigateToHit(hit);
+    });
+  });
+}
+
+let searchDebounceTimer = null;
+searchPanelInput.addEventListener('input', ()=>{
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(()=> renderSearchResults(searchPanelInput.value), 120);
 });
 
 const devModeToggle = document.getElementById('devModeToggle');
