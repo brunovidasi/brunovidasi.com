@@ -932,6 +932,7 @@ a {
 }
 
 .bottom-panel-resize-handle:hover::after,
+.bottom-panel-resize-handle.hit-hover::after,
 .bottom-panel-resize-handle.dragging::after {
   background: var(--ok);
   transition-delay: .1s;
@@ -947,6 +948,24 @@ a {
 
 .bottom-panel-resize-overlay.active {
   display: block;
+}
+
+/* .bottom-panel-resize-handle sits inside #app, which establishes its own
+   stacking context (position:relative + z-index:1) — so no z-index on the
+   handle can ever outrank a fixed, body-level sibling like an open tool
+   tab's .tool-tab-frame (z-index: 40), which the handle's -6px margin makes
+   it visually overlap. That silently swallows the drag's initial mousedown
+   whenever a mini-tool/tool tab is open underneath. This invisible twin,
+   positioned outside #app and kept in sync with the handle's rect (see
+   initBottomPanelResize), takes the mousedown instead. */
+.bottom-panel-resize-hit {
+  position: fixed;
+  z-index: 9999;
+  cursor: row-resize;
+}
+
+.bottom-panel-resize-hit[hidden] {
+  display: none;
 }
 
 .bottom-panel {

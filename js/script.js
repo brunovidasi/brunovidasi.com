@@ -2117,18 +2117,38 @@ function switchBottomPanelTab(tab){
 }
 
 const bottomPanelResizeHandle = document.getElementById('bottomPanelResizeHandle');
+const bottomPanelResizeHit = document.getElementById('bottomPanelResizeHit');
+
+// Keeps the invisible resize hit-target (a body-level sibling that can
+// out-stack an open tool tab's iframe — see initBottomPanelResize) aligned
+// with the visible handle's actual on-screen box.
+function syncBottomPanelResizeHit(){
+  if(!bottomPanelResizeHit) return;
+  if(bottomPanelResizeHandle.hidden || window.matchMedia('(max-width: 720px)').matches){
+    bottomPanelResizeHit.hidden = true;
+    return;
+  }
+  const r = bottomPanelResizeHandle.getBoundingClientRect();
+  bottomPanelResizeHit.hidden = false;
+  bottomPanelResizeHit.style.left = r.left + 'px';
+  bottomPanelResizeHit.style.top = r.top + 'px';
+  bottomPanelResizeHit.style.width = r.width + 'px';
+  bottomPanelResizeHit.style.height = r.height + 'px';
+}
 
 function openBottomPanel(tab){
   bottomPanel.hidden = false;
   bottomPanelResizeHandle.hidden = false;
   switchBottomPanelTab(tab);
   repositionActiveToolTabFrame();
+  syncBottomPanelResizeHit();
 }
 
 function closeBottomPanel(){
   bottomPanel.hidden = true;
   bottomPanelResizeHandle.hidden = true;
   repositionActiveToolTabFrame();
+  syncBottomPanelResizeHit();
 }
 
 function toggleBottomPanel(tab){
@@ -2142,8 +2162,9 @@ document.getElementById('terminalBtn').addEventListener('click', ()=> toggleBott
 
 (function initBottomPanelResize(){
   const handle = bottomPanelResizeHandle;
+  const hit = bottomPanelResizeHit;
   const overlay = document.getElementById('bottomPanelResizeOverlay');
-  if(!bottomPanel || !handle || !overlay) return;
+  if(!bottomPanel || !handle || !hit || !overlay) return;
 
   const MIN_HEIGHT = 120;
   const MAX_HEIGHT = 560;
@@ -2152,6 +2173,7 @@ document.getElementById('terminalBtn').addEventListener('click', ()=> toggleBott
   function applyHeight(height){
     bottomPanel.style.setProperty('--bottom-panel-height', height + 'px');
     repositionActiveToolTabFrame();
+    syncBottomPanelResizeHit();
   }
 
   let dragging = false;
@@ -2165,12 +2187,23 @@ document.getElementById('terminalBtn').addEventListener('click', ()=> toggleBott
     if(pendingHeight !== null) applyHeight(pendingHeight);
   }
 
+  // The handle lives inside #app, which establishes its own stacking context
+  // (position:relative + z-index:1), so nothing inside it can out-stack a
+  // fixed, body-level sibling like an open tool tab's .tool-tab-frame
+  // (z-index: 40) — which the handle's -6px margin makes it visually
+  // overlap. That silently swallows the drag's mousedown whenever a
+  // mini-tool/tool tab is open underneath, so `hit` (a real body-level
+  // sibling kept aligned to the handle's box, see syncBottomPanelResizeHit)
+  // takes the mousedown/hover instead; `handle` stays purely visual.
+  hit.addEventListener('mouseenter', ()=> handle.classList.add('hit-hover'));
+  hit.addEventListener('mouseleave', ()=> handle.classList.remove('hit-hover'));
+
   // Native dblclick can't be used to detect a double-click here: the overlay
   // it activates on mousedown covers the handle, so the matching mouseup
   // lands on the overlay instead of the handle and the browser never sees a
   // same-target click/dblclick pair. Time consecutive mousedowns ourselves.
   let lastDownTime = 0;
-  handle.addEventListener('mousedown', (e)=>{
+  hit.addEventListener('mousedown', (e)=>{
     if(window.matchMedia('(max-width: 720px)').matches) return;
     const now = Date.now();
     if(now - lastDownTime < 350){
@@ -2208,6 +2241,7 @@ document.getElementById('terminalBtn').addEventListener('click', ()=> toggleBott
     overlay.classList.remove('active');
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
+    syncBottomPanelResizeHit();
   }
   overlay.addEventListener('mouseup', endDrag);
   // A fast drag released near the bottom edge of the window can put the
@@ -2215,6 +2249,13 @@ document.getElementById('terminalBtn').addEventListener('click', ()=> toggleBott
   // event target — fall back to window's mouseup so the drag never gets
   // stuck "on" with the resize cursor and overlay left intercepting clicks.
   window.addEventListener('mouseup', endDrag);
+
+  window.addEventListener('resize', syncBottomPanelResizeHit);
+  if(window.ResizeObserver){
+    const editorArea = document.getElementById('editorArea');
+    if(editorArea) new ResizeObserver(syncBottomPanelResizeHit).observe(editorArea);
+  }
+  syncBottomPanelResizeHit();
 })();
 
 function printTerminalLine(html){
