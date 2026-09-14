@@ -37,16 +37,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- <meta property="og:image" content="http://brunovida.si/img/website.png" />
 <link rel="image_src" href="./img/website.png" /> -->
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-43397149-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -74,6 +64,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div id="boot"><pre id="bootText"></pre></div>
 
 <div id="app">
+
+  <!-- ==== TITLE BAR ==== -->
   <div class="titlebar">
     <button class="dot r" id="dotRed" title="Reload"></button>
     <button class="dot y" id="dotYellow" title="Minimize"></button>
@@ -87,6 +79,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
   </div>
 
+  <!-- ==== SHELL: EXPLORER + EDITOR ==== -->
   <div class="shell" id="shell">
     <div class="explorer">
       <div class="label-row">
@@ -126,6 +119,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="main">
       <div class="tabs" id="tabBar"></div>
 
+      <!-- ---- PANELS: one per file in the explorer ---- -->
       <div class="editor" id="editorArea">
         <div class="empty-state" id="emptyState">No file is open — select one from the explorer to continue.</div>
 
@@ -150,16 +144,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </code>
 
           <div class="socials">
-            <a class="soc-linkedin" href="https://www.linkedin.com/in/brunovidasi/?locale=en_US" target="_blank" title="LinkedIn">
+            <a class="soc-linkedin" href="https://www.linkedin.com/in/brunovidasi/?locale=en_US" target="_blank" rel="noopener" title="LinkedIn">
               <svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-linkedin"></use></svg>
             </a>
-            <a class="soc-github" href="https://github.com/brunovidasi" target="_blank" title="GitHub">
+            <a class="soc-github" href="https://github.com/brunovidasi" target="_blank" rel="noopener" title="GitHub">
               <svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-github"></use></svg>
             </a>
-            <a class="soc-codepen" href="https://codepen.io/brunovidasi" target="_blank" title="CodePen">
+            <a class="soc-codepen" href="https://codepen.io/brunovidasi" target="_blank" rel="noopener" title="CodePen">
               <svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-codepen"></use></svg>
             </a>
-            <a class="soc-more" href="https://follow.brunovidasi.com/" target="_blank" title="All links">+</a>
+            <a class="soc-more" href="https://follow.brunovidasi.com/" target="_blank" rel="noopener" title="All links">+</a>
           </div>
 
           <div class="proj-preview-label">Recent projects</div>
@@ -201,7 +195,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
 
-        <!-- BIO -->
+        <!-- ABOUT / README.md -->
         <div class="panel" id="panel-about">
           <h2 class="sect"><span class="brk">&lt;</span>about <span class="attr">name</span>=<span class="str">"Bruno"</span> <span class="attr">role</span>=<span class="str">"Senior Developer"</span> <span class="attr">based</span>=<span class="str">"Sydney, AU"</span><span class="brk"> /&gt;</span></h2>
 
@@ -220,13 +214,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="bio-after" id="bioAfter">
             <div class="bio-contact-line">
-              <a href="#" onclick="openFile('contact'); return false;">contact me →</a>
+              <a href="#" data-open="contact">contact me →</a>
             </div>
             <div class="bio-highlight">✦ This website itself is hand-coded by me from scratch — a small showcase of my work in its own right :-)</div>
             <div class="about-nav">
-              <button onclick="openFile('experience')">→ experience.js</button>
-              <button onclick="openFile('education')">→ education.md</button>
-              <button onclick="openFile('skills')">→ skills.json</button>
+              <button data-open="experience">→ experience.js</button>
+              <button data-open="education">→ education.md</button>
+              <button data-open="skills">→ skills.json</button>
             </div>
           </div>
         </div>
@@ -237,8 +231,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="sect-intro">A timeline of where I've worked, from my first internship in Rio de Janeiro to my current role in Sydney — <span class="years-exp">13</span> years across full-stack development, front-end engineering, and more recently, HTML email production. Click a role to see the details.</div>
 
           <div class="mt-26 mb-26 doc-actions">
-            <button class="doc-btn" id="toggleJobDetailsBtn" onclick="toggleAllJobDetails()"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>Hide job details</button>
-            <button class="doc-btn" onclick="openFile('documents')"><svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>View / download resume →</button>
+            <button class="doc-btn" id="toggleJobDetailsBtn" data-act="toggle-job-details"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>Hide job details</button>
+            <button class="doc-btn" data-open="documents"><svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>View / download resume →</button>
           </div>
 
           <div class="commit open" data-company="Dentsu">
@@ -448,7 +442,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                       <span class="kw-pill">MySQL</span>
                     </div>
                     <div class="case-actions">
-                      <button class="doc-btn" onclick="openFile('web-systems'); openWebsiteDetail('web-systems','programmertime');"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View project</button>
+                      <button class="doc-btn" data-act="website-detail" data-arg="web-systems" data-arg2="programmertime"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View project</button>
                       <a class="doc-btn" href="https://github.com/brunovidasi/ProgrammerTime" target="_blank" rel="noopener"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-github"></use></svg>GitHub</a>
                       <a class="doc-btn" href="projects/programmertime/TCC%20Programmer%20Time%20Bruno%20e%20Filipe.pdf" target="_blank" rel="noopener"><svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>Read thesis (PDF, Portuguese)</a>
                     </div>
@@ -562,11 +556,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <div class="tools-toolbar">
               <div class="website-filters" id="webStatusFilters-websites">
-                <button class="filter-pill active" onclick="filterWebsites('websites', 'all', this)">🌐 All</button>
-                <button class="filter-pill" onclick="filterWebsites('websites', 'live', this)">🟢 Live</button>
-                <button class="filter-pill" onclick="filterWebsites('websites', 'offline', this)">⚫ Offline</button>
+                <button class="filter-pill active" data-act="filter-websites" data-arg="websites" data-arg2="all">🌐 All</button>
+                <button class="filter-pill" data-act="filter-websites" data-arg="websites" data-arg2="live">🟢 Live</button>
+                <button class="filter-pill" data-act="filter-websites" data-arg="websites" data-arg2="offline">⚫ Offline</button>
               </div>
-              <select class="website-company-select" id="webCompanySelect-websites" onchange="filterWebsitesByCompany('websites', this.value)"></select>
+              <select class="website-company-select" id="webCompanySelect-websites" data-act-change="filter-websites-company" data-arg="websites"></select>
             </div>
 
             <div class="tools-grid" id="toolsGrid-websites" data-category="websites"></div>
@@ -582,7 +576,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="website-list-view">
             <div class="tools-toolbar tools-toolbar--kinetic">
               <div class="sect-intro kinetic-intro">Internal business systems and applications I've built while working for various companies — timesheet tools, back-office systems and more. Click a screenshot to see the full write-up, including my role and the business rules behind each one.</div>
-              <select class="website-company-select" id="webCompanySelect-web-systems" onchange="filterWebsitesByCompany('web-systems', this.value)"></select>
+              <select class="website-company-select" id="webCompanySelect-web-systems" data-act-change="filter-websites-company" data-arg="web-systems"></select>
             </div>
 
             <div class="tools-grid" id="toolsGrid-web-systems" data-category="web-systems"></div>
@@ -597,7 +591,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic tools-toolbar--timeline">
             <div class="sect-intro kinetic-intro">A few of the landing pages and single-page sites I've designed and built end-to-end — from brand concept to a deployed, responsive site.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('landing-pages', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="landing-pages"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="timeline-list" id="toolsGrid-landing-pages" data-category="landing-pages"></div>
@@ -609,7 +603,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic tools-toolbar--timeline">
             <div class="sect-intro kinetic-intro">My personal website has gone through a lot of versions — this is a visual trip through all of them, from my very first attempt back in 2012 to the one you're browsing right now. Each snapshot reflects where I was at as a developer at the time: the design trends I liked, the tools I was learning, and how much (or how little) front-end polish I knew how to pull off.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('site-history', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="site-history"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="timeline-list" id="toolsGrid-site-history" data-category="site-history"></div>
@@ -659,7 +653,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Everyday tools for testing and debugging — cron expressions, regex, and text diffs.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-dev', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="mini-tools-dev"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-dev" data-category="mini-tools-dev"></div>
@@ -671,7 +665,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Client-side tools for working with images and photo metadata — nothing ever gets uploaded.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-media', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="mini-tools-media"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-media" data-category="mini-tools-media"></div>
@@ -683,7 +677,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Unit, currency, timezone, and data-format conversions in one place.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-converters', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="mini-tools-converters"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-converters" data-category="mini-tools-converters"></div>
@@ -695,7 +689,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Quick generators for passwords and test data.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-generators', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="mini-tools-generators"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-generators" data-category="mini-tools-generators"></div>
@@ -707,7 +701,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Client-side PDF utilities — nothing ever gets uploaded.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-pdf', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="mini-tools-pdf"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-pdf" data-category="mini-tools-pdf"></div>
@@ -720,7 +714,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Small personal projects and social/data utilities I built for myself.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('mini-tools-personal', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="mini-tools-personal"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-mini-tools-personal" data-category="mini-tools-personal"></div>
@@ -743,7 +737,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Reusable kinetic modules I built entirely with HTML/CSS (no JavaScript, no AMP for Email), designed to work across real-world email clients without relying on scripting support.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('edm-kinetic-modules', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="edm-kinetic-modules"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-edm-kinetic-modules" data-category="edm-kinetic-modules"></div>
@@ -752,7 +746,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="tools-toolbar tools-toolbar--kinetic">
             <div class="sect-intro kinetic-intro">Single-file tools I built to speed up HTML email production — handling <span class="kw-pill">Outlook/MSO</span> quirks and repetitive campaign tasks.</div>
-            <button class="doc-btn view-all-btn" onclick="toggleAllDocs('edm-tools', this)"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
+            <button class="doc-btn view-all-btn" data-act="toggle-all-docs" data-arg="edm-tools"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View all</button>
           </div>
 
           <div class="tools-grid" id="toolsGrid-edm-tools" data-category="edm-tools"></div>
@@ -809,11 +803,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="exp-projects-row" id="freelanceProjectsRow"></div>
 
           <div class="mt-52">
-            <button class="doc-btn doc-btn-lg" onclick="openFile('contact')">Get in touch →</button>
+            <button class="doc-btn doc-btn-lg" data-open="contact">Get in touch →</button>
           </div>
         </div>
 
-        <!-- CV / CONTACT -->
+        <!-- CONTACT -->
         <div class="panel" id="panel-contact">
           <h2 class="sect"><span class="brk">&lt;</span>contact <span class="attr">email</span>=<span class="str">"contact@brunovidasi.com"</span> <span class="attr">status</span>=<span class="str">"open-to-work"</span><span class="brk"> /&gt;</span></h2>
 
@@ -822,10 +816,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="email-row" id="emailRow">
               <span class="email-id">
                 <span class="ic-emoji">📧</span>
-                <span id="emailText" class="email-text" data-email="contact@brunovidasi.com" title="Click to copy" onclick="copyEmail()">contact@brunovidasi.com</span><span class="cursor-caret email-caret">_</span>
+                <span id="emailText" class="email-text" data-email="contact@brunovidasi.com" title="Click to copy" data-act="copy-email">contact@brunovidasi.com</span><span class="cursor-caret email-caret">_</span>
               </span>
               <span class="email-actions">
-                <button class="doc-btn email-copy-btn" id="emailCopyBtn" onclick="copyEmail()">
+                <button class="doc-btn email-copy-btn" id="emailCopyBtn" data-act="copy-email">
                   <svg class="btn-icon icon-copy" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-copy"></use></svg>
                   <svg class="btn-icon icon-check" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-check"></use></svg>
                   <span class="copy-btn-label">Copy</span>
@@ -870,7 +864,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <textarea class="composer-body" name="message" rows="5" placeholder="Write your message…" required></textarea>
 
-                <div class="h-captcha" data-captcha="true" data-theme="dark"></div>
+                <div class="h-captcha" data-captcha="true" data-sitekey="50b2fe65-b00b-4b9e-ad62-3ba471098be2" data-theme="dark"></div>
 
                 <div class="form-actions">
                   <button type="submit" class="composer-send" id="contactSubmitBtn">Send <span class="send-icon">➤</span></button>
@@ -897,15 +891,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="contact-block">
             <div class="obj-key"><span class="brace">links:</span></div>
             <div class="link-chips">
-              <a class="link-chip" href="https://www.linkedin.com/in/brunovidasi/?locale=en_US" target="_blank">
+              <a class="link-chip" href="https://www.linkedin.com/in/brunovidasi/?locale=en_US" target="_blank" rel="noopener">
                 <span class="icon-circle soc-linkedin"><svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-linkedin"></use></svg></span>
                 linkedin.com/in/brunovidasi
               </a>
-              <a class="link-chip" href="https://github.com/brunovidasi" target="_blank">
+              <a class="link-chip" href="https://github.com/brunovidasi" target="_blank" rel="noopener">
                 <span class="icon-circle soc-github"><svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-github"></use></svg></span>
                 github.com/brunovidasi
               </a>
-              <a class="link-chip" href="https://codepen.io/brunovidasi" target="_blank">
+              <a class="link-chip" href="https://codepen.io/brunovidasi" target="_blank" rel="noopener">
                 <span class="icon-circle soc-codepen"><svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-codepen"></use></svg></span>
                 codepen.io/brunovidasi
               </a>
@@ -918,9 +912,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="doc-card">
               <div class="doc-head">
                 <span class="doc-icon"><svg class="icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg></span>
-                <div class="doc-name doc-name-clickable" onclick="toggleDoc('cv-en')">Curriculum Vitae — English</div>
+                <div class="doc-name doc-name-clickable" data-act="toggle-doc" data-arg="cv-en">Curriculum Vitae — English</div>
                 <div class="doc-actions">
-                  <button class="doc-btn" onclick="toggleDoc('cv-en')"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View</button>
+                  <button class="doc-btn" data-act="toggle-doc" data-arg="cv-en"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View</button>
                   <a class="doc-btn" href="resume.pdf" download>⬇ Download</a>
                 </div>
               </div>
@@ -932,9 +926,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="doc-card">
               <div class="doc-head">
                 <span class="doc-icon"><svg class="icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg></span>
-                <div class="doc-name doc-name-clickable" onclick="toggleDoc('cv-pt')">Curriculum Vitae — Português</div>
+                <div class="doc-name doc-name-clickable" data-act="toggle-doc" data-arg="cv-pt">Curriculum Vitae — Português</div>
                 <div class="doc-actions">
-                  <button class="doc-btn" onclick="toggleDoc('cv-pt')"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View</button>
+                  <button class="doc-btn" data-act="toggle-doc" data-arg="cv-pt"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View</button>
                   <a class="doc-btn" href="curriculo.pdf" download>⬇ Download</a>
                 </div>
               </div>
@@ -946,9 +940,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="doc-card">
               <div class="doc-head">
                 <span class="doc-icon"><svg class="icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg></span>
-                <div class="doc-name doc-name-clickable" onclick="toggleDoc('cv-es')">Curriculum Vitae — Español</div>
+                <div class="doc-name doc-name-clickable" data-act="toggle-doc" data-arg="cv-es">Curriculum Vitae — Español</div>
                 <div class="doc-actions">
-                  <button class="doc-btn" onclick="toggleDoc('cv-es')"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View</button>
+                  <button class="doc-btn" data-act="toggle-doc" data-arg="cv-es"><svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye"></use></svg>View</button>
                   <a class="doc-btn" href="resume_es.pdf" download>⬇ Download</a>
                 </div>
               </div>
@@ -962,6 +956,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       </div>
 
+      <!-- ---- BOTTOM PANEL: terminal + problems ---- -->
       <div class="bottom-panel-resize-handle" id="bottomPanelResizeHandle" hidden></div>
       <div class="bottom-panel" id="bottomPanel" hidden>
         <div class="bottom-panel-tabs">
@@ -979,23 +974,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="bottom-panel-view" id="bottomPanelProblems" hidden>
           <div class="problems-empty">
             <span class="problems-check">✓</span> No problems detected in this workspace.
-            <div class="problems-sub">Spot a real one? <a href="#" onclick="openFile('contact'); return false;">let me know →</a></div>
+            <div class="problems-sub">Spot a real one? <a href="#" data-open="contact">let me know →</a></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ==== STATUS BAR ==== -->
   <div class="statusbar">
-    <span>⎇ <a href="/about" id="footerBrunoLink" onclick="openFile('about'); return false;">bruno-vieira</a></span>
+    <span>⎇ <a href="/about" id="footerBrunoLink" data-open="about">bruno-vieira</a></span>
     <span class="statusbar-help" id="helpBtn" title="How to Use This Site (?)">guide</span>
     <span class="statusbar-help" id="terminalBtn" title="Toggle Terminal (Ctrl+`)">terminal</span>
-    <span><a href="/experience" onclick="openFile('experience'); return false;"><b><span class="years-exp">13</span>+ yrs</b> experience in software development</a></span>
-    <span class="statusbar-credit">© <span class="current-year">2026</span> - <a href="https://brunovida.si" target="_blank">brunovida.si</a></span>
+    <span><a href="/experience" data-open="experience"><b><span class="years-exp">13</span>+ yrs</b> experience in software development</a></span>
+    <span class="statusbar-credit">© <span class="current-year">2026</span> - <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></span>
     <span class="dev-toggle" id="devModeToggle" title="Toggle DEV mode — skips the boot/loading animation on page load">DEV: OFF</span>
   </div>
 </div>
 
+<!-- ==== CONTEXT MENUS, MODALS & OVERLAYS (siblings of #app) ==== -->
 <div class="tab-context-menu" id="tabContextMenu">
   <button class="explorer-menu-item" id="ctxCloseTab">Close</button>
   <button class="explorer-menu-item" id="ctxCloseOthers">Close Others</button>
@@ -1059,8 +1056,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="bottom-panel-resize-overlay" id="bottomPanelResizeOverlay"></div>
 <div class="bottom-panel-resize-hit" id="bottomPanelResizeHit" hidden></div>
 
-<script src="js/script.js" defer></script>
-<script src="https://web3forms.com/client/script.js" async defer></script>
+<script type="module" src="js/main.js"></script>
+<script src="https://js.hcaptcha.com/1/api.js?recaptchacompat=off" async defer></script>
 
 </body>
 </html>

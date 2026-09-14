@@ -8,7 +8,11 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
 <style>
+/* =========================================================
+   1. Font & design tokens
+   ========================================================= */
 @font-face {
   font-family: 'JetBrains Mono';
   src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
@@ -29,6 +33,10 @@
   --err:#ff8383;
   --mono:'JetBrains Mono', monospace;
 }
+
+/* =========================================================
+   2. Base
+   ========================================================= */
 *{ box-sizing:border-box; }
 html,body{
   margin:0; padding:0; min-height:100%;
@@ -43,6 +51,9 @@ body{
   overflow-x:hidden;
 }
 
+/* =========================================================
+   3. Background layers (z-index 0–2)
+   ========================================================= */
 canvas#rain{
   position:fixed; inset:0; z-index:0;
   opacity:.22;
@@ -78,6 +89,9 @@ canvas#rain{
   mix-blend-mode:multiply;
 }
 
+/* =========================================================
+   4. Window chrome (z-index 3–4)
+   ========================================================= */
 .win{
   position:relative; z-index:3;
   width:100%; max-width:640px;
@@ -104,6 +118,7 @@ canvas#rain{
   transition:transform .4s cubic-bezier(.6,0,.35,1), opacity .3s ease .1s;
 }
 
+/* title bar */
 .titlebar{
   display:flex; align-items:center; gap:8px;
   padding:10px 12px;
@@ -113,19 +128,6 @@ canvas#rain{
   touch-action:none;
 }
 .titlebar:active{ cursor:grabbing; }
-.dot{
-  width:11px; height:11px; border-radius:50%; display:inline-block;
-  border:none; padding:0; -webkit-appearance:none; appearance:none;
-  cursor:pointer;
-  position:relative;
-}
-.dot.r{ background:#ff5f57; }
-.dot.y{ background:#febc2e; }
-.dot.g{ background:#28c840; }
-.dot::before{
-  content:'';
-  position:absolute; inset:-6px;
-}
 .titlebar .path{
   margin-left:8px;
   font-size:12px;
@@ -133,6 +135,22 @@ canvas#rain{
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
+/* traffic-light buttons */
+.dot{
+  width:11px; height:11px; border-radius:50%; display:inline-block;
+  border:none; padding:0; -webkit-appearance:none; appearance:none;
+  cursor:pointer;
+  position:relative;
+}
+.dot::before{ /* larger hit area */
+  content:'';
+  position:absolute; inset:-6px;
+}
+.dot.r{ background:#ff5f57; }
+.dot.y{ background:#febc2e; }
+.dot.g{ background:#28c840; }
+
+/* dock button shown while minimized */
 .dock-restore{
   position:fixed; left:16px; bottom:16px; z-index:4;
   display:none; align-items:center; gap:8px;
@@ -145,21 +163,31 @@ canvas#rain{
 .dock-restore:hover{ color:var(--text); border-color:var(--accent); }
 .dock-restore .dot{ width:9px; height:9px; }
 
+/* =========================================================
+   5. Terminal body
+   ========================================================= */
 .term{
   padding:20px 22px 24px;
   font-size:13.5px;
   line-height:1.65;
 }
-
 .term .prompt{ color:var(--ok); }
 .term .path-seg{ color:var(--accent); }
 .term pre{ margin:0; white-space:pre-wrap; word-break:break-word; }
 
+/* typed intro */
 #typed{ min-height:6.6em; }
 
+/* revealed after the intro finishes typing */
 .glitch-wrap{ margin:18px 0 10px; transition:opacity .5s ease, transform .5s ease; }
 .glitch-wrap.pending{ opacity:0; transform:translateY(6px); }
 
+.tagline{ color:var(--muted); font-size:13px; margin:0 0 18px; }
+.tagline b{ color:var(--text); font-weight:600; }
+
+/* =========================================================
+   6. Glitch "404"
+   ========================================================= */
 .glitch{
   font-size:56px;
   font-weight:700;
@@ -200,15 +228,9 @@ canvas#rain{
   100%{ transform:translate(0,0); }
 }
 
-.tagline{ color:var(--muted); font-size:13px; margin:0 0 18px; }
-.tagline b{ color:var(--text); font-weight:600; }
-
-.hint{ color:var(--muted); font-size:12px; margin:14px 0 6px; }
-.hint kbd{
-  font-family:var(--mono); background:var(--panel-2); border:1px solid var(--line);
-  border-radius:4px; padding:1px 5px; color:var(--text);
-}
-
+/* =========================================================
+   7. Interactive shell (history, command line, hint)
+   ========================================================= */
 .history{
   margin-bottom:2px;
   max-height:220px;
@@ -231,6 +253,15 @@ canvas#rain{
   color:var(--text); font-family:var(--mono); font-size:13.5px; caret-color:var(--ok);
 }
 
+.hint{ color:var(--muted); font-size:12px; margin:14px 0 6px; }
+.hint kbd{
+  font-family:var(--mono); background:var(--panel-2); border:1px solid var(--line);
+  border-radius:4px; padding:1px 5px; color:var(--text);
+}
+
+/* =========================================================
+   8. Footer links
+   ========================================================= */
 .links{
   display:flex; flex-wrap:wrap; gap:8px;
   margin-top:18px; padding-top:16px; border-top:1px solid var(--line);
@@ -245,9 +276,12 @@ canvas#rain{
 
 .footer-note{ margin-top:14px; font-size:11px; color:var(--muted); }
 </style>
+
+<noscript><style>#typed,.cmdline,.hint,#rain{ display:none; }.glitch-wrap{ opacity:1; transform:none; }</style></noscript>
 </head>
 <body>
 
+<!-- ===== Background layers ===== -->
 <canvas id="rain"></canvas>
 <div class="bg-404" aria-hidden="true">
   <div class="num">404</div>
@@ -255,6 +289,7 @@ canvas#rain{
 </div>
 <div class="scanlines"></div>
 
+<!-- ===== Terminal window ===== -->
 <div class="win">
   <div class="titlebar" id="titlebar">
     <button type="button" class="dot r" id="dotClose" aria-label="Go to brunovida.si" title="brunovida.si"></button>
@@ -271,13 +306,11 @@ canvas#rain{
       <p class="tagline">The route resolved to <b>nothing</b>. It's not you — the page just isn't here (or never was).</p>
 
       <div id="history" class="history"></div>
-
       <div class="cmdline">
         <span class="prompt">guest@brunovida.si</span><span>:</span><span class="path-seg" id="cwd">~</span><span>$</span>
         <input id="cmdInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command input">
       </div>
       <p class="hint">try <kbd>ls</kbd>, <kbd>cd home</kbd>, or <kbd>help</kbd></p>
-      <noscript><style>#typed,.cmdline,.hint,#rain{ display:none; }.glitch-wrap{ opacity:1; transform:none; }</style></noscript>
 
       <div class="links">
         <a href="/">cd home</a>
@@ -291,55 +324,24 @@ canvas#rain{
   </div>
 </div>
 
+<!-- ===== Dock (visible while minimized) ===== -->
 <div class="dock-restore" id="dockRestore">
   <span class="dot y"></span>
   <span>bruno-vieira — 404</span>
 </div>
 
 <script>
-var REQ_URI = window.location.pathname + window.location.search;
-if(!REQ_URI || REQ_URI === '/') REQ_URI = '/that-page';
-document.getElementById('footerNote').textContent = 'requested: ' + REQ_URI + ' — 404 Not Found';
+// =========================================================
+// 1. Config
+// =========================================================
+var PROMPT_USER = 'guest@brunovida.si';
 
-var typedEl = document.querySelector('#typed pre');
-var revealEl = document.getElementById('reveal');
-revealEl.classList.add('pending');
-var lines = [
-  "$ cd " + REQ_URI,
-  "bash: cd: " + REQ_URI + ": No such file or directory",
-  "$ find / -iname \"*the-page-you-wanted*\" 2>/dev/null",
-  "(0 results)"
-];
-
-var li = 0, ci = 0;
-function typeLine(){
-  if(li >= lines.length){
-    setTimeout(function(){
-      revealEl.classList.remove('pending');
-      focusInput();
-    }, 350);
-    return;
-  }
-  var line = lines[li];
-  if(ci === 0) typedEl.textContent += (li > 0 ? "\n" : "");
-  if(ci < line.length){
-    typedEl.textContent += line[ci];
-    ci++;
-    setTimeout(typeLine, 14 + Math.random()*10);
-  } else {
-    li++; ci = 0;
-    setTimeout(typeLine, 130);
-  }
-}
-setTimeout(typeLine, 250);
-
-// ---- faux terminal ----
-var historyEl = document.getElementById('history');
-var input = document.getElementById('cmdInput');
-var cwdEl = document.getElementById('cwd');
-
+// Keep in sync with the RewriteRule blocks in .htaccess
 var ROUTES = {
+  // aliases for home
   'home': '/', '~': '/', '/': '/',
+
+  // sections
   'about': '/about',
   'experience': '/experience',
   'education': '/education',
@@ -360,6 +362,7 @@ var ROUTES = {
   'freelance': '/freelance',
   'contact': '/contact',
   'documents': '/documents',
+
   // individual mini-tool / mini-game tabs (opened via a card's "Open in New Tab"
   // button) — keep this in sync with the second RewriteRule block in .htaccess
   'campo-minado': '/campo-minado',
@@ -400,83 +403,142 @@ var ROUTES = {
   'unlock-pdf': '/unlock-pdf'
 };
 
+// =========================================================
+// 2. Shared helpers
+// =========================================================
+function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+var cmdInput = document.getElementById('cmdInput');
+
 function focusInput(){
+  // don't pop the on-screen keyboard on touch devices
   if(window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
-  input.focus();
+  cmdInput.focus();
 }
 
-function scrollHistoryToBottom(){
-  historyEl.scrollTop = historyEl.scrollHeight;
-}
+// =========================================================
+// 3. Intro: typed "cd / find" sequence, then reveal
+// =========================================================
+(function(){
+  var reqUri = window.location.pathname + window.location.search;
+  if(!reqUri || reqUri === '/') reqUri = '/that-page';
 
-function printLine(text, cls){
-  var div = document.createElement('div');
-  div.className = 'line' + (cls ? ' out ' + cls : '');
-  div.textContent = text;
-  historyEl.appendChild(div);
-  scrollHistoryToBottom();
-}
+  document.getElementById('footerNote').textContent = 'requested: ' + reqUri + ' — 404 Not Found';
 
-function printCmd(cmd){
-  var div = document.createElement('div');
-  div.className = 'line';
-  div.innerHTML = '<span class="prompt">guest@brunovida.si</span>:<span class="path-seg">' + cwdEl.textContent + '</span>$ ' + cmd.replace(/</g,'&lt;');
-  historyEl.appendChild(div);
-  scrollHistoryToBottom();
-}
+  var typedEl = document.querySelector('#typed pre');
+  var revealEl = document.getElementById('reveal');
+  revealEl.classList.add('pending'); // added via JS so <noscript> still shows content
 
-function runCommand(raw){
-  var cmd = raw.trim();
-  if(!cmd) return;
-  printCmd(cmd);
-  var parts = cmd.split(/\s+/);
-  var verb = parts[0].toLowerCase();
-  var arg = (parts[1] || '').toLowerCase();
+  var lines = [
+    '$ cd ' + reqUri,
+    'bash: cd: ' + reqUri + ': No such file or directory',
+    '$ find / -iname "*the-page-you-wanted*" 2>/dev/null',
+    '(0 results)'
+  ];
+  var li = 0, ci = 0;
 
-  if(verb === 'help'){
-    printLine('available commands:', 'ok');
-    printLine('  ls              list available pages');
-    printLine('  cd <page>       navigate to a page (try: cd home, cd about, cd contact)');
-    printLine('  whoami          ...');
-    printLine('  clear           clear this terminal');
-  } else if(verb === 'ls'){
-    printLine(Object.keys(ROUTES).filter(function(k){ return k !== '~' && k !== '/'; }).join('\n'), 'ok');
-  } else if(verb === 'cd'){
-    var target = arg || 'home';
-    if(ROUTES.hasOwnProperty(target)){
-      printLine('→ ' + ROUTES[target], 'ok');
-      setTimeout(function(){ window.location.href = ROUTES[target]; }, 350);
-    } else {
-      printLine('bash: cd: ' + target + ': No such file or directory', 'err');
+  function typeLine(){
+    if(li >= lines.length){
+      setTimeout(function(){
+        revealEl.classList.remove('pending');
+        focusInput();
+      }, 350);
+      return;
     }
-  } else if(verb === 'whoami'){
-    printLine('you: a curious visitor who followed a broken link.', 'ok');
-  } else if(verb === 'sudo'){
-    printLine('nice try. permission denied.', 'err');
-  } else if(verb === 'clear'){
-    historyEl.innerHTML = '';
-  } else if(verb === 'exit'){
-    printLine('there is no escape, only cd home.', 'err');
-  } else if(ROUTES.hasOwnProperty(verb)){
-    printLine('→ ' + ROUTES[verb], 'ok');
-    setTimeout(function(){ window.location.href = ROUTES[verb]; }, 350);
-  } else {
-    printLine('command not found: ' + verb + ' (try "help")', 'err');
+    var line = lines[li];
+    if(ci === 0 && li > 0) typedEl.textContent += '\n';
+    if(ci < line.length){
+      typedEl.textContent += line[ci++];
+      setTimeout(typeLine, 14 + Math.random() * 10);
+    } else {
+      li++; ci = 0;
+      setTimeout(typeLine, 130);
+    }
   }
-}
 
-input.addEventListener('keydown', function(e){
-  if(e.key === 'Enter'){
-    runCommand(input.value);
-    input.value = '';
+  setTimeout(typeLine, 250);
+})();
+
+// =========================================================
+// 4. Faux shell
+// =========================================================
+(function(){
+  var historyEl = document.getElementById('history');
+  var cwdEl = document.getElementById('cwd');
+
+  function append(div){
+    historyEl.appendChild(div);
+    historyEl.scrollTop = historyEl.scrollHeight;
   }
-});
 
-document.addEventListener('click', function(){
-  focusInput();
-});
+  function printLine(text, cls){
+    var div = document.createElement('div');
+    div.className = 'line' + (cls ? ' out ' + cls : '');
+    div.textContent = text;
+    append(div);
+  }
 
-// ---- window chrome: drag, minimize, maximize ----
+  function printCmd(cmd){
+    var div = document.createElement('div');
+    div.className = 'line';
+    div.innerHTML = '<span class="prompt">' + PROMPT_USER + '</span>:<span class="path-seg">' + cwdEl.textContent + '</span>$ ' + cmd.replace(/</g, '&lt;');
+    append(div);
+  }
+
+  function navigate(route){
+    printLine('→ ' + ROUTES[route], 'ok');
+    setTimeout(function(){ window.location.href = ROUTES[route]; }, 350);
+  }
+
+  var COMMANDS = {
+    help: function(){
+      printLine('available commands:', 'ok');
+      printLine('  ls              list available pages');
+      printLine('  cd <page>       navigate to a page (try: cd home, cd about, cd contact)');
+      printLine('  whoami          ...');
+      printLine('  clear           clear this terminal');
+    },
+    ls: function(){
+      var pages = Object.keys(ROUTES).filter(function(k){ return k !== '~' && k !== '/'; });
+      printLine(pages.join('\n'), 'ok');
+    },
+    cd: function(arg){
+      var target = arg || 'home';
+      if(ROUTES.hasOwnProperty(target)) navigate(target);
+      else printLine('bash: cd: ' + target + ': No such file or directory', 'err');
+    },
+    whoami: function(){ printLine('you: a curious visitor who followed a broken link.', 'ok'); },
+    sudo:   function(){ printLine('nice try. permission denied.', 'err'); },
+    exit:   function(){ printLine('there is no escape, only cd home.', 'err'); },
+    clear:  function(){ historyEl.innerHTML = ''; }
+  };
+
+  function runCommand(raw){
+    var cmd = raw.trim();
+    if(!cmd) return;
+    printCmd(cmd);
+
+    var parts = cmd.split(/\s+/);
+    var verb = parts[0].toLowerCase();
+    var arg = (parts[1] || '').toLowerCase();
+
+    if(COMMANDS.hasOwnProperty(verb)) COMMANDS[verb](arg);
+    else if(ROUTES.hasOwnProperty(verb)) navigate(verb); // bare page name works like "cd <page>"
+    else printLine('command not found: ' + verb + ' (try "help")', 'err');
+  }
+
+  cmdInput.addEventListener('keydown', function(e){
+    if(e.key !== 'Enter') return;
+    runCommand(cmdInput.value);
+    cmdInput.value = '';
+  });
+
+  document.addEventListener('click', focusInput);
+})();
+
+// =========================================================
+// 5. Window chrome: drag, close, minimize, maximize
+// =========================================================
 (function(){
   var winEl = document.querySelector('.win');
   var titlebar = document.getElementById('titlebar');
@@ -485,8 +547,7 @@ document.addEventListener('click', function(){
   var dotMax = document.getElementById('dotMax');
   var dockRestore = document.getElementById('dockRestore');
 
-  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
+  // switch from flex-centered to fixed coordinates on first interaction
   function pinPosition(){
     if(winEl.dataset.positioned === '1') return;
     var rect = winEl.getBoundingClientRect();
@@ -498,8 +559,19 @@ document.addEventListener('click', function(){
     winEl.dataset.positioned = '1';
   }
 
+  function restoreFromDock(){
+    winEl.classList.remove('minimized');
+    dockRestore.style.display = 'none';
+  }
+
   // ---- drag ----
   var drag = null;
+
+  function endDrag(){
+    drag = null;
+    winEl.classList.remove('dragging');
+  }
+
   titlebar.addEventListener('pointerdown', function(e){
     if(e.target.closest('.dot')) return;
     if(winEl.classList.contains('maximized') || winEl.classList.contains('minimized')) return;
@@ -511,15 +583,9 @@ document.addEventListener('click', function(){
   });
   titlebar.addEventListener('pointermove', function(e){
     if(!drag) return;
-    var x = clamp(e.clientX - drag.dx, 0, window.innerWidth - winEl.offsetWidth);
-    var y = clamp(e.clientY - drag.dy, 0, window.innerHeight - winEl.offsetHeight);
-    winEl.style.left = x + 'px';
-    winEl.style.top = y + 'px';
+    winEl.style.left = clamp(e.clientX - drag.dx, 0, window.innerWidth - winEl.offsetWidth) + 'px';
+    winEl.style.top = clamp(e.clientY - drag.dy, 0, window.innerHeight - winEl.offsetHeight) + 'px';
   });
-  function endDrag(){
-    drag = null;
-    winEl.classList.remove('dragging');
-  }
   titlebar.addEventListener('pointerup', endDrag);
   titlebar.addEventListener('pointercancel', endDrag);
 
@@ -541,19 +607,14 @@ document.addEventListener('click', function(){
       (dockRect.top + dockRect.height / 2 - winRect.top) + 'px';
     winEl.classList.add('minimized');
   });
-  dockRestore.addEventListener('click', function(){
-    winEl.classList.remove('minimized');
-    dockRestore.style.display = 'none';
-  });
+  dockRestore.addEventListener('click', restoreFromDock);
 
   // ---- green: full screen toggle ----
   var savedRect = null;
   dotMax.addEventListener('click', function(e){
     e.stopPropagation();
-    if(winEl.classList.contains('minimized')){
-      winEl.classList.remove('minimized');
-      dockRestore.style.display = 'none';
-    }
+    if(winEl.classList.contains('minimized')) restoreFromDock();
+
     if(winEl.classList.contains('maximized')){
       winEl.classList.remove('maximized');
       if(savedRect){
@@ -574,6 +635,7 @@ document.addEventListener('click', function(){
     }
   });
 
+  // ---- keep the window on-screen when the viewport shrinks ----
   window.addEventListener('resize', function(){
     if(winEl.dataset.positioned !== '1' || winEl.classList.contains('maximized')) return;
     var rect = winEl.getBoundingClientRect();
@@ -582,34 +644,39 @@ document.addEventListener('click', function(){
   });
 })();
 
-// ---- background matrix rain ----
+// =========================================================
+// 6. Background matrix rain
+// =========================================================
 (function(){
   var canvas = document.getElementById('rain');
   var ctx = canvas.getContext('2d');
-  function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-  var chars = "01";
-  var fontSize = 15;
-  var cols, drops;
+  var CHARS = '01';
+  var FONT_SIZE = 15;
+  var FRAME_MS = 55;
+  var drops = [];
+
   function setup(){
-    cols = Math.floor(canvas.width / fontSize);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var cols = Math.floor(canvas.width / FONT_SIZE);
     drops = new Array(cols).fill(0).map(function(){ return Math.random() * -50; });
   }
-  setup();
-  window.addEventListener('resize', setup);
+
   function draw(){
-    ctx.fillStyle = 'rgba(11,14,12,0.14)';
+    ctx.fillStyle = 'rgba(11,14,12,0.14)'; // --bg with low alpha for trails
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#8fd19e';
-    ctx.font = fontSize + 'px monospace';
+    ctx.fillStyle = '#8fd19e';             // --ok
+    ctx.font = FONT_SIZE + 'px monospace';
     for(var i = 0; i < drops.length; i++){
-      var ch = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
-      drops[i] = (drops[i] * fontSize > canvas.height && Math.random() > 0.975) ? 0 : drops[i] + 1;
+      var ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+      ctx.fillText(ch, i * FONT_SIZE, drops[i] * FONT_SIZE);
+      drops[i] = (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) ? 0 : drops[i] + 1;
     }
   }
-  setInterval(draw, 55);
+
+  setup();
+  window.addEventListener('resize', setup);
+  setInterval(draw, FRAME_MS);
 })();
 </script>
 

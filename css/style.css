@@ -1,3 +1,47 @@
+/* ==========================================================================
+   brunovida.si — stylesheet
+
+   Ordered from the general to the specific: tokens and base styles, the
+   editor shell and its overlays, shared content pieces, then each panel,
+   and finally the responsive overrides, which must stay last to win.
+
+   Contents
+    1. Fonts
+    2. Design tokens
+    3. Base
+    4. Content primitives
+    5. Boot sequence
+    6. Minimized desktop
+    7. App window & title bar
+    8. Shell layout
+    9. Explorer
+   10. Editor tabs
+   11. Context menus
+   12. Sidebar search
+   13. Quick Open & Command Palette
+   14. Bottom panel
+   15. Help modal
+   16. Status bar
+   17. Tool tabs
+   18. Document cards & embeds
+   19. Commit timeline
+   20. Panel: intro.js
+   21. Panel: README.md (about)
+   22. Panel: skills.json & education.md
+   23. Project grids
+   24. Websites & web systems
+   25. Mini games
+   26. Case studies (eDM)
+   27. Panel: contact.eml
+   28. Reduced motion
+   29. Responsive: mobile (≤ 720px)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Fonts
+   Self-hosted variable fonts, plus the Seti glyph font behind the explorer's file icons.
+   ========================================================================== */
+
 @font-face {
   font-family: 'JetBrains Mono';
   src: url('../fonts/JetBrainsMono-Variable.woff2') format('woff2');
@@ -22,6 +66,11 @@
   font-display: block;
 }
 
+/* ==========================================================================
+   2. Design tokens
+   Colours and font stacks. Every other colour in this file should resolve to one of these.
+   ========================================================================== */
+
 :root {
   --bg: #0b0e0c;
   --panel: #121613;
@@ -36,6 +85,11 @@
   --mono: 'JetBrains Mono', monospace;
   --sans: 'Inter', sans-serif;
 }
+
+/* ==========================================================================
+   3. Base
+   Reset and document-level defaults.
+   ========================================================================== */
 
 * {
   box-sizing: border-box;
@@ -54,6 +108,144 @@ html, body {
 a {
   color: inherit;
 }
+
+kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 2px 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+body.mobile-nav-locked {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+/* ==========================================================================
+   4. Content primitives
+   Syntax colouring, section headings, the typing caret, pills and spacing utilities — small pieces used across panels.
+   ========================================================================== */
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.code-line {
+  display: block;
+}
+
+.lineno {
+  color: #3a4136;
+  user-select: none;
+  margin-right: 18px;
+  display: inline-block;
+  width: 14px;
+  text-align: right;
+}
+
+.kw {
+  color: var(--accent);
+}
+
+.str {
+  color: var(--ok);
+}
+
+.com {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.fn {
+  color: #8ec9ff;
+}
+
+.attr {
+  color: #7fb8e0;
+}
+
+.cursor-caret {
+  color: var(--accent);
+  animation: blink 1s steps(1) infinite;
+}
+
+code.block {
+  display: block;
+  font-size: 14.5px;
+  line-height: 1.9;
+}
+
+h2.sect {
+  font-family: var(--sans);
+  color: #eef1ea;
+  font-size: 22px;
+  margin: 0 0 26px;
+}
+
+h2.sect .brk {
+  color: var(--accent);
+}
+
+.sect-caret {
+  margin-left: 2px;
+}
+
+.pill {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-26 {
+  margin-top: 26px;
+}
+
+.mt-30 {
+  margin-top: 30px;
+}
+
+.mt-52 {
+  margin-top: 52px;
+}
+
+.mb-26 {
+  margin-bottom: 26px;
+}
+
+.kw-pill {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--accent);
+  background: rgba(255,180,84,0.08);
+  border: 1px solid var(--accent-dim);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* ==========================================================================
+   5. Boot sequence
+   The typed boot text and the character rain that wipes it away on first load.
+   ========================================================================== */
 
 #boot {
   position: fixed;
@@ -85,12 +277,6 @@ a {
   pointer-events: none;
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
 #rain {
   position: fixed;
   inset: 0;
@@ -103,6 +289,11 @@ a {
 #rain.show {
   opacity: .5;
 }
+
+/* ==========================================================================
+   6. Minimized desktop
+   What shows behind the window when the yellow dot minimizes it: background rain, the note, and the dock.
+   ========================================================================== */
 
 #bgRain {
   position: fixed;
@@ -227,6 +418,11 @@ a {
   cursor: pointer;
 }
 
+/* ==========================================================================
+   7. App window & title bar
+   The #app window chrome and its traffic-light buttons.
+   ========================================================================== */
+
 #app {
   position: relative;
   z-index: 1;
@@ -342,11 +538,85 @@ a {
   color: var(--text);
 }
 
+/* ==========================================================================
+   8. Shell layout
+   The explorer + editor split and the panel container.
+   ========================================================================== */
+
 .shell {
   display: flex;
   flex: 1;
   min-height: 0;
 }
+
+.shell.sidebar-hidden .explorer {
+  flex-basis: 0;
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  opacity: 0;
+  border-right-color: transparent;
+}
+
+.shell.sidebar-hidden .explorer-resize-handle {
+  display: none;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.editor {
+  flex: 1;
+  overflow-y: auto;
+  padding: 34px 40px;
+  min-height: 0;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+  animation: fadein .25s ease;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.empty-state {
+  display: none;
+  padding: 60px 40px;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  text-align: center;
+}
+
+.empty-state.show {
+  display: block;
+}
+
+/* ==========================================================================
+   9. Explorer
+   Sidebar, resize handle, actions menu, EXPLORER/SEARCH view tabs, and the file tree.
+   ========================================================================== */
+
+/* ---- Sidebar & resize handle --------------------------------------------- */
 
 .explorer {
   position: relative;
@@ -363,15 +633,6 @@ a {
 
 .explorer.no-resize-transition {
   transition: opacity .2s ease, padding .25s ease, border-color .25s ease;
-}
-
-.shell.sidebar-hidden .explorer {
-  flex-basis: 0;
-  width: 0;
-  padding-left: 0;
-  padding-right: 0;
-  opacity: 0;
-  border-right-color: transparent;
 }
 
 .explorer-resize-handle {
@@ -413,9 +674,7 @@ a {
   display: block;
 }
 
-.shell.sidebar-hidden .explorer-resize-handle {
-  display: none;
-}
+/* ---- Header: view tabs & actions ----------------------------------------- */
 
 .explorer .label-row {
   display: flex;
@@ -429,6 +688,8 @@ a {
   letter-spacing: .08em;
   margin: 6px 6px 10px;
   white-space: nowrap;
+  display: flex;
+  gap: 14px;
 }
 
 .explorer-actions {
@@ -473,6 +734,39 @@ a {
   color: var(--err);
 }
 
+.explorer-more svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.view-tab,
+.modal-tab {
+  background: none;
+  border: none;
+  padding: 0 0 4px;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.view-tab:hover,
+.modal-tab:hover {
+  color: var(--text);
+}
+
+.view-tab.active,
+.modal-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* ---- Actions menu -------------------------------------------------------- */
+
 .explorer-menu {
   display: none;
   position: absolute;
@@ -516,33 +810,12 @@ a {
   background: var(--line);
 }
 
-.tab-context-menu {
-  display: none;
-  position: fixed;
-  min-width: 180px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
-  z-index: 9998;
-}
-
-.tab-context-menu.show {
-  display: block;
-}
-
-.tab-context-menu .explorer-menu-item[disabled] {
-  color: var(--muted);
-  opacity: .45;
-  cursor: default;
-  pointer-events: none;
-}
-
 .explorer-menu-item[hidden],
 .explorer-menu-divider[hidden] {
   display: none;
 }
+
+/* ---- File tree ----------------------------------------------------------- */
 
 .tree-item {
   padding: 5px 8px;
@@ -618,45 +891,117 @@ a {
   display: none;
 }
 
-.explorer-more svg {
-  width: 14px;
-  height: 14px;
+/* ==========================================================================
+   10. Editor tabs
+   The tab bar above the editor.
+   ========================================================================== */
+
+.tabs {
+  flex: 0 0 auto;
+  display: flex;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px 9px 16px;
+  font-size: 12.5px;
+  color: var(--muted);
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  transition: opacity .15s ease, box-shadow .1s ease;
+}
+
+.tab.active {
+  color: var(--text);
+  background: var(--panel-2);
+  border-top: 2px solid var(--accent);
+  padding-top: 7px;
+}
+
+.tab.dragging {
+  opacity: .4;
+}
+
+.tab.drag-over-before {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.tab.drag-over-after {
+  box-shadow: inset -2px 0 0 var(--accent);
+}
+
+.tab .close-x {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.tab .close-x:hover {
+  background: var(--line);
+  color: var(--err);
+}
+
+.tabs-empty-note {
+  padding: 9px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   11. Context menus
+   Right-click menus for tabs and tree items (share the explorer menu's item styles).
+   ========================================================================== */
+
+.tab-context-menu {
+  display: none;
+  position: fixed;
+  min-width: 180px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+  z-index: 9998;
+}
+
+.tab-context-menu.show {
   display: block;
 }
 
-/* ---- Explorer / Search view tabs ---- */
-.explorer .label {
-  display: flex;
-  gap: 14px;
-  margin: 6px 6px 10px;
-}
-
-.view-tab,
-.modal-tab {
-  background: none;
-  border: none;
-  padding: 0 0 4px;
+.tab-context-menu .explorer-menu-item[disabled] {
   color: var(--muted);
-  font-family: inherit;
-  font-size: 11px;
-  letter-spacing: .08em;
-  white-space: nowrap;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
+  opacity: .45;
+  cursor: default;
+  pointer-events: none;
 }
 
-.view-tab:hover,
-.modal-tab:hover {
-  color: var(--text);
-}
+/* ==========================================================================
+   12. Sidebar search
+   Workspace search panel (Ctrl/Cmd+Shift+F).
+   ========================================================================== */
 
-.view-tab.active,
-.modal-tab.active {
-  color: var(--text);
-  border-bottom-color: var(--accent);
-}
-
-/* ---- Sidebar workspace search ---- */
 .search-panel {
   display: flex;
   flex-direction: column;
@@ -736,6 +1081,12 @@ a {
   white-space: nowrap;
 }
 
+.search-result-hint {
+  color: var(--muted);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
 .search-result-count {
   color: var(--muted);
   font-size: 11px;
@@ -768,7 +1119,6 @@ a {
   border-radius: 2px;
 }
 
-.search-empty,
 .quick-open-empty {
   color: var(--muted);
   font-family: var(--sans);
@@ -785,7 +1135,11 @@ a {
   animation: searchFlash 1.5s ease;
 }
 
-/* ---- Quick Open (Ctrl/Cmd+P) ---- */
+/* ==========================================================================
+   13. Quick Open & Command Palette
+   Ctrl/Cmd+P and Ctrl/Cmd+Shift+P. The palette reuses every .quick-open* style.
+   ========================================================================== */
+
 .quick-open-backdrop {
   display: none;
   position: fixed;
@@ -897,7 +1251,6 @@ a {
   text-decoration: underline;
 }
 
-/* ---- Command Palette (Ctrl/Cmd+Shift+P) — reuses .quick-open* styles above ---- */
 .cmd-palette-caret {
   width: 16px;
   flex-shrink: 0;
@@ -907,7 +1260,13 @@ a {
   font-size: 15px;
 }
 
-/* ---- Bottom Panel: Terminal (Ctrl+`) / Problems (Ctrl/Cmd+Shift+M) ---- */
+/* ==========================================================================
+   14. Bottom panel
+   Terminal (Ctrl+`) and Problems (Ctrl/Cmd+Shift+M), with their resize handle.
+   ========================================================================== */
+
+/* ---- Resize handle ------------------------------------------------------- */
+
 .bottom-panel-resize-handle {
   flex: 0 0 6px;
   margin-top: -6px;
@@ -967,6 +1326,8 @@ a {
 .bottom-panel-resize-hit[hidden] {
   display: none;
 }
+
+/* ---- Panel & tabs -------------------------------------------------------- */
 
 .bottom-panel {
   flex: 0 0 var(--bottom-panel-height, 220px);
@@ -1044,6 +1405,8 @@ a {
   display: none;
 }
 
+/* ---- Terminal ------------------------------------------------------------ */
+
 .terminal-log {
   flex: 1;
   min-height: 0;
@@ -1096,6 +1459,8 @@ a {
   font-size: 12.5px;
 }
 
+/* ---- Problems ------------------------------------------------------------ */
+
 .problems-empty {
   padding: 20px 16px;
   color: var(--muted);
@@ -1118,7 +1483,13 @@ a {
   color: var(--accent);
 }
 
-/* ---- Keyboard Shortcuts help modal (footer "Shortcuts" link / ?) ---- */
+/* ==========================================================================
+   15. Help modal
+   "How to Use This Site" — Guide and Shortcuts tabs.
+   ========================================================================== */
+
+/* ---- Modal --------------------------------------------------------------- */
+
 .shortcuts-backdrop {
   display: none;
   position: fixed;
@@ -1195,6 +1566,8 @@ a {
   padding-bottom: 10px;
 }
 
+/* ---- Guide tab ----------------------------------------------------------- */
+
 .shortcuts-guide {
   flex: 1;
   min-height: 0;
@@ -1248,6 +1621,8 @@ a {
   background: #28c840;
 }
 
+/* ---- Shortcuts tab ------------------------------------------------------- */
+
 .shortcuts-body {
   flex: 1;
   min-height: 0;
@@ -1284,21 +1659,6 @@ a {
   flex-shrink: 0;
 }
 
-kbd {
-  display: inline-block;
-  min-width: 18px;
-  padding: 2px 6px;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--text);
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-bottom-width: 2px;
-  border-radius: 4px;
-  text-align: center;
-}
-
 .keycap-plus {
   color: var(--muted);
   font-size: 10px;
@@ -1315,7 +1675,526 @@ kbd {
   line-height: 1.5;
 }
 
-/* ---- intro.js comment toggle (Ctrl/Cmd+/) ---- */
+/* ==========================================================================
+   16. Status bar
+   Bottom strip, including the localhost-only DEV toggle.
+   ========================================================================== */
+
+.statusbar {
+  height: 26px;
+  background: var(--accent-dim);
+  color: #1a1408;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 14px;
+  position: sticky;
+  bottom: 0;
+}
+
+.statusbar-credit {
+  margin-left: auto;
+}
+
+.statusbar b {
+  font-weight: 700;
+}
+
+.statusbar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.statusbar a:hover {
+  text-decoration: underline;
+}
+
+.dev-toggle {
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(0,0,0,0.25);
+  transition: background .15s;
+}
+
+.dev-toggle:hover {
+  background: rgba(0,0,0,0.3);
+}
+
+.statusbar-help {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color .15s;
+}
+
+.statusbar-help:hover {
+  text-decoration-color: currentColor;
+}
+
+.dev-toggle.on {
+  background: #1a1408;
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   17. Tool tabs
+   Mini-tools and games opened as full editor tabs in a fixed, body-level iframe.
+   ========================================================================== */
+
+.tool-tab-frame {
+  display: none;
+  position: fixed;
+  z-index: 40;
+  background: var(--bg);
+  overflow: hidden;
+  transition: opacity .8s ease, transform .35s ease;
+}
+
+.tool-tab-frame.active {
+  display: block;
+}
+
+/* .tool-tab-frame is appended straight to <body>, outside #app, so minimizing
+   #app (the yellow dot) doesn't animate it on its own — mirror #app/#app.minimized's
+   own shrink/grow transform+opacity here so the iframe moves in lockstep with the
+   rest of the app instead of just popping away. The transform-origin is computed in
+   JS (see positionToolTabFrame) to aim at the same on-screen point as #app's, since
+   this frame's own box only covers the editor area, not the full viewport. */
+#app.minimized ~ .tool-tab-frame {
+  transform: scale(.02);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .4s cubic-bezier(.6,0,.35,1), opacity .3s ease .1s;
+}
+
+.tool-tab-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #e9e9e9;
+}
+
+.tool-tab-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--bg);
+  transition: opacity 1.2s ease;
+}
+
+.tool-tab-mask.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tool-tab-mask-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ok);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+.tool-tab-mask-dots {
+  display: inline-block;
+  width: 1.5em;
+}
+
+.tool-tab-mask-label.show {
+  opacity: 1;
+}
+
+.tool-compile-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 8px 14px;
+  background: var(--panel-2);
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ok);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(100%);
+  transition: transform .3s ease;
+  pointer-events: none;
+}
+
+.tool-compile-bar.show {
+  transform: translateY(0);
+}
+
+body.tool-tab-lock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+/* ==========================================================================
+   18. Document cards & embeds
+   Collapsible cards with an inline iframe preview — résumés, tools, prototypes.
+   ========================================================================== */
+
+.doc-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--panel);
+}
+
+.doc-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.doc-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.doc-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.icon-pdf {
+  color: #E5383B;
+}
+
+.doc-name {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  min-width: 160px;
+}
+
+.doc-name-clickable {
+  cursor: pointer;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.doc-btn {
+  font-family: var(--sans);
+  font-size: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.doc-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.doc-btn-lg {
+  font-size: 15px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.doc-embed {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease;
+  margin-top: 0;
+}
+
+.doc-embed.open {
+  max-height: 640px;
+  margin-top: 14px;
+}
+
+.doc-embed iframe {
+  width: 100%;
+  height: 560px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #e9e9e9;
+}
+
+/* ==========================================================================
+   19. Commit timeline
+   The git-log style list used by experience, education, intro and the project timelines.
+   ========================================================================== */
+
+/* ---- Commit -------------------------------------------------------------- */
+
+.commit {
+  display: flex;
+  gap: 14px;
+  padding: 14px 6px 14px 20px;
+  border-left: 2px solid var(--line);
+  margin-left: 6px;
+  position: relative;
+}
+
+.commit-body {
+  flex: 1;
+}
+
+.commit-logo {
+  align-self: flex-start;
+  margin-top: 21px;
+  width: 80px;
+  height: 40px;
+  object-fit: contain;
+  object-position: top right;
+  opacity: .55;
+  filter: grayscale(1);
+  transition: .2s;
+  cursor: pointer;
+}
+
+.commit:hover .commit-logo {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.commit::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--accent-dim);
+}
+
+.commit.clickable {
+  cursor: pointer;
+}
+
+.commit:hover::before {
+  background: var(--accent);
+}
+
+.commit.clickable:hover .msg {
+  color: var(--accent);
+}
+
+.commit .year {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--accent-dim);
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.commit .msg {
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 600;
+  transition: .15s;
+}
+
+.commit .msg.toggle-title {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.commit .msg.toggle-title:hover {
+  color: var(--accent);
+}
+
+.commit .msg .chev {
+  font-size: 11px;
+  color: var(--accent-dim);
+  transition: transform .2s;
+}
+
+.commit.open .msg .chev {
+  transform: rotate(180deg);
+}
+
+.commit .meta {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 3px 0 8px;
+}
+
+.commit .clients-line {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.commit .details {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.85;
+}
+
+.commit .details ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.commit .more {
+  display: none;
+}
+
+.commit.open .more {
+  display: block;
+}
+
+.commit.featured {
+  border-left-color: var(--accent-dim);
+}
+
+.commit.featured::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  width: 12px;
+  height: 12px;
+  left: -7px;
+  box-shadow: 0 0 8px rgba(255,180,84,.5);
+}
+
+.commit.featured .msg {
+  color: var(--accent);
+}
+
+/* ---- Section intro & stack pills ----------------------------------------- */
+
+.sect-intro {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: -10px 0 34px;
+}
+
+.sect-intro.kinetic-intro {
+  margin: 0;
+}
+
+.stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.stack-pill {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  border-radius: 12px;
+  padding: 3px 10px;
+  background: rgba(255,180,84,0.06);
+}
+
+/* ---- Related project chips ----------------------------------------------- */
+
+.exp-projects {
+  margin-top: 16px;
+}
+
+.exp-projects-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.exp-project-chip {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 11px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: .15s;
+}
+
+.exp-project-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+@keyframes project-flash {
+  0%, 100% { box-shadow: none; }
+  25%, 75% { box-shadow: 0 0 0 2px var(--accent); }
+}
+
+.project-flash {
+  animation: project-flash 1.6s ease;
+}
+
+/* ---- Project timelines --------------------------------------------------- */
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.timeline-commit .doc-card {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   20. Panel: intro.js
+   Hero heading, social links and the code-comment toggle.
+   ========================================================================== */
+
 .code-line.line-commented > *:not(.lineno) {
   opacity: .5;
   font-style: italic;
@@ -1324,162 +2203,6 @@ kbd {
 .code-line.line-commented .lineno::after {
   content: '// ';
   color: var(--muted);
-}
-
-.main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.tabs {
-  flex: 0 0 auto;
-  display: flex;
-  background: var(--panel);
-  border-bottom: 1px solid var(--line);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.tab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 10px 9px 16px;
-  font-size: 12.5px;
-  color: var(--muted);
-  border-right: 1px solid var(--line);
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  position: relative;
-  transition: opacity .15s ease, box-shadow .1s ease;
-}
-
-.tab.active {
-  color: var(--text);
-  background: var(--panel-2);
-  border-top: 2px solid var(--accent);
-  padding-top: 7px;
-}
-
-.tab.dragging {
-  opacity: .4;
-}
-
-.tab.drag-over-before {
-  box-shadow: inset 2px 0 0 var(--accent);
-}
-
-.tab.drag-over-after {
-  box-shadow: inset -2px 0 0 var(--accent);
-}
-
-.tab .close-x {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 3px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1;
-}
-
-.tab .close-x:hover {
-  background: var(--line);
-  color: var(--err);
-}
-
-.tabs-empty-note {
-  padding: 9px 16px;
-  font-size: 12px;
-  color: var(--muted);
-  font-style: italic;
-}
-
-.editor {
-  flex: 1;
-  overflow-y: auto;
-  padding: 34px 40px;
-  min-height: 0;
-}
-
-.panel {
-  display: none;
-}
-
-.panel.active {
-  display: block;
-  animation: fadein .25s ease;
-}
-
-@keyframes fadein {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.empty-state {
-  display: none;
-  padding: 60px 40px;
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: 14px;
-  text-align: center;
-}
-
-.empty-state.show {
-  display: block;
-}
-
-.code-line {
-  display: block;
-}
-
-.lineno {
-  color: #3a4136;
-  user-select: none;
-  margin-right: 18px;
-  display: inline-block;
-  width: 14px;
-  text-align: right;
-}
-
-.kw {
-  color: var(--accent);
-}
-
-.str {
-  color: var(--ok);
-}
-
-.com {
-  color: var(--muted);
-  font-style: italic;
-}
-
-.fn {
-  color: #8ec9ff;
-}
-
-.attr {
-  color: #7fb8e0;
 }
 
 h1.hero {
@@ -1509,17 +2232,6 @@ h1.hero {
   30% { transform: rotate(14deg); }
   40% { transform: rotate(-4deg); }
   50% { transform: rotate(10deg); }
-}
-
-.cursor-caret {
-  color: var(--accent);
-  animation: blink 1s steps(1) infinite;
-}
-
-code.block {
-  display: block;
-  font-size: 14.5px;
-  line-height: 1.9;
 }
 
 .socials {
@@ -1587,433 +2299,10 @@ code.block {
   font-size: 18px;
 }
 
-h2.sect {
-  font-family: var(--sans);
-  color: #eef1ea;
-  font-size: 22px;
-  margin: 0 0 26px;
-}
-
-h2.sect .brk {
-  color: var(--accent);
-}
-
-.sect-caret {
-  margin-left: 2px;
-}
-
-.commit {
-  display: flex;
-  gap: 14px;
-  padding: 14px 6px 14px 20px;
-  border-left: 2px solid var(--line);
-  margin-left: 6px;
-  position: relative;
-}
-
-.commit-body {
-  flex: 1;
-}
-
-.commit-logo {
-  align-self: flex-start;
-  margin-top: 21px;
-  width: 80px;
-  height: 40px;
-  object-fit: contain;
-  object-position: top right;
-  opacity: .55;
-  filter: grayscale(1);
-  transition: .2s;
-  cursor: pointer;
-}
-
-.commit:hover .commit-logo {
-  opacity: 1;
-  filter: grayscale(0);
-}
-
-.commit::before {
-  content: '';
-  position: absolute;
-  left: -8px;
-  top: 18px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--panel);
-  border: 2px solid var(--accent-dim);
-}
-
-.commit.clickable {
-  cursor: pointer;
-}
-
-.commit:hover::before {
-  background: var(--accent);
-}
-
-.commit.clickable:hover .msg {
-  color: var(--accent);
-}
-
-.commit .hash {
-  color: var(--muted);
-  font-size: 12px;
-  min-width: 150px;
-}
-
-.commit .year {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--accent-dim);
-  letter-spacing: .04em;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-}
-
-.commit .msg {
-  font-family: var(--sans);
-  font-size: 15px;
-  color: var(--text);
-  font-weight: 600;
-  transition: .15s;
-}
-
-.commit .msg.toggle-title {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.commit .msg.toggle-title:hover {
-  color: var(--accent);
-}
-
-.commit .msg .chev {
-  font-size: 11px;
-  color: var(--accent-dim);
-  transition: transform .2s;
-}
-
-.commit.open .msg .chev {
-  transform: rotate(180deg);
-}
-
-.commit .meta {
-  font-family: var(--sans);
-  font-size: 12.5px;
-  color: var(--muted);
-  margin: 3px 0 8px;
-}
-
-.commit .clients-line {
-  font-family: var(--sans);
-  font-size: 11.5px;
-  color: var(--muted);
-  font-style: italic;
-  margin-bottom: 10px;
-}
-
-.sect-intro {
-  font-family: var(--sans);
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.8;
-  max-width: 600px;
-  margin: -10px 0 34px;
-}
-
-.sect-intro.kinetic-intro {
-  margin: 0;
-}
-
-.stack-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.stack-pill {
-  font-family: var(--sans);
-  font-size: 11px;
-  color: var(--accent);
-  border: 1px solid var(--accent-dim);
-  border-radius: 12px;
-  padding: 3px 10px;
-  background: rgba(255,180,84,0.06);
-}
-
-.commit .stack {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.commit .details {
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.85;
-}
-
-.commit .details ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.commit .more {
-  display: none;
-}
-
-.commit.open .more {
-  display: block;
-}
-
-.commit.featured {
-  border-left-color: var(--accent-dim);
-}
-
-.commit.featured::before {
-  background: var(--accent);
-  border-color: var(--accent);
-  width: 12px;
-  height: 12px;
-  left: -7px;
-  box-shadow: 0 0 8px rgba(255,180,84,.5);
-}
-
-.commit.featured .msg {
-  color: var(--accent);
-}
-
-.exp-projects {
-  margin-top: 16px;
-}
-
-.exp-projects-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.exp-project-chip {
-  font-family: var(--sans);
-  font-size: 12px;
-  color: var(--text);
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 6px 11px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: .15s;
-}
-
-.exp-project-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-1px);
-}
-
-@keyframes project-flash {
-  0%, 100% { box-shadow: none; }
-  25%, 75% { box-shadow: 0 0 0 2px var(--accent); }
-}
-
-.project-flash {
-  animation: project-flash 1.6s ease;
-}
-
-.edu-badge {
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: #1a1408;
-  background: var(--accent);
-  border-radius: 10px;
-  padding: 2px 8px;
-  vertical-align: middle;
-}
-
-.proj-preview-label {
-  font-family: var(--sans);
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  margin: 30px 0 14px;
-}
-
-.skill-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 30px;
-}
-
-.pill {
-  font-family: var(--sans);
-  font-size: 12.5px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: 20px;
-}
-
-.client-logos {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 25px;
-  margin-top: 20px;
-}
-
-.client-logos img {
-  height: 34px;
-  width: auto;
-  opacity: .8;
-  filter: grayscale(1);
-  transition: .15s;
-  cursor: pointer;
-}
-
-.client-logos a:hover img {
-  opacity: 1;
-  filter: grayscale(0);
-}
-
-.skill-label {
-  font-family: var(--sans);
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.cv-skills {
-  margin-bottom: 30px;
-}
-
-.cv-skill-line {
-  font-family: var(--sans);
-  font-size: 13.5px;
-  line-height: 2;
-  color: var(--text);
-}
-
-.cv-skill-key {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.mt-16 {
-  margin-top: 16px;
-}
-
-.mt-26 {
-  margin-top: 26px;
-}
-
-.mt-30 {
-  margin-top: 30px;
-}
-
-.mt-52 {
-  margin-top: 52px;
-}
-
-.mb-26 {
-  margin-bottom: 26px;
-}
-
-.skill-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 30px;
-}
-
-.skill-card {
-  --brand: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 9px 14px 9px 12px;
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--text);
-  user-select: none;
-  position: relative;
-  transition: transform .18s cubic-bezier(.34,1.56,.64,1), border-color .18s ease, background .18s ease, box-shadow .18s ease;
-}
-
-.skill-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--brand);
-  background: var(--panel-2);
-  box-shadow: 0 6px 14px -6px var(--brand);
-}
-
-.skill-icon {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  fill: var(--muted);
-  transition: fill .18s ease;
-}
-
-.skill-card:hover .skill-icon {
-  fill: var(--brand);
-}
-
-.skill-icon-letter {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  border-radius: 4px;
-  background: var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--muted);
-  transition: background .18s ease, color .18s ease;
-}
-
-.skill-card:hover .skill-icon-letter {
-  background: var(--brand);
-  color: #0b0e0c;
-}
-
-.skill-card[data-name="PHP"] { --brand: #777BB4; }
-.skill-card[data-name="Node.js"] { --brand: #339933; }
-.skill-card[data-name="React"] { --brand: #61DAFB; }
-.skill-card[data-name="MySQL"] { --brand: #4479A1; }
-.skill-card[data-name="HTML5"] { --brand: #E34F26; }
-.skill-card[data-name="CSS3"] { --brand: #1572B6; }
-.skill-card[data-name="JavaScript"] { --brand: #F7DF1E; }
-.skill-card[data-name="jQuery"] { --brand: #0769AD; }
-.skill-card[data-name="Bootstrap"] { --brand: #7952B3; }
-.skill-card[data-name="WordPress"] { --brand: #21759B; }
-.skill-card[data-name="CodeIgniter"] { --brand: #EF4223; }
-.skill-card[data-name="Drupal"] { --brand: #0678BE; }
-.skill-card[data-name="Shopify"] { --brand: #95BF47; }
-.skill-card[data-name="Magento"] { --brand: #EE672F; }
+/* ==========================================================================
+   21. Panel: README.md (about)
+   Bio, avatar with speech bubble, and the quick-nav buttons.
+   ========================================================================== */
 
 .bio-text {
   font-family: var(--sans);
@@ -2050,10 +2339,6 @@ h2.sect .brk {
 .bio-after.show {
   opacity: 1;
   transform: translateY(0);
-}
-
-.bio-after .bio-text {
-  margin-top: 16px;
 }
 
 .bio-after .bio-text a {
@@ -2222,222 +2507,183 @@ h2.sect .brk {
   color: var(--accent);
 }
 
-/* ---- contact page ---- */
+/* ==========================================================================
+   22. Panel: skills.json & education.md
+   Skill lines, skill cards, client logos and education badges.
+   ========================================================================== */
 
-.contact-block {
-  margin-bottom: 36px;
+.edu-badge {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #1a1408;
+  background: var(--accent);
+  border-radius: 10px;
+  padding: 2px 8px;
+  vertical-align: middle;
 }
 
-.contact-block .obj-key {
-  color: var(--attr);
-  font-size: 13px;
-  text-transform: none;
-  letter-spacing: 0;
-  margin-bottom: 14px;
-  font-family: var(--mono);
-}
-
-.contact-block .obj-key .brace {
+.proj-preview-label {
+  font-family: var(--sans);
   color: var(--muted);
-}
-
-.doc-card {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  background: var(--panel);
-}
-
-.doc-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.doc-icon {
-  display: inline-flex;
-  flex-shrink: 0;
-}
-
-.doc-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.icon-pdf {
-  color: #E5383B;
-}
-
-.doc-name {
-  flex: 1;
-  font-family: var(--sans);
-  font-size: 14px;
-  color: var(--text);
-  min-width: 160px;
-}
-
-.doc-name-clickable {
-  cursor: pointer;
-}
-
-.doc-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.doc-btn {
-  font-family: var(--sans);
   font-size: 12px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin: 30px 0 14px;
+}
+
+.skill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+
+.client-logos {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: 25px;
+  margin-top: 20px;
 }
 
-.doc-btn:hover {
-  border-color: var(--accent);
+.client-logos img {
+  height: 34px;
+  width: auto;
+  opacity: .8;
+  filter: grayscale(1);
+  transition: .15s;
+  cursor: pointer;
+}
+
+.client-logos a:hover img {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.skill-label {
+  font-family: var(--sans);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.cv-skills {
+  margin-bottom: 30px;
+}
+
+.cv-skill-line {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 2;
+  color: var(--text);
+}
+
+.cv-skill-key {
   color: var(--accent);
-}
-
-.doc-btn-lg {
-  font-size: 15px;
-  padding: 12px 22px;
-  border-radius: 8px;
   font-weight: 600;
 }
 
-.btn-icon {
-  width: 13px;
-  height: 13px;
-  flex-shrink: 0;
+.skill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
 }
 
-.doc-embed {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .35s ease;
-  margin-top: 0;
-}
-
-.doc-embed.open {
-  max-height: 640px;
-  margin-top: 14px;
-}
-
-.doc-embed iframe {
-  width: 100%;
-  height: 560px;
+.skill-card {
+  --brand: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #e9e9e9;
+  border-radius: 10px;
+  padding: 9px 14px 9px 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  user-select: none;
+  position: relative;
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1), border-color .18s ease, background .18s ease, box-shadow .18s ease;
 }
 
-.tool-tab-frame {
-  display: none;
-  position: fixed;
-  z-index: 40;
-  background: var(--bg);
-  overflow: hidden;
-  transition: opacity .8s ease, transform .35s ease;
-}
-
-.tool-tab-frame.active {
-  display: block;
-}
-
-/* .tool-tab-frame is appended straight to <body>, outside #app, so minimizing
-   #app (the yellow dot) doesn't animate it on its own — mirror #app/#app.minimized's
-   own shrink/grow transform+opacity here so the iframe moves in lockstep with the
-   rest of the app instead of just popping away. The transform-origin is computed in
-   JS (see positionToolTabFrame) to aim at the same on-screen point as #app's, since
-   this frame's own box only covers the editor area, not the full viewport. */
-#app.minimized ~ .tool-tab-frame {
-  transform: scale(.02);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform .4s cubic-bezier(.6,0,.35,1), opacity .3s ease .1s;
-}
-
-.tool-tab-frame iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #e9e9e9;
-}
-
-.tool-tab-mask {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: var(--bg);
-  transition: opacity 1.2s ease;
-}
-
-.tool-tab-mask.hide {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.tool-tab-mask-label {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--ok);
-  opacity: 0;
-  transition: opacity .4s ease;
-}
-
-.tool-tab-mask-dots {
-  display: inline-block;
-  width: 1.5em;
-}
-
-.tool-tab-mask-label.show {
-  opacity: 1;
-}
-
-.tool-compile-bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  padding: 8px 14px;
+.skill-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--brand);
   background: var(--panel-2);
-  border-top: 1px solid var(--line);
+  box-shadow: 0 6px 14px -6px var(--brand);
+}
+
+.skill-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: var(--muted);
+  transition: fill .18s ease;
+}
+
+.skill-card:hover .skill-icon {
+  fill: var(--brand);
+}
+
+.skill-icon-letter {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--ok);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transform: translateY(100%);
-  transition: transform .3s ease;
-  pointer-events: none;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: background .18s ease, color .18s ease;
 }
 
-.tool-compile-bar.show {
-  transform: translateY(0);
+.skill-card:hover .skill-icon-letter {
+  background: var(--brand);
+  color: #0b0e0c;
 }
 
-body.tool-tab-lock {
-  position: fixed;
-  left: 0;
-  right: 0;
-  width: 100%;
-}
+.skill-card[data-name="PHP"] { --brand: #777BB4; }
+
+.skill-card[data-name="Node.js"] { --brand: #339933; }
+
+.skill-card[data-name="React"] { --brand: #61DAFB; }
+
+.skill-card[data-name="MySQL"] { --brand: #4479A1; }
+
+.skill-card[data-name="HTML5"] { --brand: #E34F26; }
+
+.skill-card[data-name="CSS3"] { --brand: #1572B6; }
+
+.skill-card[data-name="JavaScript"] { --brand: #F7DF1E; }
+
+.skill-card[data-name="jQuery"] { --brand: #0769AD; }
+
+.skill-card[data-name="Bootstrap"] { --brand: #7952B3; }
+
+.skill-card[data-name="WordPress"] { --brand: #21759B; }
+
+.skill-card[data-name="CodeIgniter"] { --brand: #EF4223; }
+
+.skill-card[data-name="Drupal"] { --brand: #0678BE; }
+
+.skill-card[data-name="Shopify"] { --brand: #95BF47; }
+
+.skill-card[data-name="Magento"] { --brand: #EE672F; }
+
+/* ==========================================================================
+   23. Project grids
+   Grid, card and toolbar shared by every project listing.
+   ========================================================================== */
 
 .tools-grid {
   display: flex;
@@ -2465,12 +2711,6 @@ body.tool-tab-lock {
   border-radius: 10px;
   padding: 2px 8px;
   white-space: nowrap;
-}
-
-.website-year {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
 }
 
 .tool-desc {
@@ -2519,27 +2759,6 @@ body.tool-tab-lock {
   line-height: 1.8;
 }
 
-.kw-pill {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--accent);
-  background: rgba(255,180,84,0.08);
-  border: 1px solid var(--accent-dim);
-  border-radius: 4px;
-  padding: 1px 6px;
-}
-
-.tools-intro-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.pill.sm {
-  font-size: 11px;
-  padding: 3px 9px;
-}
-
 .tools-toolbar {
   display: flex;
   align-items: center;
@@ -2547,10 +2766,6 @@ body.tool-tab-lock {
   justify-content: space-between;
   gap: 10px;
   margin: 0 0 18px;
-}
-
-.tools-toolbar--end {
-  justify-content: flex-end;
 }
 
 .tools-toolbar--kinetic {
@@ -2574,7 +2789,18 @@ body.tool-tab-lock {
   width: 100%;
 }
 
-/* ---- websites: interactive browser-mockup cards ---- */
+/* ==========================================================================
+   24. Websites & web systems
+   Browser-mockup cards, their filters, and the full-width detail view.
+   ========================================================================== */
+
+/* ---- Year badge & filters ------------------------------------------------ */
+
+.website-year {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
 
 .website-filters {
   display: flex;
@@ -2644,6 +2870,8 @@ body.tool-tab-lock {
   color: var(--text);
 }
 
+/* ---- Card & chrome ------------------------------------------------------- */
+
 .website-card {
   flex: 0 1 calc(50% - 8px);
   min-width: 300px;
@@ -2689,16 +2917,6 @@ body.tool-tab-lock {
 .website-card.minimized .game-frame-wrap,
 .website-card.minimized .website-body {
   display: none;
-}
-
-/* website/web-system detail page: yellow dot hides the description column so the
-   screenshot takes the full width instead of sharing it 50/50 */
-.website-detail-card.focus-media .website-detail-info-col {
-  display: none;
-}
-
-.website-detail-card.focus-media .website-detail-media {
-  flex: 1 1 100%;
 }
 
 .website-dot.r {
@@ -2752,6 +2970,8 @@ body.tool-tab-lock {
   color: var(--muted);
 }
 
+/* ---- Thumbnail ----------------------------------------------------------- */
+
 .website-thumb {
   position: relative;
   width: 100%;
@@ -2769,32 +2989,6 @@ body.tool-tab-lock {
 .website-thumb:focus-visible {
   outline: 2px solid var(--accent-dim);
   outline-offset: -2px;
-}
-
-.website-detail-thumb {
-  height: auto;
-  min-height: 240px;
-  max-height: 620px;
-  overflow-y: auto;
-  cursor: default;
-}
-
-.website-detail-thumb img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* web-systems: fill the media column's full height and crop overflow off the
-   right edge, instead of the websites tab's full-width/scroll-to-see-more behavior */
-#panel-web-systems .website-detail-thumb {
-  overflow: hidden;
-}
-
-#panel-web-systems .website-detail-thumb img {
-  width: auto;
-  max-width: none;
-  height: 100%;
 }
 
 /* thumb-contain: for entries with no real screenshot (e.g. a logo standing in for
@@ -2847,6 +3041,14 @@ body.tool-tab-lock {
   font-size: 42px;
 }
 
+#panel-websites .website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb img,
+#panel-websites .website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb-icon {
+  filter: grayscale(1);
+  opacity: .5;
+}
+
+/* ---- Card body ----------------------------------------------------------- */
+
 .website-offline-overlay {
   position: absolute;
   inset: 0;
@@ -2857,12 +3059,6 @@ body.tool-tab-lock {
   color: var(--muted);
   font-family: var(--sans);
   font-size: 12.5px;
-}
-
-#panel-websites .website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb img,
-#panel-websites .website-card[data-status="offline"]:not([data-archived="true"]) .website-thumb-icon {
-  filter: grayscale(1);
-  opacity: .5;
 }
 
 .website-body {
@@ -2924,53 +3120,43 @@ body.tool-tab-lock {
   margin-top: 10px;
 }
 
-/* ---- mini-games: website-card chrome, but the "thumb" is a live playable iframe ---- */
+/* ---- Detail view --------------------------------------------------------- */
 
-.game-card {
-  flex-basis: 100%;
-  max-width: 680px;
+/* website/web-system detail page: yellow dot hides the description column so the
+   screenshot takes the full width instead of sharing it 50/50 */
+.website-detail-card.focus-media .website-detail-info-col {
+  display: none;
 }
 
-.game-fullscreen-btn {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--muted);
-  cursor: pointer;
-  transition: color .15s ease, border-color .15s ease;
+.website-detail-card.focus-media .website-detail-media {
+  flex: 1 1 100%;
 }
 
-.game-fullscreen-btn:hover {
-  color: var(--text);
-  border-color: var(--accent-dim);
+.website-detail-thumb {
+  height: auto;
+  min-height: 240px;
+  max-height: 620px;
+  overflow-y: auto;
+  cursor: default;
 }
 
-.game-frame-wrap {
+.website-detail-thumb img {
   width: 100%;
-  height: 460px;
-  background: #000;
-  transition: height .2s ease;
-}
-
-.game-frame-wrap:fullscreen {
-  height: 100vh;
-}
-
-.game-frame-wrap iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
+  height: auto;
   display: block;
 }
 
-/* ---- website detail page (opened from a card's screenshot) ---- */
+/* web-systems: fill the media column's full height and crop overflow off the
+   right edge, instead of the websites tab's full-width/scroll-to-see-more behavior */
+#panel-web-systems .website-detail-thumb {
+  overflow: hidden;
+}
+
+#panel-web-systems .website-detail-thumb img {
+  width: auto;
+  max-width: none;
+  height: 100%;
+}
 
 @keyframes websitePaneIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -2991,13 +3177,6 @@ body.tool-tab-lock {
 
 .website-list-view.pane-enter {
   animation: websitePaneIn .3s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .website-detail-inner,
-  .website-list-view.pane-enter {
-    animation: none;
-  }
 }
 
 .website-detail-back {
@@ -3074,12 +3253,6 @@ body.tool-tab-lock {
   padding-top: 16px;
 }
 
-@media (max-width: 720px) {
-  .website-detail-split {
-    flex-direction: column;
-  }
-}
-
 .website-detail-desc {
   font-family: var(--sans);
   font-size: 13px;
@@ -3101,23 +3274,61 @@ body.tool-tab-lock {
   color: var(--muted);
 }
 
-/* ---- eDM work: case-study cards ---- */
+/* ==========================================================================
+   25. Mini games
+   Website-card chrome, but the "thumb" is a live playable iframe.
+   ========================================================================== */
 
-.case-list {
+.game-card {
+  flex-basis: 100%;
+  max-width: 680px;
+}
+
+.game-fullscreen-btn {
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  gap: 22px;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease;
 }
 
-.timeline-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0px;
+.game-fullscreen-btn:hover {
+  color: var(--text);
+  border-color: var(--accent-dim);
 }
 
-.timeline-commit .doc-card {
-  margin-bottom: 0;
+.game-frame-wrap {
+  width: 100%;
+  height: 460px;
+  background: #000;
+  transition: height .2s ease;
 }
+
+.game-frame-wrap:fullscreen {
+  height: 100vh;
+}
+
+.game-frame-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* ==========================================================================
+   26. Case studies (eDM)
+   Case-study cards with their image carousel.
+   ========================================================================== */
+
+/* ---- Card ---------------------------------------------------------------- */
 
 .case-card {
   border: 1px solid var(--line);
@@ -3142,6 +3353,8 @@ body.tool-tab-lock {
 .case-card.media-hidden .case-media {
   display: none;
 }
+
+/* ---- Media & carousel ---------------------------------------------------- */
 
 .case-media {
   width: 100%;
@@ -3261,6 +3474,8 @@ body.tool-tab-lock {
   transform: scale(1.2);
 }
 
+/* ---- Body ---------------------------------------------------------------- */
+
 .case-body {
   padding: 18px 20px;
 }
@@ -3327,6 +3542,30 @@ body.tool-tab-lock {
   margin-bottom: 14px;
 }
 
+/* ==========================================================================
+   27. Panel: contact.eml
+   Link chips, the scrambled email row, and the mail-composer contact form.
+   ========================================================================== */
+
+/* ---- Contact block & link chips ------------------------------------------ */
+
+.contact-block {
+  margin-bottom: 36px;
+}
+
+.contact-block .obj-key {
+  color: var(--attr);
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 14px;
+  font-family: var(--mono);
+}
+
+.contact-block .obj-key .brace {
+  color: var(--muted);
+}
+
 .link-chips {
   display: flex;
   flex-wrap: wrap;
@@ -3362,6 +3601,8 @@ body.tool-tab-lock {
   width: 14px;
   height: 14px;
 }
+
+/* ---- Email row ----------------------------------------------------------- */
 
 .email-row {
   display: inline-flex;
@@ -3426,6 +3667,8 @@ body.tool-tab-lock {
 .email-copy-btn.copied .icon-check {
   display: inline-flex;
 }
+
+/* ---- Composer form ------------------------------------------------------- */
 
 .composer {
   max-width: 460px;
@@ -3644,105 +3887,79 @@ body.tool-tab-lock {
   color: var(--accent);
 }
 
-.statusbar {
-  height: 26px;
-  background: var(--accent-dim);
-  color: #1a1408;
-  font-family: var(--sans);
-  font-size: 11.5px;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 0 14px;
-  position: sticky;
-  bottom: 0;
+/* ==========================================================================
+   28. Reduced motion
+   Honour the OS-level reduced-motion preference.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .website-detail-inner,
+  .website-list-view.pane-enter {
+    animation: none;
+  }
 }
 
-.statusbar-credit {
-  margin-left: auto;
-}
-
-.statusbar b {
-  font-weight: 700;
-}
-
-.statusbar a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.statusbar a:hover {
-  text-decoration: underline;
-}
-
-.dev-toggle {
-  cursor: pointer;
-  font-weight: 700;
-  letter-spacing: .04em;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: rgba(0,0,0,0.18);
-  border: 1px solid rgba(0,0,0,0.25);
-  transition: background .15s;
-}
-
-.dev-toggle:hover {
-  background: rgba(0,0,0,0.3);
-}
-
-.statusbar-help {
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 2px;
-  transition: text-decoration-color .15s;
-}
-
-.statusbar-help:hover {
-  text-decoration-color: currentColor;
-}
-
-.dev-toggle.on {
-  background: #1a1408;
-  color: var(--accent);
-}
-
-body.mobile-nav-locked {
-  position: fixed;
-  left: 0;
-  right: 0;
-  width: 100%;
-}
+/* ==========================================================================
+   29. Responsive: mobile (≤ 720px)
+   Every narrow-viewport override, kept last so it wins over the rules above.
+   ========================================================================== */
 
 @media (max-width: 720px) {
+  /* Base */
+  html {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  /* App window & title bar */
   .mobile-menu-btn {
     display: inline-flex;
-  }
-
-  .case-card--compact {
-    max-width: 100%;
-  }
-
-  .about-header {
-    justify-content: center;
-    text-align: center;
-  }
-
-  .about-nav button {
-    font-size: 13px;
-    padding: 8px 14px;
-  }
-
-  .speech-bubble {
-    top: unset;
-    bottom: -8px;
-    left: 35px;
   }
 
   .titlebar-logo-btn {
     display: none;
   }
 
+  /* .explorer's z-index only wins within #app's own stacking context (#app sets
+     position:relative + z-index:1) — but .tool-tab-frame is appended straight to
+     <body>, outside #app, at z-index:40, so it always painted over the whole of
+     #app (explorer included) regardless of the explorer's higher local z-index.
+     Lift #app itself above the frame while the mobile nav overlay is open. */
+  #app:has(.shell.mobile-nav-open) {
+    z-index: 47;
+  }
+
+  #app {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .titlebar {
+    position: sticky;
+    top: 0;
+    z-index: 46;
+  }
+
+  /* Shell layout */
+  .shell.mobile-nav-open .explorer {
+    display: block;
+  }
+
+  .editor {
+    padding: 24px 18px;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Explorer */
   .explorer {
     display: none;
     position: fixed;
@@ -3760,21 +3977,8 @@ body.mobile-nav-locked {
     user-select: none;
   }
 
-  .shell.mobile-nav-open .explorer {
-    display: block;
-  }
-
   .explorer-resize-handle {
     display: none;
-  }
-
-  /* .explorer's z-index only wins within #app's own stacking context (#app sets
-     position:relative + z-index:1) — but .tool-tab-frame is appended straight to
-     <body>, outside #app, at z-index:40, so it always painted over the whole of
-     #app (explorer included) regardless of the explorer's higher local z-index.
-     Lift #app itself above the frame while the mobile nav overlay is open. */
-  #app:has(.shell.mobile-nav-open) {
-    z-index: 47;
   }
 
   .explorer-close {
@@ -3794,6 +3998,14 @@ body.mobile-nav-locked {
     font-size: 12px;
   }
 
+  /* Editor tabs */
+  .tabs {
+    position: sticky;
+    top: 34px;
+    z-index: 44;
+  }
+
+  /* Quick Open & Command Palette */
   .quick-open-backdrop {
     padding-top: 6vh;
   }
@@ -3802,18 +4014,7 @@ body.mobile-nav-locked {
     max-width: 92vw;
   }
 
-  .shortcuts-modal {
-    max-width: 92vw;
-  }
-
-  .shortcuts-body {
-    grid-template-columns: 1fr;
-  }
-
-  .editor {
-    padding: 24px 18px;
-  }
-
+  /* Bottom panel */
   .bottom-panel {
     flex-basis: 170px;
   }
@@ -3822,18 +4023,16 @@ body.mobile-nav-locked {
     display: none;
   }
 
-  h1.hero {
-    font-size: 26px;
+  /* Help modal */
+  .shortcuts-modal {
+    max-width: 92vw;
   }
 
-  .tool-card {
-    flex-basis: 100%;
+  .shortcuts-body {
+    grid-template-columns: 1fr;
   }
 
-  .website-card {
-    flex-basis: 100%;
-  }
-
+  /* Status bar */
   .statusbar {
     justify-content: center;
     position: static;
@@ -3847,41 +4046,7 @@ body.mobile-nav-locked {
     margin-left: 0;
   }
 
-  html {
-    height: auto;
-    min-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  body {
-    height: auto;
-    min-height: 100%;
-    overflow: visible;
-  }
-
-  #app {
-    height: auto;
-    min-height: 100dvh;
-  }
-
-  .titlebar {
-    position: sticky;
-    top: 0;
-    z-index: 46;
-  }
-
-  .tabs {
-    position: sticky;
-    top: 34px;
-    z-index: 44;
-  }
-
-  .editor {
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-  }
-
+  /* Tool tabs */
   /* a tool tab has no content inside .editor (see updateToolTabFrames) — with the
      rules above, its height collapses to ~0, so the fixed-position tool-tab-frame
      that's sized off .editor's rect gets pinned to a tiny box. Restore the fixed
@@ -3893,5 +4058,46 @@ body.mobile-nav-locked {
 
   body.tool-tab-lock .editor {
     overflow-y: hidden;
+  }
+
+  /* Panel: intro.js */
+  h1.hero {
+    font-size: 26px;
+  }
+
+  /* Panel: README.md (about) */
+  .about-header {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .about-nav button {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  .speech-bubble {
+    top: unset;
+    bottom: -8px;
+    left: 35px;
+  }
+
+  /* Project grids */
+  .tool-card {
+    flex-basis: 100%;
+  }
+
+  /* Websites & web systems */
+  .website-detail-split {
+    flex-direction: column;
+  }
+
+  .website-card {
+    flex-basis: 100%;
+  }
+
+  /* Case studies (eDM) */
+  .case-card--compact {
+    max-width: 100%;
   }
 }

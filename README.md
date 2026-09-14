@@ -12,8 +12,8 @@ Sections are deep-linkable via clean URL paths (e.g. `brunovida.si/experience`, 
 
 ## How it was built
 
-- **Vanilla HTML/CSS/JS** — no framework, no build step, no bundler. The whole app is `index.html`, `css/style.css`, and `js/script.js`.
-- **Data-driven content** — project listings (landing pages, mini tools, eDM work/tools, site history, taglines) live in JSON files under `json/`, which `script.js` fetches and renders into the matching panel. Adding a project is a JSON edit, not a markup edit.
+- **Vanilla HTML/CSS/JS** — no framework, no build step, no bundler. The whole app is `index.html`, `css/style.css`, and a set of native ES modules under `js/`, loaded straight from `js/main.js`.
+- **Data-driven content** — project listings (landing pages, mini tools, eDM work/tools, site history, taglines) live in JSON files under `json/`, which `js/projects.js` fetches and renders into the matching panel. Adding a project is a JSON edit, not a markup edit.
 - **Custom "editor" UI** — the file tree, tab bar, active-file state, and folder expand/collapse are hand-rolled in JS, mimicking VS Code's explorer/tabs behavior rather than using a UI library.
 - **Static hosting** — plain static assets (HTML/CSS/JS/JSON/images), no server-side runtime required.
 - **`projects/`** — hosts the actual project work referenced by the portfolio: landing pages, mini web tools, eDM (email) kinetic modules and automation tools, prototypes, and archived past versions of this site itself (2012–2025) for a visual history of the site's evolution.
@@ -23,7 +23,18 @@ Sections are deep-linkable via clean URL paths (e.g. `brunovida.si/experience`, 
 ```
 index.html          Markup for the editor shell and all content panels
 css/style.css        All styling (VS Code–inspired theme, responsive layout)
-js/script.js          File/tab state, JSON fetch + render, deep-linking, UI behavior
+js/                   ES modules — main.js is the entry point and wires the rest:
+                        config.js / state.js    workspace data, mutable app state
+                        router.js               path + hash routing, deep links
+                        explorer.js / tabs.js   file tree, tab bar, context menus
+                        tool-tabs.js            mini-tools and games as editor tabs
+                        panels.js / cards.js    panel switching, project card markup
+                        projects.js             JSON fetch + grid rendering
+                        websites.js             websites/web-systems list & detail
+                        terminal.js             the built-in shell
+                        search.js / palette.js  workspace search, Quick Open, palette
+                        actions.js              delegated data-act handlers
+                        boot.js                 boot sequence, taglines, DEV toggle
 json/                 Content data (projects, tools, site history, taglines)
 assets/               Favicons, logo
 img/                  Site images
