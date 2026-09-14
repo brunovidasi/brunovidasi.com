@@ -238,6 +238,66 @@ function setupDropzone(dropzone, input, onFile) {
     }
   }
 
+  // Word paragraph alignment/indent are direct formatting that mammoth's HTML
+  // writer discards. We smuggle them through as an invisible marker at the
+  // start of each paragraph's text, then translate that marker into an
+  // inline style on the paragraph's actual DOM element once it's parsed —
+  // this works regardless of which tag (p, h1, li, td>p…) mammoth picked.
+  const FMT_MARK = '\uE000';
+  const FMT_MARKER_RE = new RegExp('^' + FMT_MARK + 'FMT:([^' + FMT_MARK + ']*)' + FMT_MARK);
+
+  function docxAlignToCss(alignment) {
+    switch (alignment) {
+      case 'center': return 'center';
+      case 'right': case 'end': return 'right';
+      case 'both': return 'justify';
+      default: return null;
+    }
+  }
+
+  function twipsToPx(twips) {
+    const n = parseInt(twips, 10);
+    return Number.isFinite(n) ? Math.round(n / 20 * (96 / 72)) : null;
+  }
+
+  function buildParagraphFormattingTransform() {
+    return mammoth.transforms.paragraph((paragraph) => {
+      const align = docxAlignToCss(paragraph.alignment);
+      const marginLeft = paragraph.indent && twipsToPx(paragraph.indent.start);
+      const textIndent = paragraph.indent && twipsToPx(paragraph.indent.firstLine);
+      if (!align && !marginLeft && !textIndent) return paragraph;
+
+      const params = [];
+      if (align) params.push('align=' + align);
+      if (marginLeft) params.push('marginLeft=' + marginLeft);
+      if (textIndent) params.push('textIndent=' + textIndent);
+
+      const marker = { type: 'text', value: FMT_MARK + 'FMT:' + params.join('&') + FMT_MARK };
+      return Object.assign({}, paragraph, { children: [marker].concat(paragraph.children) });
+    });
+  }
+
+  function applyParagraphFormatting(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) textNodes.push(node);
+
+    for (const textNode of textNodes) {
+      const match = FMT_MARKER_RE.exec(textNode.data);
+      if (!match) continue;
+      textNode.data = textNode.data.slice(match[0].length);
+      const el = textNode.parentElement;
+      if (!el) continue;
+      for (const pair of match[1].split('&')) {
+        const [key, value] = pair.split('=');
+        if (key === 'align') el.style.textAlign = value;
+        else if (key === 'marginLeft') el.style.marginLeft = value + 'px';
+        else if (key === 'textIndent') el.style.textIndent = value + 'px';
+      }
+    }
+  }
+
   async function convert(file) {
     progress.hidden = false;
     result.hidden = true;
@@ -246,9 +306,13 @@ function setupDropzone(dropzone, input, onFile) {
     progressFill.style.width = '15%';
 
     const buf = await file.arrayBuffer();
-    const { value: html } = await mammoth.convertToHtml({ arrayBuffer: buf });
+    const { value: html } = await mammoth.convertToHtml(
+      { arrayBuffer: buf },
+      { transformDocument: buildParagraphFormattingTransform() }
+    );
 
     renderTarget.innerHTML = html;
+    applyParagraphFormatting(renderTarget);
     progressLabel.textContent = 'Rendering pages…';
     progressFill.style.width = '45%';
 

@@ -53,7 +53,7 @@ body {
   margin: 0 auto;
 }
 
-h1 {
+.wrap > h1 {
   font-family: 'Inter', sans-serif;
   font-weight: 800;
   font-size: 21px;
@@ -64,7 +64,7 @@ h1 {
   gap: 8px;
 }
 
-h1::before {
+.wrap > h1::before {
   content: '⇄';
   font-family: var(--mono);
   font-weight: 700;
@@ -350,6 +350,31 @@ button.small {
   padding: 48px;
 }
 
+.render-target h1,
+.render-target h2,
+.render-target h3,
+.render-target h4 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  color: #111111;
+  margin: 20px 0 8px;
+}
+
+.render-target h1 { font-size: 24px; }
+.render-target h2 { font-size: 19px; }
+.render-target h3 { font-size: 16px; }
+.render-target h4 { font-size: 14px; }
+
+.render-target p {
+  margin: 0 0 10px;
+}
+
+.render-target ul,
+.render-target ol {
+  margin: 0 0 10px;
+  padding-left: 28px;
+}
+
 .render-target img {
   max-width: 100%;
 }
@@ -357,6 +382,7 @@ button.small {
 .render-target table {
   border-collapse: collapse;
   width: 100%;
+  margin: 0 0 10px;
 }
 
 .render-target table td,
