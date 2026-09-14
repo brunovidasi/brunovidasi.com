@@ -338,9 +338,9 @@ button.small {
 /* ---- offscreen render target for Word->PDF ---- */
 
 .render-target {
-  position: fixed;
-  left: -10000px;
-  top: 0;
+  position: absolute;
+  left: 0;
+  top: -10000px;
   width: 794px;
   background: #ffffff;
   color: #111111;
