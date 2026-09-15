@@ -58,3 +58,17 @@ export const ICON_EYE_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href
 export const ICON_EYE_OFF_SVG = '<svg class="btn-icon" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-eye-off"></use></svg>';
 export const ICON_PDF_SVG = '<svg class="btn-icon icon-pdf" viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-pdf"></use></svg>';
 export const ICON_FULLSCREEN_SVG = '<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>';
+
+// ---- Game overlays ---------------------------------------------------------
+
+/**
+ * Shown over a mini-game's iframe on phones and touch-only devices — the
+ * games need a keyboard. Used both by the embedded game card and by the
+ * full tool-tab view opened from the explorer/terminal (see .game-desktop-lock
+ * in css/style.css for the media query that reveals it).
+ */
+export const GAME_DESKTOP_LOCK_HTML = `<div class="game-desktop-lock" role="note">
+  <svg class="game-desktop-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+  <div class="game-desktop-lock-title">Desktop players only</div>
+  <div class="game-desktop-lock-text">This game needs a keyboard and a bigger screen. Open it on a desktop to play.</div>
+</div>`;

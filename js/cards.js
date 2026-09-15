@@ -10,7 +10,8 @@ import { TOOL_TAB_REGISTRY } from './state.js';
 import { escapeHtml } from './utils.js';
 import { act } from './actions.js';
 import {
-  ICON_GITHUB_SVG, ICON_CODEPEN_SVG, ICON_LIVE_SVG, ICON_EYE_SVG, ICON_FULLSCREEN_SVG
+  ICON_GITHUB_SVG, ICON_CODEPEN_SVG, ICON_LIVE_SVG, ICON_EYE_SVG, ICON_FULLSCREEN_SVG,
+  GAME_DESKTOP_LOCK_HTML
 } from './icons.js';
 
 /** Categories whose cards can also be opened as a full tool tab. */
@@ -216,11 +217,7 @@ export function renderMiniGameCard(project, sameYearAsPrevious, category){
       </div>
       <div class="game-frame-wrap" id="gameFrame-${project.id}">
         <iframe src="${escapeHtml(project.path)}" title="${title}" scrolling="no"></iframe>
-        <div class="game-desktop-lock" role="note">
-          <svg class="game-desktop-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-          <div class="game-desktop-lock-title">Desktop players only</div>
-          <div class="game-desktop-lock-text">This game needs a keyboard and a bigger screen. Open it on a desktop to play.</div>
-        </div>
+        ${GAME_DESKTOP_LOCK_HTML}
       </div>
       <div class="website-body">
         <div class="website-body-inner">

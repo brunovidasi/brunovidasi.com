@@ -1840,6 +1840,19 @@ h2.sect .brk {
   transform: translateY(0);
 }
 
+/* A mini-game opened as a tool tab (explorer/terminal, not just the embedded
+   card) reuses .game-desktop-lock — see the mini-games section — but needs
+   to sit above the loading mask (z-index: 2) instead of below it. */
+.tool-tab-frame-game .game-desktop-lock {
+  z-index: 3;
+}
+
+@media (max-width: 720px), (hover: none) and (pointer: coarse) {
+  .tool-tab-frame-game iframe {
+    pointer-events: none;
+  }
+}
+
 body.tool-tab-lock {
   position: fixed;
   left: 0;

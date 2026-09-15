@@ -13,6 +13,7 @@ import { escapeHtml } from './utils.js';
 import { typingDelay } from './typing.js';
 import { setActive } from './tabs.js';
 import { closeMobileNav } from './shell.js';
+import { GAME_DESKTOP_LOCK_HTML } from './icons.js';
 
 export function toolIdsForCategory(categoryId){
   return Object.keys(TOOL_TAB_REGISTRY).filter(id => TOOL_TAB_REGISTRY[id].category === categoryId);
@@ -206,12 +207,16 @@ function ensureToolTabFrame(id){
   if(frame) return frame;
 
   const info = files[id];
+  // Games are also reachable this way (explorer, terminal `open`), not just
+  // as an embedded card, and need the same desktop-only notice there too.
+  const isGame = info.parentId === 'mini-games';
   frame = document.createElement('div');
-  frame.className = 'tool-tab-frame';
+  frame.className = 'tool-tab-frame' + (isGame ? ' tool-tab-frame-game' : '');
   frame.id = 'toolTabFrame-' + id;
   frame.innerHTML =
     '<div class="tool-tab-mask"><span class="tool-tab-mask-label">loading<span class="tool-tab-mask-dots"></span></span></div>' +
-    `<iframe name="tool-${escapeHtml(id)}" title="${escapeHtml(info.label)}"></iframe>`;
+    `<iframe name="tool-${escapeHtml(id)}" title="${escapeHtml(info.label)}"></iframe>` +
+    (isGame ? GAME_DESKTOP_LOCK_HTML : '');
   document.body.appendChild(frame);
   playToolCompileAnimation(frame, id);
   wireToolTabMask(frame);
