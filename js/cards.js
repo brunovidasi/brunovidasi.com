@@ -216,6 +216,11 @@ export function renderMiniGameCard(project, sameYearAsPrevious, category){
       </div>
       <div class="game-frame-wrap" id="gameFrame-${project.id}">
         <iframe src="${escapeHtml(project.path)}" title="${title}" scrolling="no"></iframe>
+        <div class="game-desktop-lock" role="note">
+          <svg class="game-desktop-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <div class="game-desktop-lock-title">Desktop players only</div>
+          <div class="game-desktop-lock-text">This game needs a keyboard and a bigger screen. Open it on a desktop to play.</div>
+        </div>
       </div>
       <div class="website-body">
         <div class="website-body-inner">

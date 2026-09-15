@@ -131,15 +131,27 @@ body {
   font-family: var(--mono);
 }
 
-.app-card.shake {
-  animation: shake 0.3s ease;
-  border-color: var(--accent-dim);
+.app-card-featured {
+  gap: 20px;
+  padding: 22px 24px;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+.app-logo {
+  height: 48px;
+  width: auto;
+  flex: none;
+}
+
+.app-headline {
+  flex: 1;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  transition: color 0.15s ease;
+}
+
+.app-card:hover .app-headline {
+  color: var(--text);
 }
 
 .tools-section {
@@ -292,5 +304,19 @@ body {
 
   .header-text h1 {
     font-size: 1.3rem;
+  }
+
+  .app-card-featured {
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+
+  .app-logo {
+    height: 38px;
+  }
+
+  .app-headline {
+    flex-basis: 100%;
+    order: 1;
   }
 }

@@ -89,25 +89,56 @@ export function repositionActiveToolTabFrame(){
   if(active) positionToolTabFrame(active);
 }
 
-// Mobile Safari can suspend a backgrounded tab and, on restore, repaint a
-// position:fixed tool-tab-frame with a stale/wrong compositor layer (a
-// different tool's iframe) even though the underlying .active class was never
-// actually wrong — re-adding the same class to the same element is a no-op
-// and doesn't force WebKit to recomposite. So instead of just re-asserting
-// state, force every tool-tab-frame through a real display:none -> reflow ->
-// restore cycle whenever the tab becomes visible again, to make Safari
-// actually repaint from scratch rather than trust whatever pixels it kept
-// around from before the suspend.
-function resyncActiveToolTabFrame(){
-  const isToolTab = state.activeId && files[state.activeId] && files[state.activeId].isToolTab;
-  const frames = document.querySelectorAll('.tool-tab-frame');
-  frames.forEach(f => { f.style.display = 'none'; });
-  void document.body.offsetHeight;
-  updateToolTabFrames(isToolTab ? state.activeId : null);
-  frames.forEach(f => { f.style.display = ''; });
+// ---- Frame lifecycle ------------------------------------------------------
+
+// Mobile Safari discards backgrounded tabs and, on return, reloads the page
+// from session history — which also restores each child iframe's last URL,
+// matched to the new iframes by their position in the document. Tool frames
+// are created on demand, so after a restore the positions no longer line up
+// and a frame would load a *different* tool than its tab says. Three guards:
+//  1. a stable, unique `name`, so WebKit matches history by name, not index;
+//  2. navigate via location.replace() after insertion, which overrides any
+//     restored URL and adds no child entries to the back/forward list;
+//  3. on load, if the frame still shows another tool's page, correct it.
+
+function absoluteUrl(path){
+  return new URL(path, location.href);
 }
 
-// ---- Frame lifecycle ------------------------------------------------------
+export function loadFrameWithoutHistory(iframe, path){
+  try {
+    iframe.contentWindow.location.replace(absoluteUrl(path).href);
+  } catch(e){
+    iframe.src = path;
+  }
+}
+
+function isBlankFrame(iframe){
+  try { return iframe.contentWindow.location.href === 'about:blank'; }
+  catch(e){ return false; }
+}
+
+/** Pathname of another registered tool's page, used to spot a mixed-up restore. */
+function otherToolPathnames(id){
+  return new Set(Object.keys(TOOL_TAB_REGISTRY)
+    .filter(otherId => otherId !== id && TOOL_TAB_REGISTRY[otherId].path)
+    .map(otherId => decodeURIComponent(absoluteUrl(TOOL_TAB_REGISTRY[otherId].path).pathname)));
+}
+
+function wireToolFrameSelfHeal(iframe, id, path){
+  const expected = decodeURIComponent(absoluteUrl(path).pathname);
+  let healed = false;
+  iframe.addEventListener('load', ()=>{
+    if(healed || isBlankFrame(iframe)) return;
+    let loaded;
+    try { loaded = decodeURIComponent(iframe.contentWindow.location.pathname); }
+    catch(e){ return; }
+    if(loaded === expected || !otherToolPathnames(id).has(loaded)) return;
+    console.warn(`Tool frame "${id}" restored with ${loaded}; reloading ${expected}`);
+    healed = true;
+    loadFrameWithoutHistory(iframe, path);
+  });
+}
 
 /** Types out a fake compile line over the frame while the tool loads. */
 function playToolCompileAnimation(frame, id){
@@ -156,14 +187,18 @@ function wireToolTabMask(frame){
     }, 450);
   }, 500);
 
-  frame.querySelector('iframe').addEventListener('load', ()=>{
+  const iframe = frame.querySelector('iframe');
+  iframe.addEventListener('load', function onLoad(){
+    // The initial about:blank document fires its own load before the tool's.
+    if(isBlankFrame(iframe)) return;
+    iframe.removeEventListener('load', onLoad);
     clearTimeout(maskLabelTimer);
     clearInterval(maskDotsInterval);
     requestAnimationFrame(()=>{
       mask.classList.add('hide');
       mask.addEventListener('transitionend', ()=> mask.remove(), { once: true });
     });
-  }, { once: true });
+  });
 }
 
 function ensureToolTabFrame(id){
@@ -176,10 +211,13 @@ function ensureToolTabFrame(id){
   frame.id = 'toolTabFrame-' + id;
   frame.innerHTML =
     '<div class="tool-tab-mask"><span class="tool-tab-mask-label">loading<span class="tool-tab-mask-dots"></span></span></div>' +
-    `<iframe src="${escapeHtml(info.toolPath)}" title="${escapeHtml(info.label)}"></iframe>`;
+    `<iframe name="tool-${escapeHtml(id)}" title="${escapeHtml(info.label)}"></iframe>`;
   document.body.appendChild(frame);
   playToolCompileAnimation(frame, id);
   wireToolTabMask(frame);
+  const iframe = frame.querySelector('iframe');
+  wireToolFrameSelfHeal(iframe, id, info.toolPath);
+  loadFrameWithoutHistory(iframe, info.toolPath);
   return frame;
 }
 
@@ -220,8 +258,4 @@ export function updateToolTabFrames(activeToolId){
 
 export function initToolTabs(){
   window.addEventListener('resize', repositionActiveToolTabFrame);
-  window.addEventListener('pageshow', resyncActiveToolTabFrame);
-  document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState === 'visible') resyncActiveToolTabFrame();
-  });
 }

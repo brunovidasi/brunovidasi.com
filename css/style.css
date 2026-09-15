@@ -3306,10 +3306,70 @@ h1.hero {
 }
 
 .game-frame-wrap {
+  position: relative;
   width: 100%;
   height: 460px;
   background: #000;
   transition: height .2s ease;
+}
+
+/* Shown over the frame on phones and touch-only devices — the games need a keyboard. */
+.game-desktop-lock {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(11, 14, 12, .92);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.game-desktop-lock-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.game-desktop-lock-title {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text);
+}
+
+.game-desktop-lock-text {
+  max-width: 280px;
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+@media (max-width: 720px), (hover: none) and (pointer: coarse) {
+  .game-desktop-lock {
+    display: flex;
+  }
+
+  .game-frame-wrap {
+    height: 280px !important;
+  }
+
+  .game-frame-wrap iframe {
+    pointer-events: none;
+  }
+
+  .game-card .website-dot.r,
+  .game-card .website-dot.g,
+  .game-fullscreen-btn {
+    pointer-events: none;
+    opacity: .4;
+  }
 }
 
 .game-frame-wrap:fullscreen {

@@ -9,7 +9,7 @@ import { humanTypeSect } from './typing.js';
 import { ICON_EYE_SVG, ICON_EYE_OFF_SVG } from './icons.js';
 import { actSelector, registerActions } from './actions.js';
 import { updateDocumentTitle } from './router.js';
-import { updateToolTabFrames } from './tool-tabs.js';
+import { updateToolTabFrames, loadFrameWithoutHistory } from './tool-tabs.js';
 import { renderWebsiteDetail } from './websites.js';
 import { fitGameFrame } from './games.js';
 import { startBioTyping } from './boot.js';
@@ -49,12 +49,17 @@ export function showActivePanel(){
 
 // ---- Document embeds ------------------------------------------------------
 
-/** Embeds are lazy: the iframe only gets its src the first time it is opened. */
+/**
+ * Embeds are lazy: the iframe only loads the first time it is opened. Named
+ * and loaded without history for the same Safari restore reason as tool tabs.
+ */
 function loadEmbedIframe(embed){
   const iframe = embed.querySelector('iframe[data-src]');
   if(!iframe) return;
-  iframe.src = iframe.dataset.src;
+  const path = iframe.dataset.src;
+  if(!iframe.name) iframe.name = 'embed-' + path.replace(/[^a-z0-9]+/gi, '-');
   iframe.removeAttribute('data-src');
+  loadFrameWithoutHistory(iframe, path);
 }
 
 /** Swaps a View button between its open and closed icon + label. */
