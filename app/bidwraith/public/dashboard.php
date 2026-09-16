@@ -104,7 +104,7 @@ require __DIR__ . '/../includes/layout_top.php';
                 <p class="entry-meta">
                     Item <?= htmlspecialchars($a['item_id']) ?>
                     <span class="sep">·</span>
-                    Ends <?= htmlspecialchars($a['end_time'] ?? 'unknown') ?>
+                    Ends <?= $a['end_time'] !== null ? local_time((int) strtotime($a['end_time']), $a['end_time']) : 'unknown' ?>
                     <span class="sep">·</span>
                     <span class="status-<?= htmlspecialchars($a['status']) ?>"><?= htmlspecialchars($a['status']) ?></span>
                 </p>

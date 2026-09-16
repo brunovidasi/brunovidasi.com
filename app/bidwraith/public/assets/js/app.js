@@ -105,6 +105,50 @@ document.querySelectorAll('form[data-confirm]').forEach(function (form) {
     setInterval(tick, 1000);
 })();
 
+(function () {
+    var els = document.querySelectorAll('[data-local-time]');
+    if (!els.length) {
+        return;
+    }
+    els.forEach(function (el) {
+        var epoch = parseInt(el.dataset.localTime, 10);
+        if (isNaN(epoch)) {
+            return;
+        }
+        var d = new Date(epoch * 1000);
+        if (isNaN(d.getTime())) {
+            return;
+        }
+        el.textContent = d.toLocaleString(undefined, {
+            year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+        });
+    });
+})();
+
+(function () {
+    // The manual end-time field is a plain wall-clock value with no timezone of its
+    // own, so the browser is the only one who knows what timezone the person typing
+    // it is actually in. Convert it here rather than letting the server guess.
+    var input = document.getElementById('end_time');
+    var utcInput = document.getElementById('end_time_utc');
+    if (!input || !utcInput) {
+        return;
+    }
+    var form = input.closest('form');
+    if (!form) {
+        return;
+    }
+    form.addEventListener('submit', function () {
+        if (!input.value) {
+            return;
+        }
+        var d = new Date(input.value);
+        if (!isNaN(d.getTime())) {
+            utcInput.value = Math.floor(d.getTime() / 1000);
+        }
+    });
+})();
+
 function switchBidTab(form, tab) {
     form.querySelectorAll('[data-bid-tab]').forEach(function (btn) {
         var active = btn.dataset.bidTab === tab;

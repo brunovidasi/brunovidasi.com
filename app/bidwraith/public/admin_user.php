@@ -62,7 +62,7 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="detail-grid">
     <div><span class="detail-label">User ID</span><?= (int) $viewed['id'] ?></div>
-    <div><span class="detail-label">Joined</span><?= htmlspecialchars($viewed['created_at']) ?></div>
+    <div><span class="detail-label">Joined</span><?= local_time(db_time_epoch($viewed['created_at']), $viewed['created_at']) ?></div>
     <div>
         <span class="detail-label">Role</span>
         <?= $viewed['is_admin'] ? 'Admin' : 'Standard user' ?>
@@ -78,12 +78,12 @@ require __DIR__ . '/../includes/layout_top.php';
             : '<span class="muted">Not connected</span>' ?>
     </div>
     <?php if ($ebayAccount): ?>
-        <div><span class="detail-label">Connected at</span><?= htmlspecialchars($ebayAccount['connected_at']) ?></div>
+        <div><span class="detail-label">Connected at</span><?= local_time(db_time_epoch($ebayAccount['connected_at']), $ebayAccount['connected_at']) ?></div>
         <div>
             <span class="detail-label">Token expires</span>
             <?php $expired = $ebayAccount['token_expires_at'] && strtotime($ebayAccount['token_expires_at']) < time(); ?>
             <span class="<?= $expired ? 'outcome-danger' : '' ?>">
-                <?= htmlspecialchars($ebayAccount['token_expires_at'] ?? 'unknown') ?><?= $expired ? ' (expired)' : '' ?>
+                <?= $ebayAccount['token_expires_at'] !== null ? local_time((int) strtotime($ebayAccount['token_expires_at']), $ebayAccount['token_expires_at']) : 'unknown' ?><?= $expired ? ' (expired)' : '' ?>
             </span>
         </div>
     <?php endif; ?>
@@ -127,7 +127,7 @@ require __DIR__ . '/../includes/layout_top.php';
                         <a href="admin_auction.php?id=<?= (int) $a['id'] ?>"><?= htmlspecialchars($a['title'] ?? '(unknown title)') ?></a>
                         <span class="muted"><?= htmlspecialchars($a['item_id']) ?></span>
                     </td>
-                    <td class="nowrap muted"><?= htmlspecialchars($a['end_time'] ?? 'unknown') ?></td>
+                    <td class="nowrap muted"><?= $a['end_time'] !== null ? local_time((int) strtotime($a['end_time']), $a['end_time']) : 'unknown' ?></td>
                     <td class="nowrap"><span class="status-<?= htmlspecialchars($a['status']) ?>"><?= htmlspecialchars($a['status']) ?></span></td>
                     <td class="num"><?= $a['current_price'] !== null ? htmlspecialchars(number_format($a['current_price'], 2)) : '—' ?></td>
                     <td class="num"><?= htmlspecialchars(number_format($topBid, 2)) ?></td>

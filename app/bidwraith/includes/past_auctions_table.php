@@ -49,7 +49,7 @@ $anchor = $anchor ?? '';
                             <a href="admin_user.php?id=<?= (int) $row['user_id'] ?>"><?= htmlspecialchars($row['owner_email']) ?></a>
                         </td>
                     <?php endif; ?>
-                    <td class="nowrap muted"><?= htmlspecialchars($row['end_time'] ?? 'unknown') ?></td>
+                    <td class="nowrap muted"><?= $row['end_time'] !== null ? local_time((int) strtotime($row['end_time']), $row['end_time']) : 'unknown' ?></td>
                     <td class="nowrap">
                         <?php if ($settled): ?>
                             <span class="status-<?= htmlspecialchars($row['status']) ?>"><?= htmlspecialchars($row['status']) ?></span>

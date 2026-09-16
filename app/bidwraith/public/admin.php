@@ -120,6 +120,11 @@ require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Admin dashboard</h1>
 
+<div class="admin-tools">
+    <a href="ebay_setup.php" class="btn secondary">eBay setup</a>
+    <a href="preflight.php" class="btn secondary">Preflight</a>
+</div>
+
 <?php [$cronState, $cronMessage] = cron_health(); ?>
 <div class="cron-status cron-<?= $cronState ?>">
     <span class="cron-dot"></span>
@@ -210,7 +215,7 @@ require __DIR__ . '/../includes/layout_top.php';
                         <?php if ($u['is_admin']): ?><span class="admin-badge">admin</span><?php endif; ?>
                     </td>
                     <td class="num muted"><?= (int) $u['id'] ?></td>
-                    <td class="nowrap muted"><?= htmlspecialchars(substr($u['created_at'], 0, 10)) ?></td>
+                    <td class="nowrap muted"><?= local_time(db_time_epoch($u['created_at']), substr($u['created_at'], 0, 10)) ?></td>
                     <td class="nowrap">
                         <?= $u['ebay_env']
                             ? 'Connected <span class="muted">(' . htmlspecialchars($u['ebay_env']) . ')</span>'
@@ -277,13 +282,14 @@ $anchor = $section['anchor'];
 require __DIR__ . '/../includes/past_auctions_table.php';
 ?>
 <?php else: ?>
-<div class="admin-table-wrap">
+<div class="admin-table-wrap" data-server-now="<?= time() ?>">
     <table class="admin-table">
         <thead>
             <tr>
                 <?= sortable_th('Item', 'item', $section['sortKey'], $section['sortDir'], $section['sortParam'], $section['dirParam'], [$section['pageParam']], '', $section['anchor']) ?>
                 <?= sortable_th('Owner', 'owner', $section['sortKey'], $section['sortDir'], $section['sortParam'], $section['dirParam'], [$section['pageParam']], '', $section['anchor']) ?>
                 <?= sortable_th($section['dateLabel'], 'end', $section['sortKey'], $section['sortDir'], $section['sortParam'], $section['dirParam'], [$section['pageParam']], '', $section['anchor']) ?>
+                <th>Countdown</th>
                 <?= sortable_th('Status', 'status', $section['sortKey'], $section['sortDir'], $section['sortParam'], $section['dirParam'], [$section['pageParam']], '', $section['anchor']) ?>
                 <?= sortable_th('Price', 'price', $section['sortKey'], $section['sortDir'], $section['sortParam'], $section['dirParam'], [$section['pageParam']], 'num', $section['anchor']) ?>
                 <?= sortable_th('Top bid', 'topbid', $section['sortKey'], $section['sortDir'], $section['sortParam'], $section['dirParam'], [$section['pageParam']], 'num', $section['anchor']) ?>
@@ -299,7 +305,14 @@ require __DIR__ . '/../includes/past_auctions_table.php';
                     <td class="cell-email" title="<?= htmlspecialchars($a['owner_email']) ?>">
                         <a href="admin_user.php?id=<?= (int) $a['user_id'] ?>"><?= htmlspecialchars($a['owner_email']) ?></a>
                     </td>
-                    <td class="nowrap muted"><?= htmlspecialchars($a['end_time'] ?? 'unknown') ?></td>
+                    <td class="nowrap muted"><?= $a['end_time'] !== null ? local_time((int) strtotime($a['end_time']), $a['end_time']) : 'unknown' ?></td>
+                    <td class="nowrap">
+                        <?php if ($a['end_time'] !== null): ?>
+                            <span class="countdown countdown-cell" data-countdown-end="<?= (int) strtotime($a['end_time']) ?>"></span>
+                        <?php else: ?>
+                            <span class="muted">—</span>
+                        <?php endif; ?>
+                    </td>
                     <td class="nowrap"><span class="status-<?= htmlspecialchars($a['status']) ?>"><?= htmlspecialchars($a['status']) ?></span></td>
                     <td class="num"><?= $a['current_price'] !== null ? htmlspecialchars(number_format($a['current_price'], 2)) : '—' ?></td>
                     <td class="num"><?= htmlspecialchars(number_format(admin_top_bid($stepsStmt, (int) $a['id']), 2)) ?></td>

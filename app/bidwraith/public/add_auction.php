@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $itemId = extract_ebay_item_id($_POST['item_id'] ?? '');
     $manualEndTime = trim($_POST['end_time'] ?? '');
+    $manualEndTimeUtc = trim($_POST['end_time_utc'] ?? '');
 
     $steps = [];
     $secondsInput = $_POST['step_seconds'] ?? [];
@@ -52,7 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$error) {
         $title = null;
-        $endTime = $manualEndTime !== '' ? date('Y-m-d H:i:s', strtotime($manualEndTime)) : null;
+        // end_time_utc is the browser's own reading of the local end_time field, converted
+        // to an instant using the visitor's actual timezone (see app.js) — that's what
+        // decides when the sniper fires, so it takes priority over the raw field, which
+        // would otherwise be misread as being in the server's configured timezone.
+        if ($manualEndTimeUtc !== '' && ctype_digit($manualEndTimeUtc)) {
+            $endTime = date('Y-m-d H:i:s', (int) $manualEndTimeUtc);
+        } else {
+            $endTime = $manualEndTime !== '' ? date('Y-m-d H:i:s', strtotime($manualEndTime)) : null;
+        }
         $lookup = null;
 
         try {
@@ -113,7 +122,7 @@ require __DIR__ . '/../includes/layout_top.php';
 <form class="stacked" method="post">
     <?= csrf_field() ?>
     <label for="item_id">eBay item ID or listing URL</label>
-    <input type="text" id="item_id" name="item_id" required placeholder="e.g. 123456789012 or https://www.ebay.com/itm/123456789012" value="<?= htmlspecialchars($_POST['item_id'] ?? $_GET['item_id'] ?? '') ?>" autocomplete="off">
+    <input type="text" id="item_id" name="item_id" required placeholder="e.g. 123456789012 or listing url" value="<?= htmlspecialchars($_POST['item_id'] ?? $_GET['item_id'] ?? '') ?>" autocomplete="off">
     <div class="hint">Paste the item ID or the full listing URL — e.g. 123456789012.</div>
     <div class="item-lookup-result" id="itemLookupResult" hidden></div>
 
@@ -165,6 +174,8 @@ require __DIR__ . '/../includes/layout_top.php';
     <?php if ($lookupFailed): ?>
         <label for="end_time">Auction end time (since it couldn't be looked up automatically)</label>
         <input type="datetime-local" id="end_time" name="end_time" required>
+        <input type="hidden" id="end_time_utc" name="end_time_utc">
+        <div class="hint">In your own local time zone — the page converts it automatically.</div>
     <?php endif; ?>
 
     <button type="submit">Save</button>

@@ -13,6 +13,8 @@ $demo = isset($_GET['demo']);
 
 if ($demo) {
     // Sample data for previewing the layout only — not real eBay items. Visit with ?demo=1.
+    // Includes a couple of fixed-price (non-auction) items so the auction-only filter below
+    // has something to demonstrate, plus enough auctions to preview pagination.
     $items = [
         [
             'item_id' => '203945671201',
@@ -23,6 +25,7 @@ if ($demo) {
             'current_price' => 214.50,
             'currency' => 'AUD',
             'bid_count' => 8,
+            'listing_type' => 'Chinese',
         ],
         [
             'item_id' => '186372940458',
@@ -33,6 +36,7 @@ if ($demo) {
             'current_price' => 1325.00,
             'currency' => 'AUD',
             'bid_count' => 23,
+            'listing_type' => 'Chinese',
         ],
         [
             'item_id' => '297581103366',
@@ -43,6 +47,7 @@ if ($demo) {
             'current_price' => 489.00,
             'currency' => 'AUD',
             'bid_count' => 3,
+            'listing_type' => 'FixedPriceItem',
         ],
         [
             'item_id' => '154029887712',
@@ -53,8 +58,23 @@ if ($demo) {
             'current_price' => 96.00,
             'currency' => 'AUD',
             'bid_count' => null,
+            'listing_type' => 'FixedPriceItem',
         ],
     ];
+    // Pad out with extra auction entries so the demo also previews pagination.
+    for ($i = 1; $i <= 10; $i++) {
+        $items[] = [
+            'item_id' => '900000000' . str_pad((string) $i, 3, '0', STR_PAD_LEFT),
+            'title' => "Demo auction item #$i",
+            'end_time' => date('Y-m-d H:i:s', strtotime("+$i hours")),
+            'view_url' => 'https://www.ebay.com.au/itm/900000000' . str_pad((string) $i, 3, '0', STR_PAD_LEFT),
+            'gallery_url' => '',
+            'current_price' => 20.00 + $i,
+            'currency' => 'AUD',
+            'bid_count' => $i,
+            'listing_type' => 'Chinese',
+        ];
+    }
 } elseif ($account) {
     try {
         $client = new EbayClient();
@@ -64,11 +84,33 @@ if ($demo) {
     }
 }
 
+// The watchlist can include fixed-price (Buy It Now) listings too, but this app only
+// places auction bids, so only auction-format ("Chinese") listings are shown here.
+$items = array_values(array_filter($items, fn ($item) => ($item['listing_type'] ?? '') === 'Chinese'));
+
+$perPageOptions = [10, 20, 50, 100];
+$perPage = (int) get_param('per_page');
+if (!in_array($perPage, $perPageOptions, true)) {
+    $perPage = 10;
+}
+
+$totalItems = count($items);
+$pagerPages = max(1, (int) ceil($totalItems / $perPage));
+$pagerPage = (int) get_param('page');
+if ($pagerPage < 1) {
+    $pagerPage = 1;
+} elseif ($pagerPage > $pagerPages) {
+    $pagerPage = $pagerPages;
+}
+$pagerParam = 'page';
+
+$pagedItems = array_slice($items, ($pagerPage - 1) * $perPage, $perPage);
+
 $pageTitle = 'Watchlist';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Your eBay watchlist</h1>
-<p class="hint">Items you're watching on eBay itself. Add one to your <a href="dashboard.php">auction list</a> to schedule bids for it.</p>
+<p class="hint">Auctions you're watching on eBay itself. Add one to your <a href="dashboard.php">auction list</a> to schedule bids for it.</p>
 
 <?php if (!$account && !$demo): ?>
     <div class="flash flash-error">
@@ -77,11 +119,20 @@ require __DIR__ . '/../includes/layout_top.php';
     </div>
 <?php elseif ($error): ?>
     <div class="flash flash-error">Couldn't load your eBay watchlist: <?= htmlspecialchars($error) ?></div>
-<?php elseif (empty($items)): ?>
-    <p class="hint">You're not watching any items on eBay right now.</p>
+<?php elseif ($totalItems === 0): ?>
+    <p class="hint">You're not watching any auctions on eBay right now.</p>
 <?php else: ?>
+<form class="admin-filters" method="get">
+    <?php if ($demo): ?><input type="hidden" name="demo" value="1"><?php endif; ?>
+    <label for="per_page">Per page</label>
+    <select id="per_page" name="per_page" onchange="this.form.submit()">
+        <?php foreach ($perPageOptions as $option): ?>
+            <option value="<?= $option ?>" <?= $option === $perPage ? 'selected' : '' ?>><?= $option ?></option>
+        <?php endforeach; ?>
+    </select>
+</form>
 <div class="entries">
-    <?php foreach ($items as $item): ?>
+    <?php foreach ($pagedItems as $item): ?>
         <article class="entry">
             <?php if ($item['gallery_url']): ?>
                 <img class="entry-thumb" src="<?= htmlspecialchars($item['gallery_url']) ?>" alt="">
@@ -91,7 +142,7 @@ require __DIR__ . '/../includes/layout_top.php';
                 <p class="entry-meta">
                     Item <?= htmlspecialchars($item['item_id']) ?>
                     <span class="sep">·</span>
-                    Ends <?= htmlspecialchars($item['end_time'] !== '' ? $item['end_time'] : 'unknown') ?>
+                    Ends <?= $item['end_time'] !== '' ? local_time((int) strtotime($item['end_time']), $item['end_time']) : 'unknown' ?>
                     <?php if ($item['bid_count'] !== null): ?>
                         <span class="sep">·</span>
                         <?= (int) $item['bid_count'] ?> bid<?= $item['bid_count'] === 1 ? '' : 's' ?>
@@ -111,6 +162,7 @@ require __DIR__ . '/../includes/layout_top.php';
         </article>
     <?php endforeach; ?>
 </div>
+<?php require __DIR__ . '/../includes/admin_pager.php'; ?>
 <?php endif; ?>
 
 <script src="assets/js/app.js"></script>

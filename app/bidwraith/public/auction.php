@@ -91,7 +91,7 @@ require __DIR__ . '/../includes/layout_top.php';
 <div class="detail-grid">
     <div>
         <span class="detail-label"><?= $hasEnded ? 'Ended' : 'Ends' ?></span>
-        <?= htmlspecialchars($auction['end_time'] ?? 'unknown') ?>
+        <?= $auction['end_time'] !== null ? local_time((int) strtotime($auction['end_time']), $auction['end_time']) : 'unknown' ?>
     </div>
     <div>
         <span class="detail-label">Status</span>
@@ -119,8 +119,8 @@ require __DIR__ . '/../includes/layout_top.php';
         <span class="detail-label">Est. landed cost</span>
         <?= htmlspecialchars($currency . ' ' . number_format($estimate['total'], 2)) ?>
     </div>
-    <div><span class="detail-label">Added</span><?= htmlspecialchars(db_time_local($auction['created_at']) ?? 'unknown') ?></div>
-    <div><span class="detail-label">Price last checked</span><?= htmlspecialchars(db_time_local($auction['price_checked_at']) ?? 'never') ?></div>
+    <div><span class="detail-label">Added</span><?= local_time(db_time_epoch($auction['created_at']), db_time_local($auction['created_at']) ?? 'unknown') ?></div>
+    <div><span class="detail-label">Price last checked</span><?= local_time(db_time_epoch($auction['price_checked_at']), db_time_local($auction['price_checked_at']) ?? 'never') ?></div>
 </div>
 
 <p class="hint">
@@ -167,7 +167,7 @@ require __DIR__ . '/../includes/layout_top.php';
                     <td class="num nowrap"><?= (int) $s['seconds_before'] ?>s before end</td>
                     <td class="num"><?= htmlspecialchars(number_format($s['max_bid'], 2)) ?></td>
                     <td class="nowrap"><span class="status-<?= htmlspecialchars($s['status']) ?>"><?= htmlspecialchars($s['status']) ?></span></td>
-                    <td class="nowrap muted"><?= htmlspecialchars(db_time_local($s['fired_at']) ?? 'not fired') ?></td>
+                    <td class="nowrap muted"><?= local_time(db_time_epoch($s['fired_at']), db_time_local($s['fired_at']) ?? 'not fired') ?></td>
                     <td><?= $s['result_message'] ? htmlspecialchars($s['result_message']) : '<span class="muted">—</span>' ?></td>
                 </tr>
             <?php endforeach; ?>
@@ -196,7 +196,7 @@ require __DIR__ . '/../includes/layout_top.php';
         <tbody>
             <?php foreach ($log as $entry): ?>
                 <tr>
-                    <td class="nowrap muted"><?= htmlspecialchars(db_time_local($entry['attempted_at'])) ?></td>
+                    <td class="nowrap muted"><?= local_time(db_time_epoch($entry['attempted_at']), db_time_local($entry['attempted_at']) ?? 'unknown') ?></td>
                     <td class="num"><?= htmlspecialchars(number_format($entry['max_bid'], 2)) ?> <span class="muted">@<?= (int) $entry['seconds_before'] ?>s</span></td>
                     <td class="nowrap">
                         <span class="outcome-<?= $entry['success'] ? 'ok' : 'danger' ?>"><?= $entry['success'] ? 'accepted' : 'rejected' ?></span>
@@ -224,7 +224,7 @@ require __DIR__ . '/../includes/layout_top.php';
 <p class="hint">
     "Scheduled bids" is what the cron job was told to do; "eBay bid attempts" is what was
     actually sent and what eBay said back. A scheduled bid with no matching attempt never
-    left this app. Times are shown in <?= htmlspecialchars(date_default_timezone_get()) ?>.
+    left this app. Times are shown in your own local time zone.
 </p>
 
 <script src="assets/js/app.js"></script>

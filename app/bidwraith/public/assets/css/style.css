@@ -277,6 +277,11 @@ a:hover { color: var(--accent-dark); }
 
 .countdown.is-urgent { color: var(--danger); }
 
+.countdown-cell {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
 .entry-figures {
     flex: 0 0 270px;
     text-align: right;
@@ -401,6 +406,8 @@ input:focus {
     border: 1px solid var(--border);
     background: #fff;
 }
+
+.item-lookup-result[hidden] { display: none; }
 
 .item-lookup-result.is-error {
     border-color: var(--danger);
@@ -894,6 +901,15 @@ button.danger:hover { background: #8f2e23; border-color: #8f2e23; }
     padding: 7px 14px;
     font-size: 0.75rem;
 }
+
+.admin-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.admin-tools .btn { margin-top: 0; }
 
 .admin-table-wrap { overflow-x: auto; }
 

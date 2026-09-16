@@ -139,7 +139,7 @@ $currency = ebay_config()['currency'];
 require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Edit bids — <?= htmlspecialchars($auction['title'] ?? $auction['item_id']) ?></h1>
-<p class="hint">Item <?= htmlspecialchars($auction['item_id']) ?> · Ends <?= htmlspecialchars($auction['end_time'] ?? 'unknown') ?></p>
+<p class="hint">Item <?= htmlspecialchars($auction['item_id']) ?> · Ends <?= $auction['end_time'] !== null ? local_time((int) strtotime($auction['end_time']), $auction['end_time']) : 'unknown' ?></p>
 
 <?php if ($error): ?><div class="flash flash-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 

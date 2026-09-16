@@ -308,6 +308,35 @@ function db_time_local(?string $timestamp): ?string
     return $dt->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('Y-m-d H:i:s');
 }
 
+/** Unix timestamp for a value written by SQLite's datetime('now') (UTC, no offset). */
+function db_time_epoch(?string $timestamp): ?int
+{
+    if ($timestamp === null || $timestamp === '') {
+        return null;
+    }
+
+    try {
+        return (new DateTimeImmutable($timestamp, new DateTimeZone('UTC')))->getTimestamp();
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
+/**
+ * Renders an absolute instant as a <span data-local-time="epoch"> that app.js
+ * re-renders in the viewer's own timezone, so everyone sees their own local time
+ * instead of the server's configured one. $fallbackText (typically the
+ * server-timezone formatted string) is what stays on screen if JS doesn't run.
+ */
+function local_time(?int $epoch, string $fallbackText): string
+{
+    if ($epoch === null) {
+        return htmlspecialchars($fallbackText);
+    }
+
+    return '<span data-local-time="' . $epoch . '">' . htmlspecialchars($fallbackText) . '</span>';
+}
+
 /**
  * Builds a chronological "what actually happened" log for one auction, merging the
  * three sources that each hold a piece of the story: the auction row (added, ended),

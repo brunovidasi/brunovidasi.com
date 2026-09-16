@@ -343,6 +343,9 @@ class EbayClient
                     'current_price' => isset($item->SellingStatus->CurrentPrice) ? (float) $item->SellingStatus->CurrentPrice : null,
                     'currency' => (string) ($item->SellingStatus->CurrentPrice['currencyID'] ?? ''),
                     'bid_count' => isset($item->SellingStatus->BidCount) ? (int) $item->SellingStatus->BidCount : null,
+                    // "Chinese" is eBay's historical internal name for the online-auction listing
+                    // format (as opposed to "FixedPriceItem"/"StoresFixedPrice" etc.) — unrelated to China.
+                    'listing_type' => (string) $item->ListingType,
                 ];
             }
         }

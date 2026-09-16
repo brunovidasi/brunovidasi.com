@@ -33,7 +33,7 @@ require __DIR__ . '/../includes/layout_top.php';
 <?php if ($error): ?><div class="flash flash-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 
 <?php if ($account): ?>
-    <p>Connected (<?= htmlspecialchars($account['environment']) ?> environment) since <?= htmlspecialchars($account['connected_at']) ?>.</p>
+    <p>Connected (<?= htmlspecialchars($account['environment']) ?> environment) since <?= local_time(db_time_epoch($account['connected_at']), $account['connected_at']) ?>.</p>
     <form method="post" data-confirm="Disconnect your eBay account? Bidding will stop working until you reconnect.">
         <?= csrf_field() ?>
         <input type="hidden" name="disconnect" value="1">
