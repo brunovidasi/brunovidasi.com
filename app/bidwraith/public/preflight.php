@@ -55,6 +55,44 @@ $checks['Error display'] = check(!is_debug() || !is_production(), is_debug() ? '
 
 $checks['Data directory'] = check(is_dir($dataDir), $dataDir, 'does not exist: ' . $dataDir);
 $checks['Data directory writable'] = check(is_dir($dataDir) && is_writable($dataDir), 'yes', 'NOT writable — the app cannot save anything');
+
+/**
+ * Cron and the web server must run as the same account, or cron cannot write the
+ * heartbeat or its own log — and the symptom is silence, which looks identical to a
+ * cron job that was never scheduled.
+ */
+function process_user(): string
+{
+    if (function_exists('posix_geteuid')) {
+        $info = function_exists('posix_getpwuid') ? posix_getpwuid(posix_geteuid()) : null;
+        return $info['name'] ?? ('uid ' . posix_geteuid());
+    }
+    return get_current_user() ?: 'unknown';
+}
+
+function owner_of(string $path): string
+{
+    if (!file_exists($path)) {
+        return 'n/a';
+    }
+    $uid = fileowner($path);
+    if ($uid !== false && function_exists('posix_getpwuid')) {
+        $info = posix_getpwuid($uid);
+        return $info['name'] ?? ('uid ' . $uid);
+    }
+    return $uid === false ? 'unknown' : ('uid ' . $uid);
+}
+
+$webUser = process_user();
+$dataOwner = owner_of($dataDir);
+$checks['Web process user'] = check(true, $webUser, '');
+$checks['Data directory owner'] = check(
+    $dataOwner === $webUser || $dataOwner === 'n/a' || $dataOwner === 'unknown',
+    $dataOwner . ' (matches the web process)',
+    $dataOwner . ' — differs from the web process user (' . $webUser . '). If cron runs as a '
+        . 'different account again, it cannot write its log or heartbeat, and fails silently.'
+);
+$checks['Data directory mode'] = check(true, substr(sprintf('%o', fileperms($dataDir) ?: 0), -4), '');
 $checks['Database'] = $dbError !== null
     ? [false, 'could not open: ' . $dbError]
     : check(file_exists(db_path()), db_path() . '  (' . number_format(filesize(db_path()) / 1024, 1) . ' KB)', 'not created yet');
@@ -107,6 +145,22 @@ $candidates = array_merge(
 );
 $cliPaths = array_values(array_unique(array_filter($candidates, 'is_executable')));
 $phpBinary = $cliPaths[0] ?? '/usr/local/bin/php';
+
+$phpBinaryIsGuess = !$cliPaths;
+
+$cronLog = $dataDir . '/cron.log';
+$cronLogExists = is_file($cronLog);
+$cronLogTail = '';
+
+if ($cronLogExists && filesize($cronLog) > 0) {
+    // Only the tail matters and the file may be megabytes, so seek rather than read.
+    $handle = fopen($cronLog, 'rb');
+    fseek($handle, max(0, filesize($cronLog) - 8192));
+    $cronLogTail = fread($handle, 8192);
+    fclose($handle);
+    $lines = array_slice(array_filter(explode("\n", $cronLogTail)), -25);
+    $cronLogTail = implode("\n", $lines);
+}
 
 $cronLine = sprintf(
     '* * * * * %s %s/cron/snipe.php >> %s/cron.log 2>&1',
@@ -175,9 +229,33 @@ $failures = count(array_filter($checks, fn ($c) => !$c[0]));
        (<code>*</code> in all five fields) with this command. Leave the notification email
        blank, or you will receive 1,440 emails a day.</p>
     <pre><?= htmlspecialchars($cronLine) ?></pre>
-    <p>PHP CLI binaries found on this server:
-        <?= $cliPaths ? '<code>' . implode('</code>, <code>', array_map('htmlspecialchars', $cliPaths)) . '</code>' : 'none at the usual paths — check DirectAdmin for the correct one' ?>.
-    </p>
+    <?php if ($phpBinaryIsGuess): ?>
+        <div class="banner bad">No PHP CLI binary was found at any of the usual paths, so
+            <code><?= htmlspecialchars($phpBinary) ?></code> above is only a guess. If the log below says
+            &ldquo;No such file or directory&rdquo;, that is why. DirectAdmin usually lists the correct
+            path under its PHP version settings.</div>
+    <?php else: ?>
+        <p>PHP CLI binaries found on this server:
+            <code><?= implode('</code>, <code>', array_map('htmlspecialchars', $cliPaths)) ?></code>.
+        </p>
+    <?php endif; ?>
+
+    <h2>Cron log</h2>
+    <p><code><?= htmlspecialchars($cronLog) ?></code></p>
+    <?php if (!$cronLogExists): ?>
+        <div class="banner bad">This file does not exist. Either the cron job never ran, or it ran
+            but could not create the log. Two things to check, in this order:
+            <br>1. Does the job appear in DirectAdmin &rarr; Cron Jobs' list (not just the edit form)?
+            <br>2. Does <code><?= htmlspecialchars($dataDir) ?></code> exist and is it owned by your
+            account? If it is owned by the web server instead, cron cannot write here at all and
+            fails silently — see the owner rows above.</div>
+    <?php elseif ($cronLogTail === ''): ?>
+        <div class="banner bad">The log exists but is empty — the job ran and produced no output at all,
+            which the script never does. Check that the command ends with <code>2&gt;&amp;1</code>.</div>
+    <?php else: ?>
+        <p>Last lines — &ldquo;No bids due&rdquo; every minute is exactly what a healthy cron looks like:</p>
+        <pre><?= htmlspecialchars($cronLogTail) ?></pre>
+    <?php endif; ?>
 
     <h2>Paths</h2>
     <table>
