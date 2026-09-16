@@ -54,6 +54,8 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
                     <a href="connect_ebay.php" class="<?= $currentPage === 'connect_ebay.php' ? 'active' : '' ?>">eBay account</a>
                     <?php if (!empty($user['is_admin'])): ?>
                         <a href="admin.php" class="<?= $currentPage === 'admin.php' ? 'active' : '' ?>">Admin</a>
+                        <a href="ebay_setup.php" class="<?= $currentPage === 'ebay_setup.php' ? 'active' : '' ?>">eBay setup</a>
+                        <a href="preflight.php" class="<?= $currentPage === 'preflight.php' ? 'active' : '' ?>">Preflight</a>
                     <?php endif; ?>
                 </div>
                 <div class="nav-account">

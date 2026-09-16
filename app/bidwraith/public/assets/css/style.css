@@ -1209,3 +1209,12 @@ button.danger:hover { background: #8f2e23; border-color: #8f2e23; }
 .cron-ok .cron-dot { background: #2c7a3f; }
 .cron-bad { background: #fbe6e4; color: #8a2318; }
 .cron-bad .cron-dot { background: #b3341f; }
+
+/* Footer privacy link, reachable without logging in — eBay's RuName review and
+   general visitors both need to be able to find this without an account. */
+.site-footer {
+    text-align: center;
+    padding: 1.6rem 1rem 2.2rem;
+    font-size: 0.82rem;
+}
+.site-footer a { color: var(--muted, #8a877f); }
