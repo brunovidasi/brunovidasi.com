@@ -169,6 +169,18 @@ $cronLine = sprintf(
     $dataDir
 );
 
+/**
+ * A cron job that touches nothing of this app, to establish whether cron runs for
+ * this account at all. It reports the time, the user cron runs as, and where PHP
+ * actually lives — which is the information the real job's absence can't give us.
+ * Writes into the data directory so the result is readable right here.
+ */
+$selfTestFile = $dataDir . '/cron-test.txt';
+$selfTestCommand = '* * * * * (date; id; command -v php; echo "PATH=$PATH") > ' . $selfTestFile . ' 2>&1';
+$selfTestRan = is_file($selfTestFile);
+$selfTestBody = $selfTestRan ? (string) file_get_contents($selfTestFile) : '';
+$selfTestAge = $selfTestRan ? time() - filemtime($selfTestFile) : null;
+
 $failures = count(array_filter($checks, fn ($c) => !$c[0]));
 ?>
 <!doctype html>
@@ -255,6 +267,23 @@ $failures = count(array_filter($checks, fn ($c) => !$c[0]));
     <?php else: ?>
         <p>Last lines — &ldquo;No bids due&rdquo; every minute is exactly what a healthy cron looks like:</p>
         <pre><?= htmlspecialchars($cronLogTail) ?></pre>
+    <?php endif; ?>
+
+    <h2>Cron self-test</h2>
+    <?php if ($selfTestRan): ?>
+        <div class="banner ok">Cron <strong>does</strong> run for this account — this file was written
+            <?= (int) $selfTestAge ?>s ago. So the scheduler works, and the problem is the real job's
+            command. <code>command -v php</code> below gives the PHP path this server actually has.</div>
+        <pre><?= htmlspecialchars($selfTestBody) ?></pre>
+        <p>Delete this job once the real one works.</p>
+    <?php else: ?>
+        <p>If the log above is missing, the real command never executed at all — the shell creates the
+           log file <em>before</em> running PHP, so even a broken PHP path would have produced one.
+           To find out whether cron runs for this account at all, add a <strong>second</strong> cron job
+           (keep the existing one), every field <code>*</code>, with exactly this command on one line:</p>
+        <pre><?= htmlspecialchars($selfTestCommand) ?></pre>
+        <p>Wait two minutes and reload this page. It touches nothing of the app, and the result appears
+           here — no file manager needed.</p>
     <?php endif; ?>
 
     <h2>Paths</h2>
