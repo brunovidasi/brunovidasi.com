@@ -18,15 +18,21 @@ try {
     $result = $client->fetchToken($sessionId);
     $environment = ebay_config()['environment'];
 
+    // Best-effort: needed so a later eBay account-deletion notification (which
+    // identifies the account by username, not by our token) can be matched back to
+    // this row. A failure here must not stop the connection from completing.
+    $ebayUsername = $client->getUsername($result['token']);
+
     db()->prepare('
-        INSERT INTO ebay_accounts (user_id, environment, auth_token, token_expires_at, connected_at)
-        VALUES (?, ?, ?, ?, datetime(\'now\'))
+        INSERT INTO ebay_accounts (user_id, environment, auth_token, token_expires_at, ebay_username, connected_at)
+        VALUES (?, ?, ?, ?, ?, datetime(\'now\'))
         ON CONFLICT(user_id) DO UPDATE SET
             environment = excluded.environment,
             auth_token = excluded.auth_token,
             token_expires_at = excluded.token_expires_at,
+            ebay_username = excluded.ebay_username,
             connected_at = excluded.connected_at
-    ')->execute([$user['id'], $environment, $result['token'], $result['expires_at']]);
+    ')->execute([$user['id'], $environment, $result['token'], $result['expires_at'], $ebayUsername]);
 
     set_flash('success', 'eBay account connected.');
 } catch (Throwable $e) {

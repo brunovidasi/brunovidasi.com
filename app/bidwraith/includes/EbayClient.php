@@ -283,6 +283,34 @@ class EbayClient
     }
 
     /**
+     * The eBay username behind an Auth'n'Auth token, fetched right after connecting
+     * so a stored token can be matched against eBay's account-deletion notifications
+     * later — those identify the account by username/userId, not by our own token.
+     * Best-effort: returns null on any failure rather than throwing, since losing
+     * this shouldn't block the user from finishing "Connect eBay account".
+     */
+    public function getUsername(string $authToken): ?string
+    {
+        $body = '<?xml version="1.0" encoding="utf-8"?>'
+            . '<GetUserRequest xmlns="urn:ebay:apis:eBLBaseComponents">'
+            . '<RequesterCredentials><eBayAuthToken>' . htmlspecialchars($authToken) . '</eBayAuthToken></RequesterCredentials>'
+            . '</GetUserRequest>';
+
+        try {
+            [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetUser'), $body);
+            $xml = simplexml_load_string($response);
+        } catch (Throwable $e) {
+            return null;
+        }
+
+        if (!$xml || (string) $xml->Ack === 'Failure' || empty($xml->User->UserID)) {
+            return null;
+        }
+
+        return (string) $xml->User->UserID;
+    }
+
+    /**
      * The items the user is actually watching on eBay itself (Site Preferences ->
      * Watch List), as opposed to this app's own auction list. Uses the same
      * Auth'n'Auth token already stored for bidding — no separate OAuth needed.

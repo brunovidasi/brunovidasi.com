@@ -26,6 +26,11 @@ return [
     //   php -r "echo bin2hex(random_bytes(24));"
     // Leave empty to keep the endpoint disabled.
     'cron_token' => '',
+    // eBay's Marketplace Account Deletion/Closure notifications require this
+    // endpoint (public/ebay_deletion.php) and a verification token, 32-80 chars.
+    // Generate with:  php -r "echo bin2hex(random_bytes(24));"
+    'ebay_deletion_token' => '',
+
 
     // Kept as an active admin on every request, so you can't lock yourself out.
     // Leave empty to disable.

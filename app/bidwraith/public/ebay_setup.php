@@ -100,6 +100,35 @@ require __DIR__ . '/../includes/layout_top.php';
     </div>
 <?php endif; ?>
 
+<h2>Marketplace Account Deletion / Closure notifications</h2>
+<p>eBay requires this for every production app that stores any data tied to an eBay
+   account &mdash; this one stores the auth token, so the "I don't store anything"
+   opt-out doesn't apply. Found under the Developer Program's
+   <strong>Alerts &amp; Notifications</strong> (or similar &mdash; eBay has renamed this
+   page before) settings, not the Application Keys page.</p>
+
+<?php $delToken = ebay_deletion_token(); ?>
+<?php if ($delToken === ''): ?>
+    <div class="flash flash-error">No <code>ebay_deletion_token</code> is set in the config.
+        Generate one and add it before subscribing, or eBay's verification call will 503.</div>
+<?php else: ?>
+    <table class="admin-table">
+        <tr>
+            <td><strong>Marketplace account deletion endpoint</strong></td>
+            <td><code><?= htmlspecialchars(ebay_deletion_url()) ?></code></td>
+        </tr>
+        <tr>
+            <td><strong>Verification token</strong></td>
+            <td><code><?= htmlspecialchars($delToken) ?></code></td>
+        </tr>
+    </table>
+    <p>Paste both, then use eBay's own "Send test notification" / verification button on
+       that page &mdash; it is the authoritative check, not this page. If it reports
+       failure, open the admin dashboard's "Recent eBay deletion activity" panel: this
+       endpoint logs the exact challenge code and hash it computed for every attempt,
+       so a mismatch is visible rather than guessed at.</p>
+<?php endif; ?>
+
 <?php if ($api === 'sandbox'): ?>
     <h2>Sandbox limitation</h2>
     <p>The Browse API in Sandbox only resolves items that exist in your own Sandbox

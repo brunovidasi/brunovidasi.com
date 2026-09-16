@@ -115,6 +115,24 @@ function base_url(): string
  * string has to be registered as the RuName's "Accepted URL" in the eBay
  * Developer console — ebay_setup.php renders it for copy/paste.
  */
+/**
+ * eBay requires every production app that stores eBay-account-linked data (this one
+ * stores the auth token) to expose an endpoint for Marketplace Account
+ * Deletion/Closure notifications. The verification token is the shared secret eBay
+ * uses to prove it's really eBay calling — generate one with:
+ *   php -r "echo bin2hex(random_bytes(24));"
+ * eBay requires 32-80 characters.
+ */
+function ebay_deletion_url(): string
+{
+    return base_url() . '/ebay_deletion.php';
+}
+
+function ebay_deletion_token(): string
+{
+    return (string) (app_config()['ebay_deletion_token'] ?? '');
+}
+
 function ebay_callback_url(): string
 {
     return base_url() . '/ebay_callback.php';

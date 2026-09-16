@@ -1218,3 +1218,7 @@ button.danger:hover { background: #8f2e23; border-color: #8f2e23; }
     font-size: 0.82rem;
 }
 .site-footer a { color: var(--muted, #8a877f); }
+
+/* eBay deletion-notification audit panel on the admin dashboard. */
+.admin-deletion-log { margin-bottom: 1.4rem; }
+.admin-deletion-log summary { cursor: pointer; font-weight: 600; margin-bottom: 0.5rem; }

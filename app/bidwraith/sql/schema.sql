@@ -64,6 +64,20 @@ CREATE TABLE IF NOT EXISTS bid_steps (
 
 CREATE INDEX IF NOT EXISTS idx_bid_steps_status ON bid_steps (status);
 
+-- Audit trail for eBay's Marketplace Account Deletion/Closure notifications
+-- (public/ebay_deletion.php). Required by eBay for every production app that
+-- stores any data tied to an eBay account, which this one does (the auth token).
+-- Keeping this is also how you can show eBay/yourself the requirement was met,
+-- not just believed to be met.
+CREATE TABLE IF NOT EXISTS ebay_deletion_log (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    notification_id  TEXT UNIQUE,
+    ebay_username     TEXT,
+    matched_user_id   INTEGER,
+    action            TEXT NOT NULL,
+    received_at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS bid_log (
     id               INTEGER PRIMARY KEY AUTOINCREMENT,
     bid_step_id      INTEGER NOT NULL REFERENCES bid_steps(id) ON DELETE CASCADE,

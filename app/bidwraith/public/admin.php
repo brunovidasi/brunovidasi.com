@@ -129,6 +129,27 @@ require __DIR__ . '/../includes/layout_top.php';
     <?php endif; ?>
 </div>
 
+<details class="admin-deletion-log">
+    <summary>Recent eBay deletion activity</summary>
+    <?php
+    $deletionEvents = db()->query('SELECT * FROM ebay_deletion_log ORDER BY id DESC LIMIT 20')->fetchAll(PDO::FETCH_ASSOC);
+    ?>
+    <?php if (!$deletionEvents): ?>
+        <p class="admin-empty">No account-deletion notifications or verification attempts recorded yet.</p>
+    <?php else: ?>
+        <table class="admin-table">
+            <tr><th>When</th><th>Username</th><th>Action</th></tr>
+            <?php foreach ($deletionEvents as $event): ?>
+                <tr>
+                    <td><?= htmlspecialchars($event['received_at']) ?></td>
+                    <td><?= htmlspecialchars($event['ebay_username'] ?? '—') ?></td>
+                    <td><?= htmlspecialchars($event['action']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+</details>
+
 <div class="admin-stats">
     <div class="admin-stat">
         <span class="admin-stat-value"><?= (int) $userTotals['total'] ?></span>
