@@ -420,3 +420,52 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
 
     return $events;
 }
+
+/**
+ * Seconds since cron/snipe.php last ran, or null if it never has.
+ *
+ * The cron job is the only thing that actually places bids, so a silently stopped
+ * one is the worst failure this app has: nothing looks wrong until an auction is
+ * lost. Cron writes a heartbeat on every run so the admin dashboard can say so.
+ */
+function cron_heartbeat_age(): ?int
+{
+    $file = data_dir() . '/cron-heartbeat.txt';
+    if (!is_file($file)) {
+        return null;
+    }
+
+    $stamp = (int) file_get_contents($file);
+    return $stamp > 0 ? max(0, time() - $stamp) : null;
+}
+
+/** Human summary of cron health: [state, message] where state is ok|warn|bad. */
+function cron_health(): array
+{
+    $age = cron_heartbeat_age();
+
+    if ($age === null) {
+        return ['bad', 'The bidding cron job has never run. No bids will be placed until it is set up.'];
+    }
+
+    if ($age <= 180) {
+        return ['ok', 'Bidding cron ran ' . $age . 's ago.'];
+    }
+
+    return ['bad', 'Bidding cron last ran ' . format_duration($age) . ' ago. It should run every minute — no bids will fire until it does.'];
+}
+
+/** Rough human duration for the cron status line. */
+function format_duration(int $seconds): string
+{
+    if ($seconds < 120) {
+        return $seconds . ' seconds';
+    }
+    if ($seconds < 7200) {
+        return floor($seconds / 60) . ' minutes';
+    }
+    if ($seconds < 172800) {
+        return floor($seconds / 3600) . ' hours';
+    }
+    return floor($seconds / 86400) . ' days';
+}

@@ -120,6 +120,15 @@ require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Admin dashboard</h1>
 
+<?php [$cronState, $cronMessage] = cron_health(); ?>
+<div class="cron-status cron-<?= $cronState ?>">
+    <span class="cron-dot"></span>
+    <?= htmlspecialchars($cronMessage) ?>
+    <?php if ($cronState !== 'ok'): ?>
+        <a href="preflight.php">Check deployment &rarr;</a>
+    <?php endif; ?>
+</div>
+
 <div class="admin-stats">
     <div class="admin-stat">
         <span class="admin-stat-value"><?= (int) $userTotals['total'] ?></span>

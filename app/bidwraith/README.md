@@ -36,15 +36,18 @@ install required. Copy the files to any PHP host and it runs.
 
 ```bash
 cp config/config.example.php config/config.php
-# edit config/config.php with your eBay App ID / Dev ID / Cert ID
+# edit config/config.php with your eBay Sandbox keys
 
 php -S localhost:8000 -t public
 ```
 
-Visit `http://localhost:8000`, create an account, and log in.
+Visit `http://localhost:8000`, create an account, and log in. The SQLite database is
+created automatically on first request — no migration step.
 
-The SQLite database is created automatically on first request at `data/app.sqlite`
-— no migration step needed.
+`config/config.php` and `data/*.sqlite` are gitignored. **This matters more than
+usual here:** the app is deployed as a subfolder of a public repository, so the
+`.gitignore` in this folder is what keeps your eBay keys and the token database out
+of it. Don't remove those rules.
 
 ## Connecting your eBay account (Sandbox)
 
@@ -71,55 +74,97 @@ flow, the app will ask you to enter the end time manually instead; the actual
 `PlaceOffer` bid call still needs a Sandbox test listing (or production
 credentials) to succeed for real.
 
-## Going to production
+## Deployment
 
-Once you're happy with Sandbox testing:
+The app is deployed at `https://app.brunovidasi.com/bidwraith` as part of the
+brunovidasi.com website repo, which pushes to the server over FTP via GitHub Actions.
 
-1. Apply for/verify production keys in the eBay Developer Program and fill in
-   `config.php`'s `ebay.production` block.
-2. Create a **second RuName** under **Production Keys** (same idea, pointing at
-   your real domain's `/ebay_callback.php`).
-3. Set `ebay_environment` to `production` in `config.php`.
-4. Reconnect your eBay account from the app (production tokens are separate from
-   sandbox ones).
+### The instance directory
 
-## Deploying to DirectAdmin (or any shared PHP host)
+The real config and the database must live **outside** the deployed tree, because the
+repo is public and `public_html` is web-reachable. Create this once, by hand, above
+`public_html`:
 
-1. Upload the whole project outside the web root if possible, e.g.
-   `/home/youruser/ebay_bidder/`, and point your domain/subdomain's **document
-   root** at `.../ebay_bidder/public`.
-   - If you can't change the document root, `.htaccess` files are already in
-     `config/`, `includes/`, `cron/`, `sql/` and `data/` to block direct web access
-     to those folders as a fallback — but a dedicated document root is safer.
-2. Copy `config/config.example.php` to `config/config.php` on the server and fill
-   in real values, with `app.base_url` set to your real domain.
-3. Make sure `data/` is writable by PHP (it is by default once uploaded under your
-   own account).
-4. In DirectAdmin → **Cron Jobs**, add a job that runs every minute:
-   ```
-   * * * * * php /home/youruser/ebay_bidder/cron/snipe.php >> /home/youruser/ebay_bidder/data/cron.log 2>&1
-   ```
+```
+/home/<user>/domains/brunovidasi.com/
+├── bidwraith-instance/          <- create manually, never deployed
+│   ├── config.php               <- from config/config.example.php, with 'env' => 'production'
+│   └── data/                    <- database, cron log (created automatically)
+└── public_html/
+    └── app/bidwraith/           <- deployed by GitHub Actions
+```
+
+The app finds this folder by walking up the directory tree looking for
+`bidwraith-instance`, so no absolute server path is hardcoded anywhere in the repo.
+Set `BIDWRAITH_INSTANCE` to override the location.
+
+### First deploy
+
+1. Push to `main`; the existing workflow uploads `app/bidwraith/` with the rest of the site.
+2. Create `bidwraith-instance/config.php` via DirectAdmin's File Manager (copy
+   `config.example.php`, set `'env' => 'production'` and fill in the eBay keys).
+3. Open `/bidwraith/preflight.php`. While no account exists it's open to anyone; it
+   reports PHP version, extensions, resolved paths, and prints the exact cron line.
+4. Create your admin account at `/bidwraith/setup_admin.php`. It disables itself
+   permanently once any account exists, and closes off `preflight.php` too.
+5. Add the cron job (below), then reload `preflight.php` — every check should pass.
+
+### Cron
+
+`preflight.php` prints this with the real paths filled in. In DirectAdmin → **Cron
+Jobs**, every field `*`, and leave the notification email blank:
+
+```
+* * * * * /usr/local/bin/php /home/<user>/domains/brunovidasi.com/public_html/app/bidwraith/cron/snipe.php >> /home/<user>/domains/brunovidasi.com/bidwraith-instance/data/cron.log 2>&1
+```
+
+The admin dashboard shows when cron last ran. If that goes red, bids are not firing.
+
+### Switching to production eBay
+
+`ebay_api` is deliberately independent of `env`, so the live site can run against
+sandbox eBay while production keys are still being issued. Once you have them:
+
+1. Fill in `ebay_keys.production` in the instance config.
+2. Create a production RuName whose Accepted URL is
+   `https://app.brunovidasi.com/bidwraith/ebay_callback.php`.
+3. Set `'ebay_api' => 'production'` in the production environment block.
+4. Reconnect your eBay account — production tokens are separate from sandbox ones.
 
 ## Project structure
 
 ```
-config/     Config loader + your real config.php (gitignored)
-includes/   Shared PHP: db, auth, csrf, EbayClient, layout partials
-public/     Web root — every page users load lives here
+config/     config.example.php; your real config.php locally (gitignored)
+includes/   db, auth, csrf, config, runtime, EbayClient, layout partials
+public/     Web root — every page users load, plus preflight.php and setup_admin.php
 cron/       snipe.php, run once a minute by the host's cron
 sql/        schema.sql, applied automatically on first run
-data/       SQLite database file lives here (gitignored)
+data/       SQLite database locally (gitignored); on the server this lives in the
+            instance directory instead
+.htaccess   Maps every request into public/ so the rest of the project isn't web-reachable
 ```
 
-Adding a new page later is just: drop a new `.php` file in `public/`, `require
-__DIR__ . '/../includes/bootstrap.php'` at the top, and use `require_login()`,
-`db()`, etc. No routing config to touch.
+Adding a page is: drop a `.php` file in `public/`, `require
+__DIR__ . '/../includes/bootstrap.php'`, and use `require_login()`, `db()`, etc.
+
+## Environments
+
+`config.php` has one `env` key selecting a block that controls the base URL, database
+file, data directory, eBay API side, error display and whether public registration is
+open. Only that one line differs between a laptop and the server.
+
+eBay credentials are keyed by API side (`ebay_keys.sandbox` / `ebay_keys.production`)
+rather than by environment, so both environments can share sandbox keys during rollout.
 
 ## Security notes
 
-- `config/config.php` (your real eBay keys) and `data/*.sqlite` (your database,
-  including connected eBay auth tokens) are gitignored and must never be
-  committed — this matters even more once this repo is made public.
-- Passwords are hashed with PHP's `password_hash()`; eBay auth tokens are stored
-  as given by eBay (they're already opaque, revocable tokens, not your eBay
-  password).
+- The real `config.php` and the database live outside the repo and outside the web
+  root. Neither is committable; neither is downloadable.
+- `.htaccess` maps all requests into `public/`, so `config/`, `includes/`, `cron/`,
+  `sql/` and `data/` return 403/404. Each also carries its own deny-all `.htaccess`.
+- Session cookies are scoped to `/bidwraith/`, `HttpOnly`, and `Secure` in production.
+  `SameSite` is `Lax`, not `Strict`, because eBay's sign-in redirect must carry the
+  session back — `Strict` would silently break connecting an account.
+- Passwords are hashed with `password_hash()`. eBay auth tokens are stored as issued
+  by eBay (opaque and revocable, not your password).
+- Errors are displayed in development and logged to file in production.

@@ -1,0 +1,61 @@
+# Bidwraith front controller.
+#
+# The app is deployed at https://app.brunovidasi.com/bidwraith, i.e. a subfolder of
+# the app.brunovidasi.com document root (public_html/app). Only public/ may ever be
+# reachable over HTTP — config/, includes/, cron/, sql/ and data/ must not be.
+#
+# Rather than flattening the project to suit the host, every request is mapped into
+# public/. That keeps the layout on the server byte-identical to the repo, so there
+# is no dev/prod drift and no rewritten require paths.
+#
+# Note: mod_rewrite rules in a parent .htaccess are NOT inherited once a directory
+# declares its own RewriteEngine On, so the SPA fallback rules in public_html's
+# .htaccess do not apply here.
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Must match the URL path this app is mounted at.
+    RewriteBase /bidwraith/
+
+    # Force HTTPS. The second condition covers a proxy terminating TLS upstream,
+    # which would otherwise leave %{HTTPS} off and cause a redirect loop.
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Send anyone who reaches for /bidwraith/public/... to the canonical URL.
+    # THE_REQUEST holds the original request line and is untouched by the internal
+    # rewrite below, so this only fires for a real client request, never for our own.
+    RewriteCond %{THE_REQUEST} \s/bidwraith/public/ [NC]
+    RewriteRule ^public/(.*)$ /bidwraith/$1 [L,R=301]
+
+    # Stop condition. In per-directory context the ruleset re-runs after a rewrite,
+    # so without this the path would grow public/public/public/... until Apache
+    # gives up with a 500.
+    RewriteRule ^public/ - [L]
+
+    # Everything else is served from public/.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Defence in depth: even if mod_rewrite is unavailable, the SQLite database must
+# never be downloadable. data/ also carries its own deny-all .htaccess.
+<FilesMatch "\.(sqlite|sqlite-wal|sqlite-shm|sqlite-journal|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
