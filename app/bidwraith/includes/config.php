@@ -58,8 +58,15 @@ function app_config(): array
     if ($config === null) {
         $path = config_path();
         if (!file_exists($path)) {
+            // Deliberately vague in the response: this fires on a public URL in the
+            // window between a first deploy and the config being created, and the
+            // absolute path is not something to hand to anyone who visits. The
+            // detail goes to the error log, and preflight.php shows it to an admin.
+            error_log('Bidwraith: no config file at ' . $path);
             http_response_code(500);
-            die('Missing config file. Locally: copy config/config.example.php to config/config.php. On a server: create bidwraith-instance/config.php above public_html.');
+            die(PHP_SAPI === 'cli'
+                ? "Missing config file at $path\n"
+                : 'This application is not configured yet.');
         }
         $config = require $path;
     }
