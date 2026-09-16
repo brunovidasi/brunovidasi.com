@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2080" height="400" viewBox="0 0 520 100">
+  <g transform="translate(15,22) scale(0.833)">
+    <circle cx="14" cy="46" r="4" fill="#faf7f0" opacity="0.22"/>
+    <circle cx="38" cy="36" r="6" fill="#faf7f0" opacity="0.45"/>
+    <circle cx="66" cy="24" r="9" fill="#faf7f0" opacity="0.78"/>
+    <circle cx="98" cy="12" r="13" fill="#a8432b"/>
+  </g>
+  <text x="150" y="68" font-family="Georgia" font-weight="700" font-size="56" letter-spacing="-0.5" fill="#faf7f0">Bidwraith</text>
+</svg>

@@ -1,0 +1,19 @@
+# NOTE: these rules must travel WITH this folder. When this app is deployed as a
+# subfolder of the brunovidasi.com repo (app/bidwraith), this file is what keeps
+# credentials and the auth-token database out of a PUBLIC repository — the parent
+# repo's own .gitignore does not cover them.
+/config/config.php
+/data/*.sqlite
+/data/*.sqlite-journal
+/data/*.sqlite-wal
+/data/*.sqlite-shm
+/data/*.log
+/data/*.log.1
+/data/cron-heartbeat.txt
+
+# Belt and braces: an instance directory should live outside the repo entirely,
+# but ignore it here too in case one is ever created inside by mistake.
+/bidwraith-instance/
+
+.DS_Store
+/.claude/launch.json
