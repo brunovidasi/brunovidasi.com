@@ -138,6 +138,23 @@ function run_snipe_pass(callable $log): void
         }
 
         try {
+            $lookup = $client->getItemByLegacyId($step['auction_item_id']);
+        } catch (Throwable $e) {
+            $lookup = null;
+        }
+
+        if ($lookup && $lookup['current_price'] !== null && (float) $lookup['current_price'] >= (float) $step['max_bid']) {
+            $msg = "Current price ({$lookup['current_price']}) is already at or above the max bid ({$step['max_bid']}); bid not placed.";
+            $log("SKIPPED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
+            db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                ->execute([$msg, $step['id']]);
+            db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
+                ->execute([$step['id'], $msg]);
+            update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+            continue;
+        }
+
+        try {
             $result = $client->placeBid($authToken, $step['auction_item_id'], (float) $step['max_bid']);
         } catch (Throwable $e) {
             $result = ['success' => false, 'message' => $e->getMessage()];

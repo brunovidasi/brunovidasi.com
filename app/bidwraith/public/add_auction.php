@@ -8,7 +8,7 @@ $lookupFailed = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
 
-    $itemId = trim($_POST['item_id'] ?? '');
+    $itemId = extract_ebay_item_id($_POST['item_id'] ?? '');
     $manualEndTime = trim($_POST['end_time'] ?? '');
 
     $steps = [];
@@ -112,9 +112,10 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <form class="stacked" method="post">
     <?= csrf_field() ?>
-    <label for="item_id">eBay item ID</label>
-    <input type="text" id="item_id" name="item_id" required placeholder="e.g. 123456789012" value="<?= htmlspecialchars($_POST['item_id'] ?? $_GET['item_id'] ?? '') ?>">
-    <div class="hint">The number at the end of the listing URL, e.g. 123456789012.</div>
+    <label for="item_id">eBay item ID or listing URL</label>
+    <input type="text" id="item_id" name="item_id" required placeholder="e.g. 123456789012 or https://www.ebay.com/itm/123456789012" value="<?= htmlspecialchars($_POST['item_id'] ?? $_GET['item_id'] ?? '') ?>" autocomplete="off">
+    <div class="hint">Paste the item ID or the full listing URL — e.g. 123456789012.</div>
+    <div class="item-lookup-result" id="itemLookupResult" hidden></div>
 
     <label>Bids (up to 5, timed before the auction ends)</label>
     <div class="hint">

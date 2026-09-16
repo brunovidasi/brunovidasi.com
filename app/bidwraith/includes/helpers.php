@@ -138,6 +138,31 @@ function ebay_item_view_url(string $itemId, string $marketplaceId): string
 }
 
 /**
+ * Accepts either a plain eBay item ID or a pasted listing URL (e.g.
+ * https://www.ebay.com/itm/Some-Title/123456789012?hash=...) and returns just the
+ * numeric item ID. eBay always puts the item ID as the last path segment, so the
+ * last long digit run in the URL's path is it; a bare ID is returned as-is.
+ */
+function extract_ebay_item_id(string $input): string
+{
+    $input = trim($input);
+    if ($input === '' || ctype_digit($input)) {
+        return $input;
+    }
+
+    $path = (string) parse_url($input, PHP_URL_PATH);
+    if ($path !== '' && preg_match_all('/\d{9,15}/', $path, $matches)) {
+        return end($matches[0]);
+    }
+
+    if (preg_match_all('/\d{9,15}/', $input, $matches)) {
+        return end($matches[0]);
+    }
+
+    return $input;
+}
+
+/**
  * Bids fire in order as the auction end approaches, each only if an earlier,
  * lower bid hasn't already won — so a later (closer-to-end) bid must be at
  * least as large as every earlier one, or it could never trigger anything.

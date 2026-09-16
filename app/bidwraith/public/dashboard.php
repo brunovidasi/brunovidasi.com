@@ -100,7 +100,7 @@ require __DIR__ . '/../includes/layout_top.php';
                 <a href="<?= $detailUrl ?>"><img class="entry-thumb" src="<?= htmlspecialchars($a['image_url']) ?>" alt=""></a>
             <?php endif; ?>
             <div class="entry-main">
-                <h3 class="entry-title"><a href="<?= $editable ? $editUrl : $detailUrl ?>"><?= $titleText ?></a></h3>
+                <h3 class="entry-title<?= $outbid ? ' is-outbid' : '' ?>"><a href="<?= $editable ? $editUrl : $detailUrl ?>"><?= $titleText ?></a></h3>
                 <p class="entry-meta">
                     Item <?= htmlspecialchars($a['item_id']) ?>
                     <span class="sep">·</span>
@@ -132,7 +132,7 @@ require __DIR__ . '/../includes/layout_top.php';
                 <a class="entry-link entry-view-link" href="<?= htmlspecialchars(ebay_item_view_url($a['item_id'], ebay_config()['marketplace_id'])) ?>" target="_blank" rel="noopener">View on eBay</a>
             </div>
             <div class="entry-figures">
-                <div class="entry-price">
+                <div class="entry-price<?= $outbid ? ' is-outbid' : '' ?>">
                     <?= $currentPrice !== null ? htmlspecialchars($currency . ' ' . number_format($currentPrice, 2)) : '—' ?>
                     <span class="entry-figure-label">current price</span>
                 </div>
@@ -159,7 +159,15 @@ require __DIR__ . '/../includes/layout_top.php';
                     <form method="post" action="delete_auction.php" data-confirm="Remove this auction from your auction list?">
                         <?= csrf_field() ?>
                         <input type="hidden" name="id" value="<?= (int) $a['id'] ?>">
-                        <button type="submit" class="link-btn">Remove</button>
+                        <button type="submit" class="icon-btn icon-btn-danger" aria-label="Remove" title="Remove">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                <path d="M10 11v6"></path>
+                                <path d="M14 11v6"></path>
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                            </svg>
+                        </button>
                     </form>
                 </div>
             </div>

@@ -278,7 +278,7 @@ a:hover { color: var(--accent-dark); }
 .countdown.is-urgent { color: var(--danger); }
 
 .entry-figures {
-    flex: 0 0 230px;
+    flex: 0 0 270px;
     text-align: right;
 }
 
@@ -287,6 +287,8 @@ a:hover { color: var(--accent-dark); }
     font-size: 1.3rem;
     font-weight: 600;
 }
+
+.entry-price.is-outbid { color: var(--danger); }
 
 .entry-figure-label {
     display: block;
@@ -308,10 +310,12 @@ a:hover { color: var(--accent-dark); }
 
 .entry-actions {
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-end;
     gap: 16px;
     margin-top: 14px;
+    white-space: nowrap;
 }
 
 .entry-actions form { margin: 0; }
@@ -325,6 +329,22 @@ a:hover { color: var(--accent-dark); }
     text-decoration: underline;
     text-underline-offset: 3px;
 }
+
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 4px;
+    background: none;
+    border: none;
+    border-radius: 0;
+    line-height: 0;
+    cursor: pointer;
+}
+
+.icon-btn-danger { color: var(--danger); }
+.icon-btn-danger:hover { color: #8f2e23; background: none; }
 
 .entry-view-link {
     display: block;
@@ -370,6 +390,50 @@ input:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(168, 67, 43, 0.15);
+}
+
+.item-lookup-result {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    background: #fff;
+}
+
+.item-lookup-result.is-error {
+    border-color: var(--danger);
+    color: var(--danger);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.item-lookup-thumb {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+}
+
+.item-lookup-details { min-width: 0; }
+
+.item-lookup-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.item-lookup-meta {
+    margin-top: 3px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted);
 }
 
 input[readonly] {
@@ -482,14 +546,18 @@ button.danger:hover { background: #8f2e23; border-color: #8f2e23; }
 
 .warning-badge {
     display: block;
-    margin-top: 6px;
+    margin-top: 8px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
     color: var(--danger);
 }
 
 .warning-badge::before { content: "▲ "; }
+
+.entry-title.is-outbid a { color: var(--danger); }
 
 /* Auth pages */
 

@@ -292,6 +292,100 @@ function showBidStepError(form, message) {
     div.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+(function () {
+    var input = document.getElementById('item_id');
+    var result = document.getElementById('itemLookupResult');
+    if (!input || !result) {
+        return;
+    }
+
+    var debounceTimer = null;
+    var lastQueried = null;
+
+    function renderResult(data) {
+        if (!data.found) {
+            result.className = 'item-lookup-result is-error';
+            result.textContent = data.error || "Couldn't find that item.";
+            result.hidden = false;
+            return;
+        }
+
+        result.className = 'item-lookup-result is-ok';
+        result.innerHTML = '';
+
+        if (data.image_url) {
+            var img = document.createElement('img');
+            img.src = data.image_url;
+            img.alt = '';
+            img.className = 'item-lookup-thumb';
+            result.appendChild(img);
+        }
+
+        var details = document.createElement('div');
+        details.className = 'item-lookup-details';
+
+        var title = document.createElement('div');
+        title.className = 'item-lookup-title';
+        title.textContent = data.title || '(no title returned)';
+        details.appendChild(title);
+
+        var parts = [];
+        if (data.current_price !== null && data.current_price !== undefined) {
+            parts.push(data.currency + ' ' + Number(data.current_price).toFixed(2));
+        }
+        if (data.end_time) {
+            var end = new Date(data.end_time);
+            if (!isNaN(end.getTime())) {
+                parts.push('Ends ' + end.toLocaleString());
+            }
+        }
+        if (parts.length) {
+            var meta = document.createElement('div');
+            meta.className = 'item-lookup-meta';
+            meta.textContent = parts.join(' · ');
+            details.appendChild(meta);
+        }
+
+        result.appendChild(details);
+        result.hidden = false;
+    }
+
+    function lookup() {
+        var raw = input.value.trim();
+        if (raw === '' || raw === lastQueried) {
+            return;
+        }
+        lastQueried = raw;
+
+        fetch('item_lookup.php?item_id=' + encodeURIComponent(raw), { credentials: 'same-origin' })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (input.value.trim() === raw) {
+                    renderResult(data);
+                }
+            })
+            .catch(function () {
+                if (input.value.trim() === raw) {
+                    result.className = 'item-lookup-result is-error';
+                    result.textContent = "Couldn't check that item right now.";
+                    result.hidden = false;
+                }
+            });
+    }
+
+    input.addEventListener('input', function () {
+        result.hidden = true;
+        lastQueried = null;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(lookup, 700);
+    });
+
+    input.addEventListener('blur', function () {
+        clearTimeout(debounceTimer);
+        lookup();
+    });
+})();
+
 document.querySelectorAll('form').forEach(function (form) {
     var stepRows = form.querySelectorAll('.bid-step-row');
     if (!stepRows.length) {
