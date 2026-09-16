@@ -109,16 +109,36 @@ Set `BIDWRAITH_INSTANCE` to override the location.
    permanently once any account exists, and closes off `preflight.php` too.
 5. Add the cron job (below), then reload `preflight.php` — every check should pass.
 
-### Cron
+### Triggering the bidder
 
-`preflight.php` prints this with the real paths filled in. In DirectAdmin → **Cron
-Jobs**, every field `*`, and leave the notification email blank:
+Something must run a bid pass every minute. There are two ways, and the app shares
+one implementation (`includes/snipe_runner.php`) between them.
+
+**Host cron**, if the host's cron daemon runs your jobs. `preflight.php` prints the
+line with real paths; in DirectAdmin use every field `*` and leave the notification
+email blank:
 
 ```
-* * * * * /usr/local/bin/php /home/<user>/domains/brunovidasi.com/public_html/app/bidwraith/cron/snipe.php >> /home/<user>/domains/brunovidasi.com/bidwraith-instance/data/cron.log 2>&1
+* * * * * /usr/local/bin/php /home/<user>/domains/<domain>/public_html/app/bidwraith/cron/snipe.php >> /home/<user>/domains/<domain>/bidwraith-instance/data/cron.log 2>&1
 ```
 
-The admin dashboard shows when cron last ran. If that goes red, bids are not firing.
+**External scheduler**, for hosts where cron doesn't run at all — which is the case
+on this one. Set `cron_token` in the config, then point any service that can fetch a
+URL once a minute at:
+
+```
+https://app.brunovidasi.com/bidwraith/cron_http.php?token=<cron_token>
+```
+
+The endpoint answers immediately and finishes the pass in the background, so a
+scheduler's short request timeout is fine. **It must run every minute** — a pass only
+looks 65 seconds ahead, so a 5-minute scheduler (including GitHub Actions `schedule:`,
+which is also imprecise by several minutes) will miss bids.
+
+Treat the URL as a password. Rotate it by changing `cron_token`.
+
+Either way, the admin dashboard shows when a pass last ran. If that goes red, bids
+are not firing.
 
 ### Switching to production eBay
 

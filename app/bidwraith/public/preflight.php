@@ -10,6 +10,7 @@
  * still reports what it can, because that's precisely when it's needed.
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/snipe_runner.php';
 
 $dbError = null;
 $openAccess = false;
@@ -181,6 +182,11 @@ $selfTestRan = is_file($selfTestFile);
 $selfTestBody = $selfTestRan ? (string) file_get_contents($selfTestFile) : '';
 $selfTestAge = $selfTestRan ? time() - filemtime($selfTestFile) : null;
 
+$cronToken = (string) (app_config()['cron_token'] ?? '');
+$triggerUrl = base_url() . '/cron_http.php?token=' . urlencode($cronToken);
+// Only shown to a logged-in admin: anyone holding this URL can trigger a bid pass.
+$maySeeToken = !$openAccess;
+
 $failures = count(array_filter($checks, fn ($c) => !$c[0]));
 ?>
 <!doctype html>
@@ -267,6 +273,28 @@ $failures = count(array_filter($checks, fn ($c) => !$c[0]));
     <?php else: ?>
         <p>Last lines — &ldquo;No bids due&rdquo; every minute is exactly what a healthy cron looks like:</p>
         <pre><?= htmlspecialchars($cronLogTail) ?></pre>
+    <?php endif; ?>
+
+    <h2>External trigger (no host cron)</h2>
+    <p>If the self-test below never produces a file, this host's cron daemon does not run
+       this account's jobs, and no cron command of any kind will work — including
+       <code>curl</code> ones. The fix has to come from outside the server: point any
+       scheduler that can fetch a URL every minute at this endpoint.</p>
+    <?php if ($cronToken === ''): ?>
+        <div class="banner bad">No <code>cron_token</code> is set in the config, so the endpoint is
+            disabled. Copy the <code>'cron_token' =&gt; '…'</code> line from your local
+            <code>config/config.php</code> into the instance config on the server.</div>
+    <?php elseif (!$maySeeToken): ?>
+        <div class="banner bad">The trigger URL contains a secret, so it is only shown once you are
+            logged in as an admin.</div>
+    <?php else: ?>
+        <p>Give this URL to the scheduler, set to run <strong>every minute</strong>. Treat it as a
+           password — anyone holding it can start a bid pass:</p>
+        <pre><?= htmlspecialchars($triggerUrl) ?></pre>
+        <p>It answers immediately and finishes the work in the background, so a scheduler's short
+           request timeout is fine. Note that a free scheduler limited to 5-minute intervals is
+           <em>not</em> good enough: a pass only looks <?= LOOKAHEAD_SECONDS ?> seconds ahead, so
+           anything less frequent than once a minute will miss bids.</p>
     <?php endif; ?>
 
     <h2>Cron self-test</h2>

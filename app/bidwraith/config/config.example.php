@@ -21,6 +21,12 @@ return [
 
     'timezone' => 'America/Sao_Paulo',
 
+    // Shared secret for public/cron_http.php, the HTTPS trigger for hosts whose cron
+    // cannot run PHP (or cannot run at all). Generate with:
+    //   php -r "echo bin2hex(random_bytes(24));"
+    // Leave empty to keep the endpoint disabled.
+    'cron_token' => '',
+
     // Kept as an active admin on every request, so you can't lock yourself out.
     // Leave empty to disable.
     'owner_email' => '',
