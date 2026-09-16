@@ -47,6 +47,46 @@ require __DIR__ . '/../includes/layout_top.php';
     </div>
 <?php endif; ?>
 
+<h2>Currently configured credentials</h2>
+<p>Check these against eBay's Application Keys page for the <strong><?= htmlspecialchars($api) ?></strong>
+   keyset specifically &mdash; a value copied from the wrong keyset (e.g. a Sandbox RuName still in the
+   production block) causes eBay's sign-in page itself to reject the connection with a
+   &ldquo;Third Party Authorization Error&rdquo;, which is invisible to this app since it happens entirely
+   on eBay's own page.</p>
+<?php
+$cfg = ebay_config();
+$appIdMasked = strlen($cfg['app_id']) > 8
+    ? substr($cfg['app_id'], 0, 6) . str_repeat('*', max(0, strlen($cfg['app_id']) - 10)) . substr($cfg['app_id'], -4)
+    : ($cfg['app_id'] === '' ? '(empty)' : '(too short to mask safely — check by hand)');
+?>
+<table class="admin-table">
+    <tr>
+        <td><strong>App ID</strong> (masked)</td>
+        <td><code><?= htmlspecialchars($appIdMasked) ?></code>
+            <?= str_contains($cfg['app_id'], '-SBX-') ? ' &mdash; contains -SBX-, this is a SANDBOX key' : '' ?>
+            <?= str_contains($cfg['app_id'], '-PRD-') ? ' &mdash; contains -PRD-, this is a PRODUCTION key' : '' ?>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>RuName</strong> (not secret &mdash; it's already sent in the sign-in URL)</td>
+        <td><code><?= htmlspecialchars($cfg['ru_name']) ?></code>
+            <br><span class="hint">RuNames don't reliably carry an -SBX-/-PRD- marker the way App IDs do
+                &mdash; compare this by eye against the RuName shown on eBay's Application Keys page for
+                the <?= htmlspecialchars($api) ?> keyset.</span>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Dev ID / Cert ID</strong></td>
+        <td><?= $cfg['dev_id'] !== '' ? 'set (' . strlen($cfg['dev_id']) . ' chars)' : '(empty)' ?> /
+            <?= $cfg['cert_id'] !== '' ? 'set (' . strlen($cfg['cert_id']) . ' chars)' : '(empty)' ?></td>
+    </tr>
+</table>
+<?php if ($api === 'production' && str_contains($cfg['app_id'], '-SBX-')): ?>
+    <div class="flash flash-error">ebay_api is 'production' but the App ID above contains -SBX-, meaning
+        it is a Sandbox key. This alone would cause a "Third Party Authorization Error" on eBay's sign-in
+        page &mdash; replace ebay_keys.production with the values from eBay's Production keyset.</div>
+<?php endif; ?>
+
 <h2>1. Create (or find) your RuName</h2>
 <p>
     eBay Developer Program &rarr; My Account &rarr;
