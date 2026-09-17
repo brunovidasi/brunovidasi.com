@@ -344,16 +344,27 @@ class EbayClient
      * Watch List), as opposed to this app's own auction list. Uses the same
      * Auth'n'Auth token already stored for bidding — no separate OAuth needed.
      */
-    public function getWatchList(string $authToken): array
+    private function watchListRequestBody(string $authToken): string
     {
-        $body = '<?xml version="1.0" encoding="utf-8"?>'
+        return '<?xml version="1.0" encoding="utf-8"?>'
             . '<GetMyeBayBuyingRequest xmlns="urn:ebay:apis:eBLBaseComponents">'
             . '<RequesterCredentials><eBayAuthToken>' . htmlspecialchars($authToken) . '</eBayAuthToken></RequesterCredentials>'
             . '<WatchList><Include>true</Include><Pagination><EntriesPerPage>200</EntriesPerPage></Pagination></WatchList>'
             . '<DetailLevel>ReturnSummary</DetailLevel>'
             . '</GetMyeBayBuyingRequest>';
+    }
 
-        [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetMyeBayBuying'), $body);
+    /** TEMPORARY debugging helper: returns eBay's raw GetMyeBayBuying XML response, unparsed. */
+    public function getWatchListRaw(string $authToken): string
+    {
+        [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetMyeBayBuying'), $this->watchListRequestBody($authToken));
+
+        return $response;
+    }
+
+    public function getWatchList(string $authToken): array
+    {
+        [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetMyeBayBuying'), $this->watchListRequestBody($authToken));
         $xml = simplexml_load_string($response);
 
         if (!$xml || (string) $xml->Ack === 'Failure') {

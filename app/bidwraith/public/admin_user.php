@@ -154,5 +154,5 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <p class="hint">Prices shown in <?= htmlspecialchars($currency) ?>.</p>
 
-<script src="assets/js/app.js"></script>
+<script src="<?= asset_url('assets/js/app.js') ?>"></script>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

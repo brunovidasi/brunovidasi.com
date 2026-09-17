@@ -227,5 +227,5 @@ require __DIR__ . '/../includes/layout_top.php';
     left this app. Times are shown in your own local time zone.
 </p>
 
-<script src="assets/js/app.js"></script>
+<script src="<?= asset_url('assets/js/app.js') ?>"></script>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

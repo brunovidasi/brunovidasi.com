@@ -19,6 +19,20 @@ function get_param(string $name): string
 }
 
 /**
+ * Appends a cache-busting ?v= query param (the file's mtime) to a static asset
+ * path under public/. Without this, browsers that already cached app.js or
+ * style.css keep serving the old version after a deploy changes them — a
+ * feature can ship server-side and still be invisible to anyone with a warm
+ * cache until they hard-refresh.
+ */
+function asset_url(string $path): string
+{
+    $file = __DIR__ . '/../public/' . $path;
+    $version = is_file($file) ? (string) filemtime($file) : (string) time();
+    return $path . '?v=' . $version;
+}
+
+/**
  * Resolves a (key, direction) sort pair from raw GET values, falling back to the
  * given defaults when unset or when the key isn't one of $allowedKeys.
  */
