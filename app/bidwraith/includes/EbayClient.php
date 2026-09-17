@@ -354,14 +354,6 @@ class EbayClient
             . '</GetMyeBayBuyingRequest>';
     }
 
-    /** TEMPORARY debugging helper: returns eBay's raw GetMyeBayBuying XML response, unparsed. */
-    public function getWatchListRaw(string $authToken): string
-    {
-        [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetMyeBayBuying'), $this->watchListRequestBody($authToken));
-
-        return $response;
-    }
-
     public function getWatchList(string $authToken): array
     {
         [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetMyeBayBuying'), $this->watchListRequestBody($authToken));

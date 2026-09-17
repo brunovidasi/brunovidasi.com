@@ -84,20 +84,11 @@ if ($demo) {
     }
 }
 
-// TEMPORARY: capture eBay's raw GetMyeBayBuying response for debugging why watched
-// items aren't showing up. Admin-only, opt-in via ?raw=1. Remove once diagnosed.
-$rawDebug = null;
-if ($user['is_admin'] && isset($_GET['raw']) && $account) {
-    try {
-        $rawDebug = (new EbayClient())->getWatchListRaw($account['auth_token']);
-    } catch (Throwable $e) {
-        $rawDebug = 'Request failed: ' . $e->getMessage();
-    }
-}
-
 // The watchlist can include fixed-price (Buy It Now) listings too, but this app only
-// places auction bids, so only auction-format ("Chinese") listings are shown here.
-$items = array_values(array_filter($items, fn ($item) => ($item['listing_type'] ?? '') === 'Chinese'));
+// places auction bids, so only auction-format listings are shown here. eBay's Trading
+// API returns "Chinese" (its historical internal name for this format) from some
+// calls and "Auction" from others — GetMyeBayBuying uses "Auction" — so match both.
+$items = array_values(array_filter($items, fn ($item) => in_array($item['listing_type'] ?? '', ['Chinese', 'Auction'], true)));
 
 $perPageOptions = [10, 20, 50, 100];
 $perPage = (int) get_param('per_page');
@@ -122,10 +113,6 @@ require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Your eBay watchlist</h1>
 <p class="hint">Auctions you're watching on eBay itself. Add one to your <a href="dashboard.php">auction list</a> to schedule bids for it.</p>
-
-<?php if ($rawDebug !== null): ?>
-    <pre style="white-space:pre-wrap;border:1px solid #ccc;padding:1em;margin:1em 0;"><?= htmlspecialchars($rawDebug) ?></pre>
-<?php endif; ?>
 
 <?php if (!$account && !$demo): ?>
     <div class="flash flash-error">
