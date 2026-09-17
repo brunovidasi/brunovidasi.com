@@ -110,8 +110,7 @@ $stepsStmt = db()->prepare('SELECT * FROM bid_steps WHERE watched_auction_id = ?
 function admin_top_bid(PDOStatement $stmt, int $auctionId): float
 {
     $stmt->execute([$auctionId]);
-    $steps = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $steps ? (float) max(array_column($steps, 'max_bid')) : 0.0;
+    return bid_steps_top_amount($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
 $pageTitle = 'Admin';

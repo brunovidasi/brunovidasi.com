@@ -120,7 +120,7 @@ require __DIR__ . '/../includes/layout_top.php';
             <?php foreach ($currentRows as $a):
                 $stepsStmt->execute([$a['id']]);
                 $steps = $stepsStmt->fetchAll(PDO::FETCH_ASSOC);
-                $topBid = $steps ? max(array_column($steps, 'max_bid')) : 0.0;
+                $topBid = bid_steps_top_amount($steps);
             ?>
                 <tr>
                     <td class="cell-title" title="<?= htmlspecialchars($a['title'] ?? '') ?>">

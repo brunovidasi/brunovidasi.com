@@ -166,11 +166,17 @@ function extract_ebay_item_id(string $input): string
  * Bids fire in order as the auction end approaches, each only if an earlier,
  * lower bid hasn't already won — so a later (closer-to-end) bid must be at
  * least as large as every earlier one, or it could never trigger anything.
- * $steps: list of ['seconds_before' => int, 'max_bid' => float].
+ * $steps: list of ['seconds_before' => int, 'max_bid' => float, 'bid_mode' => ?string].
+ *
+ * An uncapped 'anyway' step is exempt in both directions: without a max value its
+ * eventual amount isn't decided until fire time (see resolve_anyway_bid_input()),
+ * so there's nothing yet to compare it against. A capped one, or one that has
+ * already fired (max_bid overwritten with what was actually bid), has a concrete
+ * number and is compared normally.
  */
 function validate_bid_step_ordering(array $steps): ?string
 {
-    $sorted = $steps;
+    $sorted = array_values(array_filter($steps, fn ($s) => !(($s['bid_mode'] ?? 'fixed') === 'anyway' && $s['max_bid'] === null)));
     usort($sorted, fn ($a, $b) => $b['seconds_before'] <=> $a['seconds_before']);
 
     for ($i = 1; $i < count($sorted); $i++) {
@@ -184,6 +190,210 @@ function validate_bid_step_ordering(array $steps): ?string
     }
 
     return null;
+}
+
+/**
+ * A bid_steps row is unambiguously a "Steps" (last-minute snipe) entry at 1-60s
+ * before the end, or a "Scheduled Bid" entry above that — the two never overlap,
+ * so this cutoff is also how existing rows are told apart when redisplaying them.
+ */
+const SCHEDULED_BID_MIN_SECONDS_BEFORE = 61;
+
+/** Keeps a scheduled bid within a sane horizon — far enough out is pointless anyway. */
+const SCHEDULED_BID_MAX_SECONDS_BEFORE = 30 * 24 * 60 * 60;
+
+/**
+ * Turns the "Scheduled Bid" tab's input (hours/minutes before the end, or an exact
+ * date) into a single bid_steps-shaped ['seconds_before' => int, 'max_bid' => float]
+ * entry. Kept in the same shape bid_steps already uses rather than a new table,
+ * since the cron firing logic (snipe_runner.php) only ever needs a seconds-before-end
+ * number and doesn't care how it was derived.
+ *
+ * $endTime (the app-timezone 'Y-m-d H:i:s' auction end time) is required to resolve
+ * either mode: 'date' mode can only become a seconds-before-end offset once the
+ * actual end time is known, and 'offset' mode still needs it to confirm the
+ * resulting fire time hasn't already passed.
+ *
+ * Returns [] if the tab was left entirely blank, ['error' => string] if it was
+ * filled in but invalid, or ['seconds_before' => int, 'max_bid' => float] once valid.
+ */
+function resolve_scheduled_bid_input(array $post, ?string $endTime): array
+{
+    $mode = trim((string) ($post['scheduled_mode'] ?? ''));
+    $maxBidRaw = trim((string) ($post['scheduled_max_bid'] ?? ''));
+    $hoursRaw = trim((string) ($post['scheduled_hours'] ?? ''));
+    $minutesRaw = trim((string) ($post['scheduled_minutes'] ?? ''));
+    $dateUtcRaw = trim((string) ($post['scheduled_date_utc'] ?? ''));
+
+    if ($maxBidRaw === '' && $hoursRaw === '' && $minutesRaw === '' && $dateUtcRaw === '') {
+        return [];
+    }
+
+    if ($maxBidRaw === '' || !is_numeric($maxBidRaw) || (float) $maxBidRaw <= 0) {
+        return ['error' => 'The scheduled bid needs a max bid greater than 0.'];
+    }
+    $maxBid = (float) $maxBidRaw;
+
+    if ($endTime === null) {
+        return ['error' => "Couldn't schedule the bid: the auction's end time isn't known yet. Enter it below and save again."];
+    }
+    $endTs = strtotime($endTime);
+
+    if ($mode === 'date') {
+        if ($dateUtcRaw === '' || !ctype_digit($dateUtcRaw)) {
+            return ['error' => 'Pick a date and time for the scheduled bid to fire.'];
+        }
+        $fireAt = (int) $dateUtcRaw;
+        $secondsBefore = $endTs - $fireAt;
+    } elseif ($mode === 'offset') {
+        if (($hoursRaw !== '' && !ctype_digit($hoursRaw)) || ($minutesRaw !== '' && !ctype_digit($minutesRaw))) {
+            return ['error' => 'Hours and minutes before the end must be whole numbers.'];
+        }
+        $hours = $hoursRaw === '' ? 0 : (int) $hoursRaw;
+        $minutes = $minutesRaw === '' ? 0 : (int) $minutesRaw;
+        if ($minutes > 59) {
+            return ['error' => 'Minutes before the end must be between 0 and 59.'];
+        }
+        if ($hours === 0 && $minutes === 0) {
+            return ['error' => 'Enter hours and/or minutes before the end for the scheduled bid.'];
+        }
+        $secondsBefore = $hours * 3600 + $minutes * 60;
+        $fireAt = $endTs - $secondsBefore;
+    } else {
+        return ['error' => 'Choose how the scheduled bid should be timed: hours/minutes before the end, or an exact date.'];
+    }
+
+    if ($secondsBefore < SCHEDULED_BID_MIN_SECONDS_BEFORE) {
+        return ['error' => 'The scheduled bid must be timed more than a minute before the end — for anything closer, use the Steps tab instead.'];
+    }
+    if ($secondsBefore > SCHEDULED_BID_MAX_SECONDS_BEFORE) {
+        return ['error' => "The scheduled bid can't be timed more than 30 days before the end."];
+    }
+    if ($fireAt <= time()) {
+        return ['error' => "The scheduled bid's fire time has already passed — pick a later time or fewer hours/minutes before the end."];
+    }
+
+    return ['seconds_before' => $secondsBefore, 'max_bid' => $maxBid];
+}
+
+/**
+ * Default, and minimum sane, timing for "I want the item anyway": close enough to
+ * the end that almost nothing can still outbid it, but with enough margin that a
+ * slow eBay response still has time to register. A user who sets fewer seconds is
+ * allowed to (it's still a valid Steps-range value), just at their own risk.
+ */
+const ANYWAY_DEFAULT_SECONDS_BEFORE = 4;
+
+/**
+ * Turns the "I want the item anyway" tab's input into a bid_steps-shaped entry.
+ * Unlike every other bid on this form, its amount is deliberately *not* fixed here
+ * — it's computed at fire time from the item's live price plus increment_amount (a
+ * flat value or a percentage, per increment_type), optionally capped at max_bid.
+ * See the matching logic in snipe_runner.php.
+ *
+ * Returns [] if the tab was left entirely blank, ['error' => string] if it was
+ * filled in but invalid, or ['seconds_before' => int, 'bid_mode' => 'anyway',
+ * 'increment_type' => string, 'increment_amount' => float, 'max_bid' => ?float]
+ * once valid (max_bid null means no cap).
+ */
+function resolve_anyway_bid_input(array $post): array
+{
+    $incrementType = trim((string) ($post['anyway_increment_type'] ?? ''));
+    $incrementAmountRaw = trim((string) ($post['anyway_increment_amount'] ?? ''));
+    $secondsRaw = trim((string) ($post['anyway_seconds_before'] ?? ''));
+    $maxBidRaw = trim((string) ($post['anyway_max_bid'] ?? ''));
+
+    if ($incrementAmountRaw === '' && $secondsRaw === '' && $maxBidRaw === '') {
+        return [];
+    }
+
+    if (!in_array($incrementType, ['value', 'percent'], true)) {
+        return ['error' => 'Choose whether "I want the item anyway" adds a fixed value or a percentage over the current price.'];
+    }
+    if ($incrementAmountRaw === '' || !is_numeric($incrementAmountRaw) || (float) $incrementAmountRaw <= 0) {
+        return ['error' => 'Enter how much more than the current price to bid, greater than 0.'];
+    }
+
+    $seconds = $secondsRaw === '' ? ANYWAY_DEFAULT_SECONDS_BEFORE : ($secondsRaw !== '' && ctype_digit($secondsRaw) ? (int) $secondsRaw : null);
+    if ($seconds === null || $seconds < 1 || $seconds > 60) {
+        return ['error' => 'Seconds before end must be between 1 and 60.'];
+    }
+
+    $maxBid = null;
+    if ($maxBidRaw !== '') {
+        if (!is_numeric($maxBidRaw) || (float) $maxBidRaw <= 0) {
+            return ['error' => 'The max value for "I want the item anyway", if set, must be greater than 0.'];
+        }
+        $maxBid = (float) $maxBidRaw;
+    }
+
+    return [
+        'seconds_before' => $seconds,
+        'bid_mode' => 'anyway',
+        'increment_type' => $incrementType,
+        'increment_amount' => (float) $incrementAmountRaw,
+        'max_bid' => $maxBid,
+    ];
+}
+
+/**
+ * How a bid_steps row's amount should read to a person: a plain number for a fixed
+ * step, or for an "anyway" step that has already fired (its max_bid column is
+ * overwritten with what was actually bid once it does — see snipe_runner.php). A
+ * still-pending "anyway" step instead shows the formula, since the real amount
+ * isn't decided until fire time.
+ */
+function bid_step_amount_text(array $step, string $currency): string
+{
+    $isPendingAnyway = ($step['bid_mode'] ?? 'fixed') === 'anyway' && $step['status'] === 'pending';
+    if (!$isPendingAnyway) {
+        return $step['max_bid'] !== null ? $currency . ' ' . number_format((float) $step['max_bid'], 2) : '—';
+    }
+
+    $incrementLabel = $step['increment_type'] === 'percent'
+        ? '+' . rtrim(rtrim(number_format((float) $step['increment_amount'], 2), '0'), '.') . '%'
+        : '+' . $currency . ' ' . number_format((float) $step['increment_amount'], 2);
+
+    return 'Current price ' . $incrementLabel . ($step['max_bid'] !== null
+        ? ', up to ' . $currency . ' ' . number_format((float) $step['max_bid'], 2)
+        : ', no cap');
+}
+
+/**
+ * The highest amount actually at stake across an auction's bid_steps, for the
+ * landed-cost estimate and the admin/auction-detail tables. A still-pending
+ * "anyway" step with no cap has no fixed ceiling to include, so it's simply left
+ * out rather than counted as 0 — it could end up higher than every fixed step.
+ */
+function bid_steps_top_amount(array $steps): float
+{
+    $amounts = array_filter(array_column($steps, 'max_bid'), fn ($v) => $v !== null);
+    return $amounts ? (float) max($amounts) : 0.0;
+}
+
+/**
+ * Renders a bid_steps seconds_before value the way a person would say it: exact
+ * seconds for a last-minute Steps entry (unchanged from before Scheduled Bids
+ * existed), and days/hours/minutes for anything further out.
+ */
+function format_seconds_before(int $seconds): string
+{
+    if ($seconds <= 60) {
+        return $seconds . 's';
+    }
+
+    $days = intdiv($seconds, 86400);
+    $hours = intdiv($seconds % 86400, 3600);
+    $minutes = intdiv($seconds % 3600, 60);
+    $secs = $seconds % 60;
+
+    $parts = [];
+    if ($days > 0) { $parts[] = $days . 'd'; }
+    if ($hours > 0) { $parts[] = $hours . 'h'; }
+    if ($minutes > 0) { $parts[] = $minutes . 'm'; }
+    if ($secs > 0 && $days === 0) { $parts[] = $secs . 's'; }
+
+    return implode(' ', $parts);
 }
 
 /**
@@ -358,7 +568,6 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
     $events = [];
     $endTs = $auction['end_time'] !== null ? strtotime($auction['end_time']) : null;
     $settled = in_array($auction['status'], ['won', 'lost'], true);
-    $money = fn (float $amount) => $currency . ' ' . number_format($amount, 2);
 
     // How far from the auction close a moment actually was, e.g. "4s before end".
     $relativeToEnd = function (?string $time) use ($endTs): string {
@@ -367,9 +576,9 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
         }
         $delta = $endTs - strtotime($time);
         if ($delta >= 0) {
-            return $delta . 's before end';
+            return format_seconds_before($delta) . ' before end';
         }
-        return abs($delta) . 's after end';
+        return format_seconds_before(abs($delta)) . ' after end';
     };
 
     $events[] = [
@@ -390,9 +599,9 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
         $events[] = [
             'time' => db_time_local($step['created_at']),
             'seq' => 1,
-            'label' => 'Bid scheduled: ' . $money((float) $step['max_bid']),
+            'label' => 'Bid scheduled: ' . bid_step_amount_text($step, $currency),
             'detail' => '',
-            'meta' => 'to fire ' . (int) $step['seconds_before'] . 's before the auction ends',
+            'meta' => 'to fire ' . format_seconds_before((int) $step['seconds_before']) . ' before the auction ends',
             'tone' => 'muted',
         ];
 
@@ -408,13 +617,13 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
             $events[] = [
                 'time' => $dueAt !== null ? date('Y-m-d H:i:s', $dueAt) : null,
                 'seq' => 2,
-                'label' => $missed ? 'Bid never fired: ' . $money((float) $step['max_bid']) : 'Bid waiting: ' . $money((float) $step['max_bid']),
+                'label' => ($missed ? 'Bid never fired: ' : 'Bid waiting: ') . bid_step_amount_text($step, $currency),
                 'detail' => $missed
                     ? ($settled
                         ? 'The auction was already settled by the time this bid was due, so the cron job skipped it.'
                         : 'This bid was due here and no attempt was ever recorded — check that the cron job is running.')
                     : '',
-                'meta' => (int) $step['seconds_before'] . 's before end',
+                'meta' => format_seconds_before((int) $step['seconds_before']) . ' before end',
                 'tone' => $missed ? ($settled ? 'muted' : 'danger') : 'muted',
             ];
             continue;
@@ -425,9 +634,9 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
             $events[] = [
                 'time' => $firedAt,
                 'seq' => 2,
-                'label' => 'Bid failed before reaching eBay: ' . $money((float) $step['max_bid']),
+                'label' => 'Bid failed before reaching eBay: ' . bid_step_amount_text($step, $currency),
                 'detail' => $step['result_message'] ?? '',
-                'meta' => trim((int) $step['seconds_before'] . 's step · gave up ' . $relativeToEnd($firedAt), ' ·'),
+                'meta' => trim(format_seconds_before((int) $step['seconds_before']) . ' step · gave up ' . $relativeToEnd($firedAt), ' ·'),
                 'tone' => 'danger',
             ];
             continue;
@@ -439,9 +648,9 @@ function auction_event_timeline(array $auction, array $steps, array $log, string
             $events[] = [
                 'time' => $attemptedAt,
                 'seq' => 2,
-                'label' => ($ok ? 'Bid placed on eBay: ' : 'Bid rejected by eBay: ') . $money((float) $step['max_bid']),
+                'label' => ($ok ? 'Bid placed on eBay: ' : 'Bid rejected by eBay: ') . bid_step_amount_text($step, $currency),
                 'detail' => $entry['response_summary'] ?? '',
-                'meta' => trim((int) $step['seconds_before'] . 's step · fired ' . $relativeToEnd($attemptedAt), ' ·'),
+                'meta' => trim(format_seconds_before((int) $step['seconds_before']) . ' step · fired ' . $relativeToEnd($attemptedAt), ' ·'),
                 'tone' => $ok ? 'ok' : 'danger',
             ];
         }

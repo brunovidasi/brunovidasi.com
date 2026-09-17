@@ -53,8 +53,61 @@ function run_migrations(PDO $db): void
         }
     }
 
+    migrate_bid_steps_anyway_mode($db);
     migrate_single_bid_to_steps($db);
     grant_owner_admin($db);
+}
+
+/**
+ * Rebuilds bid_steps to add bid_mode/increment_type/increment_amount and make
+ * max_bid nullable, for the "I want the item anyway" option (see schema.sql).
+ * SQLite's ALTER TABLE can add columns but can't relax an existing NOT NULL
+ * constraint, so an existing bid_steps table (missing bid_mode) needs a full
+ * rebuild rather than the simple ADD COLUMN loop above.
+ *
+ * bid_log has a foreign key to bid_steps, and by default SQLite's RENAME TABLE
+ * rewrites that reference to follow the renamed table — which would leave it
+ * pointing at the soon-to-be-dropped bid_steps_old. That rewrite turns out to
+ * need both foreign_keys off AND legacy_alter_table on at the same time (tested
+ * empirically — foreign_keys alone, or legacy_alter_table alone once
+ * foreign_keys has ever been turned on for the connection, isn't enough); with
+ * both set, bid_log's reference is left reading plain "bid_steps", which is
+ * correct again once the new table of that name exists.
+ */
+function migrate_bid_steps_anyway_mode(PDO $db): void
+{
+    $columns = array_column($db->query('PRAGMA table_info(bid_steps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (in_array('bid_mode', $columns, true)) {
+        return;
+    }
+
+    $db->exec('PRAGMA foreign_keys = OFF');
+    $db->exec('PRAGMA legacy_alter_table = ON');
+    $db->exec('ALTER TABLE bid_steps RENAME TO bid_steps_old');
+    $db->exec("
+        CREATE TABLE bid_steps (
+            id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+            watched_auction_id  INTEGER NOT NULL REFERENCES watched_auctions(id) ON DELETE CASCADE,
+            seconds_before      INTEGER NOT NULL,
+            bid_mode            TEXT NOT NULL DEFAULT 'fixed',
+            max_bid             REAL,
+            increment_type      TEXT,
+            increment_amount    REAL,
+            status              TEXT NOT NULL DEFAULT 'pending',
+            fired_at            TEXT,
+            result_message      TEXT,
+            created_at          TEXT NOT NULL DEFAULT (datetime('now')),
+            UNIQUE (watched_auction_id, seconds_before)
+        )
+    ");
+    $db->exec("
+        INSERT INTO bid_steps (id, watched_auction_id, seconds_before, max_bid, status, fired_at, result_message, created_at)
+        SELECT id, watched_auction_id, seconds_before, max_bid, status, fired_at, result_message, created_at FROM bid_steps_old
+    ");
+    $db->exec('DROP TABLE bid_steps_old');
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_bid_steps_status ON bid_steps (status)');
+    $db->exec('PRAGMA legacy_alter_table = OFF');
+    $db->exec('PRAGMA foreign_keys = ON');
 }
 
 /**

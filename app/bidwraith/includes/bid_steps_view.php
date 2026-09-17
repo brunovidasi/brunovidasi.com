@@ -29,7 +29,10 @@ function render_bid_step_rows(array $steps, string $currency, bool $allowAdd = t
                 <div class="field-error" data-field-error></div>
             </div>
             <div class="bid-step-field">
-                <label for="step_max_bid_<?= $i ?>">Max bid (<?= htmlspecialchars($currency) ?>)</label>
+                <div class="bid-step-field-header">
+                    <label for="step_max_bid_<?= $i ?>">Max bid (<?= htmlspecialchars($currency) ?>)</label>
+                    <button type="button" class="link-btn cents-btn" data-random-cents<?= $readonly ? ' disabled' : '' ?>>Add random cents</button>
+                </div>
                 <input type="number" id="step_max_bid_<?= $i ?>" name="step_max_bid[]" step="0.01" min="0"
                        placeholder="e.g. 55.00"
                        value="<?= htmlspecialchars((string) $step['max_bid']) ?>"

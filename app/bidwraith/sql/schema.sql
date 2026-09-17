@@ -50,11 +50,21 @@ CREATE INDEX IF NOT EXISTS idx_watched_auctions_status_end
 -- can have up to 5 of these, e.g. $50 at 10s before, $60 at 3s before, $70 at 1s
 -- before — a "ladder" that raises the ceiling as the close gets nearer, to compete
 -- with other snipers rather than relying on a single fixed max.
+--
+-- bid_mode 'fixed' bids max_bid exactly, decided ahead of time (the default, used
+-- by Steps and Scheduled Bid rows). bid_mode 'anyway' ("I want the item anyway")
+-- instead computes its amount at fire time as the item's live price plus
+-- increment_amount (a flat value or a percentage, per increment_type) — max_bid is
+-- then an optional cap, NULL meaning no limit, until the step fires and it's
+-- overwritten with whatever was actually bid.
 CREATE TABLE IF NOT EXISTS bid_steps (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     watched_auction_id  INTEGER NOT NULL REFERENCES watched_auctions(id) ON DELETE CASCADE,
     seconds_before      INTEGER NOT NULL,
-    max_bid             REAL NOT NULL,
+    bid_mode            TEXT NOT NULL DEFAULT 'fixed',
+    max_bid             REAL,
+    increment_type      TEXT,
+    increment_amount    REAL,
     status              TEXT NOT NULL DEFAULT 'pending',
     fired_at            TEXT,
     result_message      TEXT,

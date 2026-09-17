@@ -133,6 +133,31 @@ class EbayClient
     }
 
     /**
+     * Dev-only shortcut: item ID "1" always resolves to a canned mock item instead of
+     * calling out to eBay, so the add-auction flow (lookup result, max bid, bid tabs)
+     * can be exercised locally without depending on the Sandbox having matching test
+     * data. Gated on is_production() so it can never fire on a real deployment.
+     */
+    private function mockItem(): array
+    {
+        // An inline data-URI placeholder rather than an external image URL, so the
+        // mock has no network dependency of its own and renders offline.
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">'
+            . '<rect width="100%" height="100%" fill="#ddd"/>'
+            . '<text x="50%" y="50%" font-family="sans-serif" font-size="20" text-anchor="middle" dominant-baseline="middle" fill="#555">Mock Item</text>'
+            . '</svg>';
+
+        return [
+            'title' => 'Mock Item (dev only) — Vintage Widget',
+            'end_time' => date('c', time() + 3600),
+            'current_price' => 42.50,
+            'shipping_cost' => 5.00,
+            'item_country' => 'US',
+            'image_url' => 'data:image/svg+xml;base64,' . base64_encode($svg),
+        ];
+    }
+
+    /**
      * Looks up an item by the plain numeric ID from an ebay.com listing URL.
      * Note: in the Sandbox environment this only finds items that exist in your own
      * sandbox seller test data — real production item IDs won't resolve there.
@@ -140,6 +165,10 @@ class EbayClient
      */
     public function getItemByLegacyId(string $legacyItemId): ?array
     {
+        if ($legacyItemId === '1' && !is_production()) {
+            return $this->mockItem();
+        }
+
         $token = $this->getAppAccessToken();
         $url = $this->browseEndpoint() . '/item/get_item_by_legacy_id?legacy_item_id=' . urlencode($legacyItemId);
 

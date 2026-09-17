@@ -34,7 +34,7 @@ $anchor = $anchor ?? '';
         <tbody>
             <?php foreach ($pastRows as $row):
                 $steps = $row['steps'] ?? [];
-                $topBid = $steps ? max(array_column($steps, 'max_bid')) : 0.0;
+                $topBid = bid_steps_top_amount($steps);
                 $outcome = bid_outcome_summary($steps, $row['status']);
                 $settled = in_array($row['status'], ['won', 'lost'], true);
             ?>

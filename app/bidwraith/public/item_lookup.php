@@ -36,4 +36,6 @@ echo json_encode([
     'currency' => ebay_config()['currency'],
     'end_time' => $lookup['end_time'],
     'image_url' => $lookup['image_url'],
+    'shipping_cost' => $lookup['shipping_cost'],
+    'item_country' => $lookup['item_country'],
 ]);

@@ -39,7 +39,7 @@ $logStmt = db()->prepare('
 $logStmt->execute([$auctionId]);
 $log = $logStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$topBid = $steps ? max(array_column($steps, 'max_bid')) : 0.0;
+$topBid = bid_steps_top_amount($steps);
 $hasEnded = $auction['end_time'] !== null && $auction['end_time'] < date('Y-m-d H:i:s');
 $outcome = $hasEnded ? bid_outcome_summary($steps, $auction['status']) : null;
 
@@ -121,8 +121,8 @@ require __DIR__ . '/../includes/layout_top.php';
         <tbody>
             <?php foreach ($steps as $s): ?>
                 <tr>
-                    <td class="num nowrap"><?= (int) $s['seconds_before'] ?>s before end</td>
-                    <td class="num"><?= htmlspecialchars(number_format($s['max_bid'], 2)) ?></td>
+                    <td class="num nowrap"><?= htmlspecialchars(format_seconds_before((int) $s['seconds_before'])) ?> before end</td>
+                    <td class="num"><?= htmlspecialchars(bid_step_amount_text($s, $currency)) ?></td>
                     <td class="nowrap"><span class="status-<?= htmlspecialchars($s['status']) ?>"><?= htmlspecialchars($s['status']) ?></span></td>
                     <td class="nowrap muted"><?= local_time(db_time_epoch($s['fired_at']), db_time_local($s['fired_at']) ?? 'not fired') ?></td>
                     <td><?= $s['result_message'] ? htmlspecialchars($s['result_message']) : '<span class="muted">—</span>' ?></td>
@@ -154,7 +154,7 @@ require __DIR__ . '/../includes/layout_top.php';
             <?php foreach ($log as $entry): ?>
                 <tr>
                     <td class="nowrap muted"><?= local_time(db_time_epoch($entry['attempted_at']), db_time_local($entry['attempted_at']) ?? 'unknown') ?></td>
-                    <td class="num"><?= htmlspecialchars(number_format($entry['max_bid'], 2)) ?> <span class="muted">@<?= (int) $entry['seconds_before'] ?>s</span></td>
+                    <td class="num"><?= htmlspecialchars(number_format($entry['max_bid'], 2)) ?> <span class="muted">@<?= htmlspecialchars(format_seconds_before((int) $entry['seconds_before'])) ?></span></td>
                     <td class="nowrap">
                         <span class="outcome-<?= $entry['success'] ? 'ok' : 'danger' ?>"><?= $entry['success'] ? 'accepted' : 'rejected' ?></span>
                     </td>

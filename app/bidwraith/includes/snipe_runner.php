@@ -118,7 +118,10 @@ function run_snipe_pass(callable $log): void
         $sleepFor = $fireAt - time();
 
         if ($sleepFor > 0) {
-            $log("Sleeping {$sleepFor}s before bidding {$step['max_bid']} on item {$step['auction_item_id']} (step #{$step['id']}, {$step['seconds_before']}s before end)");
+            $plannedAmount = ($step['bid_mode'] ?? 'fixed') === 'anyway'
+                ? 'current price + ' . $step['increment_amount'] . ($step['increment_type'] === 'percent' ? '%' : '')
+                : (string) $step['max_bid'];
+            $log("Sleeping {$sleepFor}s before bidding {$plannedAmount} on item {$step['auction_item_id']} (step #{$step['id']}, {$step['seconds_before']}s before end)");
             sleep($sleepFor);
         }
 
@@ -142,20 +145,57 @@ function run_snipe_pass(callable $log): void
         } catch (Throwable $e) {
             $lookup = null;
         }
+        $currentPrice = $lookup['current_price'] ?? null;
+        $bidMode = $step['bid_mode'] ?? 'fixed';
 
-        if ($lookup && $lookup['current_price'] !== null && (float) $lookup['current_price'] >= (float) $step['max_bid']) {
-            $msg = "Current price ({$lookup['current_price']}) is already at or above the max bid ({$step['max_bid']}); bid not placed.";
-            $log("SKIPPED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
-            db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
-                ->execute([$msg, $step['id']]);
-            db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
-                ->execute([$step['id'], $msg]);
-            update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
-            continue;
+        if ($bidMode === 'anyway') {
+            // Unlike a fixed step, there's nothing to bid without a live price to
+            // add the increment to — this can't fall back to a preset amount.
+            if ($currentPrice === null) {
+                $msg = "Could not determine the item's current price; bid not placed.";
+                $log("FAILED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
+                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                    ->execute([$msg, $step['id']]);
+                update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+                continue;
+            }
+
+            $cap = $step['max_bid'] !== null ? (float) $step['max_bid'] : null;
+            if ($cap !== null && $currentPrice >= $cap) {
+                $msg = "Current price ($currentPrice) is already at or above the max value ($cap); bid not placed.";
+                $log("SKIPPED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
+                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                    ->execute([$msg, $step['id']]);
+                db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
+                    ->execute([$step['id'], $msg]);
+                update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+                continue;
+            }
+
+            $bidAmount = $step['increment_type'] === 'percent'
+                ? $currentPrice * (1 + ((float) $step['increment_amount'] / 100))
+                : $currentPrice + (float) $step['increment_amount'];
+            $bidAmount = round($bidAmount, 2);
+            if ($cap !== null) {
+                $bidAmount = min($bidAmount, $cap);
+            }
+        } else {
+            $bidAmount = (float) $step['max_bid'];
+
+            if ($currentPrice !== null && $currentPrice >= $bidAmount) {
+                $msg = "Current price ({$currentPrice}) is already at or above the max bid ({$bidAmount}); bid not placed.";
+                $log("SKIPPED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
+                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                    ->execute([$msg, $step['id']]);
+                db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
+                    ->execute([$step['id'], $msg]);
+                update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+                continue;
+            }
         }
 
         try {
-            $result = $client->placeBid($authToken, $step['auction_item_id'], (float) $step['max_bid']);
+            $result = $client->placeBid($authToken, $step['auction_item_id'], $bidAmount);
         } catch (Throwable $e) {
             $result = ['success' => false, 'message' => $e->getMessage()];
         }
@@ -163,8 +203,11 @@ function run_snipe_pass(callable $log): void
         $status = $result['success'] ? 'bid_placed' : 'failed';
         $log(($result['success'] ? 'OK' : 'FAILED') . " step #{$step['id']} (item {$step['auction_item_id']}): {$result['message']}");
 
-        db()->prepare("UPDATE bid_steps SET status = ?, result_message = ?, fired_at = datetime('now') WHERE id = ?")
-            ->execute([$status, $result['message'], $step['id']]);
+        // max_bid is overwritten here with the amount actually attempted — for a
+        // fixed step this just rewrites the same value, but for an 'anyway' step
+        // this is the only record of what the dynamic formula above resolved to.
+        db()->prepare("UPDATE bid_steps SET status = ?, max_bid = ?, result_message = ?, fired_at = datetime('now') WHERE id = ?")
+            ->execute([$status, $bidAmount, $result['message'], $step['id']]);
 
         db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, ?, ?)')
             ->execute([$step['id'], $result['success'] ? 1 : 0, $result['message']]);

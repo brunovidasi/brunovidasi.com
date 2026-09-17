@@ -85,10 +85,16 @@ require __DIR__ . '/../includes/layout_top.php';
     <?php foreach ($auctions as $a):
         $stepsStmt->execute([$a['id']]);
         $steps = $stepsStmt->fetchAll(PDO::FETCH_ASSOC);
-        $effectiveMaxBid = $steps ? max(array_column($steps, 'max_bid')) : 0.0;
+        $effectiveMaxBid = bid_steps_top_amount($steps);
+        // An uncapped, still-pending "anyway" step has no ceiling to be outbid past,
+        // so the usual "current price already at/above your max" warning doesn't apply.
+        $hasUncappedAnyway = (bool) array_filter(
+            $steps,
+            fn ($s) => ($s['bid_mode'] ?? 'fixed') === 'anyway' && $s['status'] === 'pending' && $s['max_bid'] === null
+        );
 
         $currentPrice = $a['current_price'];
-        $outbid = $currentPrice !== null && in_array($a['status'], ['pending', 'bid_placed'], true) && (float) $currentPrice >= $effectiveMaxBid;
+        $outbid = !$hasUncappedAnyway && $currentPrice !== null && in_array($a['status'], ['pending', 'bid_placed'], true) && (float) $currentPrice >= $effectiveMaxBid;
         $estimate = estimate_landed_cost($effectiveMaxBid, $a['shipping_cost'], $a['item_country'], $homeCountry);
         $editable = !in_array($a['status'], ['won', 'lost'], true);
         $editUrl = 'edit_auction.php?id=' . (int) $a['id'];
@@ -123,7 +129,7 @@ require __DIR__ . '/../includes/layout_top.php';
                 <ul class="bid-steps-summary">
                 <?php foreach ($steps as $s): ?>
                     <li>
-                        <?= (int) $s['seconds_before'] ?>s: <?= htmlspecialchars($currency . ' ' . number_format($s['max_bid'], 2)) ?>
+                        <?= htmlspecialchars(format_seconds_before((int) $s['seconds_before'])) ?> before end: <?= htmlspecialchars(bid_step_amount_text($s, $currency)) ?>
                         <span class="status-<?= htmlspecialchars($s['status']) ?>">(<?= htmlspecialchars($s['status']) ?>)</span>
                     </li>
                 <?php endforeach; ?>
