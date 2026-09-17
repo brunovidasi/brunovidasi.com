@@ -11,22 +11,26 @@
  *
  * $scheduled: ['hours' => int|'', 'minutes' => int|'', 'max_bid' => float|'',
  * 'date_local' => string, 'mode' => 'offset'|'date'|'', 'readonly' => bool,
- * 'status' => ?string, 'exists' => bool]. There is at most one scheduled bid
- * per auction, so unlike
- * render_bid_step_rows() this renders a single, always-visible set of fields.
+ * 'disabled' => bool, 'status' => ?string, 'exists' => bool]. There is at most
+ * one scheduled bid per auction, so unlike render_bid_step_rows() this renders
+ * a single, always-visible set of fields. 'readonly' marks a bid that already
+ * fired; 'disabled' marks the whole auction as ended, where nothing on the
+ * form can be interacted with at all.
  */
 function render_scheduled_bid_panel(array $scheduled, string $currency): void
 {
     $mode = $scheduled['mode'] !== '' ? $scheduled['mode'] : 'offset';
     $readonly = !empty($scheduled['readonly']);
+    $disabled = !empty($scheduled['disabled']);
+    $locked = $readonly || $disabled;
     ?>
     <div class="scheduled-mode-toggle" role="radiogroup" aria-label="How the scheduled bid is timed" data-scheduled-mode-toggle>
         <label>
-            <input type="radio" name="scheduled_mode" value="offset" <?= $mode === 'offset' ? 'checked' : '' ?> <?= $readonly ? 'disabled' : '' ?>>
+            <input type="radio" name="scheduled_mode" value="offset" <?= $mode === 'offset' ? 'checked' : '' ?> <?= $locked ? 'disabled' : '' ?>>
             Hours/minutes before the end
         </label>
         <label>
-            <input type="radio" name="scheduled_mode" value="date" <?= $mode === 'date' ? 'checked' : '' ?> <?= $readonly ? 'disabled' : '' ?>>
+            <input type="radio" name="scheduled_mode" value="date" <?= $mode === 'date' ? 'checked' : '' ?> <?= $locked ? 'disabled' : '' ?>>
             An exact date &amp; time
         </label>
     </div>
@@ -35,17 +39,17 @@ function render_scheduled_bid_panel(array $scheduled, string $currency): void
         <div class="bid-step-field">
             <label for="scheduled_hours">Hours before end</label>
             <input type="number" id="scheduled_hours" name="scheduled_hours" min="0" max="720" step="1"
-                   placeholder="e.g. 2"
+                   <?= $disabled ? '' : 'placeholder="e.g. 2"' ?>
                    value="<?= htmlspecialchars((string) $scheduled['hours']) ?>"
-                   <?= $readonly ? 'readonly' : '' ?>>
+                   <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
             <div class="field-error" data-field-error></div>
         </div>
         <div class="bid-step-field">
             <label for="scheduled_minutes">Minutes before end</label>
             <input type="number" id="scheduled_minutes" name="scheduled_minutes" min="0" max="59" step="1"
-                   placeholder="e.g. 30"
+                   <?= $disabled ? '' : 'placeholder="e.g. 30"' ?>
                    value="<?= htmlspecialchars((string) $scheduled['minutes']) ?>"
-                   <?= $readonly ? 'readonly' : '' ?>>
+                   <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
             <div class="field-error" data-field-error></div>
         </div>
     </div>
@@ -55,7 +59,7 @@ function render_scheduled_bid_panel(array $scheduled, string $currency): void
             <label for="scheduled_date">Date &amp; time to fire</label>
             <input type="datetime-local" id="scheduled_date" name="scheduled_date"
                    value="<?= htmlspecialchars((string) ($scheduled['date_local'] ?? '')) ?>"
-                   <?= $readonly ? 'readonly disabled' : '' ?>>
+                   <?= $locked ? 'readonly disabled' : '' ?>>
             <input type="hidden" id="scheduled_date_utc" name="scheduled_date_utc">
             <div class="hint">In your own local time zone — converted automatically.</div>
             <div class="field-error" data-field-error></div>
@@ -66,19 +70,19 @@ function render_scheduled_bid_panel(array $scheduled, string $currency): void
         <div class="bid-step-field">
             <div class="bid-step-field-header">
                 <label for="scheduled_max_bid">Max bid (<?= htmlspecialchars($currency) ?>)</label>
-                <button type="button" class="link-btn cents-btn" data-random-cents-scheduled<?= $readonly ? ' disabled' : '' ?>>Add random cents</button>
+                <button type="button" class="link-btn cents-btn" data-random-cents-scheduled<?= $locked ? ' disabled' : '' ?>>Add random cents</button>
             </div>
             <input type="number" id="scheduled_max_bid" name="scheduled_max_bid" step="0.01" min="0"
-                   placeholder="e.g. 55.00"
+                   <?= $disabled ? '' : 'placeholder="e.g. 55.00"' ?>
                    value="<?= htmlspecialchars((string) $scheduled['max_bid']) ?>"
-                   <?= $readonly ? 'readonly' : '' ?>>
+                   <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
             <div class="field-error" data-field-error></div>
         </div>
         <?php if (!empty($scheduled['status'])): ?>
             <span class="status-<?= htmlspecialchars($scheduled['status']) ?>"><?= htmlspecialchars($scheduled['status']) ?></span>
         <?php endif; ?>
     </div>
-    <?php if (!$readonly): ?>
+    <?php if (!$locked): ?>
         <div class="hint">Leave every field blank to not use a scheduled bid<?= !empty($scheduled['exists']) ? ', or clear them to remove the one below' : '' ?>.</div>
     <?php endif; ?>
     <?php

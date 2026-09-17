@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
-require_login();
+$user = require_login();
 
 header('Content-Type: application/json');
 
@@ -33,7 +33,7 @@ echo json_encode([
     'item_id' => $itemId,
     'title' => $lookup['title'],
     'current_price' => $lookup['current_price'],
-    'currency' => ebay_config()['currency'],
+    'currency' => user_currency($user),
     'end_time' => $lookup['end_time'],
     'image_url' => $lookup['image_url'],
     'shipping_cost' => $lookup['shipping_cost'],

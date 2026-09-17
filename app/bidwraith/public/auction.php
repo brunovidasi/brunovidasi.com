@@ -47,7 +47,7 @@ $logStmt = db()->prepare('
 $logStmt->execute([$auctionId]);
 $log = $logStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$currency = ebay_config()['currency'];
+$currency = user_currency($user);
 $homeCountry = marketplace_country_code(ebay_config()['marketplace_id']);
 
 $topBid = bid_steps_top_amount($steps);

@@ -18,22 +18,26 @@
  *
  * $anyway: ['seconds_before' => int|'', 'increment_type' => 'value'|'percent'|'',
  * 'increment_amount' => float|'', 'max_bid' => float|'', 'readonly' => bool,
- * 'status' => ?string, 'exists' => bool]. There is at most one of these per
- * auction, so unlike render_bid_step_rows() this renders a single, always-visible
- * set of fields.
+ * 'disabled' => bool, 'status' => ?string, 'exists' => bool]. There is at most
+ * one of these per auction, so unlike render_bid_step_rows() this renders a
+ * single, always-visible set of fields. 'readonly' marks a bid that already
+ * fired; 'disabled' marks the whole auction as ended, where nothing on the
+ * form can be interacted with at all.
  */
 function render_anyway_bid_panel(array $anyway, string $currency): void
 {
     $incrementType = $anyway['increment_type'] !== '' ? $anyway['increment_type'] : 'value';
     $readonly = !empty($anyway['readonly']);
+    $disabled = !empty($anyway['disabled']);
+    $locked = $readonly || $disabled;
     ?>
     <div class="scheduled-row">
         <div class="bid-step-field">
             <label for="anyway_seconds_before">Seconds before end</label>
             <input type="number" id="anyway_seconds_before" name="anyway_seconds_before" min="1" max="60"
-                   placeholder="<?= ANYWAY_DEFAULT_SECONDS_BEFORE ?> (default)"
+                   <?= $disabled ? '' : 'placeholder="' . ANYWAY_DEFAULT_SECONDS_BEFORE . ' (default)"' ?>
                    value="<?= htmlspecialchars((string) $anyway['seconds_before']) ?>"
-                   <?= $readonly ? 'readonly' : '' ?>>
+                   <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
             <div class="hint">
                 Defaults to <?= ANYWAY_DEFAULT_SECONDS_BEFORE ?>s before the end if left blank. You can set it lower,
                 but under <?= ANYWAY_DEFAULT_SECONDS_BEFORE ?>s risks eBay responding too slowly for the bid to
@@ -45,11 +49,11 @@ function render_anyway_bid_panel(array $anyway, string $currency): void
 
     <div class="scheduled-mode-toggle" role="radiogroup" aria-label="How much more than the current price to bid" data-anyway-increment-toggle data-currency="<?= htmlspecialchars($currency) ?>">
         <label>
-            <input type="radio" name="anyway_increment_type" value="value" <?= $incrementType === 'value' ? 'checked' : '' ?> <?= $readonly ? 'disabled' : '' ?>>
+            <input type="radio" name="anyway_increment_type" value="value" <?= $incrementType === 'value' ? 'checked' : '' ?> <?= $locked ? 'disabled' : '' ?>>
             A fixed amount over the price at the time of the bid
         </label>
         <label>
-            <input type="radio" name="anyway_increment_type" value="percent" <?= $incrementType === 'percent' ? 'checked' : '' ?> <?= $readonly ? 'disabled' : '' ?>>
+            <input type="radio" name="anyway_increment_type" value="percent" <?= $incrementType === 'percent' ? 'checked' : '' ?> <?= $locked ? 'disabled' : '' ?>>
             A percentage over the price at the time of the bid
         </label>
     </div>
@@ -58,9 +62,9 @@ function render_anyway_bid_panel(array $anyway, string $currency): void
         <div class="bid-step-field">
             <label for="anyway_increment_amount">Amount (<span data-anyway-increment-unit><?= $incrementType === 'percent' ? '%' : htmlspecialchars($currency) ?></span>)</label>
             <input type="number" id="anyway_increment_amount" name="anyway_increment_amount" step="0.01" min="0.01"
-                   placeholder="e.g. 10"
+                   <?= $disabled ? '' : 'placeholder="e.g. 10"' ?>
                    value="<?= htmlspecialchars((string) $anyway['increment_amount']) ?>"
-                   <?= $readonly ? 'readonly' : '' ?>>
+                   <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
             <div class="field-error" data-field-error></div>
         </div>
     </div>
@@ -69,9 +73,9 @@ function render_anyway_bid_panel(array $anyway, string $currency): void
         <div class="bid-step-field">
             <label for="anyway_max_bid">Max value (<?= htmlspecialchars($currency) ?>) &mdash; optional</label>
             <input type="number" id="anyway_max_bid" name="anyway_max_bid" step="0.01" min="0.01"
-                   placeholder="Leave blank for no limit"
+                   <?= $disabled ? '' : 'placeholder="Leave blank for no limit"' ?>
                    value="<?= htmlspecialchars((string) $anyway['max_bid']) ?>"
-                   <?= $readonly ? 'readonly' : '' ?>>
+                   <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
             <div class="hint">Won't bid above this, no matter how high the price has gone. Leave blank if you don't want a limit.</div>
             <div class="field-error" data-field-error></div>
         </div>
@@ -79,7 +83,7 @@ function render_anyway_bid_panel(array $anyway, string $currency): void
             <span class="status-<?= htmlspecialchars($anyway['status']) ?>"><?= htmlspecialchars($anyway['status']) ?></span>
         <?php endif; ?>
     </div>
-    <?php if (!$readonly): ?>
+    <?php if (!$locked): ?>
         <div class="hint">Leave the amount blank to not use this option<?= !empty($anyway['exists']) ? ', or clear it to remove the one below' : '' ?>.</div>
     <?php endif; ?>
     <?php

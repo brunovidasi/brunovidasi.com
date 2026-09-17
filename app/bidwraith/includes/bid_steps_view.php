@@ -6,16 +6,20 @@
  * button, so the common case (1-2 bids) doesn't show 5 rows at once.
  *
  * Each entry in $steps: ['id' => int|'', 'seconds_before' => int|'', 'max_bid' => float|'',
- * 'readonly' => bool, 'status' => ?string].
+ * 'readonly' => bool, 'disabled' => bool, 'status' => ?string]. 'readonly' marks a
+ * step that already fired (its value is kept but can't be changed); 'disabled'
+ * marks the whole auction as ended, where nothing on the form can be interacted
+ * with at all.
  */
 function render_bid_step_rows(array $steps, string $currency, bool $allowAdd = true): void
 {
     $visibleCount = max(1, count($steps));
 
     for ($i = 0; $i < 5; $i++) {
-        $step = $steps[$i] ?? ['id' => '', 'seconds_before' => '', 'max_bid' => '', 'readonly' => false, 'status' => null];
+        $step = $steps[$i] ?? ['id' => '', 'seconds_before' => '', 'max_bid' => '', 'readonly' => false, 'disabled' => false, 'status' => null];
         $hidden = $i >= $visibleCount;
         $readonly = !empty($step['readonly']);
+        $disabled = !empty($step['disabled']);
         ?>
         <div class="bid-step-row"<?= $hidden ? ' hidden' : '' ?>>
             <input type="hidden" name="step_id[]" value="<?= htmlspecialchars((string) $step['id']) ?>">
@@ -23,20 +27,20 @@ function render_bid_step_rows(array $steps, string $currency, bool $allowAdd = t
             <div class="bid-step-field">
                 <label for="step_seconds_<?= $i ?>">Seconds before end</label>
                 <input type="number" id="step_seconds_<?= $i ?>" name="step_seconds[]" min="1" max="60"
-                       placeholder="e.g. 5"
+                       <?= $disabled ? '' : 'placeholder="e.g. 5"' ?>
                        value="<?= htmlspecialchars((string) $step['seconds_before']) ?>"
-                       <?= $readonly ? 'readonly' : '' ?>>
+                       <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
                 <div class="field-error" data-field-error></div>
             </div>
             <div class="bid-step-field">
                 <div class="bid-step-field-header">
                     <label for="step_max_bid_<?= $i ?>">Max bid (<?= htmlspecialchars($currency) ?>)</label>
-                    <button type="button" class="link-btn cents-btn" data-random-cents<?= $readonly ? ' disabled' : '' ?>>Add random cents</button>
+                    <button type="button" class="link-btn cents-btn" data-random-cents<?= ($readonly || $disabled) ? ' disabled' : '' ?>>Add random cents</button>
                 </div>
                 <input type="number" id="step_max_bid_<?= $i ?>" name="step_max_bid[]" step="0.01" min="0"
-                       placeholder="e.g. 55.00"
+                       <?= $disabled ? '' : 'placeholder="e.g. 55.00"' ?>
                        value="<?= htmlspecialchars((string) $step['max_bid']) ?>"
-                       <?= $readonly ? 'readonly' : '' ?>>
+                       <?= $readonly ? 'readonly' : '' ?> <?= $disabled ? 'disabled' : '' ?>>
                 <div class="field-error" data-field-error></div>
             </div>
             <?php if ($step['status']): ?>

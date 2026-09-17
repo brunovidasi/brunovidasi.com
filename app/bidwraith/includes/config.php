@@ -237,7 +237,6 @@ function ebay_config(): array
         'environment' => $api,
         'site_id' => $config['marketplace']['site_id'],
         'marketplace_id' => $config['marketplace']['marketplace_id'],
-        'currency' => $config['marketplace']['currency'],
     ];
 }
 

@@ -1,12 +1,16 @@
 -- ebay_bidder database schema (SQLite)
 -- Applied automatically at runtime by includes/db.php — no manual migration needed.
 
+-- currency is NULL until the user picks one or eBay's account currency is detected
+-- when they connect (see ebay_callback.php); user_currency() in helpers.php is what
+-- falls back to 'AUD' for display and bidding, so NULL never leaks into the UI.
 CREATE TABLE IF NOT EXISTS users (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     email         TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     is_admin      INTEGER NOT NULL DEFAULT 0,
     is_active     INTEGER NOT NULL DEFAULT 1,
+    currency      TEXT,
     created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

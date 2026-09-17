@@ -8,6 +8,20 @@
  */
 class EbayClient
 {
+    /**
+     * Maps a GetUser RegistrationAddress country code to the currency that account
+     * most likely bids in, used to prefill a newly-connected user's currency
+     * preference. Deliberately just the major eBay markets — an unmapped country
+     * leaves the preference at its 'AUD' default instead of guessing wrong.
+     */
+    private const COUNTRY_CURRENCIES = [
+        'AU' => 'AUD', 'US' => 'USD', 'GB' => 'GBP', 'CA' => 'CAD', 'NZ' => 'NZD',
+        'CH' => 'CHF', 'JP' => 'JPY', 'SG' => 'SGD', 'HK' => 'HKD', 'MY' => 'MYR',
+        'PH' => 'PHP', 'TH' => 'THB', 'TW' => 'TWD', 'PL' => 'PLN',
+        'DE' => 'EUR', 'FR' => 'EUR', 'IT' => 'EUR', 'ES' => 'EUR', 'NL' => 'EUR',
+        'AT' => 'EUR', 'IE' => 'EUR', 'BE' => 'EUR',
+    ];
+
     private array $cfg;
     private string $environment;
 
@@ -283,7 +297,7 @@ class EbayClient
      * Places (or raises) a proxy bid. eBay will auto-rebid on the user's behalf up to
      * maxBid each time they're outbid, exactly like bidding manually on the site.
      */
-    public function placeBid(string $authToken, string $itemId, float $maxBid): array
+    public function placeBid(string $authToken, string $itemId, float $maxBid, string $currency): array
     {
         $body = '<?xml version="1.0" encoding="utf-8"?>'
             . '<PlaceOfferRequest xmlns="urn:ebay:apis:eBLBaseComponents">'
@@ -291,7 +305,7 @@ class EbayClient
             . '<ItemID>' . htmlspecialchars($itemId) . '</ItemID>'
             . '<Offer>'
             . '<Action>Bid</Action>'
-            . '<MaxBid currencyID="' . htmlspecialchars($this->cfg['currency']) . '">' . htmlspecialchars((string) $maxBid) . '</MaxBid>'
+            . '<MaxBid currencyID="' . htmlspecialchars($currency) . '">' . htmlspecialchars((string) $maxBid) . '</MaxBid>'
             . '<Quantity>1</Quantity>'
             . '</Offer>'
             . '</PlaceOfferRequest>';
@@ -312,13 +326,14 @@ class EbayClient
     }
 
     /**
-     * The eBay username behind an Auth'n'Auth token, fetched right after connecting
-     * so a stored token can be matched against eBay's account-deletion notifications
-     * later — those identify the account by username/userId, not by our own token.
-     * Best-effort: returns null on any failure rather than throwing, since losing
-     * this shouldn't block the user from finishing "Connect eBay account".
+     * Account details fetched right after connecting: the eBay username (so a stored
+     * token can be matched against eBay's account-deletion notifications later, which
+     * identify the account by username/userId rather than by our own token) and the
+     * currency implied by the account's registered country, used to prefill this
+     * user's currency preference. Best-effort: both come back null on any failure
+     * rather than throwing, since losing this shouldn't block "Connect eBay account".
      */
-    public function getUsername(string $authToken): ?string
+    public function getAccountInfo(string $authToken): array
     {
         $body = '<?xml version="1.0" encoding="utf-8"?>'
             . '<GetUserRequest xmlns="urn:ebay:apis:eBLBaseComponents">'
@@ -329,14 +344,19 @@ class EbayClient
             [, $response] = $this->httpPost($this->tradingEndpoint(), $this->tradingHeaders('GetUser'), $body);
             $xml = simplexml_load_string($response);
         } catch (Throwable $e) {
-            return null;
+            return ['username' => null, 'currency' => null];
         }
 
         if (!$xml || (string) $xml->Ack === 'Failure' || empty($xml->User->UserID)) {
-            return null;
+            return ['username' => null, 'currency' => null];
         }
 
-        return (string) $xml->User->UserID;
+        $country = strtoupper((string) ($xml->User->RegistrationAddress->Country ?? ''));
+
+        return [
+            'username' => (string) $xml->User->UserID,
+            'currency' => self::COUNTRY_CURRENCIES[$country] ?? null,
+        ];
     }
 
     /**

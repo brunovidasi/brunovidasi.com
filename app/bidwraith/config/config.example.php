@@ -37,11 +37,12 @@ return [
     'owner_email' => '',
 
     // See https://developer.ebay.com/api-docs/static/rest-request-components.html#marketp
-    // for other marketplace/site IDs. 15/EBAY_AU/AUD is Australia.
+    // for other marketplace/site IDs. 15/EBAY_AU is Australia. Bidding/display currency
+    // is a per-user setting (users.currency), not configured here — see user_currency()
+    // in includes/helpers.php.
     'marketplace' => [
         'site_id'        => 15,
         'marketplace_id' => 'EBAY_AU',
-        'currency'       => 'AUD',
     ],
 
     // Keyed by eBay API side, NOT by app environment — a production deployment may

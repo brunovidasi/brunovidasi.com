@@ -62,7 +62,7 @@ foreach ($pastRows as &$pastRow) {
 unset($pastRow);
 
 $pageTitle = 'Auction list';
-$currency = ebay_config()['currency'];
+$currency = user_currency($user);
 $homeCountry = marketplace_country_code(ebay_config()['marketplace_id']);
 require __DIR__ . '/../includes/layout_top.php';
 ?>

@@ -175,7 +175,7 @@ $anywayView = [
 $anywayFilled = $anywayView['increment_amount'] !== '' || $anywayView['max_bid'] !== '' || $anywayView['seconds_before'] !== '';
 
 $pageTitle = 'Add auction';
-$currency = ebay_config()['currency'];
+$currency = user_currency($user);
 $homeCountry = marketplace_country_code(ebay_config()['marketplace_id']);
 require __DIR__ . '/../includes/layout_top.php';
 ?>
@@ -184,9 +184,11 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <form class="stacked" method="post" data-requires-bid>
     <?= csrf_field() ?>
-    <label for="item_id">eBay item ID or listing URL</label>
-    <input type="text" id="item_id" name="item_id" required placeholder="e.g. 123456789012 or listing url" value="<?= htmlspecialchars($_POST['item_id'] ?? $_GET['item_id'] ?? '') ?>" autocomplete="off">
-    <div class="hint">Paste the item ID or the full listing URL — e.g. 123456789012.</div>
+    <div id="itemIdField">
+        <label for="item_id">eBay item ID or listing URL</label>
+        <input type="text" id="item_id" name="item_id" required placeholder="e.g. 123456789012 or listing url" value="<?= htmlspecialchars($_POST['item_id'] ?? $_GET['item_id'] ?? '') ?>" autocomplete="off">
+        <div class="hint">Paste the item ID or the full listing URL — e.g. 123456789012.</div>
+    </div>
     <div class="item-lookup-result" id="itemLookupResult" hidden></div>
 
     <?php
@@ -197,14 +199,14 @@ require __DIR__ . '/../includes/layout_top.php';
     ?>
     <div id="auctionDetails"<?= $showAuctionDetails ? '' : ' hidden' ?>>
     <div class="label-with-action">
-        <label for="target_max_bid">Max bid</label>
+        <label for="target_max_bid">Max bid (Maximum you would pay for this produc in <?= htmlspecialchars($currency) ?>.)</label>
         <button type="button" class="link-btn cents-btn" data-random-cents-target>Add random cents</button>
     </div>
     <input type="number" id="target_max_bid" name="target_max_bid" step="0.01" min="0.01"
            placeholder="e.g. 75.00"
            value="<?= htmlspecialchars($_POST['target_max_bid'] ?? '') ?>">
     <div class="field-error" id="targetMaxBidError"></div>
-    <div class="hint">Maximum you would pay for this product.</div>
+    <div class="hint"></div>
     <div class="max-bid-warning" id="maxBidWarning" hidden></div>
     <div class="max-bid-estimate" id="maxBidEstimate" hidden></div>
 

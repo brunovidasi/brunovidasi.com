@@ -5,7 +5,7 @@ $admin = require_admin();
 
 $userId = (int) ($_GET['id'] ?? 0);
 
-$stmt = db()->prepare('SELECT id, email, is_admin, is_active, created_at FROM users WHERE id = ?');
+$stmt = db()->prepare('SELECT id, email, is_admin, is_active, currency, created_at FROM users WHERE id = ?');
 $stmt->execute([$userId]);
 $viewed = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -52,7 +52,7 @@ foreach ($pastRows as &$pastRow) {
 unset($pastRow);
 
 $pageTitle = $viewed['email'];
-$currency = ebay_config()['currency'];
+$currency = user_currency($viewed);
 $detailPage = 'admin_auction.php';
 require __DIR__ . '/../includes/layout_top.php';
 ?>

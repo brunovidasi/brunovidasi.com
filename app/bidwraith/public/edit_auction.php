@@ -242,7 +242,8 @@ $viewSteps = array_map(fn ($s) => [
     'id' => $s['id'],
     'seconds_before' => $s['seconds_before'],
     'max_bid' => $s['max_bid'],
-    'readonly' => $hasEnded || $s['status'] !== 'pending',
+    'readonly' => $s['status'] !== 'pending',
+    'disabled' => $hasEnded,
     'status' => $s['status'],
 ], $regularDbSteps);
 
@@ -257,14 +258,15 @@ if ($scheduledDbStep) {
         'minutes' => (string) intdiv($scheduledSeconds % 3600, 60),
         'date_local' => '',
         'max_bid' => $scheduledDbStep['max_bid'],
-        'readonly' => $hasEnded || $scheduledDbStep['status'] !== 'pending',
+        'readonly' => $scheduledDbStep['status'] !== 'pending',
+        'disabled' => $hasEnded,
         'status' => $scheduledDbStep['status'],
         'exists' => true,
     ];
 } else {
     $scheduledView = [
         'mode' => '', 'hours' => '', 'minutes' => '', 'date_local' => '', 'max_bid' => '',
-        'readonly' => $hasEnded, 'status' => null, 'exists' => false,
+        'readonly' => false, 'disabled' => $hasEnded, 'status' => null, 'exists' => false,
     ];
 }
 
@@ -274,19 +276,34 @@ if ($anywayDbStep) {
         'increment_type' => $anywayDbStep['increment_type'] ?? '',
         'increment_amount' => $anywayDbStep['increment_amount'],
         'max_bid' => $anywayDbStep['max_bid'],
-        'readonly' => $hasEnded || $anywayDbStep['status'] !== 'pending',
+        'readonly' => $anywayDbStep['status'] !== 'pending',
+        'disabled' => $hasEnded,
         'status' => $anywayDbStep['status'],
         'exists' => true,
     ];
 } else {
     $anywayView = [
         'seconds_before' => '', 'increment_type' => '', 'increment_amount' => '', 'max_bid' => '',
-        'readonly' => $hasEnded, 'status' => null, 'exists' => false,
+        'readonly' => false, 'disabled' => $hasEnded, 'status' => null, 'exists' => false,
     ];
 }
 
+// Once an auction has ended, there's no "current tab" from user navigation to
+// respect, so open whichever tab actually holds the strategy that was used
+// instead of always defaulting to Steps.
+$activeBidTab = 'custom';
+if ($hasEnded) {
+    if (!empty($regularDbSteps)) {
+        $activeBidTab = 'custom';
+    } elseif ($scheduledDbStep) {
+        $activeBidTab = 'scheduled';
+    } elseif ($anywayDbStep) {
+        $activeBidTab = 'anyway';
+    }
+}
+
 $pageTitle = 'Edit bids';
-$currency = ebay_config()['currency'];
+$currency = user_currency($user);
 require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Edit bids — <?= htmlspecialchars($auction['title'] ?? $auction['item_id']) ?></h1>
@@ -298,28 +315,28 @@ require __DIR__ . '/../includes/layout_top.php';
     <div class="flash flash-error">This auction has already ended — bids can no longer be changed.</div>
 <?php endif; ?>
 
-<form class="stacked" method="post">
+<form class="stacked" method="post" data-initial-bid-tab="<?= htmlspecialchars($activeBidTab) ?>">
     <?= csrf_field() ?>
     <input type="hidden" name="id" value="<?= (int) $auction['id'] ?>">
     <label>Bids (up to 5, timed before the auction ends)</label>
     <div class="hint">Bids that already fired are shown for reference and can't be changed. Clear a still-pending bid's fields to remove it.</div>
 
     <div class="bid-tabs" role="tablist">
-        <button type="button" class="bid-tab is-active" data-bid-tab="custom" role="tab" aria-selected="true">Steps</button>
-        <button type="button" class="bid-tab" data-bid-tab="scheduled" role="tab" aria-selected="false">Scheduled Bid</button>
-        <button type="button" class="bid-tab" data-bid-tab="anyway" role="tab" aria-selected="false">I Want The Item Anyway</button>
+        <button type="button" class="bid-tab<?= $activeBidTab === 'custom' ? ' is-active' : '' ?>" data-bid-tab="custom" role="tab" aria-selected="<?= $activeBidTab === 'custom' ? 'true' : 'false' ?>">Steps</button>
+        <button type="button" class="bid-tab<?= $activeBidTab === 'scheduled' ? ' is-active' : '' ?>" data-bid-tab="scheduled" role="tab" aria-selected="<?= $activeBidTab === 'scheduled' ? 'true' : 'false' ?>">Scheduled Bid</button>
+        <button type="button" class="bid-tab<?= $activeBidTab === 'anyway' ? ' is-active' : '' ?>" data-bid-tab="anyway" role="tab" aria-selected="<?= $activeBidTab === 'anyway' ? 'true' : 'false' ?>">I Want The Item Anyway</button>
     </div>
 
-    <div class="bid-tab-panel" data-bid-panel="custom">
+    <div class="bid-tab-panel" data-bid-panel="custom"<?= $activeBidTab !== 'custom' ? ' hidden' : '' ?>>
         <?php render_bid_step_rows($viewSteps, $currency, !$hasEnded); ?>
     </div>
 
-    <div class="bid-tab-panel" data-bid-panel="scheduled" hidden>
+    <div class="bid-tab-panel" data-bid-panel="scheduled"<?= $activeBidTab !== 'scheduled' ? ' hidden' : '' ?>>
         <div class="hint">A single bid, timed separately from the Steps ladder above — either hours/minutes before the auction ends, or at an exact date and time.</div>
         <?php render_scheduled_bid_panel($scheduledView, $currency); ?>
     </div>
 
-    <div class="bid-tab-panel" data-bid-panel="anyway" hidden>
+    <div class="bid-tab-panel" data-bid-panel="anyway"<?= $activeBidTab !== 'anyway' ? ' hidden' : '' ?>>
         <div class="hint">
             Bids whatever it takes to win, separate from the Steps ladder above. Instead of a fixed amount decided now,
             it adds your value or percentage on top of the item's price right when it fires.

@@ -6,6 +6,11 @@
  * add an owner column, for the admin view). $anchor, when given (an element id, no
  * leading '#'), is passed through to the sort links so reloading lands back on this
  * table instead of the top of the page.
+ *
+ * A row with an 'owner_currency' key (the admin view, where rows span multiple users
+ * with potentially different currencies) shows prices in that row's own currency;
+ * otherwise every row falls back to $currency, the single currency of the page's own
+ * user.
  */
 $showOwner = $showOwner ?? false;
 // Each title links through to a detail page: the admin views to their own, everyone
@@ -37,6 +42,7 @@ $anchor = $anchor ?? '';
                 $topBid = bid_steps_top_amount($steps);
                 $outcome = bid_outcome_summary($steps, $row['status']);
                 $settled = in_array($row['status'], ['won', 'lost'], true);
+                $rowCurrency = array_key_exists('owner_currency', $row) ? user_currency(['currency' => $row['owner_currency']]) : $currency;
             ?>
                 <tr>
                     <td class="cell-title" title="<?= htmlspecialchars($row['title'] ?? '') ?>">
@@ -63,8 +69,8 @@ $anchor = $anchor ?? '';
                             <span class="outcome-detail"><?= htmlspecialchars($outcome['detail']) ?></span>
                         <?php endif; ?>
                     </td>
-                    <td class="num"><?= $row['current_price'] !== null ? htmlspecialchars(number_format($row['current_price'], 2)) : '—' ?></td>
-                    <td class="num"><?= htmlspecialchars(number_format($topBid, 2)) ?></td>
+                    <td class="num"><?= $row['current_price'] !== null ? htmlspecialchars($rowCurrency . ' ' . number_format($row['current_price'], 2)) : '—' ?></td>
+                    <td class="num"><?= htmlspecialchars($rowCurrency . ' ' . number_format($topBid, 2)) ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

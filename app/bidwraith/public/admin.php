@@ -87,7 +87,7 @@ function admin_auctions(string $condition, string $order, string $pageParam, str
     $offset = ($page - 1) * ADMIN_PER_PAGE;
 
     $stmt = db()->prepare("
-        SELECT wa.*, u.email AS owner_email
+        SELECT wa.*, u.email AS owner_email, u.currency AS owner_currency
         FROM watched_auctions wa
         JOIN users u ON u.id = wa.user_id
         WHERE $condition
@@ -114,7 +114,6 @@ function admin_top_bid(PDOStatement $stmt, int $auctionId): float
 }
 
 $pageTitle = 'Admin';
-$currency = ebay_config()['currency'];
 require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Admin dashboard</h1>
@@ -313,8 +312,9 @@ require __DIR__ . '/../includes/past_auctions_table.php';
                         <?php endif; ?>
                     </td>
                     <td class="nowrap"><span class="status-<?= htmlspecialchars($a['status']) ?>"><?= htmlspecialchars($a['status']) ?></span></td>
-                    <td class="num"><?= $a['current_price'] !== null ? htmlspecialchars(number_format($a['current_price'], 2)) : '—' ?></td>
-                    <td class="num"><?= htmlspecialchars(number_format(admin_top_bid($stepsStmt, (int) $a['id']), 2)) ?></td>
+                    <?php $rowCurrency = user_currency(['currency' => $a['owner_currency']]); ?>
+                    <td class="num"><?= $a['current_price'] !== null ? htmlspecialchars($rowCurrency . ' ' . number_format($a['current_price'], 2)) : '—' ?></td>
+                    <td class="num"><?= htmlspecialchars($rowCurrency . ' ' . number_format(admin_top_bid($stepsStmt, (int) $a['id']), 2)) ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -331,7 +331,7 @@ require __DIR__ . '/../includes/past_auctions_table.php';
 endif; ?>
 <?php endforeach; ?>
 
-<p class="hint">Prices shown in <?= htmlspecialchars($currency) ?>. "Top bid" is the highest scheduled bid on the auction.</p>
+<p class="hint">Prices shown in each user's own currency. "Top bid" is the highest scheduled bid on the auction.</p>
 
 <script src="<?= asset_url('assets/js/app.js') ?>"></script>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

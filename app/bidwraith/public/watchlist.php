@@ -124,15 +124,6 @@ require __DIR__ . '/../includes/layout_top.php';
 <?php elseif ($totalItems === 0): ?>
     <p class="hint">You're not watching any auctions on eBay right now.</p>
 <?php else: ?>
-<form class="admin-filters" method="get">
-    <?php if ($demo): ?><input type="hidden" name="demo" value="1"><?php endif; ?>
-    <label for="per_page">Per page</label>
-    <select id="per_page" name="per_page" onchange="this.form.submit()">
-        <?php foreach ($perPageOptions as $option): ?>
-            <option value="<?= $option ?>" <?= $option === $perPage ? 'selected' : '' ?>><?= $option ?></option>
-        <?php endforeach; ?>
-    </select>
-</form>
 <div class="entries">
     <?php foreach ($pagedItems as $item): ?>
         <article class="entry">
@@ -164,7 +155,18 @@ require __DIR__ . '/../includes/layout_top.php';
         </article>
     <?php endforeach; ?>
 </div>
-<?php require __DIR__ . '/../includes/admin_pager.php'; ?>
+<div class="watchlist-footer">
+    <?php require __DIR__ . '/../includes/admin_pager.php'; ?>
+    <form class="admin-filters" method="get">
+        <?php if ($demo): ?><input type="hidden" name="demo" value="1"><?php endif; ?>
+        <label for="per_page">Per page</label>
+        <select id="per_page" name="per_page" onchange="this.form.submit()">
+            <?php foreach ($perPageOptions as $option): ?>
+                <option value="<?= $option ?>" <?= $option === $perPage ? 'selected' : '' ?>><?= $option ?></option>
+            <?php endforeach; ?>
+        </select>
+    </form>
+</div>
 <?php endif; ?>
 
 <script src="<?= asset_url('assets/js/app.js') ?>"></script>

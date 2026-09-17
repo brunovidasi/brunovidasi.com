@@ -10,7 +10,7 @@ function current_user(): ?array
     if ($user === null) {
         // Deactivated accounts are filtered out here too, so an admin switching a
         // user off ends their existing session on their next request.
-        $stmt = db()->prepare('SELECT id, email, is_admin, created_at FROM users WHERE id = ? AND is_active = 1');
+        $stmt = db()->prepare('SELECT id, email, is_admin, currency, created_at FROM users WHERE id = ? AND is_active = 1');
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         if ($user) {

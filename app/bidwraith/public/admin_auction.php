@@ -6,7 +6,7 @@ require_admin();
 $auctionId = (int) ($_GET['id'] ?? 0);
 
 $stmt = db()->prepare('
-    SELECT wa.*, u.email AS owner_email, u.id AS owner_id
+    SELECT wa.*, u.email AS owner_email, u.id AS owner_id, u.currency AS owner_currency
     FROM watched_auctions wa
     JOIN users u ON u.id = wa.user_id
     WHERE wa.id = ?
@@ -43,7 +43,7 @@ $topBid = bid_steps_top_amount($steps);
 $hasEnded = $auction['end_time'] !== null && $auction['end_time'] < date('Y-m-d H:i:s');
 $outcome = $hasEnded ? bid_outcome_summary($steps, $auction['status']) : null;
 
-$currency = ebay_config()['currency'];
+$currency = user_currency(['currency' => $auction['owner_currency']]);
 $homeCountry = marketplace_country_code(ebay_config()['marketplace_id']);
 $estimate = estimate_landed_cost($topBid, $auction['shipping_cost'], $auction['item_country'], $homeCountry);
 

@@ -118,6 +118,19 @@ function marketplace_country_code(string $marketplaceId): string
     return end($parts);
 }
 
+/** Currencies a user can pick as their own, offered on the eBay account page. */
+const SUPPORTED_CURRENCIES = ['AUD', 'USD', 'GBP', 'EUR', 'CAD', 'NZD', 'CHF', 'JPY', 'SGD', 'HKD', 'MYR', 'PHP', 'THB', 'TWD', 'PLN'];
+
+/**
+ * The currency a user's bids and prices are shown in. Defaults to AUD until they
+ * pick one themselves or it's detected from their eBay account on connect (see
+ * ebay_callback.php) — users.currency is NULL until either of those happens.
+ */
+function user_currency(array $user): string
+{
+    return $user['currency'] ?? 'AUD';
+}
+
 /**
  * Public listing page for an item, so users can jump to it on eBay itself. Domain follows
  * the configured marketplace (e.g. EBAY_AU -> ebay.com.au); marketplaces not in the map

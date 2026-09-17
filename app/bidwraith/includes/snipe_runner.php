@@ -87,9 +87,10 @@ function run_snipe_pass(callable $log): void
 
     $stmt = db()->prepare("
         SELECT bid_steps.*, watched_auctions.item_id AS auction_item_id, watched_auctions.user_id AS auction_user_id,
-               watched_auctions.end_time AS auction_end_time
+               watched_auctions.end_time AS auction_end_time, users.currency AS auction_user_currency
         FROM bid_steps
         JOIN watched_auctions ON watched_auctions.id = bid_steps.watched_auction_id
+        JOIN users ON users.id = watched_auctions.user_id
         WHERE bid_steps.status = 'pending'
           AND watched_auctions.end_time IS NOT NULL
           AND watched_auctions.status NOT IN ('won', 'lost')
@@ -195,7 +196,7 @@ function run_snipe_pass(callable $log): void
         }
 
         try {
-            $result = $client->placeBid($authToken, $step['auction_item_id'], $bidAmount);
+            $result = $client->placeBid($authToken, $step['auction_item_id'], $bidAmount, user_currency(['currency' => $step['auction_user_currency']]));
         } catch (Throwable $e) {
             $result = ['success' => false, 'message' => $e->getMessage()];
         }

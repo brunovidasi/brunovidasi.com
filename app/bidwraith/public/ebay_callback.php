@@ -18,10 +18,12 @@ try {
     $result = $client->fetchToken($sessionId);
     $environment = ebay_config()['environment'];
 
-    // Best-effort: needed so a later eBay account-deletion notification (which
-    // identifies the account by username, not by our token) can be matched back to
-    // this row. A failure here must not stop the connection from completing.
-    $ebayUsername = $client->getUsername($result['token']);
+    // Best-effort: the username is needed so a later eBay account-deletion
+    // notification (which identifies the account by username, not by our token) can
+    // be matched back to this row. The currency is used to prefill this user's
+    // currency preference below. A failure here must not stop the connection from
+    // completing.
+    $accountInfo = $client->getAccountInfo($result['token']);
 
     db()->prepare('
         INSERT INTO ebay_accounts (user_id, environment, auth_token, token_expires_at, ebay_username, connected_at)
@@ -32,7 +34,15 @@ try {
             token_expires_at = excluded.token_expires_at,
             ebay_username = excluded.ebay_username,
             connected_at = excluded.connected_at
-    ')->execute([$user['id'], $environment, $result['token'], $result['expires_at'], $ebayUsername]);
+    ')->execute([$user['id'], $environment, $result['token'], $result['expires_at'], $accountInfo['username']]);
+
+    // Only fills in a currency the user has never set (including never having it
+    // detected on an earlier connect) — an explicit choice on connect_ebay.php must
+    // never be silently overwritten by a later reconnect.
+    if ($accountInfo['currency'] !== null) {
+        db()->prepare('UPDATE users SET currency = ? WHERE id = ? AND currency IS NULL')
+            ->execute([$accountInfo['currency'], $user['id']]);
+    }
 
     set_flash('success', 'eBay account connected.');
 } catch (Throwable $e) {

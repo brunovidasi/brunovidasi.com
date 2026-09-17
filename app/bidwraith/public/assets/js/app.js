@@ -921,6 +921,7 @@ document.querySelectorAll('form').forEach(function (form) {
 (function () {
     var input = document.getElementById('item_id');
     var result = document.getElementById('itemLookupResult');
+    var itemIdField = document.getElementById('itemIdField');
     var details = document.getElementById('auctionDetails');
     var targetMaxBidInput = document.getElementById('target_max_bid');
     var maxBidWarning = document.getElementById('maxBidWarning');
@@ -950,10 +951,41 @@ document.querySelectorAll('form').forEach(function (form) {
         }
     }
 
+    function removeItem() {
+        input.value = '';
+        lastQueried = null;
+        result.hidden = true;
+        result.innerHTML = '';
+        hideDetails();
+        if (itemIdField) {
+            itemIdField.hidden = false;
+        }
+        input.focus();
+        var form = input.closest('form');
+        if (form && form.bidwraithRevalidateSave) {
+            form.bidwraithRevalidateSave();
+        }
+    }
+
+    function addRemoveButton() {
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'item-lookup-remove';
+        removeBtn.setAttribute('aria-label', 'Remove item');
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', removeItem);
+        result.appendChild(removeBtn);
+    }
+
     function renderResult(data) {
+        if (itemIdField) {
+            itemIdField.hidden = true;
+        }
+
         if (!data.found) {
             result.className = 'item-lookup-result is-error';
             result.textContent = data.error || "Couldn't find that item.";
+            addRemoveButton();
             result.hidden = false;
             hideDetails();
             return;
@@ -1010,6 +1042,7 @@ document.querySelectorAll('form').forEach(function (form) {
         }
 
         result.appendChild(resultDetails);
+        addRemoveButton();
         result.hidden = false;
     }
 

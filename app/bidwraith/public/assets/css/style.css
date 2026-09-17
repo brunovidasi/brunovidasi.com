@@ -397,12 +397,35 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(168, 67, 43, 0.15);
 }
 
+select {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+select:hover { border-color: var(--muted); }
+
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(168, 67, 43, 0.15);
+}
+
 .item-lookup-result {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 14px;
     margin-top: 10px;
-    padding: 12px 14px;
+    padding: 12px 36px 12px 14px;
     border: 1px solid var(--border);
     background: #fff;
 }
@@ -414,6 +437,34 @@ input:focus {
     color: var(--danger);
     font-family: 'Inter', sans-serif;
     font-size: 0.85rem;
+}
+
+.item-lookup-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.item-lookup-remove:hover,
+.item-lookup-remove:focus-visible {
+    background: var(--danger);
+    color: #fff;
+    outline: none;
 }
 
 .item-lookup-thumb {
@@ -470,13 +521,13 @@ input:focus {
     margin-top: 4px;
 }
 
-input[readonly] {
+input[readonly], input:disabled {
     background: var(--paper);
     color: var(--muted);
     cursor: default;
 }
 
-input[readonly]:hover { border-color: var(--border); }
+input[readonly]:hover, input:disabled:hover { border-color: var(--border); }
 
 .hint {
     font-family: 'Inter', sans-serif;
@@ -1030,6 +1081,21 @@ button:disabled:hover, .btn:disabled:hover {
 
 .admin-tools .btn { margin-top: 0; }
 
+/* Groups a page into labeled blocks (e.g. the eBay account page's Currency and
+   Account settings) with the same rule-line the page header itself uses, so a
+   page that's really several unrelated settings doesn't read as one long form. */
+.settings-section {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+}
+
+.settings-section:first-of-type {
+    padding-top: 0;
+    border-top: none;
+}
+
+.settings-section h2 { margin-bottom: 10px; }
+
 .admin-table-wrap { overflow-x: auto; }
 
 .admin-table {
@@ -1144,6 +1210,31 @@ button:disabled:hover, .btn:disabled:hover {
 
 .pager a:hover { border-color: var(--accent); }
 .pager span.pager-disabled { opacity: 0.4; }
+
+.watchlist-footer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.watchlist-footer .pager {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0;
+}
+
+.watchlist-footer .admin-filters {
+    margin-left: auto;
+}
+
+@media (max-width: 640px) {
+    .watchlist-footer { flex-direction: column; align-items: stretch; gap: 10px; }
+    .watchlist-footer .pager { position: static; transform: none; justify-content: center; }
+    .watchlist-footer .admin-filters { margin-left: 0; justify-content: center; }
+}
 
 @media (max-width: 640px) {
     .admin-section { flex-direction: column; align-items: stretch; }
