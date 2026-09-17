@@ -26,6 +26,8 @@ if ($demo) {
             'currency' => 'AUD',
             'bid_count' => 8,
             'listing_type' => 'Chinese',
+            'shipping_cost' => 12.00,
+            'item_country' => 'AU',
         ],
         [
             'item_id' => '186372940458',
@@ -37,6 +39,8 @@ if ($demo) {
             'currency' => 'AUD',
             'bid_count' => 23,
             'listing_type' => 'Chinese',
+            'shipping_cost' => 0.00,
+            'item_country' => 'GB',
         ],
         [
             'item_id' => '297581103366',
@@ -48,6 +52,8 @@ if ($demo) {
             'currency' => 'AUD',
             'bid_count' => 3,
             'listing_type' => 'FixedPriceItem',
+            'shipping_cost' => 0.00,
+            'item_country' => 'AU',
         ],
         [
             'item_id' => '154029887712',
@@ -59,6 +65,8 @@ if ($demo) {
             'currency' => 'AUD',
             'bid_count' => null,
             'listing_type' => 'FixedPriceItem',
+            'shipping_cost' => 9.95,
+            'item_country' => 'US',
         ],
     ];
     // Pad out with extra auction entries so the demo also previews pagination.
@@ -73,6 +81,8 @@ if ($demo) {
             'currency' => 'AUD',
             'bid_count' => $i,
             'listing_type' => 'Chinese',
+            'shipping_cost' => 5.00,
+            'item_country' => 'AU',
         ];
     }
 } elseif ($account) {
@@ -108,6 +118,27 @@ $pagerParam = 'page';
 
 $pagedItems = array_slice($items, ($pagerPage - 1) * $perPage, $perPage);
 
+// The watch list call itself doesn't return shipping cost or item location, so those
+// are looked up per item (only for the page actually being shown). Best-effort: a
+// lookup failure just leaves that item without a landed-cost estimate.
+if (!$demo && $account) {
+    $client = $client ?? new EbayClient();
+    foreach ($pagedItems as &$pagedItem) {
+        try {
+            $lookup = $client->getItemByLegacyId($pagedItem['item_id']);
+            if ($lookup) {
+                $pagedItem['shipping_cost'] = $lookup['shipping_cost'];
+                $pagedItem['item_country'] = $lookup['item_country'];
+            }
+        } catch (Throwable $e) {
+            // Leave this item without shipping/fee details.
+        }
+    }
+    unset($pagedItem);
+}
+
+$homeCountry = marketplace_country_code(ebay_config()['marketplace_id']);
+
 $pageTitle = 'Watchlist';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
@@ -125,7 +156,11 @@ require __DIR__ . '/../includes/layout_top.php';
     <p class="hint">You're not watching any auctions on eBay right now.</p>
 <?php else: ?>
 <div class="entries">
-    <?php foreach ($pagedItems as $item): ?>
+    <?php foreach ($pagedItems as $item):
+        $estimate = $item['current_price'] !== null
+            ? estimate_landed_cost((float) $item['current_price'], $item['shipping_cost'] ?? null, $item['item_country'] ?? null, $homeCountry)
+            : null;
+    ?>
         <article class="entry">
             <?php if ($item['gallery_url']): ?>
                 <img class="entry-thumb" src="<?= htmlspecialchars($item['gallery_url']) ?>" alt="">
@@ -150,6 +185,20 @@ require __DIR__ . '/../includes/layout_top.php';
                     <?= $item['current_price'] !== null ? htmlspecialchars(trim($item['currency'] . ' ' . number_format($item['current_price'], 2))) : '—' ?>
                     <span class="entry-figure-label">current price</span>
                 </div>
+                <?php if ($estimate): ?>
+                    <div class="entry-estimate">
+                        <?= htmlspecialchars(trim($item['currency'] . ' ' . number_format($estimate['total'], 2))) ?>
+                        <span class="entry-figure-label">est. full price</span>
+                    </div>
+                    <p class="hint">
+                        current bid <?= number_format((float) $item['current_price'], 2) ?>
+                        + shipping <?= number_format($estimate['shipping'], 2) ?>
+                        + buyer protection fee (est.) <?= number_format($estimate['buyer_protection_fee'], 2) ?>
+                        <?php if ($estimate['gst'] > 0): ?>
+                            + GST on import (est.) <?= number_format($estimate['gst'], 2) ?>
+                        <?php endif; ?>
+                    </p>
+                <?php endif; ?>
                 <a class="btn" href="add_auction.php?item_id=<?= urlencode($item['item_id']) ?>">+ Add to auction list</a>
             </div>
         </article>
