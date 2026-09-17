@@ -116,7 +116,7 @@ function admin_top_bid(PDOStatement $stmt, int $auctionId): float
 $pageTitle = 'Admin';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
-<h1>Admin dashboard</h1>
+<h1>Admin</h1>
 
 <div class="admin-tools">
     <a href="ebay_setup.php" class="btn secondary">eBay setup</a>
