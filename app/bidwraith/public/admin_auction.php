@@ -172,5 +172,5 @@ require __DIR__ . '/../includes/layout_top.php';
     sent and what eBay said back.
 </p>
 
-<script src="<?= asset_url('assets/js/app.js') ?>"></script>
+<?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

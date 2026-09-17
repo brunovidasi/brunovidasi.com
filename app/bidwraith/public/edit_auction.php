@@ -349,5 +349,5 @@ require __DIR__ . '/../includes/layout_top.php';
     <?php endif; ?>
 </form>
 <p><a href="dashboard.php">&larr; Back to auction list</a></p>
-<script src="<?= asset_url('assets/js/app.js') ?>"></script>
+<?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

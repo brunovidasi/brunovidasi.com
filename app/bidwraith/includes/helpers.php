@@ -20,7 +20,7 @@ function get_param(string $name): string
 
 /**
  * Appends a cache-busting ?v= query param (the file's mtime) to a static asset
- * path under public/. Without this, browsers that already cached app.js or
+ * path under public/. Without this, browsers that already cached a JS file or
  * style.css keep serving the old version after a deploy changes them — a
  * feature can ship server-side and still be invisible to anyone with a warm
  * cache until they hard-refresh.
@@ -30,6 +30,42 @@ function asset_url(string $path): string
     $file = __DIR__ . '/../public/' . $path;
     $version = is_file($file) ? (string) filemtime($file) : (string) time();
     return $path . '?v=' . $version;
+}
+
+/**
+ * The app's JavaScript, in load order. There's no build step: each file is a
+ * plain <script> sharing one `Bidwraith` global (see assets/js/core.js), so the
+ * order here is the dependency order — core first, and anything that calls into
+ * another file while loading (rather than from an event handler) after it.
+ */
+const APP_SCRIPTS = [
+    'core.js',          // namespace, current item, shared field/error helpers
+    'confirm_modal.js', // the shared confirm dialog
+    'nav.js',           // narrow-screen nav menu
+    'time.js',          // countdowns, local times, local -> UTC fields
+    'pricing.js',       // fee/landed-cost estimates (ports of helpers.php)
+    'bid_tabs.js',      // the bid form's tabs and strategy cards
+    'bid_steps.js',     // the Steps tab's ladder of rows
+    'scheduled_bid.js', // the Scheduled Bid tab
+    'anyway_bid.js',    // the "I want the item anyway" tab
+    'random_cents.js',  // the random-cents buttons on max bid fields
+    'max_bid.js',       // the Max bid field's warning, estimate and tab reveal
+    'item_lookup.js',   // the eBay item ID lookup
+    'bid_form.js',      // Save-button gating and the submit backstop
+];
+
+/**
+ * Renders the <script> tags for the whole app, each cache-busted on its own
+ * mtime. Pages include this instead of listing the files themselves, so adding
+ * or reordering one is a change in a single place.
+ */
+function app_scripts(): string
+{
+    $tags = array_map(
+        fn (string $file) => '<script src="' . htmlspecialchars(asset_url('assets/js/' . $file)) . '"></script>',
+        APP_SCRIPTS
+    );
+    return implode("\n", $tags);
 }
 
 /**
@@ -560,7 +596,7 @@ function db_time_epoch(?string $timestamp): ?int
 }
 
 /**
- * Renders an absolute instant as a <span data-local-time="epoch"> that app.js
+ * Renders an absolute instant as a <span data-local-time="epoch"> that assets/js/time.js
  * re-renders in the viewer's own timezone, so everyone sees their own local time
  * instead of the server's configured one. $fallbackText (typically the
  * server-timezone formatted string) is what stays on screen if JS doesn't run.

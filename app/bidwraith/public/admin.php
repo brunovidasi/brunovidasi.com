@@ -333,5 +333,5 @@ endif; ?>
 
 <p class="hint">Prices shown in each user's own currency. "Top bid" is the highest scheduled bid on the auction.</p>
 
-<script src="<?= asset_url('assets/js/app.js') ?>"></script>
+<?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

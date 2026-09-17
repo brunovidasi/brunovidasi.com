@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // auction's real end time is known.
     if (!$error) {
         // end_time_utc is the browser's own reading of the local end_time field, converted
-        // to an instant using the visitor's actual timezone (see app.js) — that's what
+        // to an instant using the visitor's actual timezone (see assets/js/time.js) — that's what
         // decides when the sniper fires, so it takes priority over the raw field, which
         // would otherwise be misread as being in the server's configured timezone.
         if ($manualEndTimeUtc !== '' && ctype_digit($manualEndTimeUtc)) {
@@ -199,14 +199,15 @@ require __DIR__ . '/../includes/layout_top.php';
     ?>
     <div id="auctionDetails"<?= $showAuctionDetails ? '' : ' hidden' ?>>
     <div class="label-with-action">
-        <label for="target_max_bid">Max bid (Maximum you would pay for this produc in <?= htmlspecialchars($currency) ?>.)</label>
+        <label for="target_max_bid">Max bid</label>
         <button type="button" class="link-btn cents-btn" data-random-cents-target>Add random cents</button>
     </div>
     <input type="number" id="target_max_bid" name="target_max_bid" step="0.01" min="0.01"
            placeholder="e.g. 75.00"
            value="<?= htmlspecialchars($_POST['target_max_bid'] ?? '') ?>">
+    <div class="hint">(Maximum you would bid for this item in <?= htmlspecialchars($currency) ?> - excluding shipping and fees)</div>
     <div class="field-error" id="targetMaxBidError"></div>
-    <div class="hint"></div>
+    
     <div class="max-bid-warning" id="maxBidWarning" hidden></div>
     <div class="max-bid-estimate" id="maxBidEstimate" hidden></div>
 
@@ -214,7 +215,7 @@ require __DIR__ . '/../includes/layout_top.php';
     // The bid tabs stay hidden until there's a valid max bid to work from — the
     // Strategies tab in particular needs a real number to compute anything, and
     // a max bid already below the current price could never win with it anyway.
-    // Mirrors the same check app.js runs live as the field is typed into. Once
+    // Mirrors the same check assets/js/max_bid.js runs live as the field is typed into. Once
     // a valid value is already present (redisplayed after a POST, or existing
     // bid data was already filled in), there's no reason to hide it again.
     $maxBidRaw = trim((string) ($_POST['target_max_bid'] ?? ''));
@@ -310,5 +311,5 @@ require __DIR__ . '/../includes/layout_top.php';
 <script>
     var bidwraithHomeCountry = <?= json_encode($homeCountry) ?>;
 </script>
-<script src="<?= asset_url('assets/js/app.js') ?>"></script>
+<?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

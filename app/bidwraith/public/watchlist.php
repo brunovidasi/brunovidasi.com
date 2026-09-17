@@ -169,5 +169,5 @@ require __DIR__ . '/../includes/layout_top.php';
 </div>
 <?php endif; ?>
 
-<script src="<?= asset_url('assets/js/app.js') ?>"></script>
+<?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

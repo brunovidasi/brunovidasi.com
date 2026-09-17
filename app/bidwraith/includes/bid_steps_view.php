@@ -23,6 +23,7 @@ function render_bid_step_rows(array $steps, string $currency, bool $allowAdd = t
         ?>
         <div class="bid-step-row"<?= $hidden ? ' hidden' : '' ?>>
             <input type="hidden" name="step_id[]" value="<?= htmlspecialchars((string) $step['id']) ?>">
+            <button type="button" class="bid-step-remove" data-remove-step aria-label="Remove step"<?= ($readonly || $disabled) ? ' hidden' : '' ?>>&times;</button>
             <span class="step-index">Step <?= $i + 1 ?></span>
             <div class="bid-step-field">
                 <label for="step_seconds_<?= $i ?>">Seconds before end</label>

@@ -79,5 +79,5 @@ require __DIR__ . '/../includes/layout_top.php';
     </form>
 </div>
 
-<script src="<?= asset_url('assets/js/app.js') ?>"></script>
+<?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

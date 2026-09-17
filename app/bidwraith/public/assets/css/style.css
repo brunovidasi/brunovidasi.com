@@ -425,7 +425,7 @@ select:focus {
     align-items: center;
     gap: 14px;
     margin-top: 10px;
-    padding: 12px 36px 12px 14px;
+    padding: 12px 14px 12px 14px;
     border: 1px solid var(--border);
     background: #fff;
 }
@@ -441,8 +441,8 @@ select:focus {
 
 .item-lookup-remove {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: -32px;
+    left: -8px;
     width: 22px;
     height: 22px;
     display: flex;
@@ -458,6 +458,9 @@ select:focus {
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease;
+    background: var(--danger);
+    color: #fff;
+    outline: none;
 }
 
 .item-lookup-remove:hover,
@@ -801,11 +804,12 @@ button:disabled:hover, .btn:disabled:hover {
 /* Bid steps */
 
 .bid-step-row {
+    position: relative;
     display: flex;
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 14px;
-    padding: 14px;
+    padding: 14px 40px 14px 14px;
     margin-top: 12px;
     background: #fff;
     border: 1px solid var(--border);
@@ -813,6 +817,34 @@ button:disabled:hover, .btn:disabled:hover {
 }
 
 .bid-step-row[hidden] { display: none; }
+
+.bid-step-remove {
+    position: absolute;
+    top: -30px;
+    right: -8px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--danger);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    outline: none;
+}
+
+.bid-step-remove:hover,
+.bid-step-remove:focus-visible {
+    opacity: 0.85;
+}
+
+.bid-step-remove[hidden] { display: none; }
 
 .bid-step-row .step-index {
     flex: 0 0 100%;
