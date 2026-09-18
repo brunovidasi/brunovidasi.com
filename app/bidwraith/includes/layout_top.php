@@ -69,7 +69,14 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
                 </div>
                 <div class="nav-account">
                     <span class="user-email"><?= htmlspecialchars($user['email']) ?></span>
-                    <a href="logout.php">Log out</a>
+                    <a href="logout.php" class="nav-logout" title="Log out" aria-label="Log out">
+                        <svg class="nav-logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span class="nav-logout-label">Log out</span>
+                    </a>
                 </div>
             </div>
         </div>

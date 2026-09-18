@@ -228,7 +228,7 @@ a:hover { color: var(--accent-dark); }
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     max-width: 0;
     margin-right: 0;
     opacity: 0;
@@ -244,7 +244,12 @@ a:hover { color: var(--accent-dark); }
     transition: max-width 0.35s ease, opacity 0.25s ease, margin-right 0.35s ease, transform 0.35s ease;
 }
 
-@media (min-width: 641px) {
+/*
+ * The sliding brand costs ~226px. It outranks the address, so it appears as
+ * soon as the bar fits it without one — the address gives way below 1200 to
+ * make that room. 960 is the floor where even the address-less bar runs out.
+ */
+@media (min-width: 961px) {
     .site-nav.is-stuck .site-nav-brand {
         max-width: 200px;
         margin-right: 26px;
@@ -315,14 +320,34 @@ a:hover { color: var(--accent-dark); }
     text-decoration: none;
 }
 
+/*
+ * The bar never wraps: between the desktop layout and the phone breakpoint the
+ * spacing compresses instead, so .nav-account cannot drop onto a second line.
+ */
 .nav-menu {
     display: flex;
     flex: 1 1 auto;
     min-width: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: clamp(8px, 2vw, 24px);
+}
+
+.nav-links {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    align-items: center;
+    gap: clamp(10px, 2.2vw, 26px);
+}
+
+.nav-account {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    align-items: center;
+    gap: clamp(8px, 1.5vw, 20px);
 }
 
 .nav-links a, .nav-account a {
@@ -334,7 +359,7 @@ a:hover { color: var(--accent-dark); }
     transition: color 0.15s ease;
 }
 
-.nav-links a { margin-right: 26px; }
+.nav-links a { margin-right: 0; white-space: nowrap; }
 .nav-links a:hover, .nav-account a:hover { color: var(--accent); }
 
 .nav-links a.active {
@@ -342,7 +367,52 @@ a:hover { color: var(--accent-dark); }
 }
 
 .nav-account { color: var(--muted); }
-.user-email { margin-right: 20px; color: var(--muted); }
+
+/*
+ * The address is the one unbounded item in the bar, so it is capped and
+ * ellipsised, then dropped once the links need the room. The phone breakpoint
+ * further down puts it back, where the menu is a stacked drawer with space.
+ */
+.user-email {
+    min-width: 0;
+    max-width: clamp(80px, 12vw, 220px);
+    margin-right: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--muted);
+}
+
+/*
+ * The address is dropped outright once the links need the room, and earlier
+ * than that whenever the stuck brand is showing, since the brand takes
+ * priority over it.
+ */
+@media (max-width: 1200px) {
+    .site-nav.is-stuck .user-email { display: none; }
+}
+
+@media (max-width: 960px) {
+    .user-email { display: none; }
+}
+
+.nav-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+
+.nav-logout-icon { display: none; }
+
+/*
+ * Below this the label is dropped for the icon alone; the link keeps its
+ * aria-label and title either way, so the accessible name never changes.
+ */
+@media (max-width: 780px) {
+    .nav-logout-label { display: none; }
+    .nav-logout-icon { display: block; }
+}
 
 /* Layout */
 
@@ -1290,6 +1360,7 @@ button:disabled:hover, .btn:disabled:hover {
     .nav-links, .nav-account {
         display: flex;
         flex-direction: column;
+        gap: 0;
     }
 
     .nav-links a, .nav-account a {
@@ -1301,7 +1372,9 @@ button:disabled:hover, .btn:disabled:hover {
     .nav-links a.active { border-bottom: 1px solid var(--border); }
 
     .nav-account { color: var(--muted); }
-    .user-email { margin-right: 0; padding: 12px 2px 0; display: block; }
+    .nav-logout-label { display: inline; }
+    .nav-logout-icon { display: none; }
+    .user-email { max-width: none; padding: 12px 2px 0; display: block; }
 }
 
 /* Admin dashboard */
