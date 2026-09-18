@@ -74,6 +74,31 @@
         return null;
     };
 
+    /**
+     * Shows each row's remove button only where pressing it would actually do
+     * something. Removing the last row left doesn't take it away — removeBidStepRow()
+     * always keeps one on screen — so all a press can do there is blank the fields,
+     * which is nothing at all when they're already blank.
+     */
+    Bidwraith.updateStepRemoveButtons = function (form) {
+        var rows = Bidwraith.visibleBidStepRows(form);
+        rows.forEach(function (row) {
+            var btn = row.querySelector('[data-remove-step]');
+            var secondsInput = row.querySelector('input[name="step_seconds[]"]');
+            var maxBidInput = row.querySelector('input[name="step_max_bid[]"]');
+            if (!btn || !secondsInput || !maxBidInput) {
+                return;
+            }
+            // A step that already fired, or one on an auction that has ended, has
+            // its button hidden server-side and can't be edited at all — leave it.
+            if (secondsInput.readOnly || secondsInput.disabled) {
+                return;
+            }
+            var empty = secondsInput.value.trim() === '' && maxBidInput.value.trim() === '';
+            btn.hidden = rows.length === 1 && empty;
+        });
+    };
+
     /** Whether any Steps row has something typed into it. */
     Bidwraith.hasAnyStep = function (form) {
         var rows = Bidwraith.visibleBidStepRows(form);
@@ -141,6 +166,7 @@
             addStepBtn.hidden = false;
         }
         Bidwraith.clearAllFieldErrors(form);
+        Bidwraith.updateStepRemoveButtons(form);
     };
 
     /**
@@ -185,6 +211,7 @@
 
         Bidwraith.clearAllFieldErrors(form);
         Bidwraith.revalidateStepOrder(form);
+        Bidwraith.updateStepRemoveButtons(form);
         Bidwraith.revalidateSave(form);
     }
 
@@ -232,6 +259,7 @@
             if (!form.querySelector('.bid-step-row[hidden]')) {
                 btn.hidden = true;
             }
+            Bidwraith.updateStepRemoveButtons(form);
             Bidwraith.revalidateSave(form);
         });
     });
@@ -243,5 +271,18 @@
                 removeBidStepRow(row);
             }
         });
+    });
+
+    // One delegated listener per form covers typing in any row and any value set
+    // programmatically that dispatches an input event (the random-cents buttons),
+    // and keeps working for rows revealed later.
+    document.querySelectorAll('form').forEach(function (form) {
+        if (!form.querySelector('.bid-step-row')) {
+            return;
+        }
+        form.addEventListener('input', function () {
+            Bidwraith.updateStepRemoveButtons(form);
+        });
+        Bidwraith.updateStepRemoveButtons(form);
     });
 })(window.Bidwraith);

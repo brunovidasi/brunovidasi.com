@@ -98,8 +98,16 @@
 
 * { box-sizing: border-box; }
 
+html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
 body {
     margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
     font-size: 1.05rem;
     color: var(--ink);
@@ -152,8 +160,15 @@ a:hover { color: var(--accent-dark); }
 /* Masthead */
 
 .masthead {
+    min-width: 0;
+    background: color-mix(in srgb, var(--accent) 6%, var(--paper));
+    border-bottom: 1px solid var(--border);
+}
+
+.masthead-inner {
+    max-width: 1240px;
+    margin: 0 auto;
     padding: 30px 32px 0;
-    border-bottom: 3px double var(--ink);
 }
 
 .masthead-top {
@@ -189,12 +204,53 @@ a:hover { color: var(--accent-dark); }
     color: var(--muted);
 }
 
-.masthead-nav {
-    position: relative;
-    padding: 12px 0;
-    border-top: 1px solid var(--border);
+.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: color-mix(in srgb, var(--accent) 6%, var(--paper));
+    border-bottom: 3px double var(--ink);
+    box-shadow: 0 2px 10px rgba(34, 31, 25, 0.06);
     font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
+}
+
+.site-nav-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 12px 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.site-nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    max-width: 0;
+    margin-right: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-decoration: none;
+    transform: translateX(-6px);
+    transition: max-width 0.35s ease, opacity 0.25s ease, margin-right 0.35s ease, transform 0.35s ease;
+}
+
+@media (min-width: 641px) {
+    .site-nav.is-stuck .site-nav-brand {
+        max-width: 200px;
+        margin-right: 26px;
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .nav-bar {
@@ -261,6 +317,8 @@ a:hover { color: var(--accent-dark); }
 
 .nav-menu {
     display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
@@ -289,9 +347,12 @@ a:hover { color: var(--accent-dark); }
 /* Layout */
 
 .container {
+    width: 100%;
     max-width: 1240px;
     margin: 0 auto;
     padding: 40px 32px 70px;
+    flex: 1 0 auto;
+    min-width: 0;
 }
 
 /* Entry list rows (auction list, watchlist) */
@@ -505,6 +566,51 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(168, 67, 43, 0.15);
 }
 
+/*
+ * Small round "remove" buttons (the item lookup's, and each bid step's). The X is
+ * drawn here as two rotated strokes instead of being typeset from the buttons'
+ * &times; character: a glyph is centred on the font's math axis rather than in its
+ * own box, so however the box itself is centred the mark still lands visibly high
+ * inside the circle. Two strokes crossing at the button's real centre can't. The
+ * character stays in the markup as the accessible label's backstop and is hidden
+ * with font-size: 0.
+ */
+.item-lookup-remove,
+.bid-step-remove {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    font-size: 0;
+    line-height: 0;
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.15s ease;
+}
+
+.item-lookup-remove::before,
+.item-lookup-remove::after,
+.bid-step-remove::before,
+.bid-step-remove::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: currentColor;
+}
+
+.item-lookup-remove::before,
+.bid-step-remove::before { transform: translate(-50%, -50%) rotate(45deg); }
+
+.item-lookup-remove::after,
+.bid-step-remove::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
 .item-lookup-result {
     position: relative;
     display: flex;
@@ -525,35 +631,18 @@ select:focus {
     font-size: 0.85rem;
 }
 
+/* -10px, not -32px: the shared rule above drops the 22px margin-top every button
+   on the page carries, which used to eat most of that offset. */
 .item-lookup-remove {
-    position: absolute;
-    top: -32px;
+    top: -10px;
     left: -8px;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
-    background: transparent;
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
     background: var(--danger);
     color: #fff;
-    outline: none;
 }
 
 .item-lookup-remove:hover,
 .item-lookup-remove:focus-visible {
-    background: var(--danger);
-    color: #fff;
-    outline: none;
+    opacity: 0.85;
 }
 
 .item-lookup-thumb {
@@ -778,17 +867,97 @@ button:disabled:hover, .btn:disabled:hover {
 
 /* Bid tabs */
 
+/*
+ * The strategies/tabs block appears only once the max bid settles on a usable
+ * number (see assets/js/max_bid.js), which puts a tall section on the page in one
+ * jump. The fade takes the edge off that without delaying anything.
+ */
+#bidTabsSection:not([hidden]) {
+    animation: bid-tabs-reveal 0.22s ease-out;
+}
+
+@keyframes bid-tabs-reveal {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #bidTabsSection:not([hidden]) { animation: none; }
+}
+
+/* Keeps a form's submit button off to the right, away from the field column. */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Centred on a phone: there's no field column to sit beside, and a lone button
+   against the right edge reads as stray rather than placed. */
+@media (max-width: 640px) {
+    .form-actions {
+        justify-content: center;
+    }
+}
+
+/*
+ * Four tabs, one of them "I Want The Item Anyway", don't fit across a phone, so the
+ * strip scrolls sideways on its own instead of running off the page and dragging
+ * the whole document's horizontal scroll with it. Wide viewports fit all four and
+ * never scroll.
+ *
+ * An edge shadow marks each side that still has tabs off-screen — the one thing a
+ * scrolling tab strip otherwise fails to tell you. Which sides get one is decided
+ * by the .can-scroll-* classes bid_tabs.js keeps in step with the scroll position;
+ * the pure-CSS version of this (covers pinned to the content with
+ * background-attachment: local) leaves part of the shadow showing at the starting
+ * edge in Chromium.
+ */
 .bid-tabs {
     display: flex;
     gap: 4px;
     margin-top: 16px;
     border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    /* No vertical scroll axis at all: overflow-x alone would compute overflow-y to
+       'auto', and a tab underline sitting a fraction of a pixel low is enough to
+       make the strip creep vertically under a finger. */
+    overflow-y: hidden;
+    /* Keeps a swipe that runs past the end from scrolling the page behind it. */
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    --bid-tabs-edge: rgba(34, 31, 25, 0.09);
+    --bid-tabs-shadow-left: transparent;
+    --bid-tabs-shadow-right: transparent;
+    background-image:
+        linear-gradient(to right, var(--bid-tabs-shadow-left), transparent),
+        linear-gradient(to left, var(--bid-tabs-shadow-right), transparent);
+    background-position: left center, right center;
+    background-size: 26px 100%, 26px 100%;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
 }
+
+.bid-tabs.can-scroll-left { --bid-tabs-shadow-left: var(--bid-tabs-edge); }
+.bid-tabs.can-scroll-right { --bid-tabs-shadow-right: var(--bid-tabs-edge); }
+
+/* Hidden because the shadows above already say there's more; a scrollbar under a
+   tab strip reads as a stray rule. */
+.bid-tabs::-webkit-scrollbar { display: none; }
+
+/* Grabbed rather than clicked — see the pointer-drag handler in bid_tabs.js. */
+.bid-tabs.is-dragging { cursor: grabbing; }
+.bid-tabs.is-dragging .bid-tab { cursor: grabbing; }
 
 .bid-tab {
     margin: 0;
     padding: 10px 4px;
     margin-right: 22px;
+    /* No shrinking and no breaking: a tab keeps its full label and goes off the
+       end of the strip, where scrolling can reach it. Flex would otherwise squeeze
+       the longest label down to one word per line. */
+    flex: 0 0 auto;
+    white-space: nowrap;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
@@ -800,7 +969,6 @@ button:disabled:hover, .btn:disabled:hover {
     letter-spacing: 0.05em;
     color: var(--muted);
     cursor: pointer;
-    transform: translateY(1px);
 }
 
 .bid-tab:hover {
@@ -866,10 +1034,20 @@ button:disabled:hover, .btn:disabled:hover {
     color: var(--muted);
 }
 
-.strategy-warning {
+/*
+ * A card only flags that it's risky; the explanation itself lives in
+ * .strategy-notes under the grid. Kept to a single line on purpose — the cards
+ * share grid rows, so a paragraph in one of them stretches all of its neighbours
+ * to match.
+ */
+.strategy-flag {
+    margin-top: auto;
+    padding-top: 2px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    color: #a8432b;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--danger);
 }
 
 .strategy-card-danger {
@@ -882,9 +1060,41 @@ button:disabled:hover, .btn:disabled:hover {
     box-shadow: 0 0 0 3px rgba(178, 59, 46, 0.15);
 }
 
-.strategy-card-danger .strategy-warning {
-    color: var(--danger);
+.strategy-notes {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.strategy-note {
+    margin: 0;
+    padding: 9px 12px;
+    border-left: 3px solid var(--border);
+    background: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+}
+
+.strategy-note-name {
     font-weight: 600;
+    color: var(--ink);
+}
+
+.strategy-note-name::after {
+    content: ' — ';
+    font-weight: 400;
+    color: var(--muted);
+}
+
+.strategy-note-danger {
+    border-left-color: var(--danger);
+}
+
+.strategy-note-danger .strategy-note-name {
+    color: var(--danger);
 }
 
 /* Bid steps */
@@ -904,25 +1114,12 @@ button:disabled:hover, .btn:disabled:hover {
 
 .bid-step-row[hidden] { display: none; }
 
+/* -8px, not -30px: see the note on .item-lookup-remove's offset above. */
 .bid-step-remove {
-    position: absolute;
-    top: -30px;
+    top: -8px;
     right: -8px;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
     background: var(--danger);
     color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 1.05rem;
-    line-height: 1;
-    cursor: pointer;
-    outline: none;
 }
 
 .bid-step-remove:hover,
@@ -1054,20 +1251,17 @@ button:disabled:hover, .btn:disabled:hover {
 .bid-steps-summary li { margin-top: 4px; }
 
 @media (max-width: 640px) {
-    .masthead { padding: 24px 18px 0; }
+    .masthead-inner { padding: 24px 18px 0; }
+    .site-nav-inner { padding: 10px 18px; }
     .container { padding: 28px 18px 56px; }
 
-    .has-nav .masthead-top {
+    .has-nav.masthead {
         display: none;
-    }
-
-    .has-nav .masthead-nav {
-        border-top: none;
-        padding-top: 0;
     }
 
     .nav-bar {
         display: grid;
+        flex: 1 1 100%;
         grid-template-columns: 34px 1fr 34px;
         align-items: center;
     }
@@ -1088,7 +1282,7 @@ button:disabled:hover, .btn:disabled:hover {
         gap: 0;
         margin-top: 8px;
         padding-top: 4px;
-        border-top: 1px solid var(--border);
+        border-top: 1px solid var(--muted);
     }
 
     .nav-menu.is-open { display: flex; }
@@ -1625,6 +1819,7 @@ button:disabled:hover, .btn:disabled:hover {
 /* Footer privacy link, reachable without logging in — eBay's RuName review and
    general visitors both need to be able to find this without an account. */
 .site-footer {
+    min-width: 0;
     padding: 1.6rem 0 2.2rem;
     font-size: 0.82rem;
 }

@@ -14,20 +14,34 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
 </head>
 <body>
 <header class="masthead<?= $user ? ' has-nav' : '' ?>">
-    <div class="masthead-top">
-        <a class="brand" href="dashboard.php">
-            <svg class="brand-mark" width="30" height="15" viewBox="0 0 120 60" aria-hidden="true">
-                <circle cx="14" cy="46" r="4" style="fill:var(--ink)" opacity="0.18"/>
-                <circle cx="38" cy="36" r="6" style="fill:var(--ink)" opacity="0.4"/>
-                <circle cx="66" cy="24" r="9" style="fill:var(--ink)" opacity="0.72"/>
-                <circle cx="98" cy="12" r="13" style="fill:var(--accent)"/>
-            </svg>
-            Bidwraith
-        </a>
-        <span class="masthead-tag">Automatic eBay Bidding</span>
+    <div class="masthead-inner">
+        <div class="masthead-top">
+            <a class="brand" href="dashboard.php">
+                <svg class="brand-mark" width="30" height="15" viewBox="0 0 120 60" aria-hidden="true">
+                    <circle cx="14" cy="46" r="4" style="fill:var(--ink)" opacity="0.18"/>
+                    <circle cx="38" cy="36" r="6" style="fill:var(--ink)" opacity="0.4"/>
+                    <circle cx="66" cy="24" r="9" style="fill:var(--ink)" opacity="0.72"/>
+                    <circle cx="98" cy="12" r="13" style="fill:var(--accent)"/>
+                </svg>
+                Bidwraith
+            </a>
+            <span class="masthead-tag">Automatic eBay Bidding</span>
+        </div>
     </div>
-    <?php if ($user): ?>
-        <nav class="masthead-nav">
+</header>
+<?php if ($user): ?>
+    <div id="navSentinel" aria-hidden="true"></div>
+    <nav class="site-nav" id="siteNav">
+        <div class="site-nav-inner">
+            <a class="site-nav-brand" href="dashboard.php" aria-label="Bidwraith">
+                <svg class="brand-mark" width="22" height="11" viewBox="0 0 120 60" aria-hidden="true">
+                    <circle cx="14" cy="46" r="4" style="fill:var(--ink)" opacity="0.18"/>
+                    <circle cx="38" cy="36" r="6" style="fill:var(--ink)" opacity="0.4"/>
+                    <circle cx="66" cy="24" r="9" style="fill:var(--ink)" opacity="0.72"/>
+                    <circle cx="98" cy="12" r="13" style="fill:var(--accent)"/>
+                </svg>
+                Bidwraith
+            </a>
             <div class="nav-bar">
                 <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Menu">
                     <span class="nav-toggle-bars"><span></span><span></span><span></span></span>
@@ -58,9 +72,9 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
                     <a href="logout.php">Log out</a>
                 </div>
             </div>
-        </nav>
-    <?php endif; ?>
-</header>
+        </div>
+    </nav>
+<?php endif; ?>
 <main class="container">
 <?php if (!empty($_SESSION['flash'])): ?>
     <div class="flash flash-<?= htmlspecialchars($_SESSION['flash']['type']) ?>">

@@ -250,11 +250,24 @@ require __DIR__ . '/../includes/layout_top.php';
         <button type="button" class="bid-tab<?= $initialTab === 'anyway' ? ' is-active' : '' ?>" data-bid-tab="anyway" role="tab" aria-selected="<?= $initialTab === 'anyway' ? 'true' : 'false' ?>">I Want The Item Anyway</button>
     </div>
 
+    <?php
+    // The two risky cards carry only a short "Risky" flag; the full explanation
+    // lives in .strategy-notes below the grid. Inline, a paragraph of warning
+    // text in one card stretched every card in its grid row to match it.
+    $anywayConfirm = '"I want the item anyway" does not bid a fixed amount. '
+        . ANYWAY_DEFAULT_SECONDS_BEFORE . ' seconds before the end it reads the item\'s live price and bids '
+        . 'that price plus your amount (or percentage) — whatever the price has climbed to by then. '
+        . 'Unless you set a max value, you are agreeing now to an amount you can\'t see yet. Continue?';
+    ?>
     <div class="bid-tab-panel" data-bid-panel="strategies"<?= $initialTab === 'strategies' ? '' : ' hidden' ?>>
         <div class="strategy-cards">
             <button type="button" class="strategy-card" data-strategy="[5,3,2]">
                 <span class="strategy-name">3 Steps Strategy</span>
                 <span class="strategy-desc">3 bids &mdash; 5s, 3s, and 2s before the end</span>
+            </button>
+            <button type="button" class="strategy-card" data-strategy-goto="scheduled">
+                <span class="strategy-name">Scheduled Bid</span>
+                <span class="strategy-desc">1 bid &mdash; hours/minutes before the end, or at an exact date</span>
             </button>
             <button type="button" class="strategy-card" data-strategy="[2]">
                 <span class="strategy-name">Last Second Strategy</span>
@@ -263,17 +276,26 @@ require __DIR__ . '/../includes/layout_top.php';
             <button type="button" class="strategy-card" data-strategy="[1]">
                 <span class="strategy-name">High Risk Strategy</span>
                 <span class="strategy-desc">1 bid &mdash; 1s before the end</span>
-                <span class="strategy-warning">&#9888; If eBay responds slowly, there may not be enough time left for the bid to register &mdash; you could lose the auction.</span>
+                <span class="strategy-flag">&#9888; Risky &mdash; see below</span>
             </button>
-            <button type="button" class="strategy-card strategy-card-danger" data-strategy-goto="anyway" data-strategy-confirm="eBay will automatically keep raising your bid above whoever else bids &mdash; all the way up to whatever the current price plus your amount comes to when it fires (or your max value, if you set one), no matter how far past the item's real value that goes. Only continue if you truly want this item at any price.">
+            <button type="button" class="strategy-card strategy-card-danger" data-strategy-goto="anyway" data-strategy-confirm="<?= htmlspecialchars($anywayConfirm) ?>">
                 <span class="strategy-name">I Want The Item Anyway</span>
-                <span class="strategy-desc"><?= ANYWAY_DEFAULT_SECONDS_BEFORE ?>s before the end, bids current price + your amount, up to an optional max</span>
-                <span class="strategy-warning">&#9888; Dangerous: there's no fixed ceiling unless you set a max value. eBay's proxy bidding keeps outbidding everyone else automatically, all the way up to whatever the current price plus your amount comes to.</span>
+                <span class="strategy-desc">1 bid <?= ANYWAY_DEFAULT_SECONDS_BEFORE ?>s before the end, at the live price plus your amount</span>
+                <span class="strategy-flag">&#9888; Amount not fixed &mdash; see below</span>
             </button>
-            <button type="button" class="strategy-card" data-strategy-goto="scheduled">
-                <span class="strategy-name">Scheduled Bid</span>
-                <span class="strategy-desc">A single bid hours/minutes before the end, or at an exact date &mdash; separate from the Steps ladder</span>
-            </button>
+        </div>
+        <div class="strategy-notes">
+            <p class="strategy-note">
+                <span class="strategy-note-name">High Risk Strategy</span>
+                1s leaves no margin for error: if eBay responds slowly there may not be enough time left for the
+                bid to register, and you lose the auction.
+            </p>
+            <p class="strategy-note strategy-note-danger">
+                <span class="strategy-note-name">I Want The Item Anyway</span>
+                The amount isn't decided now. When it fires it bids the item's live price plus your amount (or
+                percentage), so the final number depends on how high others have pushed the price by then. Set a
+                max value if you want a ceiling &mdash; without one, you're committing to whatever that comes to.
+            </p>
         </div>
         <div class="hint">Pick a strategy to prefill the timing and, using your max bid above, the amount for each step — the final step gets your max bid, and any earlier steps are scaled up from the item's current price. Enter your max bid first for this to work; you can still fine-tune amounts on the Steps tab.</div>
     </div>
@@ -291,8 +313,9 @@ require __DIR__ . '/../includes/layout_top.php';
 
     <div class="bid-tab-panel" data-bid-panel="anyway"<?= $initialTab === 'anyway' ? '' : ' hidden' ?>>
         <div class="hint">
-            Bids whatever it takes to win, separate from the Steps ladder above. Instead of a fixed amount decided now,
-            it adds your value or percentage on top of the item's price right when it fires.
+            One bid, separate from the Steps ladder above, whose amount is worked out when it fires rather than now:
+            it takes the item's live price at that moment and adds your value or percentage on top. Because that
+            price isn't known in advance, neither is the bid — the optional max value below is what caps it.
         </div>
         <?php render_anyway_bid_panel($anywayView, $currency); ?>
     </div>
@@ -306,7 +329,9 @@ require __DIR__ . '/../includes/layout_top.php';
         <div class="hint">In your own local time zone — the page converts it automatically.</div>
     <?php endif; ?>
 
-    <button type="submit">Save</button>
+    <div class="form-actions">
+        <button type="submit">Schedule bids</button>
+    </div>
 </form>
 <script>
     var bidwraithHomeCountry = <?= json_encode($homeCountry) ?>;

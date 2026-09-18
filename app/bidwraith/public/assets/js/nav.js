@@ -17,4 +17,13 @@
             toggle.setAttribute('aria-expanded', 'false');
         });
     });
+
+    var sentinel = document.getElementById('navSentinel');
+    var siteNav = document.getElementById('siteNav');
+    if (sentinel && siteNav && 'IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+            siteNav.classList.toggle('is-stuck', !entries[0].isIntersecting);
+        }, { threshold: 0 });
+        observer.observe(sentinel);
+    }
 })();

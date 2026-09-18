@@ -57,10 +57,13 @@
         }
         var value = randomCentsValue(input.value, minValue, maxValue);
         input.value = value.toFixed(2);
-        // Setting .value directly doesn't fire a native input event, so anything
-        // listening for one (the max-bid warning/estimate box, the Save-button
-        // validity check) wouldn't otherwise notice this changed.
+        // Setting .value directly doesn't fire native events, so anything listening
+        // for one (the max-bid warning/estimate box, the Save-button validity check)
+        // wouldn't otherwise notice this changed. Both halves of the native pair are
+        // sent: 'change' is what marks the value as settled rather than mid-typing,
+        // which is the difference between reacting now and waiting out a debounce.
         input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
         return value;
     }
 

@@ -110,8 +110,10 @@
             : null;
         Bidwraith.item.country = data.item_country || null;
         Bidwraith.item.currency = data.currency || null;
+        // Immediate: what changed is the item the max bid is judged against, not
+        // the field itself, so there's no keystroke to wait out before reacting.
         if (Bidwraith.updateMaxBidHelpers) {
-            Bidwraith.updateMaxBidHelpers();
+            Bidwraith.updateMaxBidHelpers(true);
         }
 
         result.className = 'item-lookup-result is-ok';

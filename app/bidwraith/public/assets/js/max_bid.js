@@ -2,6 +2,13 @@
  * The "Max bid" field at the top of the add-auction form: its validity, the
  * warning when it sits below the item's current price, the landed-cost estimate,
  * and the first reveal of the strategies/tabs section below it.
+ *
+ * Everything here is deliberately split into two halves: an immediate one that
+ * only ever *hides* things (so clearing the field clears the page with it), and a
+ * settled one that waits for a pause in typing before showing anything. A max bid
+ * is typed one digit at a time and every prefix of it ("5" on the way to "56") is
+ * a different, usually wrong, number — reacting to each of those in turn is what
+ * made the page flicker and pop open mid-keystroke.
  */
 (function (Bidwraith) {
     'use strict';
@@ -16,19 +23,19 @@
     }
 
     // Once the bid tabs have been revealed, they stay open even if the max bid
-    // field goes through invalid or too-low in-between states — see the
-    // bidTabsSection block in updateMaxBidHelpers() below.
+    // field goes through invalid or too-low in-between states — see
+    // collapseBidTabsIfUnused() for the one case that closes them again.
     var bidTabsRevealed = !!(bidTabsSection && !bidTabsSection.hidden);
-    // First reveal only happens after the user pauses typing for a bit, so the
-    // whole strategies/tabs section doesn't pop in after the very first digit.
-    var REVEAL_DELAY_MS = 500;
-    var revealTimer = null;
+    // How long the field has to sit still before anything reacts to it. Long
+    // enough to type a two- or three-digit amount straight through without the
+    // page moving underneath, short enough not to feel stuck.
+    var SETTLE_DELAY_MS = 800;
+    var settleTimer = null;
 
     /**
      * Reads target_max_bid's current value and how it stands against the item's
-     * current price. Shared by updateMaxBidHelpers() (live, every keystroke) and
-     * the deferred first-reveal check below (re-read after the pause, since the
-     * value may have kept changing during the wait).
+     * current price. Read fresh at settle time rather than captured when the timer
+     * was set, since the value (or a late item lookup) may have changed since.
      */
     function readMaxBidValidity() {
         var raw = targetMaxBidInput.value.trim();
@@ -42,23 +49,6 @@
         var priceKnown = typeof currentPrice === 'number' && !isNaN(currentPrice);
         var belowCurrentPrice = basicValid && priceKnown && value < currentPrice;
         return { raw: raw, value: value, basicValid: basicValid, priceKnown: priceKnown, belowCurrentPrice: belowCurrentPrice };
-    }
-
-    /**
-     * Fires ~REVEAL_DELAY_MS after the user stops typing a first, not-yet-revealed
-     * max bid. Re-checks validity at fire time rather than trusting whatever it
-     * was when the timer was set, since more typing (or a late item lookup) may
-     * have changed it in the meantime.
-     */
-    function revealBidTabsIfStillValid() {
-        if (bidTabsRevealed || !bidTabsSection) {
-            return;
-        }
-        var v = readMaxBidValidity();
-        if (v.basicValid && !v.belowCurrentPrice) {
-            bidTabsSection.hidden = false;
-            bidTabsRevealed = true;
-        }
     }
 
     /** Renders the estimated total if this bid wins, broken down by component. */
@@ -93,47 +83,74 @@
         maxBidEstimate.hidden = false;
     }
 
-    Bidwraith.updateMaxBidHelpers = function () {
+    /** Whether any of the bid tabs has something entered in it. */
+    function bidTabsHaveInput() {
+        var form = targetMaxBidInput.closest('form');
+        if (!form) {
+            return false;
+        }
+        return (Bidwraith.hasAnyStep && Bidwraith.hasAnyStep(form))
+            || (Bidwraith.hasScheduledBid && Bidwraith.hasScheduledBid(form))
+            || (Bidwraith.hasAnywayBid && Bidwraith.hasAnywayBid(form));
+    }
+
+    /**
+     * Puts the tabs back behind their first reveal when the max bid is cleared —
+     * but only while they're still empty. Once there are bids in them, collapsing
+     * would hide the user's own work (and the Steps tab's last max bid mirrors
+     * back into this very field, so clearing it there must not close the tab
+     * being typed in — see bid_steps.js).
+     */
+    function collapseBidTabsIfUnused() {
+        if (!bidTabsSection || !bidTabsRevealed || bidTabsHaveInput()) {
+            return;
+        }
+        bidTabsSection.hidden = true;
+        bidTabsRevealed = false;
+    }
+
+    /** Clears the field error, the below-price warning and the cost estimate. */
+    function clearMaxBidFeedback() {
+        targetMaxBidInput.classList.remove('has-error');
+        if (targetMaxBidError) {
+            targetMaxBidError.textContent = '';
+        }
+        if (maxBidWarning) {
+            maxBidWarning.hidden = true;
+        }
+        if (maxBidEstimate) {
+            maxBidEstimate.hidden = true;
+        }
+    }
+
+    /**
+     * Everything that should only happen once the user has stopped typing: the
+     * verdict on the field, the below-price warning, the cost estimate, and the
+     * one-time reveal of the strategies/tabs section.
+     */
+    function applySettledState() {
         var v = readMaxBidValidity();
         var currentPrice = Bidwraith.item.currentPrice;
 
-        targetMaxBidInput.placeholder = v.priceKnown
-            ? 'Max bid should be more than ' + Bidwraith.currencyPrefix() + currentPrice.toFixed(2)
-            : 'e.g. 75.00';
-
-        if (bidTabsSection) {
-            if (bidTabsRevealed) {
-                // Once revealed, an in-between invalid/too-low value (including a
-                // momentary one, e.g. a number input clearing itself on a stray
-                // "." or the value dipping low mid-keystroke) no longer hides this
-                // whole section again — it contains the Steps tab itself, and a
-                // Steps row's max bid mirrors live into this field (see bid_steps.js),
-                // so re-hiding here would yank the very field the user is typing
-                // into out from under them.
-                bidTabsSection.hidden = false;
-            } else if (v.basicValid && !v.belowCurrentPrice) {
-                // Passes full validation (a real, positive number that isn't
-                // below the current price) — wait for a pause in typing before
-                // revealing, rather than popping the whole section in after the
-                // very first digit.
-                clearTimeout(revealTimer);
-                revealTimer = setTimeout(revealBidTabsIfStillValid, REVEAL_DELAY_MS);
-            } else {
-                clearTimeout(revealTimer);
-                bidTabsSection.hidden = true;
-            }
-        }
-
+        // Only flags the field itself for the basic-format problem; "below
+        // current price" already gets its own clearer message via maxBidWarning.
+        //
         // Not reusing setFieldError() here: it looks up the nearest
         // [data-field-error] via parentNode, but target_max_bid's parent also
         // contains every Steps row's own error slot — it would write into
         // whichever one happens to come first in the DOM instead of this field's.
-        // Only flags the field itself for the basic-format problem; "below
-        // current price" already gets its own clearer message via maxBidWarning.
         var showFieldError = v.raw !== '' && !v.basicValid;
         targetMaxBidInput.classList.toggle('has-error', showFieldError);
         if (targetMaxBidError) {
             targetMaxBidError.textContent = showFieldError ? 'Enter a max bid greater than 0.' : '';
+        }
+
+        // A max bid already below the current price could never win, and the
+        // Strategies tab needs a real number to scale a ladder from, so the
+        // section waits for one before appearing for the first time.
+        if (bidTabsSection && !bidTabsRevealed && v.basicValid && !v.belowCurrentPrice) {
+            bidTabsSection.hidden = false;
+            bidTabsRevealed = true;
         }
 
         if (!maxBidWarning || !maxBidEstimate) {
@@ -161,12 +178,45 @@
         }
 
         renderEstimate(v.value);
+    }
+
+    /**
+     * Call on every change to the max bid field. Pass `immediate` when the change
+     * didn't come from typing (a blur, or an item lookup landing), where there's
+     * no next keystroke to wait for.
+     */
+    Bidwraith.updateMaxBidHelpers = function (immediate) {
+        var currentPrice = Bidwraith.item.currentPrice;
+        var priceKnown = typeof currentPrice === 'number' && !isNaN(currentPrice);
+
+        targetMaxBidInput.placeholder = priceKnown
+            ? 'Max bid should be more than ' + Bidwraith.currencyPrefix() + currentPrice.toFixed(2)
+            : 'e.g. 75.00';
+
+        clearTimeout(settleTimer);
+
+        // An empty field has nothing to say anything about, so everything hanging
+        // off it goes at once rather than lingering until the next settle.
+        if (targetMaxBidInput.value.trim() === '') {
+            clearMaxBidFeedback();
+            collapseBidTabsIfUnused();
+            return;
+        }
+
+        if (immediate) {
+            applySettledState();
+            return;
+        }
+        settleTimer = setTimeout(applySettledState, SETTLE_DELAY_MS);
     };
 
     /** Hides the warning/estimate and puts the tabs back behind their first reveal. */
     Bidwraith.hideMaxBidHelpers = function () {
+        clearTimeout(settleTimer);
         bidTabsRevealed = false;
-        clearTimeout(revealTimer);
+        if (bidTabsSection) {
+            bidTabsSection.hidden = true;
+        }
         if (maxBidWarning) {
             maxBidWarning.hidden = true;
         }
@@ -184,5 +234,16 @@
         }
     };
 
-    targetMaxBidInput.addEventListener('input', Bidwraith.updateMaxBidHelpers);
+    targetMaxBidInput.addEventListener('input', function () {
+        Bidwraith.updateMaxBidHelpers(false);
+    });
+
+    // Leaving the field is as clear an "I've finished typing" as a pause is, and
+    // waiting out the timer after that just looks unresponsive. 'change' covers the
+    // same thing for a value that arrived all at once ("Add random cents").
+    ['blur', 'change'].forEach(function (event) {
+        targetMaxBidInput.addEventListener(event, function () {
+            Bidwraith.updateMaxBidHelpers(true);
+        });
+    });
 })(window.Bidwraith);

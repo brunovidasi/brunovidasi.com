@@ -8,11 +8,34 @@
     /** Maximum number of Steps rows the form offers, matching the fixed rows in includes/bid_steps_view.php. */
     var MAX_STEPS = 5;
 
+    /**
+     * Scrolls a tab into view within its strip when it's off the end. Done by hand
+     * rather than with scrollIntoView(), which is also entitled to scroll the page
+     * itself — jumping the form around under someone who only picked a tab.
+     */
+    function revealTab(btn) {
+        var strip = btn.closest('.bid-tabs');
+        if (!strip || strip.scrollWidth <= strip.clientWidth) {
+            return;
+        }
+        var margin = 16;
+        var left = btn.offsetLeft;
+        var right = left + btn.offsetWidth;
+        if (left - margin < strip.scrollLeft) {
+            strip.scrollLeft = left - margin;
+        } else if (right + margin > strip.scrollLeft + strip.clientWidth) {
+            strip.scrollLeft = right + margin - strip.clientWidth;
+        }
+    }
+
     Bidwraith.switchBidTab = function (form, tab) {
         form.querySelectorAll('[data-bid-tab]').forEach(function (btn) {
             var active = btn.dataset.bidTab === tab;
             btn.classList.toggle('is-active', active);
             btn.setAttribute('aria-selected', active ? 'true' : 'false');
+            if (active) {
+                revealTab(btn);
+            }
         });
         form.querySelectorAll('[data-bid-panel]').forEach(function (panel) {
             panel.hidden = panel.dataset.bidPanel !== tab;
@@ -27,6 +50,97 @@
             }
         });
     });
+
+    /**
+     * Lets the strip be dragged with a mouse, which touch gets natively from
+     * overflow-x but a pointer doesn't. Only the drag itself is handled here:
+     * pointer events on a touchscreen stay untouched so the native inertia and
+     * rubber-banding keep working.
+     *
+     * A drag that moved is swallowed on the way back up, so releasing over a tab
+     * scrolls the strip instead of also switching to that tab.
+     */
+    var DRAG_THRESHOLD_PX = 4;
+
+    /** Marks which sides of the strip still have tabs off-screen, for the edge shadows. */
+    function updateScrollHints(strip) {
+        // A browser can land a pixel short of the exact end, which would leave the
+        // shadow up with nothing left to scroll to.
+        var max = strip.scrollWidth - strip.clientWidth;
+        strip.classList.toggle('can-scroll-left', strip.scrollLeft > 1);
+        strip.classList.toggle('can-scroll-right', strip.scrollLeft < max - 1);
+    }
+
+    document.querySelectorAll('.bid-tabs').forEach(function (strip) {
+        var startX = 0;
+        var startScroll = 0;
+        var pointerId = null;
+        var moved = false;
+
+        strip.addEventListener('pointerdown', function (e) {
+            if (e.pointerType === 'touch' || e.button !== 0) {
+                return;
+            }
+            pointerId = e.pointerId;
+            startX = e.clientX;
+            startScroll = strip.scrollLeft;
+            moved = false;
+        });
+
+        strip.addEventListener('pointermove', function (e) {
+            if (pointerId === null || e.pointerId !== pointerId) {
+                return;
+            }
+            var dx = e.clientX - startX;
+            if (!moved) {
+                if (Math.abs(dx) < DRAG_THRESHOLD_PX) {
+                    return;
+                }
+                moved = true;
+                strip.classList.add('is-dragging');
+                // Claiming the pointer keeps the drag alive past the strip's edges,
+                // and stops the browser starting a text selection out of it.
+                strip.setPointerCapture(pointerId);
+            }
+            strip.scrollLeft = startScroll - dx;
+            e.preventDefault();
+        });
+
+        function endDrag(e) {
+            if (pointerId === null || (e && e.pointerId !== pointerId)) {
+                return;
+            }
+            if (strip.hasPointerCapture && strip.hasPointerCapture(pointerId)) {
+                strip.releasePointerCapture(pointerId);
+            }
+            pointerId = null;
+            strip.classList.remove('is-dragging');
+        }
+
+        strip.addEventListener('pointerup', endDrag);
+        strip.addEventListener('pointercancel', endDrag);
+
+        strip.addEventListener('click', function (e) {
+            if (!moved) {
+                return;
+            }
+            moved = false;
+            e.preventDefault();
+            e.stopPropagation();
+        }, true);
+
+        strip.addEventListener('scroll', function () { updateScrollHints(strip); });
+        // The strip can start out scrollable (a narrow window) or become so later
+        // (a rotation, or the whole section being revealed with the max bid).
+        if (typeof ResizeObserver === 'function') {
+            new ResizeObserver(function () { updateScrollHints(strip); }).observe(strip);
+        }
+        updateScrollHints(strip);
+    });
+
+    // A form redisplayed on an open tab (a validation error, say) may have that tab
+    // off the end of the strip on a narrow screen.
+    document.querySelectorAll('.bid-tab.is-active').forEach(revealTab);
 
     /**
      * Fills in a max bid for each step of a strategy, working backwards from the
@@ -104,6 +218,7 @@
 
         Bidwraith.showBidStepError(form, null);
         Bidwraith.clearAllFieldErrors(form);
+        Bidwraith.updateStepRemoveButtons(form);
         Bidwraith.switchBidTab(form, 'custom');
 
         var firstMaxBid = form.querySelector('.bid-step-row:not([hidden]) input[name="step_max_bid[]"]');
