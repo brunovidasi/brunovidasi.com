@@ -14,6 +14,13 @@
  * steps, would need parallel processes to do better.
  */
 
+// The cron entrypoints don't go through bootstrap.php, so this file has to load what
+// it uses itself — user_currency() below lives here.
+require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/Mailer.php';
+require_once __DIR__ . '/email_templates.php';
+require_once __DIR__ . '/bid_alerts.php';
+
 const LOOKAHEAD_SECONDS = 65;
 
 /**
@@ -74,8 +81,51 @@ function update_auction_status_after_step(int $auctionId, bool $success, string 
     }
 }
 
-/** @param callable(string):void $log */
+/**
+ * A full pass: fire what's due, then send the mail that produced.
+ *
+ * Email is never sent from inside the firing loop. A step fires the instant its second
+ * arrives and the next may be one or two seconds behind it, so even a fast SMTP
+ * handshake would push a bid late. Instead results are collected as they happen and
+ * mailed when there is slack — while waiting on a step more than a few seconds away —
+ * and once the pass is over.
+ *
+ * @param callable(string):void $log
+ */
 function run_snipe_pass(callable $log): void
+{
+    $outcomes = [];
+
+    $sendMail = function () use (&$outcomes, $log): void {
+        try {
+            queue_bid_alerts($outcomes);
+            $outcomes = [];
+            flush_outbox();
+        } catch (Throwable $e) {
+            // Mail trouble must never be the reason a pass fails.
+            $log('Email error: ' . $e->getMessage());
+        }
+    };
+
+    try {
+        fire_due_bids($log, $outcomes, $sendMail);
+    } finally {
+        $sendMail();
+        try {
+            queue_ebay_token_warnings(ebay_config()['environment']);
+            flush_outbox();
+        } catch (Throwable $e) {
+            $log('Email error: ' . $e->getMessage());
+        }
+    }
+}
+
+/**
+ * @param callable(string):void $log
+ * @param array $outcomes collects one entry per step that finished, for bid_alerts.php
+ * @param callable():void $sendMail queues and sends the mail collected so far
+ */
+function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): void
 {
     $startedAt = time();
 
@@ -109,7 +159,26 @@ function run_snipe_pass(callable $log): void
     $client = new EbayClient();
     $ebayEnvironment = ebay_config()['environment'];
 
+    $record = function (array $step, bool $ok, ?float $amount, string $message) use (&$outcomes): void {
+        // A fixed bid that never got as far as eBay still has a known amount to report.
+        if ($amount === null && ($step['bid_mode'] ?? 'fixed') === 'fixed' && $step['max_bid'] !== null) {
+            $amount = (float) $step['max_bid'];
+        }
+        $outcomes[] = [
+            'step_id' => (int) $step['id'],
+            'auction_id' => (int) $step['watched_auction_id'],
+            'seconds_before' => (int) $step['seconds_before'],
+            'ok' => $ok,
+            'amount' => $amount,
+            'message' => $message,
+        ];
+    };
+
     foreach ($due as $step) {
+        // Reset each time round: a value left from the previous step must never be
+        // reported as this one's.
+        $bidAmount = null;
+
         if (time() - $startedAt > MAX_RUNTIME_SECONDS) {
             $log('Runtime cap reached; leaving remaining steps to the next pass.');
             break;
@@ -122,6 +191,10 @@ function run_snipe_pass(callable $log): void
             $plannedAmount = ($step['bid_mode'] ?? 'fixed') === 'anyway'
                 ? 'current price + ' . $step['increment_amount'] . ($step['increment_type'] === 'percent' ? '%' : '')
                 : (string) $step['max_bid'];
+            // Idle time: the best moment to send mail, as nothing is about to fire.
+            if ($sleepFor >= 8) {
+                $sendMail();
+            }
             $log("Sleeping {$sleepFor}s before bidding {$plannedAmount} on item {$step['auction_item_id']} (step #{$step['id']}, {$step['seconds_before']}s before end)");
             sleep($sleepFor);
         }
@@ -138,6 +211,7 @@ function run_snipe_pass(callable $log): void
             db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
                 ->execute([$msg, $step['id']]);
             update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+            $record($step, false, $bidAmount, $msg);
             continue;
         }
 
@@ -158,6 +232,7 @@ function run_snipe_pass(callable $log): void
                 db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
                     ->execute([$msg, $step['id']]);
                 update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+                $record($step, false, $bidAmount, $msg);
                 continue;
             }
 
@@ -170,6 +245,7 @@ function run_snipe_pass(callable $log): void
                 db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
                     ->execute([$step['id'], $msg]);
                 update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+                $record($step, false, $bidAmount, $msg);
                 continue;
             }
 
@@ -191,6 +267,7 @@ function run_snipe_pass(callable $log): void
                 db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
                     ->execute([$step['id'], $msg]);
                 update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
+                $record($step, false, $bidAmount, $msg);
                 continue;
             }
         }
@@ -214,5 +291,6 @@ function run_snipe_pass(callable $log): void
             ->execute([$step['id'], $result['success'] ? 1 : 0, $result['message']]);
 
         update_auction_status_after_step((int) $step['watched_auction_id'], $result['success'], $result['message']);
+        $record($step, (bool) $result['success'], $bidAmount, (string) $result['message']);
     }
 }

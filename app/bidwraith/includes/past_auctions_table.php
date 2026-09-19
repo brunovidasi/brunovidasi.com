@@ -15,7 +15,7 @@
 $showOwner = $showOwner ?? false;
 // Each title links through to a detail page: the admin views to their own, everyone
 // else to the user-facing one, which only ever shows the viewer's own auctions.
-$detailPage = $detailPage ?? 'auction.php';
+$detailPage = $detailPage ?? 'auction';
 $sortKey = $sortKey ?? 'end';
 $sortDir = $sortDir ?? 'desc';
 $sortParam = $sortParam ?? 'psort';
@@ -52,7 +52,7 @@ $anchor = $anchor ?? '';
                     </td>
                     <?php if ($showOwner): ?>
                         <td class="cell-email" title="<?= htmlspecialchars($row['owner_email']) ?>">
-                            <a href="admin_user.php?id=<?= (int) $row['user_id'] ?>"><?= htmlspecialchars($row['owner_email']) ?></a>
+                            <a href="admin_user?id=<?= (int) $row['user_id'] ?>"><?= htmlspecialchars($row['owner_email']) ?></a>
                         </td>
                     <?php endif; ?>
                     <td class="nowrap muted"><?= $row['end_time'] !== null ? local_time((int) strtotime($row['end_time']), $row['end_time']) : 'unknown' ?></td>

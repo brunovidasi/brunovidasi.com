@@ -11,8 +11,68 @@ CREATE TABLE IF NOT EXISTS users (
     is_admin      INTEGER NOT NULL DEFAULT 0,
     is_active     INTEGER NOT NULL DEFAULT 1,
     currency      TEXT,
-    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+
+    -- Billing (see includes/billing.php). Stripe is the source of truth; these are the
+    -- local copy of the parts the app needs. subscription_status holds Stripe's own
+    -- status word (trialing, active, past_due, canceled, …) and is NULL for someone
+    -- who never subscribed. Times are UTC, like created_at. free_access is granted by
+    -- an admin and bypasses billing entirely.
+    stripe_customer_id     TEXT,
+    stripe_subscription_id TEXT,
+    subscription_status    TEXT,
+    trial_ends_at          TEXT,
+    current_period_end     TEXT,
+    cancel_at_period_end   INTEGER NOT NULL DEFAULT 0,
+    free_access            INTEGER NOT NULL DEFAULT 0,
+    free_access_note       TEXT,
+
+    -- Email (see includes/Mailer.php). email_verified_at is NULL until the person
+    -- clicks the link we sent (admins never need it); email_bid_alerts is their choice
+    -- about "your bid was placed / failed" mail. Account, billing and eBay-connection
+    -- mail is not optional.
+    email_verified_at      TEXT,
+    email_bid_alerts       INTEGER NOT NULL DEFAULT 1
 );
+
+-- One row per email the app has decided to send. Everything goes through here rather
+-- than straight to the mail server so a slow or down mail server can never hold up a
+-- bid being fired, and so a failed send is retried instead of lost. dedupe_key makes
+-- "tell them once" idempotent: a webhook delivered twice, or a cron pass that sees the
+-- same expiring token every minute, queues the message only the first time.
+CREATE TABLE IF NOT EXISTS email_outbox (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id         INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    kind            TEXT NOT NULL,
+    to_email        TEXT NOT NULL,
+    subject         TEXT NOT NULL,
+    body_text       TEXT NOT NULL,
+    body_html       TEXT,
+    dedupe_key      TEXT UNIQUE,
+    attempts        INTEGER NOT NULL DEFAULT 0,
+    claimed_at      TEXT,
+    next_attempt_at TEXT,
+    sent_at         TEXT,
+    last_error      TEXT,
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_email_outbox_pending ON email_outbox (sent_at, next_attempt_at);
+
+-- Single-use links sent by email: purpose 'verify' (confirm an address) or 'reset'
+-- (choose a new password). Only a SHA-256 of the token is stored, so a copy of the
+-- database can't be used to reset anyone's password.
+CREATE TABLE IF NOT EXISTS user_tokens (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    purpose     TEXT NOT NULL,
+    token_hash  TEXT NOT NULL UNIQUE,
+    expires_at  TEXT NOT NULL,
+    used_at     TEXT,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_tokens_user ON user_tokens (user_id, purpose);
 
 CREATE TABLE IF NOT EXISTS ebay_accounts (
     id               INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -5,6 +5,12 @@ $user = require_login();
 
 header('Content-Type: application/json');
 
+if (!user_has_access($user)) {
+    http_response_code(402);
+    echo json_encode(['found' => false, 'error' => 'Start a plan to look up auctions.']);
+    exit;
+}
+
 $itemId = extract_ebay_item_id(get_param('item_id'));
 
 if ($itemId === '' || !ctype_digit($itemId)) {

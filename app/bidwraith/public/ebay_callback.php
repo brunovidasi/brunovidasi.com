@@ -10,7 +10,7 @@ unset($_SESSION['ebay_session_id']);
 
 if (!$sessionId) {
     set_flash('error', 'No pending eBay authorization found. Try connecting again.');
-    redirect('connect_ebay.php');
+    redirect('connect_ebay');
 }
 
 try {
@@ -49,4 +49,4 @@ try {
     set_flash('error', 'Could not complete eBay authorization: ' . $e->getMessage());
 }
 
-redirect('connect_ebay.php');
+redirect('connect_ebay');

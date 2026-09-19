@@ -18,4 +18,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Strict whitelist rather than trusting the posted path — anything else goes to the dashboard.
 $return = (string) ($_POST['return'] ?? '');
-redirect(preg_match('#^admin_user\.php\?id=\d+$#', $return) ? $return : 'admin.php');
+redirect(preg_match('#^admin_user\?id=\d+$#', $return) ? $return : 'admin');

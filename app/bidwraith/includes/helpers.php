@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * The current page's URL name — 'dashboard' for public/dashboard.php, however the
+ * request got here. SCRIPT_NAME always points at the file on disk, so it keeps the
+ * .php the URL no longer has (see .htaccess); stripping it here is what lets links
+ * and nav highlighting be written the way the URL reads.
+ */
+function current_page(): string
+{
+    return preg_replace('/\.php$/', '', basename($_SERVER['SCRIPT_NAME'] ?? ''));
+}
+
+/**
  * Builds the current request's URL with some query params overridden ('' or null
  * removes a param). Used by sortable table headers and pagers, which both need to
  * change one or two params while preserving everything else already in the URL.
@@ -8,7 +19,7 @@
 function url_with(array $overrides): string
 {
     $params = array_filter(array_merge($_GET, $overrides), fn ($v) => $v !== '' && $v !== null);
-    return basename($_SERVER['SCRIPT_NAME']) . ($params ? '?' . http_build_query($params) : '');
+    return current_page() . ($params ? '?' . http_build_query($params) : '');
 }
 
 /** Query params are user-controlled, so anything non-scalar (?q[]=x) becomes an empty string. */

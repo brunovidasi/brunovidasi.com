@@ -10,4 +10,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_flash('success', 'Removed from auction list.');
 }
 
-redirect('dashboard.php');
+redirect('dashboard');

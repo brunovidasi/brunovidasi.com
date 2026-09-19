@@ -23,7 +23,15 @@ if (isset($_POST['disconnect'])) {
     csrf_verify();
     db()->prepare('DELETE FROM ebay_accounts WHERE user_id = ?')->execute([$user['id']]);
     set_flash('success', 'Disconnected your eBay account.');
-    redirect('connect_ebay.php');
+    redirect('connect_ebay');
+}
+
+if (isset($_POST['update_notifications'])) {
+    csrf_verify();
+    db()->prepare('UPDATE users SET email_bid_alerts = ? WHERE id = ?')
+        ->execute([($_POST['email_bid_alerts'] ?? '') === '1' ? 1 : 0, $user['id']]);
+    set_flash('success', 'Notification preference saved.');
+    redirect('connect_ebay');
 }
 
 if (isset($_POST['update_currency'])) {
@@ -35,7 +43,7 @@ if (isset($_POST['update_currency'])) {
     } else {
         set_flash('error', 'Choose a valid currency.');
     }
-    redirect('connect_ebay.php');
+    redirect('connect_ebay');
 }
 
 $pageTitle = 'eBay account';
@@ -55,7 +63,7 @@ require __DIR__ . '/../includes/layout_top.php';
         </form>
     <?php else: ?>
         <p>Connect your eBay account so this app can place bids on your behalf, the same way you would manually on eBay.</p>
-        <a class="btn" href="connect_ebay.php?start=1">Connect eBay account</a>
+        <a class="btn" href="connect_ebay?start=1">Connect eBay account</a>
         <p class="hint">
             You will be redirected to eBay to log in and authorize this app. After that, you'll be redirected back here.
             If you have two-factor authentication enabled on your eBay account, you may need to enter a code during the login process.
@@ -76,6 +84,21 @@ require __DIR__ . '/../includes/layout_top.php';
             <?php endforeach; ?>
         </select>
         <button type="submit">Save currency</button>
+    </form>
+</div>
+
+<div class="settings-section">
+    <h2>Email notifications</h2>
+    <p class="hint">Bidwraith emails you when a bid is placed or fails, so you know without checking. Account, billing and eBay-connection emails (like a link expiring while you have bids waiting) are always sent.</p>
+    <form method="post" class="stacked">
+        <?= csrf_field() ?>
+        <input type="hidden" name="update_notifications" value="1">
+        <label for="email_bid_alerts">Email me about my bids</label>
+        <select id="email_bid_alerts" name="email_bid_alerts">
+            <option value="1" <?= !empty($user['email_bid_alerts']) ? 'selected' : '' ?>>Yes</option>
+            <option value="0" <?= empty($user['email_bid_alerts']) ? 'selected' : '' ?>>No</option>
+        </select>
+        <button type="submit">Save</button>
     </form>
 </div>
 

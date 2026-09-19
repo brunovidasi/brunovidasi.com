@@ -53,9 +53,72 @@ function run_migrations(PDO $db): void
         }
     }
 
+    migrate_billing($db);
+    migrate_email($db);
     migrate_bid_steps_anyway_mode($db);
     migrate_single_bid_to_steps($db);
     grant_owner_admin($db);
+}
+
+/**
+ * Adds the billing columns to a users table that predates them.
+ *
+ * Everyone already in the database when billing arrives is granted free access. They
+ * were invited before there was a plan to buy, and locking out someone with bids
+ * scheduled for auctions that are about to end would be the worst way to introduce a
+ * price. An admin can switch it off per person. It runs once: the columns exist from
+ * then on, and a brand-new database is created with them already (see schema.sql),
+ * with no one to grandfather.
+ *
+ * The lookup indexes live here rather than in schema.sql because schema.sql runs
+ * before migrations, when an old table doesn't have the columns yet.
+ */
+function migrate_billing(PDO $db): void
+{
+    $existing = array_column($db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+
+    if (!in_array('free_access', $existing, true)) {
+        $columns = [
+            'stripe_customer_id' => 'TEXT',
+            'stripe_subscription_id' => 'TEXT',
+            'subscription_status' => 'TEXT',
+            'trial_ends_at' => 'TEXT',
+            'current_period_end' => 'TEXT',
+            'cancel_at_period_end' => 'INTEGER NOT NULL DEFAULT 0',
+            'free_access' => 'INTEGER NOT NULL DEFAULT 0',
+            'free_access_note' => 'TEXT',
+        ];
+        foreach ($columns as $name => $type) {
+            if (!in_array($name, $existing, true)) {
+                $db->exec("ALTER TABLE users ADD COLUMN $name $type");
+            }
+        }
+
+        $db->exec("UPDATE users SET free_access = 1, free_access_note = 'Existing user when billing was introduced'");
+    }
+
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users (stripe_customer_id)');
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_users_stripe_subscription ON users (stripe_subscription_id)');
+}
+
+/**
+ * Adds the email columns to a users table that predates them. Like billing, it
+ * grandfathers everyone already there — as verified — because they were created by
+ * hand or before verification existed, and locking them out of their own account to
+ * click a link would be absurd. It runs once; new databases get the columns from
+ * schema.sql with nobody to grandfather.
+ */
+function migrate_email(PDO $db): void
+{
+    $existing = array_column($db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+
+    if (!in_array('email_verified_at', $existing, true)) {
+        $db->exec('ALTER TABLE users ADD COLUMN email_verified_at TEXT');
+        $db->exec("UPDATE users SET email_verified_at = datetime('now')");
+    }
+    if (!in_array('email_bid_alerts', $existing, true)) {
+        $db->exec('ALTER TABLE users ADD COLUMN email_bid_alerts INTEGER NOT NULL DEFAULT 1');
+    }
 }
 
 /**

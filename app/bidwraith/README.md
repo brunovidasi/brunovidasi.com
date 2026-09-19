@@ -151,11 +151,93 @@ sandbox eBay while production keys are still being issued. Once you have them:
 3. Set `'ebay_api' => 'production'` in the production environment block.
 4. Reconnect your eBay account — production tokens are separate from sandbox ones.
 
+## Billing (Stripe)
+
+A monthly subscription with a free trial, sold through Stripe Checkout. Billing is
+**off until `stripe.secret_key` and `stripe.price_id` are set** — nothing is gated
+before that, so it is safe to deploy first and switch on later.
+
+**What it gates.** Without a plan a user can still log in, see their auction list and
+delete auctions, but can't add auctions, edit bids, use the watchlist or look items
+up. Bids already scheduled still fire. Admins, and anyone an admin has given *free
+access*, are never gated. `past_due` (a failed payment while Stripe retries the card)
+keeps access. Everyone already in the database when billing was introduced is granted
+free access by the migration in `includes/db.php`; revoke it per person in the admin.
+
+**Setup (do it in Stripe's test mode first):**
+
+1. Stripe dashboard → Product catalogue → add a product with a **recurring monthly
+   price**. Copy its `price_…` ID into `stripe.price_id`.
+2. Developers → API keys → copy the secret key into `stripe.secret_key`.
+3. Developers → Webhooks → add an endpoint `{base_url}/stripe_webhook.php` listening
+   for `checkout.session.completed` and `customer.subscription.created`, `.updated`,
+   `.deleted` and `.trial_will_end`. Copy its signing secret into `stripe.webhook_secret`.
+4. Settings → Billing → **Customer portal**: activate it and allow cancelling
+   subscriptions and updating payment methods. The Manage subscription button needs
+   this saved once.
+5. Set `trial_days` (default 7) and `trial_requires_card` in the config.
+
+Locally, forward events with `stripe listen --forward-to localhost:8000/stripe_webhook.php`
+and use the `whsec_…` it prints; pay with card `4242 4242 4242 4242`.
+
+**How it stays in sync.** Stripe is the source of truth; the `users` table holds a copy
+(`subscription_status`, `trial_ends_at`, `current_period_end`, …). It is refreshed when
+the customer returns from Checkout and by the webhook, which re-reads the subscription
+from Stripe rather than trusting the event body. If a webhook is ever missed, *Refresh
+from Stripe* on a user's admin page fixes that person.
+
+**Admin.** *Admin → Subscriptions* lists who is in trial, subscribed, past due, on free
+access, ended or never started, with trial-end and renewal dates. Grant or remove free
+access (with a note) on a user's own admin page.
+
+A cancelled user can't get a second trial: the trial is only offered to someone who has
+never had a subscription.
+
+## Email
+
+Everything the app emails goes through one outbox (`includes/Mailer.php`). Sending is
+always *queued* first and delivered afterwards — after the page has been sent to the
+browser, or by the cron pass when it's idle or finished — so a slow or down mail server
+can never slow a page or delay a bid. Failures retry with a back-off (5, 10, 15… minutes,
+six tries) and show in *Admin → Email*, where **Send a test email** reports the mail
+server's own error if something's wrong.
+
+**What gets sent**
+
+| Email | When |
+|---|---|
+| Confirm your email | Sign-up, or *Send a new link* (24 h, single use) |
+| Reset your password / password changed | *Forgot password*; the change notice goes after it's used (1 h, single use) |
+| Trial started · Trial ending (3 days out) · Plan active · Payment failed · Plan ending · Plan ended | Stripe subscription changes (see Billing) |
+| Bid placed / bid failed | After bids fire — one email per auction, not per step. Users can turn these off |
+| eBay connection expiring / expired | When a user has bids waiting and their eBay authorization is within 7 days of lapsing |
+| New sign-up, new trial, new subscriber, failed payment | To `owner_email` (`mail.admin_notifications`) |
+
+Stripe emails the receipts itself. In *Settings → Billing → Customer emails* leave receipts
+on, and switch off Stripe's own trial-ending and failed-payment emails so customers don't
+get each one twice.
+
+**Setup for production**
+
+1. Pick a provider with SMTP (Postmark, Resend, Amazon SES, Brevo, or your host's own) and
+   set `mail.transport => 'smtp'` with its host, port and credentials in the instance
+   config. Mail from `mail()` on shared hosting often lands in spam.
+2. Set `from_email` to an address on a domain you control, and add the SPF and DKIM DNS
+   records your provider gives you. Without them, Gmail and Outlook will junk or reject it.
+3. Open *Admin → Email* and press **Send a test email**.
+
+Until step 1 is done, production **refuses new sign-ups** (accounts couldn't confirm their
+address), and `preflight.php` says why. Locally the default `log` transport writes mail to
+`data/mail.log`, and the verification/reset link is also shown on screen.
+
+**Verification.** New accounts must confirm their email before adding bids or starting a
+trial. Admins are exempt, and so is everyone who existed when this was introduced.
+
 ## Project structure
 
 ```
 config/     config.example.php; your real config.php locally (gitignored)
-includes/   db, auth, csrf, config, runtime, EbayClient, layout partials
+includes/   db, auth, csrf, config, runtime, EbayClient, StripeClient, billing, Mailer + email templates, layout partials
 public/     Web root — every page users load, plus preflight.php and setup_admin.php
 cron/       snipe.php, run once a minute by the host's cron
 sql/        schema.sql, applied automatically on first run

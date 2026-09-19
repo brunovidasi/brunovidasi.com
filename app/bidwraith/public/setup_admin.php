@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             db()->prepare('UPDATE users SET is_admin = 1, is_active = 1 WHERE id = ?')->execute([$result]);
             attempt_login($email, $password);
             set_flash('success', 'Admin account created. Public sign-up stays closed; this setup page is now disabled.');
-            redirect('dashboard.php');
+            redirect('dashboard');
         }
     }
 }

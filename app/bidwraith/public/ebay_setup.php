@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_connection'])) {
 $api = ebay_api();
 $missing = ebay_keys_missing();
 $callbackUrl = ebay_callback_url();
-$declinedUrl = base_url() . '/connect_ebay.php';
-$privacyUrl = base_url() . '/privacy.php';
+$declinedUrl = base_url() . '/connect_ebay';
+$privacyUrl = base_url() . '/privacy';
 
 $pageTitle = 'eBay developer setup';
 require __DIR__ . '/../includes/layout_top.php';

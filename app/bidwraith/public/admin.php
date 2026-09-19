@@ -60,7 +60,7 @@ $userOffset = ($userPage - 1) * ADMIN_PER_PAGE;
 
 // Admins always sort to the top, whatever ordering is picked below them.
 $usersStmt = db()->prepare("
-    SELECT u.id, u.email, u.is_admin, u.is_active, u.created_at,
+    SELECT u.id, u.email, u.is_admin, u.is_active, u.created_at, u.free_access, u.subscription_status,
            (SELECT COUNT(*) FROM watched_auctions wa WHERE wa.user_id = u.id) AS auction_count,
            (SELECT ea.environment FROM ebay_accounts ea WHERE ea.user_id = u.id) AS ebay_env
     FROM users u
@@ -119,8 +119,9 @@ require __DIR__ . '/../includes/layout_top.php';
 <h1>Admin</h1>
 
 <div class="admin-tools">
-    <a href="ebay_setup.php" class="btn secondary">eBay setup</a>
-    <a href="preflight.php" class="btn secondary">Preflight</a>
+    <a href="admin_subscriptions" class="btn secondary">Subscriptions</a>
+    <a href="ebay_setup" class="btn secondary">eBay setup</a>
+    <a href="preflight" class="btn secondary">Preflight</a>
 </div>
 
 <?php [$cronState, $cronMessage] = cron_health(); ?>
@@ -128,7 +129,7 @@ require __DIR__ . '/../includes/layout_top.php';
     <span class="cron-dot"></span>
     <?= htmlspecialchars($cronMessage) ?>
     <?php if ($cronState !== 'ok'): ?>
-        <a href="preflight.php">Check deployment &rarr;</a>
+        <a href="preflight">Check deployment &rarr;</a>
     <?php endif; ?>
 </div>
 
@@ -147,6 +148,47 @@ require __DIR__ . '/../includes/layout_top.php';
                     <td><?= htmlspecialchars($event['received_at']) ?></td>
                     <td><?= htmlspecialchars($event['ebay_username'] ?? '—') ?></td>
                     <td><?= htmlspecialchars($event['action']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+</details>
+
+<details class="admin-deletion-log" id="email" <?= get_param('mail') === '1' ? 'open' : '' ?>>
+    <summary>Email</summary>
+    <?php
+    [$mailOk, $mailNote] = mail_status();
+    $outbox = db()->query('SELECT id, kind, to_email, subject, attempts, sent_at, last_error, created_at FROM email_outbox ORDER BY id DESC LIMIT 25')->fetchAll(PDO::FETCH_ASSOC);
+    $mailPending = (int) db()->query('SELECT COUNT(*) FROM email_outbox WHERE sent_at IS NULL AND attempts < 6')->fetchColumn();
+    $mailGivenUp = (int) db()->query('SELECT COUNT(*) FROM email_outbox WHERE sent_at IS NULL AND attempts >= 6')->fetchColumn();
+    ?>
+    <p class="<?= $mailOk ? '' : 'outcome-danger' ?>"><?= htmlspecialchars($mailNote) ?>.
+        <?= $mailPending ?> waiting to send<?= $mailGivenUp ? ', <strong class="outcome-danger">' . $mailGivenUp . ' gave up</strong>' : '' ?>.</p>
+    <form method="post" action="admin_email_test" class="detail-action">
+        <?= csrf_field() ?>
+        <button type="submit" class="secondary">Send a test email to <?= htmlspecialchars($admin['email']) ?></button>
+    </form>
+    <?php if (!$outbox): ?>
+        <p class="admin-empty">Nothing has been emailed yet.</p>
+    <?php else: ?>
+        <table class="admin-table">
+            <tr><th>When (UTC)</th><th>To</th><th>Kind</th><th>Subject</th><th>Status</th></tr>
+            <?php foreach ($outbox as $m): ?>
+                <tr>
+                    <td class="nowrap muted"><?= htmlspecialchars($m['created_at']) ?></td>
+                    <td><?= htmlspecialchars($m['to_email']) ?></td>
+                    <td><?= htmlspecialchars($m['kind']) ?></td>
+                    <td><?= htmlspecialchars($m['subject']) ?></td>
+                    <td>
+                        <?php if ($m['sent_at']): ?>
+                            <span class="status-active">sent</span>
+                        <?php elseif ($m['last_error']): ?>
+                            <span class="status-failed" title="<?= htmlspecialchars($m['last_error']) ?>"><?= $m['attempts'] >= 6 ? 'gave up' : 'retrying' ?></span>
+                            <span class="muted"><?= htmlspecialchars(mb_substr($m['last_error'], 0, 80)) ?></span>
+                        <?php else: ?>
+                            <span class="status-pending">queued</span>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>
@@ -178,13 +220,13 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="admin-section" id="users">
     <h2>Users (<?= $userMatches ?>)<?= $search !== '' ? ' <span class="muted">matching “' . htmlspecialchars($search) . '”</span>' : '' ?></h2>
-    <form class="admin-filters" method="get" action="admin.php">
+    <form class="admin-filters" method="get" action="admin">
         <input type="search" name="q" placeholder="Search email…" value="<?= htmlspecialchars($search) ?>">
         <input type="hidden" name="sort" value="<?= htmlspecialchars($userSortKey) ?>">
         <input type="hidden" name="dir" value="<?= htmlspecialchars($userSortDir) ?>">
         <button type="submit">Apply</button>
         <?php if ($search !== ''): ?>
-            <a href="admin.php">Reset</a>
+            <a href="admin">Reset</a>
         <?php endif; ?>
     </form>
 </div>
@@ -202,6 +244,7 @@ require __DIR__ . '/../includes/layout_top.php';
                 <?= sortable_th('eBay', 'ebay', $userSortKey, $userSortDir, 'sort', 'dir', ['up'], '', 'users') ?>
                 <?= sortable_th('Auctions', 'auctions', $userSortKey, $userSortDir, 'sort', 'dir', ['up'], 'num', 'users') ?>
                 <?= sortable_th('Status', 'status', $userSortKey, $userSortDir, 'sort', 'dir', ['up'], '', 'users') ?>
+                <?php if (billing_enabled()): ?><th>Plan</th><?php endif; ?>
                 <th></th>
             </tr>
         </thead>
@@ -209,7 +252,7 @@ require __DIR__ . '/../includes/layout_top.php';
             <?php foreach ($users as $u): ?>
                 <tr class="<?= $u['is_active'] ? '' : 'admin-row-inactive' ?>">
                     <td class="cell-email" title="<?= htmlspecialchars($u['email']) ?>">
-                        <a href="admin_user.php?id=<?= (int) $u['id'] ?>"><?= htmlspecialchars($u['email']) ?></a>
+                        <a href="admin_user?id=<?= (int) $u['id'] ?>"><?= htmlspecialchars($u['email']) ?></a>
                         <?php if ($u['is_admin']): ?><span class="admin-badge">admin</span><?php endif; ?>
                     </td>
                     <td class="num muted"><?= (int) $u['id'] ?></td>
@@ -223,9 +266,12 @@ require __DIR__ . '/../includes/layout_top.php';
                     <td class="nowrap">
                         <span class="status-<?= $u['is_active'] ? 'active' : 'inactive' ?>"><?= $u['is_active'] ? 'active' : 'inactive' ?></span>
                     </td>
+                    <?php if (billing_enabled()): ?>
+                        <td class="nowrap"><?= billing_group_badge(billing_group($u)) ?></td>
+                    <?php endif; ?>
                     <td class="cell-actions nowrap">
                         <?php if ((int) $u['id'] !== (int) $admin['id']): ?>
-                            <form method="post" action="admin_user_status.php"
+                            <form method="post" action="admin_user_status"
                                   <?= $u['is_active'] ? 'data-confirm="Deactivate this account? They won\'t be able to log in."' : '' ?>>
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="id" value="<?= (int) $u['id'] ?>">
@@ -270,7 +316,7 @@ foreach ($pastRows as &$pastRow) {
 }
 unset($pastRow);
 $showOwner = true;
-$detailPage = 'admin_auction.php';
+$detailPage = 'admin_auction';
 $sortKey = $section['sortKey'];
 $sortDir = $section['sortDir'];
 $sortParam = $section['sortParam'];
@@ -297,11 +343,11 @@ require __DIR__ . '/../includes/past_auctions_table.php';
             <?php foreach ($section['data']['rows'] as $a): ?>
                 <tr>
                     <td class="cell-title" title="<?= htmlspecialchars($a['title'] ?? '') ?>">
-                        <a href="admin_auction.php?id=<?= (int) $a['id'] ?>"><?= htmlspecialchars($a['title'] ?? '(unknown title)') ?></a>
+                        <a href="admin_auction?id=<?= (int) $a['id'] ?>"><?= htmlspecialchars($a['title'] ?? '(unknown title)') ?></a>
                         <span class="muted"><?= htmlspecialchars($a['item_id']) ?></span>
                     </td>
                     <td class="cell-email" title="<?= htmlspecialchars($a['owner_email']) ?>">
-                        <a href="admin_user.php?id=<?= (int) $a['user_id'] ?>"><?= htmlspecialchars($a['owner_email']) ?></a>
+                        <a href="admin_user?id=<?= (int) $a['user_id'] ?>"><?= htmlspecialchars($a['owner_email']) ?></a>
                     </td>
                     <td class="nowrap muted"><?= $a['end_time'] !== null ? local_time((int) strtotime($a['end_time']), $a['end_time']) : 'unknown' ?></td>
                     <td class="nowrap">

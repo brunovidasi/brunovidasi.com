@@ -32,6 +32,46 @@ return [
     'ebay_deletion_token' => '',
 
 
+    // Monthly subscription billing through Stripe (see "Billing" in the README).
+    // Billing is OFF until both secret_key and price_id are set: nobody is gated and
+    // the Billing page says plans aren't switched on. Use TEST keys (sk_test_…) in
+    // development and LIVE keys (sk_live_…) on the server — this file already differs
+    // between the two.
+    'stripe' => [
+        'secret_key'     => '',   // Developers -> API keys
+        'price_id'       => '',   // The monthly recurring price, price_…
+        'webhook_secret' => '',   // Developers -> Webhooks -> the endpoint's signing secret, whsec_…
+        'trial_days'     => 7,    // 0 turns the trial off
+        // true: Checkout asks for a card and charges when the trial ends.
+        // false: no card to start; the subscription is cancelled if none is added by then.
+        'trial_requires_card' => true,
+    ],
+
+    // Email: verification links, password resets, billing notices, bid alerts (see
+    // "Email" in the README). Everything is queued and sent after the fact, so a slow or
+    // down mail server never delays a page or a bid.
+    'mail' => [
+        // 'log'  writes messages to data/mail.log instead of sending (the default, and
+        //        right for development — you can read verification links there)
+        // 'smtp' a real mail server or provider — use this in production
+        // 'mail' PHP's mail(), the host's own sendmail (works, but often lands in spam)
+        'transport'  => 'log',
+        // Must be an address on a domain you've set SPF/DKIM up for with your provider.
+        'from_email' => 'noreply@example.com',
+        'from_name'  => 'Bidwraith',
+        'reply_to'   => '',          // where replies go, e.g. your own inbox; blank for none
+        'smtp' => [
+            'host'       => '',      // e.g. smtp.postmarkapp.com, smtp.resend.com, email-smtp.<region>.amazonaws.com
+            'port'       => 587,
+            'encryption' => 'tls',   // 'tls' = STARTTLS (587), 'ssl' = implicit TLS (465), '' = none
+            'username'   => '',
+            'password'   => '',
+            'verify_peer' => true,   // leave on; only turn off to test against a self-signed server
+        ],
+        // Email the owner_email below about new sign-ups, trials, subscribers and failed payments.
+        'admin_notifications' => true,
+    ],
+
     // Kept as an active admin on every request, so you can't lock yourself out.
     // Leave empty to disable.
     'owner_email' => '',

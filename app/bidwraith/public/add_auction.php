@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $user = require_login();
+require_access($user);
 $error = null;
 $lookupFailed = false;
 
@@ -137,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->commit();
 
         set_flash('success', 'Auction added to your auction list.');
-        redirect('dashboard.php');
+        redirect('dashboard');
     }
 }
 

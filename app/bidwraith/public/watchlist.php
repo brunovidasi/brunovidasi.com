@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $user = require_login();
+require_access($user);
 
 $stmt = db()->prepare('SELECT * FROM ebay_accounts WHERE user_id = ?');
 $stmt->execute([$user['id']]);
@@ -143,12 +144,12 @@ $pageTitle = 'Watchlist';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
 <h1>Your eBay watchlist</h1>
-<p class="hint">Auctions you're watching on eBay itself. Add one to your <a href="dashboard.php">auction list</a> to schedule bids for it.</p>
+<p class="hint">Auctions you're watching on eBay itself. Add one to your <a href="dashboard">auction list</a> to schedule bids for it.</p>
 
 <?php if (!$account && !$demo): ?>
     <div class="flash flash-error">
         You haven't connected an eBay account yet, so your watchlist can't be loaded.
-        <a href="connect_ebay.php">Connect it now</a>.
+        <a href="connect_ebay">Connect it now</a>.
     </div>
 <?php elseif ($error): ?>
     <div class="flash flash-error">Couldn't load your eBay watchlist: <?= htmlspecialchars($error) ?></div>
@@ -199,7 +200,7 @@ require __DIR__ . '/../includes/layout_top.php';
                         <?php endif; ?>
                     </p>
                 <?php endif; ?>
-                <a class="btn" href="add_auction.php?item_id=<?= urlencode($item['item_id']) ?>">+ Add to auction list</a>
+                <a class="btn" href="add_auction?item_id=<?= urlencode($item['item_id']) ?>">+ Add to auction list</a>
             </div>
         </article>
     <?php endforeach; ?>

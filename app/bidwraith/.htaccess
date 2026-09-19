@@ -38,9 +38,34 @@ DirectoryIndex index.php index.html
     # gives up with a 500.
     RewriteRule ^public/ - [L]
 
+    # Pretty URLs. Every page link in the app is written without .php, so this is
+    # the rule that actually serves them: /bidwraith/dashboard -> public/dashboard.php.
+    # The -f test means an unknown name falls through to the 404 below rather than
+    # being rewritten onto a PHP file that isn't there.
+    RewriteCond %{DOCUMENT_ROOT}/bidwraith/public/$1.php -f
+    RewriteRule ^([A-Za-z0-9_]+)$ public/$1.php [L]
+
+    # Canonicalise the old .php URLs (bookmarks, links already sent out) onto the
+    # extensionless ones. Restricted to GET because a 301 tells the client to redo
+    # the request as a GET, which would silently drop the body of a POST.
+    #
+    # The excluded endpoints are not ours to rename: ebay_callback and ebay_deletion
+    # are registered in the eBay developer console, stripe_webhook in the Stripe
+    # dashboard, and cron_http is baked into the host's cron entry. They keep
+    # answering on their .php URL.
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteRule ^(?!ebay_callback|ebay_deletion|cron_http|stripe_webhook)([A-Za-z0-9_]+)\.php$ /bidwraith/$1 [L,R=301,NE]
+
     # Everything else is served from public/.
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
+
+# Error pages, styled like the rest of the app. These are URL paths, so they go
+# back through the rewrites above and land on public/404.php and public/500.php.
+# Apache only raises a 500 itself; a PHP fatal is caught by the shutdown handler
+# in includes/runtime.php, which renders the same page.
+ErrorDocument 404 /bidwraith/404
+ErrorDocument 500 /bidwraith/500
 
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"

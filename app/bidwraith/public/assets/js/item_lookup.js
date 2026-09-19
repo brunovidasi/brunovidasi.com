@@ -165,7 +165,7 @@
         }
         lastQueried = raw;
 
-        fetch('item_lookup.php?item_id=' + encodeURIComponent(raw), { credentials: 'same-origin' })
+        fetch('item_lookup?item_id=' + encodeURIComponent(raw), { credentials: 'same-origin' })
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 if (input.value.trim() === raw) {

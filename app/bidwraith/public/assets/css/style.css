@@ -174,7 +174,7 @@ a:hover { color: var(--accent-dark); }
 .masthead-top {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 8px;
     padding-bottom: 18px;
@@ -202,6 +202,59 @@ a:hover { color: var(--accent-dark); }
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: var(--muted);
+}
+
+/*
+ * The logged-out masthead's log-in form. On a wide screen it sits inline beside the
+ * brand, so logging in is type-and-enter with nothing to click first. On a narrow one
+ * it wouldn't fit the row, so it drops onto its own line behind the "Log in" button
+ * (see assets/js/login_menu.js).
+ */
+.masthead-login {
+    margin-left: auto;
+}
+
+.masthead-login-toggle {
+    display: none;
+    margin: 0;
+    padding: 8px 16px;
+    font-size: 0.75rem;
+}
+
+.masthead-login-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.masthead-login .masthead-login-form input {
+    width: 200px;
+    padding: 9px 12px;
+    font-size: 0.95rem;
+}
+
+.masthead-login .masthead-login-form button {
+    margin: 0;
+    padding: 10px 18px;
+    font-size: 0.75rem;
+}
+
+.masthead-login-forgot {
+    flex-basis: 100%;
+    text-align: right;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.masthead-login-error {
+    flex-basis: 100%;
+    text-align: right;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--danger);
 }
 
 .site-nav {
@@ -882,18 +935,21 @@ button:disabled:hover, .btn:disabled:hover {
 
 .flash-success { color: var(--ok); }
 .flash-error { color: var(--danger); }
+.flash-info { color: var(--accent-dark); }
 .flash a { color: inherit; text-decoration: underline; }
 
 /* Status */
 
 .status-pending, .status-bid_placed, .status-won, .status-lost, .status-failed,
-.status-active, .status-inactive {
+.status-active, .status-inactive,
+.status-trialing, .status-free, .status-past_due, .status-ended, .status-none, .status-admin {
     font-weight: 600;
     letter-spacing: 0.03em;
 }
 
 .status-pending::before, .status-bid_placed::before, .status-won::before, .status-lost::before, .status-failed::before,
-.status-active::before, .status-inactive::before {
+.status-active::before, .status-inactive::before,
+.status-trialing::before, .status-free::before, .status-past_due::before, .status-ended::before, .status-none::before, .status-admin::before {
     content: "●";
     font-size: 0.6em;
     margin-right: 5px;
@@ -903,7 +959,12 @@ button:disabled:hover, .btn:disabled:hover {
 .status-pending { color: var(--muted); }
 .status-bid_placed { color: var(--accent-dark); }
 .status-won, .status-active { color: var(--ok); }
-.status-lost, .status-failed, .status-inactive { color: var(--danger); }
+.status-lost, .status-failed, .status-inactive, .status-past_due { color: var(--danger); }
+
+/* Plans (see includes/billing.php): trial and free access read as "in progress /
+   granted", ended and none as quiet, the same way pending does. */
+.status-trialing, .status-free, .status-admin { color: var(--accent-dark); }
+.status-ended, .status-none { color: var(--muted); }
 
 .warning-badge {
     display: block;
@@ -1320,6 +1381,18 @@ button:disabled:hover, .btn:disabled:hover {
 
 .bid-steps-summary li { margin-top: 4px; }
 
+@media (max-width: 820px) {
+    /* The wrapper steps aside so the toggle stays beside the brand and the open form
+       can take a full line of its own beneath it. */
+    .masthead-login { display: contents; }
+    .masthead-login-toggle { display: block; margin-left: auto; }
+    .masthead-login-form { display: none; flex: 1 0 100%; margin-top: 6px; }
+    .masthead-login.is-open .masthead-login-form { display: flex; }
+    .masthead-login.is-open .masthead-login-toggle { background: var(--ink); color: var(--paper); }
+    .masthead-login .masthead-login-form input { flex: 1 1 160px; width: auto; min-width: 0; }
+    .masthead-login-error { text-align: left; }
+}
+
 @media (max-width: 640px) {
     .masthead-inner { padding: 24px 18px 0; }
     .site-nav-inner { padding: 10px 18px; }
@@ -1393,6 +1466,10 @@ button:disabled:hover, .btn:disabled:hover {
     border-radius: 3px;
     background: #fff;
 }
+
+/* The subscriptions page's tiles double as filters. */
+a.admin-stat { display: block; color: inherit; text-decoration: none; }
+a.admin-stat:hover, a.admin-stat.is-active { border-color: var(--accent); }
 
 .admin-stat-value {
     font-family: 'Fraunces', Georgia, serif;
@@ -1917,3 +1994,212 @@ button:disabled:hover, .btn:disabled:hover {
 /* eBay deletion-notification audit panel on the admin dashboard. */
 .admin-deletion-log { margin-bottom: 1.4rem; }
 .admin-deletion-log summary { cursor: pointer; font-weight: 600; margin-bottom: 0.5rem; }
+
+/* Marketing landing page (logged-out login.php) */
+
+.hero {
+    max-width: 820px;
+    margin: 20px auto 60px;
+    text-align: center;
+}
+
+.hero-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin: 0 0 14px;
+}
+
+.hero-title {
+    font-size: 2.6rem;
+    font-style: italic;
+    line-height: 1.2;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 18px;
+    /* Evens the lines out instead of stranding a last word ("clock.") alone. */
+    text-wrap: balance;
+}
+
+.hero-sub {
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin: 0 auto 30px;
+    text-wrap: balance;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+}
+
+.hero-actions .btn { margin-top: 0; }
+
+.landing-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 0;
+    border-top: 1px solid var(--border);
+}
+
+.landing-section h2 {
+    text-align: center;
+    font-size: 1.7rem;
+    margin-bottom: 34px;
+    text-wrap: balance;
+}
+
+.landing-section > .hint {
+    text-align: center;
+    margin: -20px auto 30px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 26px;
+}
+
+.feature-card {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--accent) 4%, var(--paper));
+}
+
+.feature-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+}
+
+.feature-card p {
+    color: var(--ink-soft);
+    margin: 0;
+}
+
+.steps-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.steps-list li {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.steps-list li > div {
+    min-width: 0;
+}
+
+.step-num {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.steps-list h3 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+}
+
+.steps-list p {
+    color: var(--ink-soft);
+    margin: 0;
+}
+
+.pricing-card {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    text-align: center;
+    position: relative;
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 999px;
+}
+
+.pricing-card h3 { margin-top: 6px; }
+
+.pricing-amount {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 2.4rem;
+    color: var(--ink);
+    margin: 10px 0 4px;
+}
+
+.pricing-amount span {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+.pricing-features {
+    list-style: none;
+    margin: 22px 0;
+    padding: 0;
+    text-align: left;
+}
+
+.pricing-features li {
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    color: var(--ink-soft);
+}
+
+.pricing-features li:first-child { border-top: none; }
+
+.mock-waitlist { text-align: left; }
+.mock-waitlist button { width: 100%; text-align: center; }
+
+.mock-note {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin-top: 20px;
+}
+
+@media (max-width: 640px) {
+    .hero { margin: 6px auto 44px; }
+    .hero-title { font-size: 2rem; }
+    .hero-sub { font-size: 1.05rem; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .landing-section { padding: 40px 0; }
+}

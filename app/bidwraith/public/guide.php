@@ -24,19 +24,19 @@ require __DIR__ . '/../includes/layout_top.php';
 <div class="settings-section">
     <h2>Quick start</h2>
     <ol>
-        <li><a href="connect_ebay.php">Connect your eBay account</a> once, so the app
+        <li><a href="connect_ebay">Connect your eBay account</a> once, so the app
             can place bids on your behalf.</li>
-        <li><a href="add_auction.php">Add an auction</a> by its eBay item ID or listing
+        <li><a href="add_auction">Add an auction</a> by its eBay item ID or listing
             URL.</li>
         <li>Enter your max bid and pick a strategy (or set your own timing).</li>
-        <li>Watch it on your <a href="dashboard.php">auction list</a> &mdash; Bidwraith
+        <li>Watch it on your <a href="dashboard">auction list</a> &mdash; Bidwraith
             takes it from there.</li>
     </ol>
 </div>
 
 <div class="settings-section">
     <h2>Connecting your eBay account</h2>
-    <p>Go to <a href="connect_ebay.php">eBay account</a> and click
+    <p>Go to <a href="connect_ebay">eBay account</a> and click
        <strong>Connect eBay account</strong>. You'll be redirected to eBay to sign in
        and authorize Bidwraith &mdash; the same "connect this app" flow eBay uses for
        any third-party tool. Bidwraith never sees or stores your eBay password, only a
@@ -53,7 +53,7 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="settings-section">
     <h2>Adding an auction</h2>
-    <p>On <a href="add_auction.php">Add auction</a>, paste the eBay item ID or the full
+    <p>On <a href="add_auction">Add auction</a>, paste the eBay item ID or the full
        listing URL. Bidwraith looks the item up automatically to fill in its title, end
        time, and current price. If a lookup fails (this can happen for some listings),
        you'll be asked to enter the auction's end time yourself.</p>
@@ -98,7 +98,7 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="settings-section">
     <h2>Your auction list</h2>
-    <p>The <a href="dashboard.php">auction list</a> shows every auction you're
+    <p>The <a href="dashboard">auction list</a> shows every auction you're
        watching, with its live current price, countdown, and every bid you've
        scheduled for it. A few things worth knowing:</p>
     <ul>
@@ -142,7 +142,7 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="settings-section">
     <h2>Watchlist</h2>
-    <p>The <a href="watchlist.php">Watchlist</a> page shows auctions you're watching on
+    <p>The <a href="watchlist">Watchlist</a> page shows auctions you're watching on
        eBay itself (via the star icon on ebay.com), separate from your Bidwraith
        auction list. It's a quick way to find items you've already flagged on eBay and
        add timed bids for them without hunting down the item ID.</p>

@@ -18,7 +18,7 @@ if (!$auction) {
     http_response_code(404);
     $pageTitle = 'Auction not found';
     require __DIR__ . '/../includes/layout_top.php';
-    echo '<h1>Auction not found</h1><p class="hint"><a href="admin.php">Back to the admin dashboard</a></p>';
+    echo '<h1>Auction not found</h1><p class="hint"><a href="admin">Back to the admin dashboard</a></p>';
     require __DIR__ . '/../includes/layout_bottom.php';
     exit;
 }
@@ -50,7 +50,7 @@ $estimate = estimate_landed_cost($topBid, $auction['shipping_cost'], $auction['i
 $pageTitle = $auction['title'] ?? 'Auction';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
-<p class="crumb"><a href="admin.php">&larr; Admin dashboard</a></p>
+<p class="crumb"><a href="admin">&larr; Admin dashboard</a></p>
 
 <h1><?= htmlspecialchars($auction['title'] ?? '(unknown title)') ?></h1>
 
@@ -58,7 +58,7 @@ require __DIR__ . '/../includes/layout_top.php';
     <div><span class="detail-label">Item ID</span><?= htmlspecialchars($auction['item_id']) ?></div>
     <div>
         <span class="detail-label">Owner</span>
-        <a href="admin_user.php?id=<?= (int) $auction['owner_id'] ?>"><?= htmlspecialchars($auction['owner_email']) ?></a>
+        <a href="admin_user?id=<?= (int) $auction['owner_id'] ?>"><?= htmlspecialchars($auction['owner_email']) ?></a>
     </div>
     <div>
         <span class="detail-label"><?= $hasEnded ? 'Ended' : 'Ends' ?></span>

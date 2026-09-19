@@ -10,7 +10,7 @@ function current_user(): ?array
     if ($user === null) {
         // Deactivated accounts are filtered out here too, so an admin switching a
         // user off ends their existing session on their next request.
-        $stmt = db()->prepare('SELECT id, email, is_admin, currency, created_at FROM users WHERE id = ? AND is_active = 1');
+        $stmt = db()->prepare('SELECT id, email, is_admin, currency, created_at, free_access, stripe_customer_id, stripe_subscription_id, subscription_status, trial_ends_at, current_period_end, cancel_at_period_end, email_verified_at, email_bid_alerts FROM users WHERE id = ? AND is_active = 1');
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         if ($user) {
@@ -27,7 +27,7 @@ function require_login(): array
 {
     $user = current_user();
     if (!$user) {
-        header('Location: login.php');
+        header('Location: login');
         exit;
     }
     return $user;

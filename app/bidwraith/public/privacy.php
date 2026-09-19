@@ -27,7 +27,19 @@ require __DIR__ . '/../includes/layout_top.php';
         or stores your eBay password.</li>
     <li><strong>Watched auctions:</strong> the eBay item IDs you add, their end times,
         your scheduled bid amounts, and the outcome of each bid attempt.</li>
+    <li><strong>Subscription:</strong> if you take a paid plan, payment is handled by
+        <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe</a>.
+        Your card details go to Stripe and never touch this app; it keeps only Stripe's
+        customer and subscription IDs and your plan's status and dates.</li>
 </ul>
+
+<h2>Email</h2>
+<p>Bidwraith emails your account's address to confirm it, to reset a forgotten
+   password, about your plan and billing, when a bid you scheduled is placed or fails,
+   and when your eBay connection is about to expire while you have bids waiting. You can
+   turn the bid emails off under <em>eBay account</em>; the others are needed to run the
+   account. Emails are sent through a mail provider, which sees the message and the
+   address it goes to.</p>
 
 <h2>What it is used for</h2>
 <p>Solely to look up auction details and place the bids you configure, at the times

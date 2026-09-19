@@ -19,7 +19,7 @@ $auction = $stmt->fetch(PDO::FETCH_ASSOC);
 // admin view of it rather than a dead end.
 if ($auction && (int) $auction['user_id'] !== (int) $user['id']) {
     if ($user['is_admin']) {
-        redirect('admin_auction.php?id=' . $auctionId);
+        redirect('admin_auction?id=' . $auctionId);
     }
     $auction = null;
 }
@@ -28,7 +28,7 @@ if (!$auction) {
     http_response_code(404);
     $pageTitle = 'Auction not found';
     require __DIR__ . '/../includes/layout_top.php';
-    echo '<h1>Auction not found</h1><p class="hint">It may have been removed. <a href="dashboard.php">Back to your auction list</a>.</p>';
+    echo '<h1>Auction not found</h1><p class="hint">It may have been removed. <a href="dashboard">Back to your auction list</a>.</p>';
     require __DIR__ . '/../includes/layout_bottom.php';
     exit;
 }
@@ -62,7 +62,7 @@ $ebayUrl = ebay_item_view_url($auction['item_id'], ebay_config()['marketplace_id
 $pageTitle = $auction['title'] ?? 'Auction';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
-<p class="crumb"><a href="dashboard.php<?= $hasEnded ? '#past-auctions' : '' ?>">&larr; Your auction list</a></p>
+<p class="crumb"><a href="dashboard<?= $hasEnded ? '#past-auctions' : '' ?>">&larr; Your auction list</a></p>
 
 <div class="detail-head">
     <?php if (!empty($auction['image_url'])): ?>
@@ -76,7 +76,7 @@ require __DIR__ . '/../includes/layout_top.php';
             <span class="muted">Item <?= htmlspecialchars($auction['item_id']) ?></span>
             <?php if ($editable): ?>
                 <span class="sep">·</span>
-                <a href="edit_auction.php?id=<?= (int) $auction['id'] ?>">Edit bids</a>
+                <a href="edit_auction?id=<?= (int) $auction['id'] ?>">Edit bids</a>
             <?php endif; ?>
         </p>
     </div>
@@ -211,10 +211,10 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="detail-actions">
     <?php if ($editable): ?>
-        <a class="entry-link" href="edit_auction.php?id=<?= (int) $auction['id'] ?>">Edit bids</a>
+        <a class="entry-link" href="edit_auction?id=<?= (int) $auction['id'] ?>">Edit bids</a>
     <?php endif; ?>
     <a class="entry-link" href="<?= htmlspecialchars($ebayUrl) ?>" target="_blank" rel="noopener">View on eBay</a>
-    <form method="post" action="delete_auction.php" data-confirm="Remove this auction from your auction list?">
+    <form method="post" action="delete_auction" data-confirm="Remove this auction from your auction list?">
         <?= csrf_field() ?>
         <input type="hidden" name="id" value="<?= (int) $auction['id'] ?>">
         <button type="submit" class="link-btn">Remove</button>

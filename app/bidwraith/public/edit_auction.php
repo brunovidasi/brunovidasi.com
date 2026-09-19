@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $user = require_login();
+require_access($user);
 
 $auctionId = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 $stmt = db()->prepare('SELECT * FROM watched_auctions WHERE id = ? AND user_id = ?');
@@ -10,7 +11,7 @@ $auction = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$auction) {
     set_flash('error', 'Auction not found.');
-    redirect('dashboard.php');
+    redirect('dashboard');
 }
 
 $hasEnded = $auction['end_time'] && strtotime($auction['end_time']) <= time();
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($hasEnded) {
         set_flash('error', 'This auction has already ended — bids can no longer be changed.');
-        redirect('dashboard.php');
+        redirect('dashboard');
     }
 
     $existingStmt = db()->prepare('SELECT * FROM bid_steps WHERE watched_auction_id = ?');
@@ -208,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->commit();
 
         set_flash('success', 'Bids updated.');
-        redirect('dashboard.php');
+        redirect('dashboard');
     }
 }
 
@@ -348,6 +349,6 @@ require __DIR__ . '/../includes/layout_top.php';
         <button type="submit">Save</button>
     <?php endif; ?>
 </form>
-<p><a href="dashboard.php">&larr; Back to auction list</a></p>
+<p><a href="dashboard">&larr; Back to auction list</a></p>
 <?= app_scripts() ?>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

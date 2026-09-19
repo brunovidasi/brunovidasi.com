@@ -68,13 +68,13 @@ require __DIR__ . '/../includes/layout_top.php';
 ?>
 <div class="page-header">
     <h1>Your auction list</h1>
-    <a class="btn" href="add_auction.php">+ Add auction</a>
+    <a class="btn" href="add_auction">+ Add auction</a>
 </div>
 
 <?php if (!$hasEbayAccount): ?>
     <div class="flash flash-error">
         You haven't connected an eBay account yet, so bids can't be placed.
-        <a href="connect_ebay.php">Connect it now</a>.
+        <a href="connect_ebay">Connect it now</a>.
     </div>
 <?php endif; ?>
 
@@ -97,8 +97,8 @@ require __DIR__ . '/../includes/layout_top.php';
         $outbid = !$hasUncappedAnyway && $currentPrice !== null && in_array($a['status'], ['pending', 'bid_placed'], true) && (float) $currentPrice >= $effectiveMaxBid;
         $estimate = estimate_landed_cost($effectiveMaxBid, $a['shipping_cost'], $a['item_country'], $homeCountry);
         $editable = !in_array($a['status'], ['won', 'lost'], true);
-        $editUrl = 'edit_auction.php?id=' . (int) $a['id'];
-        $detailUrl = 'auction.php?id=' . (int) $a['id'];
+        $editUrl = 'edit_auction?id=' . (int) $a['id'];
+        $detailUrl = 'auction?id=' . (int) $a['id'];
         $titleText = htmlspecialchars($a['title'] ?? '(unknown title)');
     ?>
         <article class="entry">
@@ -162,7 +162,7 @@ require __DIR__ . '/../includes/layout_top.php';
                     <?php if ($editable): ?>
                         <a class="entry-link" href="<?= $editUrl ?>">Edit bids</a>
                     <?php endif; ?>
-                    <form method="post" action="delete_auction.php" data-confirm="Remove this auction from your auction list?">
+                    <form method="post" action="delete_auction" data-confirm="Remove this auction from your auction list?">
                         <?= csrf_field() ?>
                         <input type="hidden" name="id" value="<?= (int) $a['id'] ?>">
                         <button type="submit" class="icon-btn icon-btn-danger" aria-label="Remove" title="Remove">

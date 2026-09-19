@@ -13,19 +13,28 @@ if (!registration_allowed()) {
 }
 
 if (current_user()) {
-    redirect('dashboard.php');
+    redirect('dashboard');
 }
 
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
-    [$ok, $result] = register_user($_POST['email'] ?? '', $_POST['password'] ?? '');
-    if ($ok) {
-        $_SESSION['user_id'] = $result;
-        redirect('dashboard.php');
+
+    // Every new account has to confirm its address by email. If this installation can't
+    // send any, signing up would only create accounts that can never be used.
+    if (is_production() && !mail_status()[0]) {
+        error_log('Bidwraith: sign-up refused because email is not configured (' . mail_status()[1] . ').');
+        $error = 'Sign-up is temporarily unavailable. Please try again later.';
+    } else {
+        [$ok, $result] = register_user($_POST['email'] ?? '', $_POST['password'] ?? '');
+        if ($ok) {
+            $_SESSION['user_id'] = $result;
+            on_user_registered((int) $result, trim(strtolower($_POST['email'])));
+            redirect('verify_email');
+        }
+        $error = $result;
     }
-    $error = $result;
 }
 
 $pageTitle = 'Create account';
@@ -45,6 +54,6 @@ require __DIR__ . '/../includes/layout_top.php';
 
         <button type="submit">Create account</button>
     </form>
-    <div class="switch">Already have an account? <a href="login.php">Log in</a></div>
+    <div class="switch">Already have an account? <a href="login">Log in</a></div>
 </div>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

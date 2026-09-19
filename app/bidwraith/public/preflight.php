@@ -124,6 +124,10 @@ $checks['eBay credentials (' . ebay_api() . ')'] = check(
     'blank: ' . implode(', ', $missingKeys)
 );
 
+[$mailReady, $mailNote] = mail_status();
+$checks['Email'] = check($mailReady || !is_production(), $mailNote, $mailNote . ' — sign-up is refused in production until email can be sent');
+$checks['mbstring extension'] = check(extension_loaded('mbstring'), 'loaded', 'MISSING — email subjects and text need it');
+
 $heartbeatFile = $dataDir . '/cron-heartbeat.txt';
 if (is_file($heartbeatFile)) {
     $age = time() - (int) file_get_contents($heartbeatFile);
@@ -229,7 +233,7 @@ $failures = count(array_filter($checks, fn ($c) => !$c[0]));
 
     <?php if ($openAccess && $dbError === null): ?>
         <div class="banner bad">No accounts exist yet, so this page is open to anyone.
-            Create your admin account at <a href="setup_admin.php">setup_admin.php</a> — that closes both pages.</div>
+            Create your admin account at <a href="setup_admin">/setup_admin</a> — that closes both pages.</div>
     <?php endif; ?>
 
     <table>
