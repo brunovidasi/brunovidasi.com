@@ -41,6 +41,7 @@ function run_migrations(PDO $db): void
 {
     $columns = [
         'watched_auctions' => ['current_price' => 'REAL', 'shipping_cost' => 'REAL', 'item_country' => 'TEXT', 'price_checked_at' => 'TEXT', 'image_url' => 'TEXT'],
+        'bid_steps' => ['end_user_ip' => 'TEXT'],
         'users' => ['is_admin' => 'INTEGER NOT NULL DEFAULT 0', 'is_active' => 'INTEGER NOT NULL DEFAULT 1', 'currency' => 'TEXT'],
     ];
 

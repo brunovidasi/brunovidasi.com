@@ -296,12 +296,14 @@ class EbayClient
     /**
      * Places (or raises) a proxy bid. eBay will auto-rebid on the user's behalf up to
      * maxBid each time they're outbid, exactly like bidding manually on the site.
+     * $endUserIp is the address the bid was saved from; eBay rejects the call without it.
      */
-    public function placeBid(string $authToken, string $itemId, float $maxBid, string $currency): array
+    public function placeBid(string $authToken, string $itemId, float $maxBid, string $currency, ?string $endUserIp): array
     {
         $body = '<?xml version="1.0" encoding="utf-8"?>'
             . '<PlaceOfferRequest xmlns="urn:ebay:apis:eBLBaseComponents">'
             . '<RequesterCredentials><eBayAuthToken>' . htmlspecialchars($authToken) . '</eBayAuthToken></RequesterCredentials>'
+            . ($endUserIp !== null ? '<EndUserIP>' . htmlspecialchars($endUserIp) . '</EndUserIP>' : '')
             . '<ItemID>' . htmlspecialchars($itemId) . '</ItemID>'
             . '<Offer>'
             . '<Action>Bid</Action>'

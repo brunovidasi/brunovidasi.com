@@ -32,6 +32,11 @@ return [
     'ebay_deletion_token' => '',
 
 
+    // eBay's PlaceOffer needs the bidder's IP address. It is recorded when a bid is
+    // saved. If the app sits behind a proxy or CDN, name the header that carries the
+    // visitor's real IP ('X-Forwarded-For', 'CF-Connecting-IP'); leave empty otherwise.
+    'client_ip_header' => '',
+
     // Monthly subscription billing through Stripe (see "Billing" in the README).
     // Billing is OFF until both secret_key and price_id are set: nobody is gated and
     // the Billing page says plans aren't switched on. Use TEST keys (sk_test_…) in

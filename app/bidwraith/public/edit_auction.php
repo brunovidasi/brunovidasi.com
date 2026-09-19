@@ -189,21 +189,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$error) {
         db()->beginTransaction();
+        $endUserIp = client_ip();
         foreach ($toDelete as $id) {
             db()->prepare('DELETE FROM bid_steps WHERE id = ? AND watched_auction_id = ?')->execute([$id, $auctionId]);
         }
         foreach ($toUpdate as $u) {
-            db()->prepare('UPDATE bid_steps SET seconds_before = ?, max_bid = ?, bid_mode = ?, increment_type = ?, increment_amount = ? WHERE id = ? AND watched_auction_id = ?')
+            db()->prepare('UPDATE bid_steps SET seconds_before = ?, max_bid = ?, bid_mode = ?, increment_type = ?, increment_amount = ?, end_user_ip = ? WHERE id = ? AND watched_auction_id = ?')
                 ->execute([
                     $u['seconds_before'], $u['max_bid'] ?? null, $u['bid_mode'] ?? 'fixed',
-                    $u['increment_type'] ?? null, $u['increment_amount'] ?? null, $u['id'], $auctionId,
+                    $u['increment_type'] ?? null, $u['increment_amount'] ?? null, $endUserIp, $u['id'], $auctionId,
                 ]);
         }
         foreach ($toInsert as $ins) {
-            db()->prepare('INSERT INTO bid_steps (watched_auction_id, seconds_before, max_bid, bid_mode, increment_type, increment_amount) VALUES (?, ?, ?, ?, ?, ?)')
+            db()->prepare('INSERT INTO bid_steps (watched_auction_id, seconds_before, max_bid, bid_mode, increment_type, increment_amount, end_user_ip) VALUES (?, ?, ?, ?, ?, ?, ?)')
                 ->execute([
                     $auctionId, $ins['seconds_before'], $ins['max_bid'] ?? null,
-                    $ins['bid_mode'] ?? 'fixed', $ins['increment_type'] ?? null, $ins['increment_amount'] ?? null,
+                    $ins['bid_mode'] ?? 'fixed', $ins['increment_type'] ?? null, $ins['increment_amount'] ?? null, $endUserIp,
                 ]);
         }
         db()->commit();

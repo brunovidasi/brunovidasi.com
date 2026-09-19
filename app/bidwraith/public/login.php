@@ -23,14 +23,13 @@ $pageTitle = 'Automatic eBay bidding';
 require __DIR__ . '/../includes/layout_top.php';
 ?>
 <section class="hero">
-    <p class="hero-eyebrow">For eBay auction snipers</p>
+    <p class="hero-eyebrow">A private tool for eBay auction sniping</p>
     <h1 class="hero-title">Win eBay auctions without watching the clock.</h1>
     <p class="hero-sub">Set a max bid once. Bidwraith places it in the auction's final
         seconds through eBay's own proxy bidding &mdash; automatically, precisely, and
         only as high as it needs to.</p>
     <div class="hero-actions">
-        <a href="#pricing" class="btn">See membership</a>
-        <a href="#mastheadLoginEmail" class="btn secondary">Log in</a>
+        <a href="#mastheadLoginEmail" class="btn">Log in</a>
     </div>
 </section>
 
@@ -93,45 +92,4 @@ require __DIR__ . '/../includes/layout_top.php';
         </li>
     </ol>
 </section>
-
-<section class="landing-section" id="pricing">
-    <h2>Membership</h2>
-    <p class="hint">Preview only &mdash; sign-ups and billing aren't live yet. This is
-        what it'll look like.</p>
-    <div class="pricing-card">
-        <div class="pricing-badge">Preview</div>
-        <h3>Bidwraith Membership</h3>
-        <p class="pricing-amount">$7<span>/month</span></p>
-        <p class="hint">Placeholder pricing &mdash; nothing here is final.</p>
-        <ul class="pricing-features">
-            <li>Unlimited auctions &amp; scheduled bids</li>
-            <li>Every bidding strategy, including custom step ladders</li>
-            <li>Live landed-cost estimates before you commit</li>
-            <li>Full bid history &amp; audit log per auction</li>
-            <li>eBay watchlist import</li>
-        </ul>
-        <form class="stacked mock-waitlist" id="waitlistForm">
-            <label for="waitlistEmail">Email</label>
-            <input type="email" id="waitlistEmail" placeholder="you@example.com" required>
-            <button type="submit">Request access</button>
-        </form>
-        <p class="mock-note" id="waitlistNote" hidden>Thanks for the interest &mdash;
-            Bidwraith isn't taking paid members yet. Email me at
-            <a href="https://brunovida.si/contact">brunovida.si/contact</a> and I'll
-            let you know when it opens.</p>
-    </div>
-</section>
-
-<script>
-(function () {
-    var form = document.getElementById('waitlistForm');
-    var note = document.getElementById('waitlistNote');
-    if (!form || !note) return;
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        form.hidden = true;
-        note.hidden = false;
-    });
-})();
-</script>
 <?php require __DIR__ . '/../includes/layout_bottom.php'; ?>

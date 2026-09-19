@@ -89,7 +89,7 @@ require __DIR__ . '/../includes/layout_top.php';
 
 <div class="settings-section">
     <h2>Email notifications</h2>
-    <p class="hint">Bidwraith emails you when a bid is placed or fails, so you know without checking. Account, billing and eBay-connection emails (like a link expiring while you have bids waiting) are always sent.</p>
+    <p class="hint">Bidwraith emails you when a bid is placed or fails, so you know without checking. Account and eBay-connection emails (like a link expiring while you have bids waiting) are always sent.</p>
     <form method="post" class="stacked">
         <?= csrf_field() ?>
         <input type="hidden" name="update_notifications" value="1">

@@ -47,6 +47,32 @@ function request_is_https(): bool
 }
 
 /**
+ * The IP address of whoever is making this request, or null if it can't be determined.
+ *
+ * eBay's PlaceOffer requires an EndUserIP, and the bid itself is placed later by cron,
+ * so the address is captured here, when the person saves the bid, and stored with it.
+ *
+ * REMOTE_ADDR is the real client only when nothing sits in front of the app. Behind a
+ * proxy or CDN it is the proxy's address, so 'client_ip_header' in the config names the
+ * header the proxy sets (e.g. 'X-Forwarded-For', 'CF-Connecting-IP'). It is only
+ * trusted when configured, because any client can send that header itself.
+ */
+function client_ip(): ?string
+{
+    $header = app_config()['client_ip_header'] ?? '';
+    if ($header !== '') {
+        $value = $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $header))] ?? '';
+        $first = trim(explode(',', $value)[0]);
+        if (filter_var($first, FILTER_VALIDATE_IP)) {
+            return $first;
+        }
+    }
+
+    $remote = $_SERVER['REMOTE_ADDR'] ?? '';
+    return filter_var($remote, FILTER_VALIDATE_IP) ? $remote : null;
+}
+
+/**
  * Session cookie scoped to this app's own URL path and hostname, so it isn't shared
  * with anything else running on the same domain, and given a distinct name so it
  * can't collide with a parent site's PHPSESSID.

@@ -128,11 +128,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
         $auctionId = (int) db()->lastInsertId();
 
-        $stepStmt = db()->prepare('INSERT INTO bid_steps (watched_auction_id, seconds_before, max_bid, bid_mode, increment_type, increment_amount) VALUES (?, ?, ?, ?, ?, ?)');
+        $stepStmt = db()->prepare('INSERT INTO bid_steps (watched_auction_id, seconds_before, max_bid, bid_mode, increment_type, increment_amount, end_user_ip) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $endUserIp = client_ip();
         foreach ($steps as $s) {
             $stepStmt->execute([
                 $auctionId, $s['seconds_before'], $s['max_bid'] ?? null,
-                $s['bid_mode'] ?? 'fixed', $s['increment_type'] ?? null, $s['increment_amount'] ?? null,
+                $s['bid_mode'] ?? 'fixed', $s['increment_type'] ?? null, $s['increment_amount'] ?? null, $endUserIp,
             ]);
         }
         db()->commit();

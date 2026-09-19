@@ -273,7 +273,7 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
         }
 
         try {
-            $result = $client->placeBid($authToken, $step['auction_item_id'], $bidAmount, user_currency(['currency' => $step['auction_user_currency']]));
+            $result = $client->placeBid($authToken, $step['auction_item_id'], $bidAmount, user_currency(['currency' => $step['auction_user_currency']]), $step['end_user_ip']);
         } catch (Throwable $e) {
             $result = ['success' => false, 'message' => $e->getMessage()];
         }

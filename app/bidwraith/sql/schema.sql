@@ -132,6 +132,7 @@ CREATE TABLE IF NOT EXISTS bid_steps (
     status              TEXT NOT NULL DEFAULT 'pending',
     fired_at            TEXT,
     result_message      TEXT,
+    end_user_ip         TEXT,
     created_at          TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE (watched_auction_id, seconds_before)
 );
