@@ -51,8 +51,9 @@ html { scroll-behavior: smooth; }
   display: flex;
   gap: 0.4rem;
   overflow-x: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
 }
+.era-nav-inner::-webkit-scrollbar { display: none; }
 
 .era-nav a {
   flex: 0 0 auto;
@@ -107,6 +108,11 @@ html { scroll-behavior: smooth; }
   white-space: nowrap;
 }
 
+/* The wantlist at the end of the page: not an era, so it gets an empty-sleeve
+   heading (dashed, like the wantlist page's disc) instead of a number. */
+.era.wanted .era-head { border-bottom-style: dashed; }
+.era.wanted .era-num { font-weight: 400; opacity: 0.7; }
+
 /* ---------- Vinyl / CD / DVD inside an era ---------- */
 
 .group-label {
@@ -149,6 +155,10 @@ html { scroll-behavior: smooth; }
 /* The grid is capped narrower than the floor on the shelf; inside an era both
    should use the same width, so the eras line up down the page. */
 .era .grid { max-width: none; }
+
+/* The table has no pile above it to give the heading some air, so it gets its
+   own. */
+.era .list { margin-top: 1.6rem; }
 
 @media (max-width: 520px) {
   .era-counts { margin-left: 0; width: 100%; }

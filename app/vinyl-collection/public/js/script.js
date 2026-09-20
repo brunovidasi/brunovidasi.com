@@ -9,8 +9,8 @@
  * has hidden.
  */
 
-const CACHE_KEY = 'vinyl_collection_v4';
-const OLD_CACHE_KEYS = ['vinyl_collection_cache_v3', 'vinyl_collection_cache_v2'];
+const CACHE_KEY = 'vinyl_collection_v5';
+const OLD_CACHE_KEYS = ['vinyl_collection_v4', 'vinyl_collection_cache_v3', 'vinyl_collection_cache_v2'];
 const PREFS_KEY = 'vinyl_prefs_v1';
 const CACHE_TTL = 1000 * 60 * 60 * 6;
 const VIEWS = ['floor', 'grid', 'list'];
@@ -35,10 +35,20 @@ function savePrefs() {
 
 /* ---------- Filtering & sorting ---------- */
 
+/* `date` is the full release date as a sortable "YYYY-MM-DD" (00 where the
+   month or day isn't known) or '' when it isn't known at all. Records with no
+   date go last whichever way the list runs; within a date, artist then title. */
+const byDate = dir => (a, b) => {
+  if (!a.date || !b.date) return !a.date - !b.date;
+  return dir * (a.date < b.date ? -1 : a.date > b.date ? 1 : 0)
+    || a.artist.localeCompare(b.artist) || a.title.localeCompare(b.title);
+};
+
+const DEFAULT_SORT = 'date-desc';
 const SORTS = {
-  'artist': (a, b) => a.artist.localeCompare(b.artist) || a.year - b.year,
-  'year-desc': (a, b) => (b.year || 0) - (a.year || 0),
-  'year-asc': (a, b) => (a.year || 9999) - (b.year || 9999),
+  'date-desc': byDate(-1),
+  'date-asc': byDate(1),
+  'artist': (a, b) => a.artist.localeCompare(b.artist) || byDate(1)(a, b),
   'added': (a, b) => new Date(b.added) - new Date(a.added),
 };
 
@@ -46,7 +56,7 @@ function visibleItems() {
   const query = $('search').value.trim().toLowerCase();
   return items
     .filter(it => (prefs.fmt === 'all' || it.kind === prefs.fmt) && (!query || it.hay.includes(query)))
-    .sort(SORTS[$('sort').value] || SORTS.artist);
+    .sort(SORTS[$('sort').value] || SORTS[DEFAULT_SORT]);
 }
 
 function renderChips() {
@@ -139,11 +149,6 @@ $('mess').addEventListener('input', e => {
   const floor = document.querySelector('.floor');
   if (floor) floor.style.setProperty('--mess', prefs.mess);
   savePrefs();
-});
-
-$('refresh').addEventListener('click', () => {
-  clearCache(CACHE_KEY);
-  init(true);
 });
 
 function setItems(list) {

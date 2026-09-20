@@ -61,9 +61,9 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
   <input type="search" id="search" placeholder="Search by artist or title…" aria-label="Search collection">
   <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
   <select id="sort" aria-label="Sort collection">
+    <option value="date-desc">Release date, newest first</option>
+    <option value="date-asc">Release date, oldest first</option>
     <option value="artist">Artist, A–Z</option>
-    <option value="year-desc">Year, newest first</option>
-    <option value="year-asc">Year, oldest first</option>
     <option value="added">Recently added</option>
   </select>
   <div class="seg" id="viewToggle" role="group" aria-label="View">
@@ -72,7 +72,6 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
     <button type="button" data-view="list">List</button>
   </div>
   <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.7" aria-label="Messiness of the pile"></label>
-  <button class="ghost" id="refresh">Refresh</button>
   <span class="meta" id="countMeta"></span>
 </div>
 

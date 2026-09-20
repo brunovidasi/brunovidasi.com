@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('admin_wantlist');
 }
 
-$wanted = db()->query(ITEM_SELECT . " WHERE i.source = 'wantlist' AND i.missing_since IS NULL ORDER BY r.primary_artist COLLATE NOCASE, r.year")->fetchAll();
+$wanted = db()->query(ITEM_SELECT . " WHERE i.source = 'wantlist' AND i.missing_since IS NULL ORDER BY r.primary_artist COLLATE NOCASE, " . RELEASE_DATE_SQL)->fetchAll();
 $hunting = db()->query(ITEM_SELECT . " WHERE i.source = 'searching' ORDER BY i.created_at DESC")->fetchAll();
 
 $pageTitle = 'Wantlist';

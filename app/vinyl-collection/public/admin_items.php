@@ -55,7 +55,7 @@ $total = (int) (function () use ($whereSql, $params) {
 
 $stmt = db()->prepare(ITEM_SELECT . "
     WHERE $whereSql
-    ORDER BY r.primary_artist COLLATE NOCASE, r.year, r.title COLLATE NOCASE
+    ORDER BY r.primary_artist COLLATE NOCASE, " . RELEASE_DATE_SQL . ", r.title COLLATE NOCASE
     LIMIT $perPage OFFSET " . (($page - 1) * $perPage));
 $stmt->execute($params);
 $rows = $stmt->fetchAll();

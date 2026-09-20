@@ -267,9 +267,9 @@ function wireDrawer() {
  *
  * The data only changes when a sync runs or an item is edited, so a page revisit
  * shouldn't wait on the network to draw the shelf. A cached copy is used only
- * while the page's data version still matches the one it was saved under, which
- * means "Refresh" is honest: it asks the server, and if nothing has changed
- * since, nothing changes.
+ * while the page's data version still matches the one it was saved under, so a
+ * sync or an admin edit is picked up on the next visit without anyone having to
+ * clear anything by hand.
  */
 
 function loadCache(key, ttlMs) {

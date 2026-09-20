@@ -20,10 +20,11 @@ if ($artist === null || !$artist['is_published']) {
 $rows = public_items('collection', ['i.artist_id = ?'], [$artist['id']]);
 
 // Within an era: the order the era's rules were written (album, then singles),
-// then oldest first, then by title — the order the hand-built page used.
+// then oldest first by full release date, then by title — the order the
+// hand-built page used, with the day and month now breaking a year's ties.
 usort($rows, fn ($a, $b) =>
-    [(int) $a['era_rank'], (int) ($a['year'] ?: 9999), item_title($a)]
-    <=> [(int) $b['era_rank'], (int) ($b['year'] ?: 9999), item_title($b)]
+    [(int) $a['era_rank'], item_sort_date($a) ?: '9999-99-99', item_title($a)]
+    <=> [(int) $b['era_rank'], item_sort_date($b) ?: '9999-99-99', item_title($b)]
 );
 
 $grouped = [];
@@ -59,6 +60,22 @@ if (!empty($grouped[0])) {
     ];
 }
 
+// What's still missing for this artist, for the end of the page: the Discogs
+// wantlist and the records being hunted, together, oldest first. Left out
+// entirely when the wantlist isn't public.
+$wanted = [];
+if (setting('show_wantlist', true)) {
+    $missing = [...public_items('wantlist', ['i.artist_id = ?'], [$artist['id']]),
+                ...public_items('searching', ['i.artist_id = ?'], [$artist['id']])];
+
+    usort($missing, fn ($a, $b) =>
+        [item_sort_date($a) ?: '9999-99-99', item_title($a)]
+        <=> [item_sort_date($b) ?: '9999-99-99', item_title($b)]
+    );
+
+    $wanted = array_map('item_card', $missing);
+}
+
 json_cache_headers(300);
 
 json_response([
@@ -71,5 +88,6 @@ json_response([
     ],
     'count'    => count($rows),
     'sections' => $sections,
+    'wanted'   => $wanted,
     'updated'  => setting('last_successful_sync'),
 ]);

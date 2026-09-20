@@ -75,7 +75,6 @@ $others = $others->fetchAll();
     <button type="button" data-view="grid">Grid</button>
     <button type="button" data-view="list">List</button>
   </div>
-  <button class="ghost" id="refresh">Refresh</button>
   <span class="meta" id="countMeta"></span>
 </div>
 

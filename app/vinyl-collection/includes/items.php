@@ -28,6 +28,17 @@ const ITEM_SELECT = '
 ';
 
 /**
+ * When a release came out, as SQL, for ORDER BY: Discogs' full date where the
+ * per-release fetch has brought it in ("2009-11-23", or "2006-08-00" when only
+ * the month is known), else the year from the collection listing. It sorts as
+ * text, which is why the parts are zero-padded. Blank sorts first, as NULL does.
+ *
+ * Only Discogs' side: a date typed into the admin is free text SQL can't read,
+ * so item_sort_date() below is the one to use wherever a row is in PHP.
+ */
+const RELEASE_DATE_SQL = "COALESCE(NULLIF(r.released, ''), CASE WHEN r.year > 0 THEN printf('%04d', r.year) END)";
+
+/**
  * The items a visitor may see: on the shelf, not hidden, still on Discogs.
  * Everything the public API reads goes through this.
  */
@@ -37,7 +48,7 @@ function public_items(string $source = 'collection', array $where = [], array $p
     foreach ($where as $clause) {
         $sql .= " AND $clause";
     }
-    $sql .= ' ORDER BY i.sort_rank DESC, r.primary_artist COLLATE NOCASE, r.year, r.title COLLATE NOCASE';
+    $sql .= ' ORDER BY i.sort_rank DESC, r.primary_artist COLLATE NOCASE, ' . RELEASE_DATE_SQL . ', r.title COLLATE NOCASE';
 
     $stmt = db()->prepare($sql);
     $stmt->execute(array_merge([$source], $params));
@@ -151,6 +162,51 @@ function item_discs(array $row, array $formats): array
     return array_slice($discs, 0, 3);
 }
 
+/**
+ * A release date as "YYYY-MM-DD" with 00 for a part that isn't known, or null
+ * if it isn't a date at all. Reads Discogs' forms ("2009", "2009-11",
+ * "2009-11-23", "2006-08-00") and the prose typed into the admin ("19 August
+ * 2008"). Zero-padding means a plain string comparison puts a year-only release
+ * ahead of the dated ones in the same year, and a month ahead of its days.
+ */
+function parse_release_date(string $text): ?string
+{
+    $text = trim($text);
+
+    if (preg_match('/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/', $text, $m)) {
+        [$year, $month, $day] = [(int) $m[1], (int) ($m[2] ?? 0), (int) ($m[3] ?? 0)];
+    } else {
+        $parsed = date_parse($text);
+        if ($text === '' || $parsed['error_count'] > 0 || !is_int($parsed['year'])) {
+            return null;
+        }
+        [$year, $month, $day] = [$parsed['year'], (int) $parsed['month'], (int) $parsed['day']];
+        // date_parse() fills in the 1st for "Aug 2006"; the day isn't known.
+        if (preg_match('/^[[:alpha:]]+\.?,? \d{4}$/', $text)) {
+            $day = 0;
+        }
+    }
+
+    return $year > 0 ? sprintf('%04d-%02d-%02d', $year, $month, $day) : null;
+}
+
+/**
+ * The key every release-date ordering on the site sorts by: Bruno's own date if
+ * he typed one, else Discogs' full date, else just its year. Empty when nothing
+ * is known, and the callers put those last.
+ */
+function item_sort_date(array $row): string
+{
+    foreach ([(string) ($row['release_date'] ?? ''), (string) ($row['released'] ?? ''), (string) ($row['year'] ?? '')] as $text) {
+        $date = parse_release_date($text);
+        if ($date !== null) {
+            return $date;
+        }
+    }
+
+    return '';
+}
+
 /** The small payload: one sleeve on the shelf. */
 function item_card(array $row): array
 {
@@ -166,6 +222,7 @@ function item_card(array $row): array
         'title'   => item_title($row),
         'artist'  => item_artist($row),
         'year'    => (int) ($row['year'] ?? 0),
+        'date'    => item_sort_date($row),
         'cover'   => item_cover($row),
         'thumb'   => item_thumb($row),
         'disc'    => (string) ($row['disc_url'] ?? ''),

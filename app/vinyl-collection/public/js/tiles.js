@@ -52,8 +52,9 @@ function discEl(it, k) {
   const sp = document.createElement('span');
   el.className = `d ${d.t === 'v' ? 'v' : d.t}${d.tr ? ' tr' : ''}${d.pic ? ' pic' : ''}`;
   el.style.setProperty('--k', k);
-  el.style.setProperty('--dd', d.t === 'v' ? 0.96 : 0.88);
-  el.style.setProperty('--reach', (1.42 + k * 0.16).toFixed(2)); // later discs peek out a little further, behind the first
+  const dd = d.t === 'v' ? 0.96 : 0.88;
+  el.style.setProperty('--dd', dd);
+  el.style.setProperty('--reach', (1 + dd / 3 + k * 0.16).toFixed(2)); // a third of the first disc peeks out; later ones a little further, behind it
   el.style.zIndex = String(3 - k);
   if (d.c) el.style.setProperty('--vc', d.c);
   // Vinyl shows the cover on the label; a CD, DVD or Blu-ray shows the plain
@@ -83,7 +84,7 @@ function reveal(t) {
   }
   // slide out toward whichever side has room
   const rc = t.getBoundingClientRect();
-  const reach = 0.45 + 0.16 * (it.discs.length - 1);
+  const reach = 0.33 + 0.16 * (it.discs.length - 1);
   t.classList.toggle('left', rc.right + rc.width * reach > document.documentElement.clientWidth - 6);
   void t.offsetWidth; // flush styles so the slide-out transition runs
   t.classList.add('hot');

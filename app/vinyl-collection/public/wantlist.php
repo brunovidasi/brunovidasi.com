@@ -70,7 +70,6 @@ $count = (int) db()->query("
     <button type="button" data-view="grid">Grid</button>
   </div>
   <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.6" aria-label="Messiness of the pile"></label>
-  <button class="ghost" id="refresh">Refresh</button>
   <span class="meta" id="countMeta"></span>
 </div>
 

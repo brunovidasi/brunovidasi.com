@@ -6,7 +6,7 @@
  * they sit a little more spaced out and the hunting ones say why they're here.
  */
 
-const CACHE_KEY = 'vinyl_wantlist_v1';
+const CACHE_KEY = 'vinyl_wantlist_v2';
 const PREFS_KEY = 'vinyl_wantlist_prefs_v1';
 const CACHE_TTL = 1000 * 60 * 60 * 6;
 const VIEWS = ['floor', 'grid'];
@@ -133,14 +133,12 @@ function setData(data) {
   renderChips();
 }
 
-async function init(force) {
-  if (!force) {
-    const cached = loadCache(CACHE_KEY, CACHE_TTL);
-    if (cached) {
-      setData(cached);
-      render();
-      return;
-    }
+async function init() {
+  const cached = loadCache(CACHE_KEY, CACHE_TTL);
+  if (cached) {
+    setData(cached);
+    render();
+    return;
   }
 
   try {
@@ -153,11 +151,6 @@ async function init(force) {
   }
 }
 
-$('refresh').addEventListener('click', () => {
-  clearCache(CACHE_KEY);
-  init(true);
-});
-
 $('mess').value = prefs.mess;
 syncViewToggle();
-init(false);
+init();
