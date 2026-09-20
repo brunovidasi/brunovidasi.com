@@ -1,0 +1,18 @@
+# NOTE: these rules must travel WITH this folder. This app is deployed as a
+# subfolder of the brunovidasi.com repo (app/vinyl-collection), which is PUBLIC —
+# this file is what keeps the Discogs token and the database out of it. The parent
+# repo's own .gitignore does not cover them.
+/config/config.php
+/data/*.sqlite
+/data/*.sqlite-journal
+/data/*.sqlite-wal
+/data/*.sqlite-shm
+/data/*.log
+/data/*.log.1
+
+# Belt and braces: an instance directory should live outside the repo entirely,
+# but ignore it here too in case one is ever created inside by mistake.
+/vinyl-instance/
+
+.DS_Store
+/.claude/launch.json
