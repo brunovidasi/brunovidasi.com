@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 8 — Artist stacks</title>
+<link rel="stylesheet" href="lib.css">
+<style>
+body{overflow-x:hidden}
+#grid{max-width:1240px;margin:0 auto;padding:40px 60px 120px;display:grid;grid-template-columns:repeat(auto-fill,170px);gap:70px 56px;justify-content:center}
+.slot{position:relative;width:170px}
+.slot .box{position:relative;width:170px;height:170px}
+.cap{margin-top:14px;font-size:12px;line-height:1.3;text-align:center;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap b{display:block;font:600 14px 'Fraunces',serif;overflow:hidden;text-overflow:ellipsis}
+.solo .tile{width:170px;height:170px}
+
+.pile .tile{position:absolute;inset:0;z-index:var(--i);
+  transform:translate(calc(var(--o) * 2.2px),calc(var(--o) * -2.2px)) rotate(calc(var(--o) * 1.7deg));
+  transition:transform .5s cubic-bezier(.2,.9,.25,1)}
+.pile:hover .tile{transform:translate(calc(var(--o) * 58px),calc(var(--o) * var(--o) * 7px)) rotate(calc(var(--o) * 8deg))}
+.pile:hover .tile:hover{transform:translate(calc(var(--o) * 58px),calc(var(--o) * var(--o) * 7px - 22px)) rotate(calc(var(--o) * 8deg))}
+.pile .tile.hot{z-index:60}
+.badge{position:absolute;right:-12px;top:-12px;z-index:30;background:var(--gold);color:var(--ink);font:600 12px 'Space Grotesk',sans-serif;border-radius:99px;padding:4px 9px;box-shadow:0 3px 8px rgba(0,0,0,.5);transition:opacity .3s}
+.pile:hover .badge{opacity:0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Artist stacks</h1><small id="src">Loading…</small></div>
+  <div id="bar"></div>
+</header>
+<p class="lead">Artists with several records collapse into one pile — <b>hover a pile to fan it out</b>, then hover a single record to lift it and slide its disc out. Singles stay on their own.</p>
+<main id="grid"><div class="msg" style="grid-column:1/-1">Loading your collection…</div></main>
+
+<script src="lib.js"></script>
+<script>
+L.nav('8-stacks.html');
+const grid = document.getElementById('grid');
+let sort = 'az';
+
+function render() {
+  const groups = new Map();
+  L.visible().forEach(r => { if (!groups.has(r.artist)) groups.set(r.artist, []); groups.get(r.artist).push(r); });
+  let list = [...groups.entries()];
+  list.sort(sort === 'big' ? (a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]) : (a, b) => a[0].localeCompare(b[0]));
+
+  grid.replaceChildren(...list.map(([artist, recs]) => {
+    const el = document.createElement('div');
+    if (recs.length === 1) {
+      const r = recs[0];
+      el.className = 'slot solo';
+      el.innerHTML = '<div class="box"></div>';
+      el.firstChild.append(L.tile(r));
+      el.insertAdjacentHTML('beforeend', `<div class="cap"><b>${L.esc(r.title)}</b>${L.esc(artist)}</div>`);
+    } else {
+      const shown = recs.slice().sort((a, b) => b.year - a.year).slice(0, 7), m = shown.length;
+      el.className = 'slot pile';
+      el.innerHTML = '<div class="box"></div>';
+      shown.forEach((r, i) => {
+        const t = L.tile(r); t.style.setProperty('--i', i + 1); t.style.setProperty('--o', (i - (m - 1) / 2).toFixed(2));
+        el.firstChild.append(t);
+      });
+      el.firstChild.insertAdjacentHTML('beforeend', `<span class="badge">×${recs.length}</span>`);
+      el.insertAdjacentHTML('beforeend', `<div class="cap"><b>${L.esc(artist)}</b>${recs.length} records</div>`);
+    }
+    return el;
+  }));
+  L.setCount(list.length + ' piles');
+}
+
+const extra = '<div class="chips sortc"><button data-s="az" class="on">A–Z</button><button data-s="big">Biggest piles first</button></div>';
+
+L.load((p, n) => document.getElementById('src').textContent = `Loading Discogs page ${p} of ${n}…`).then(({ recs, source }) => {
+  L.init(recs);
+  document.getElementById('src').textContent = `${recs.length} records · ${source}`;
+  L.bar(document.getElementById('bar'), render, extra);
+  document.querySelector('.sortc').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    sort = b.dataset.s; document.querySelectorAll('.sortc button').forEach(x => x.classList.toggle('on', x === b)); render();
+  });
+  // discs on pile cards wait until the fan has finished opening
+  L.wire(grid, { upgrade: true, delay: t => t.closest('.pile') ? 480 : 0 });
+  render();
+});
+</script>
+</body>
+</html>

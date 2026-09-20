@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 4 — Visual map</title>
+<style>
+@font-face{font-family:'Fraunces';src:url('../fonts/fraunces-latin.woff2') format('woff2');font-weight:400 700;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url('../fonts/space-grotesk-latin.woff2') format('woff2');font-weight:400 600;font-display:swap}
+
+:root{--ink:#17140F;--paper:#F2EAD8;--gold:#C99A2E}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#100d09;color:var(--paper);font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+
+.protonav{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:999;display:flex;gap:2px;background:rgba(20,17,13,.85);backdrop-filter:blur(8px);border:1px solid rgba(242,234,216,.2);border-radius:99px;padding:4px;font:500 12px 'Space Grotesk',sans-serif;white-space:nowrap}
+.protonav a{color:#F2EAD8;text-decoration:none;padding:6px 11px;border-radius:99px;opacity:.7}
+.protonav a[aria-current]{background:#C99A2E;color:#17140F;opacity:1}
+
+header{max-width:1200px;margin:0 auto;padding:64px 20px 8px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+h1{font:600 30px 'Fraunces',serif;margin:0;letter-spacing:-.01em}
+header small{display:block;opacity:.55;font-size:12px;margin-top:4px}
+.tabs{display:flex;gap:6px}
+.tabs button{font:500 13px 'Space Grotesk',sans-serif;border:1px solid rgba(242,234,216,.28);background:transparent;color:var(--paper);border-radius:99px;padding:8px 16px;cursor:pointer}
+.tabs button.on{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+
+main{max-width:1200px;margin:0 auto;padding:10px 20px 90px}
+.lead{opacity:.6;font-size:14px;margin:6px 0 18px;max-width:60ch}
+.note{font-size:12px;opacity:.55;margin-top:14px}
+
+.tile{width:34px;height:34px;border-radius:2px;background-size:cover;background-position:center;flex:none;cursor:pointer;transition:transform .15s;position:relative;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.tile:hover{transform:scale(2.4);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.7)}
+
+/* timeline */
+.tl{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;padding:70px 6px 8px;min-height:380px;border-bottom:1px solid rgba(242,234,216,.2)}
+.col{display:flex;flex-direction:column;align-items:center;flex:none;width:34px;justify-content:flex-end;align-self:stretch}
+.stack{display:flex;flex-direction:column-reverse;gap:2px}
+.yr{font-size:10px;height:16px;margin-top:6px;opacity:.6;font-variant-numeric:tabular-nums}
+.tl{overflow-y:visible}
+
+/* genres */
+.bubbles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;padding:16px 0 26px}
+.bubble{border:0;border-radius:50%;cursor:pointer;color:#fff;font:600 12px 'Space Grotesk',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6px;
+  animation:bob 5s ease-in-out infinite;animation-delay:var(--dl);box-shadow:inset 0 -8px 20px rgba(0,0,0,.3),inset 0 6px 14px rgba(255,255,255,.18);transition:transform .2s}
+.bubble:hover{transform:scale(1.08)}
+.bubble.on{outline:3px solid var(--paper);outline-offset:3px}
+.bubble small{font-weight:400;opacity:.8;font-size:11px}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.gpanel{display:flex;flex-wrap:wrap;gap:6px;padding-top:12px;border-top:1px solid rgba(242,234,216,.2)}
+.gpanel h2{width:100%;font:600 20px 'Fraunces',serif;margin:8px 0}
+.gpanel .tile{width:64px;height:64px}
+@media (prefers-reduced-motion:reduce){.bubble{animation:none}}
+
+/* colour wall */
+.wall{display:flex;flex-wrap:wrap;gap:3px}
+.wall .tile{width:72px;height:72px}
+.wall .tile:hover{transform:scale(1.9)}
+
+#tip{position:fixed;z-index:1000;pointer-events:none;background:#F2EAD8;color:#17140F;padding:7px 11px;border-radius:5px;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;transition:opacity .1s;max-width:240px}
+#tip b{display:block;font:600 14px 'Fraunces',serif}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+</style>
+</head>
+<body>
+<nav class="protonav">
+  <a href="1-crate.html">1 Crate</a><a href="2-turntable.html">2 Deck</a><a href="3-shelf.html">3 Shelf</a><a href="4-map.html" aria-current="page">4 Map</a><a href="5-stats.html">5 Stats</a>
+</nav>
+
+<header>
+  <div><h1>The Map</h1><small id="src">Loading…</small></div>
+  <div class="tabs" id="tabs">
+    <button data-v="timeline" class="on">Timeline</button><button data-v="genres">Genres</button><button data-v="colour">Colour wall</button>
+  </div>
+</header>
+<main id="panel"></main>
+<div id="tip"></div>
+
+<script>
+/* ---- shared data loader (same source as the real app) ---- */
+const CACHE_KEY='vinyl_collection_cache_v2';
+const SAMPLE=[
+['Pink Floyd','The Dark Side of the Moon',1973,'Rock','Prog Rock','Harvest'],['Miles Davis','Kind of Blue',1959,'Jazz','Modal','Columbia'],
+['Fleetwood Mac','Rumours',1977,'Rock','Soft Rock','Warner Bros.'],['Daft Punk','Random Access Memories',2013,'Electronic','Disco','Columbia'],
+['Stevie Wonder','Songs in the Key of Life',1976,'Funk / Soul','Soul','Tamla'],['Radiohead','OK Computer',1997,'Rock','Alternative Rock','Parlophone'],
+['Nirvana','Nevermind',1991,'Rock','Grunge','DGC'],['Massive Attack','Mezzanine',1998,'Electronic','Trip Hop','Virgin'],
+['John Coltrane','A Love Supreme',1965,'Jazz','Free Jazz','Impulse!'],['Portishead','Dummy',1994,'Electronic','Trip Hop','Go! Discs'],
+['David Bowie','Low',1977,'Rock','Art Rock','RCA'],['Kendrick Lamar','To Pimp a Butterfly',2015,'Hip Hop','Conscious','Interscope'],
+['Talking Heads','Remain in Light',1980,'Rock','New Wave','Sire'],['Joni Mitchell','Blue',1971,'Folk','Singer-Songwriter','Reprise'],
+['Aphex Twin','Selected Ambient Works 85-92',1992,'Electronic','Ambient','R&S'],['The Beatles','Abbey Road',1969,'Rock','Pop Rock','Apple'],
+['Herbie Hancock','Head Hunters',1973,'Jazz','Jazz-Funk','Columbia'],['Amy Winehouse','Back to Black',2006,'Funk / Soul','Soul','Island'],
+['Kraftwerk','Trans-Europe Express',1977,'Electronic','Synth-pop','Kling Klang'],['Nina Simone','Pastel Blues',1965,'Jazz','Vocal','Philips'],
+['Tame Impala','Currents',2015,'Rock','Psychedelic Rock','Modular'],['Lady Gaga','The Fame',2008,'Pop','Synth-pop','Interscope'],
+['Björk','Homogenic',1997,'Electronic','Art Pop','One Little Indian'],['Led Zeppelin','IV',1971,'Rock','Hard Rock','Atlantic'],
+['Frank Ocean','Blonde',2016,'Funk / Soul','Contemporary R&B',"Boys Don't Cry"],['Boards of Canada','Music Has the Right to Children',1998,'Electronic','IDM','Warp'],
+['Bob Marley & The Wailers','Exodus',1977,'Reggae','Roots Reggae','Island'],['Beach House','Depression Cherry',2015,'Rock','Dream Pop','Sub Pop'],
+['A Tribe Called Quest','The Low End Theory',1991,'Hip Hop','Jazzy Hip-Hop','Jive'],['Fela Kuti','Zombie',1977,'Funk / Soul','Afrobeat','Coconut'],
+['The Cure','Disintegration',1989,'Rock','Goth Rock','Fiction'],['Caribou','Swim',2010,'Electronic','House','City Slang'],
+];
+const isVinyl=r=>(r.basic_information.formats||[]).some(f=>f.name==='Vinyl');
+function norm(r){const b=r.basic_information;return{id:r.id,title:b.title,artist:(b.artists||[]).map(a=>a.name.replace(/\s\(\d+\)$/,'')).join(', ')||'Unknown',year:b.year||0,cover:b.cover_image||b.thumb||'',thumb:b.thumb||b.cover_image||'',genres:b.genres||[],styles:b.styles||[],label:((b.labels||[])[0]||{}).name||'',added:r.date_added||''}}
+async function loadRecords(){
+  try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c&&c.data&&c.data.length)return{recs:c.data.filter(isVinyl).map(norm),source:'your cached collection'}}catch(e){}
+  try{const res=await fetch('https://api.discogs.com/users/brunovidasi/collection/folders/0/releases?per_page=100');if(res.ok){const d=await res.json();const v=(d.releases||[]).filter(isVinyl);if(v.length)return{recs:v.map(norm),source:'Discogs (first 100 records)'}}}catch(e){}
+  return{recs:SAMPLE.map((s,i)=>({id:-i-1,artist:s[0],title:s[1],year:s[2],genres:[s[3]],styles:[s[4]],label:s[5],cover:'',thumb:'',added:new Date(2018+(i*7)%8,(i*5)%12,1+i%27).toISOString()})),source:'sample data (Discogs unreachable)'}
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+const fallbackBg=r=>{const h=hash(r.artist+r.title)%360;return `linear-gradient(135deg,hsl(${h} 45% 38%),hsl(${(h+40)%360} 50% 18%))`};
+const coverBg=(r,thumb)=>{const u=thumb?r.thumb:r.cover;return u?`url("${u.replace(/"/g,'%22')}"),${fallbackBg(r)}`:fallbackBg(r)};
+function rgb2hsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;let h=0,s=0;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}return{h,s,l}}
+/* average colour of the cover; falls back to a hash colour if the image host blocks canvas reads (CORS) */
+function dominant(r){return new Promise(res=>{
+  const fb=()=>res({h:hash(r.artist+r.title)%360,s:.45,l:.38,real:false});
+  if(!r.thumb)return fb();
+  const im=new Image();im.crossOrigin='anonymous';
+  im.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=10;const x=c.getContext('2d');x.drawImage(im,0,0,10,10);const d=x.getImageData(0,0,10,10).data;let R=0,G=0,B=0,n=0;for(let i=0;i<d.length;i+=4){R+=d[i];G+=d[i+1];B+=d[i+2];n++}res({...rgb2hsl(R/n,G/n,B/n),real:true})}catch(e){fb()}};
+  im.onerror=fb;im.src=r.thumb;
+})}
+async function eachLimit(items,n,fn){let i=0;await Promise.all(Array.from({length:n},async()=>{while(i<items.length){const k=i++;await fn(items[k],k)}}))}
+/* ---- end shared ---- */
+
+const $=id=>document.getElementById(id);
+let recs=[],view='timeline',colors=null,source='';
+
+/* shared hover tooltip — every tile carries data-i */
+const tip=$('tip');
+document.addEventListener('mouseover',e=>{
+  const t=e.target.closest('[data-i]');if(!t){tip.style.opacity=0;return}
+  const r=recs[t.dataset.i];tip.innerHTML=`<b>${esc(r.title)}</b>${esc(r.artist)} · ${esc(r.year||'—')}`;tip.style.opacity=1;
+});
+document.addEventListener('mousemove',e=>{tip.style.left=Math.min(e.clientX+14,innerWidth-250)+'px';tip.style.top=(e.clientY+16)+'px'});
+const tiles=(list,extra='')=>list.map(r=>`<div class="tile" data-i="${recs.indexOf(r)}" ${extra}></div>`).join('');
+const paint=root=>root.querySelectorAll('.tile').forEach(t=>t.style.backgroundImage=coverBg(recs[t.dataset.i],true));
+
+/* 1 — every record stacked in the column of the year it came out */
+function timeline(){
+  const by=new Map();
+  recs.filter(r=>r.year).sort((a,b)=>a.artist.localeCompare(b.artist)).forEach(r=>{if(!by.has(r.year))by.set(r.year,[]);by.get(r.year).push(r)});
+  const ys=[...by.keys()],min=Math.min(...ys),max=Math.max(...ys);
+  let cols='';
+  for(let y=min;y<=max;y++){cols+=`<div class="col"><div class="stack">${tiles(by.get(y)||[])}</div><div class="yr">${y%5===0||y===min||y===max?y:''}</div></div>`}
+  $('panel').innerHTML=`<p class="lead">Every record, stacked by release year. Hover a cover to enlarge it. Scroll sideways for the full range.</p><div class="tl">${cols}</div>`;
+  paint($('panel'));
+}
+
+/* 2 — styles as bubbles; click one to see its records */
+function genres(sel){
+  const count=new Map();
+  recs.forEach(r=>{(r.styles.length?r.styles:r.genres).forEach(s=>count.set(s,(count.get(s)||0)+1))});
+  const top=[...count].sort((a,b)=>b[1]-a[1]).slice(0,22),max=top[0][1];
+  sel=sel||top[0][0];
+  const bubbles=top.map(([name,n],i)=>{const d=Math.round(70+Math.sqrt(n/max)*90),h=hash(name)%360;
+    return `<button class="bubble ${name===sel?'on':''}" data-g="${esc(name)}" style="width:${d}px;height:${d}px;background:radial-gradient(circle at 35% 30%,hsl(${h} 50% 48%),hsl(${h} 50% 26%));--dl:${-(i*.7).toFixed(1)}s">${esc(name)}<small>${n}</small></button>`}).join('');
+  const list=recs.filter(r=>(r.styles.length?r.styles:r.genres).includes(sel));
+  $('panel').innerHTML=`<p class="lead">Bubble size = how many records share that style. Click one to open it.</p><div class="bubbles">${bubbles}</div>
+    <div class="gpanel"><h2>${esc(sel)} · ${list.length}</h2>${tiles(list)}</div>`;
+  paint($('panel'));
+  $('panel').querySelectorAll('.bubble').forEach(b=>b.addEventListener('click',()=>genres(b.dataset.g)));
+}
+
+/* 3 — every cover sorted by its average colour */
+async function colour(){
+  if(!colors){
+    colors=new Map();let done=0;
+    $('panel').innerHTML='<p class="lead" id="prog">Reading cover colours…</p>';
+    await eachLimit(recs,8,async r=>{colors.set(r,await dominant(r));done++;if(view==='colour'&&$('prog'))$('prog').textContent=`Reading cover colours… ${done} / ${recs.length}`});
+  }
+  if(view!=='colour')return;
+  const real=[...colors.values()].filter(c=>c.real).length;
+  const key=r=>{const c=colors.get(r);return c.s<.14?500+c.l*100:c.h};
+  const list=recs.slice().sort((a,b)=>key(a)-key(b));
+  $('panel').innerHTML=`<p class="lead">The whole collection as a colour spectrum — every cover sorted by its average hue, greys and blacks at the end.</p><div class="wall">${tiles(list)}</div>
+    ${real<recs.length/2?'<p class="note">Note: Discogs images block pixel reads from the browser (CORS), so colours here are estimated. A real version needs a tiny proxy or colours pre-computed at build time.</p>':''}`;
+  paint($('panel'));
+}
+
+function show(v){view=v;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));({timeline,genres,colour})[v]()}
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.v)});
+
+loadRecords().then(r=>{recs=r.recs;$('src').textContent=`${recs.length} records · ${r.source}`;show('timeline')});
+</script>
+</body>
+</html>

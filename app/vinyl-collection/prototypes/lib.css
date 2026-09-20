@@ -1,0 +1,82 @@
+/* lib.css — shared by prototypes 6–11 */
+@font-face{font-family:'Fraunces';src:url('../fonts/fraunces-latin.woff2') format('woff2');font-weight:400 700;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url('../fonts/space-grotesk-latin.woff2') format('woff2');font-weight:400 600;font-display:swap}
+
+:root{--ink:#17140F;--paper:#F2EAD8;--gold:#C99A2E}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#100d09;color:var(--paper);font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+h1{font:600 28px 'Fraunces',serif;margin:0;letter-spacing:-.01em}
+
+.protonav{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:999;display:flex;gap:2px;background:rgba(20,17,13,.88);backdrop-filter:blur(8px);border:1px solid rgba(242,234,216,.2);border-radius:99px;padding:4px;font:500 12px 'Space Grotesk',sans-serif;white-space:nowrap;max-width:96vw;overflow-x:auto;scrollbar-width:none}
+.protonav a{color:#F2EAD8;text-decoration:none;padding:6px 11px;border-radius:99px;opacity:.7}
+.protonav a.dim{opacity:.4}
+.protonav a[aria-current]{background:#C99A2E;color:#17140F;opacity:1}
+
+.top{max-width:1240px;margin:0 auto;padding:62px 20px 8px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.top small{display:block;opacity:.55;font-size:12px;margin-top:4px}
+.lead{max-width:1240px;margin:0 auto;padding:4px 20px 14px;opacity:.6;font-size:14px}
+.lead b{color:var(--gold);font-weight:500}
+
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button,.bar input,.btn{font:500 12px 'Space Grotesk',sans-serif;border:1px solid rgba(242,234,216,.28);background:transparent;color:var(--paper);border-radius:99px;padding:7px 13px;cursor:pointer}
+.chips button.on,.btn.on{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.chips button i{font-style:normal;opacity:.6;margin-left:3px}
+.bar input{cursor:text;border-radius:6px;width:150px}
+.bar input::placeholder{color:rgba(242,234,216,.4)}
+.bar .cnt{font-size:12px;opacity:.55;margin-left:4px}
+
+/* ---------- sleeve + disc ---------- */
+.tile{position:relative;isolation:isolate;outline:none;--sg:1}
+.tile.left{--sg:-1}
+.tile .sleeve{position:relative;z-index:6;width:100%;height:100%;overflow:hidden;border-radius:2px;background:var(--fb,#333);box-shadow:0 0 0 1px rgba(0,0,0,.5),0 5px 14px rgba(0,0,0,.45);transition:transform .45s cubic-bezier(.2,.8,.25,1)}
+.tile .sleeve img{display:block;width:100%;height:100%;object-fit:cover}
+.tile .sleeve::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.16),transparent 38%,rgba(0,0,0,.16));pointer-events:none}
+.tile:focus-visible .sleeve{box-shadow:0 0 0 2px var(--gold)}
+.tile.hot{z-index:60}
+.tile.hot .sleeve{transform:translateX(calc(var(--sg)*-2%))}
+
+.discs{position:absolute;inset:0;pointer-events:none}
+.d{position:absolute;left:50%;top:50%;width:calc(var(--dd)*100%);aspect-ratio:1;margin:calc(var(--dd)*-50%) 0 0 calc(var(--dd)*-50%);border-radius:50%;
+  --reach:1.42;--out:calc((var(--reach) - (1 + var(--dd))/2)/var(--dd));
+  transition:transform .6s cubic-bezier(.2,.8,.25,1);transition-delay:calc(var(--k)*45ms);box-shadow:0 5px 16px rgba(0,0,0,.5)}
+.tile.hot .d{pointer-events:auto;transform:translate(calc(var(--sg)*var(--out)*(1 - var(--k)*.32)*100%),calc(var(--k)*var(--sg)*6%))}
+
+/* the disc surface spins; the sheen on top stays put */
+.sp{position:absolute;inset:0;border-radius:50%;overflow:hidden;
+  background:repeating-radial-gradient(circle,rgba(255,255,255,.06) 0 1px,rgba(0,0,0,.3) 1px 2.5px),var(--vc,#131313)}
+.tile.hot .sp,.spin .sp{animation:dspin 5s linear infinite}
+@keyframes dspin{to{transform:rotate(360deg)}}
+.d.tr .sp{background:repeating-radial-gradient(circle,rgba(255,255,255,.1) 0 1px,rgba(0,0,0,.22) 1px 2.5px),color-mix(in srgb,var(--vc) 60%,transparent)}
+.lbl{position:absolute;left:33%;top:33%;width:34%;height:34%;border-radius:50%;background:var(--art) center/cover,#222;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+.lbl::after,.d.pic .sp::after{content:"";position:absolute;left:50%;top:50%;width:11%;height:11%;transform:translate(-50%,-50%);border-radius:50%;background:#0b0a08;box-shadow:0 0 0 1px rgba(255,255,255,.3)}
+.d.pic .sp::after{width:3.6%;height:3.6%}
+.d.pic .sp{background:repeating-radial-gradient(circle,rgba(255,255,255,.05) 0 1px,rgba(0,0,0,.2) 1px 2.5px),var(--art) center/cover,#222}
+.d.pic .lbl{display:none}
+.d::before{content:"";position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;background:conic-gradient(from 20deg,transparent 0 16%,rgba(255,255,255,.13) 24%,transparent 32% 66%,rgba(255,255,255,.13) 74%,transparent 82%)}
+
+/* CD / DVD: printed art, clear hub ring, see-through spindle hole, rainbow sheen */
+.d.cd .sp,.d.dvd .sp{background:radial-gradient(circle,transparent 0 6%,rgba(255,255,255,.55) 6.2% 17%,rgba(255,255,255,.16) 17.2% 19%,transparent 19.2%),var(--art) center/cover,#c9ced2;
+  -webkit-mask:radial-gradient(circle,transparent 0 4.6%,#000 4.8%);mask:radial-gradient(circle,transparent 0 4.6%,#000 4.8%)}
+.d.cd.plain .sp{background:radial-gradient(circle,transparent 0 6%,rgba(255,255,255,.55) 6.2% 17%,rgba(255,255,255,.16) 17.2% 19%,transparent 19.2%),conic-gradient(#eef,#9aa4ad,#fafafa,#b9c0ca,#eef,#8e98a3,#fff,#eef)}
+.d.cd::after,.d.dvd::after{content:"";position:absolute;inset:0;border-radius:50%;z-index:3;pointer-events:none;mix-blend-mode:screen;
+  background:conic-gradient(from 30deg,rgba(255,60,140,.3),rgba(255,210,60,.26),rgba(60,255,170,.3),rgba(60,150,255,.3),rgba(255,60,140,.3))}
+.d.dvd::after{filter:hue-rotate(50deg)}
+.d.cd .lbl,.d.dvd .lbl{display:none}
+
+.ring{position:absolute;inset:0;width:100%;height:100%}
+.ring text{font:600 4.3px 'Space Grotesk',sans-serif;fill:rgba(255,255,255,.85);letter-spacing:.25px;stroke:rgba(0,0,0,.45);stroke-width:.5px;paint-order:stroke}
+.d.cd .ring text,.d.dvd .ring text{fill:#fff}
+
+/* a disc lifted out of a tile (used when a disc flies into a panel) */
+.flat{position:relative}
+.flat .d{left:0;top:0;margin:0;width:100%;transform:none;transition:none}
+.flat.spin .sp{animation:dspin 4s linear infinite}
+.fly{position:fixed;z-index:2000;pointer-events:none}
+
+#tip{position:fixed;z-index:1000;pointer-events:none;background:#F2EAD8;color:#17140F;padding:7px 11px;border-radius:5px;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;transition:opacity .1s;max-width:260px;line-height:1.35}
+#tip b{display:block;font:600 14px 'Fraunces',serif}
+#tip span{opacity:.6}
+.msg{padding:60px 20px;text-align:center;opacity:.6}
+
+@media (prefers-reduced-motion:reduce){.tile.hot .sp,.spin .sp{animation:none}.d{transition-duration:.01s}.tile .sleeve{transition:none}}

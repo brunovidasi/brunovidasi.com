@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Collection — Bruno's Vinyl</title>
+<link rel="icon" href="../assets/favicon.ico">
+<link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="display">The Collection</div>
+      <p>Every record Bruno owns, straight from the Discogs shelf.</p>
+    </div>
+    <svg id="disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="50" cy="50" r="48" fill="#0B0A08" stroke="#3a352c" stroke-width="1"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+      <circle cx="50" cy="50" r="34" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+      <circle cx="50" cy="50" r="28" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+      <circle cx="50" cy="50" r="16" fill="#C99A2E"/>
+      <circle cx="50" cy="50" r="3" fill="#0B0A08"/>
+    </svg>
+  </div>
+</header>
+
+<div class="controls">
+  <input type="search" id="search" placeholder="Search by artist or title…" aria-label="Search collection">
+  <select id="sort" aria-label="Sort collection">
+    <option value="artist">Artist, A–Z</option>
+    <option value="year-desc">Year, newest first</option>
+    <option value="year-asc">Year, oldest first</option>
+    <option value="added">Recently added</option>
+  </select>
+  <button class="ghost" id="refresh">Refresh from Discogs</button>
+  <span class="meta" id="countMeta"></span>
+</div>
+
+<main>
+  <div id="content">
+    <div class="skeleton-grid" id="skeleton">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </div>
+</main>
+
+<footer>Data via the <a href="https://www.discogs.com" target="_blank" rel="noopener">Discogs</a> API</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <button class="drawer-close" id="drawerClose" aria-label="Close">✕</button>
+  <div class="drawer-cover" id="drawerCover"></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

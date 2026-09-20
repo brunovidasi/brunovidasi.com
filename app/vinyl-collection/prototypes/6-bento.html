@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 6 — Bento grid</title>
+<link rel="stylesheet" href="lib.css">
+<style>
+#wall{display:grid;grid-auto-flow:dense;grid-auto-rows:44px;gap:4px;justify-content:center;padding:6px 20px 90px}
+.key{max-width:1240px;margin:0 auto;padding:0 20px 14px;display:flex;gap:16px;align-items:flex-end;font-size:11px;opacity:.75;flex-wrap:wrap}
+.key div{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.key i{display:block;background:linear-gradient(135deg,#6a5a3c,#3a3122);border-radius:2px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Bento — size follows the real thing</h1><small id="src">Loading…</small></div>
+  <div id="bar"></div>
+</header>
+<p class="lead" id="lead"></p>
+<div class="key" id="key"></div>
+<main id="wall"><div class="msg">Loading your collection…</div></main>
+
+<script src="lib.js"></script>
+<script>
+L.nav('6-bento.html');
+const wall = document.getElementById('wall');
+let mode = 'phys';
+
+const MODES = {
+  phys:   ['Physical size',   'Tile size = the real object: <b>CD</b> small, <b>7″</b> medium, <b>12″ LP</b> big, <b>double LP / box set</b> biggest. Hover any tile — the disc that slides out matches the pressing.'],
+  recent: ['Recently added',  'Newest additions get the big tiles; the older shelf shrinks to small tiles. Sorted newest first.'],
+  artist: ['Artist weight',   'The more records you own by an artist, the bigger their tiles. Your obsessions jump out.'],
+  equal:  ['Equal (today)',   'For comparison: every record the same size, like the current page.'],
+};
+
+function spans(list, mode) {
+  const out = new Map();
+  if (mode === 'phys') list.forEach(r => {
+    const d = r.discs[0];
+    out.set(r, r.kind === 'vinyl' ? (r.discs.length > 1 || r.box ? 6 : d.sz === 7 ? 3 : d.sz === 10 ? 4 : 5) : r.kind === 'dvd' ? 3 : (r.box ? 3 : 2));
+  });
+  else if (mode === 'recent') list.forEach((r, i) => { const p = i / list.length; out.set(r, p < .06 ? 6 : p < .22 ? 4 : p < .5 ? 3 : 2); });
+  else if (mode === 'artist') {
+    const n = new Map(); L.S.recs.forEach(r => n.set(r.artist, (n.get(r.artist) || 0) + 1));
+    list.forEach(r => { const c = n.get(r.artist); out.set(r, c >= 10 ? 6 : c >= 5 ? 5 : c >= 3 ? 4 : c === 2 ? 3 : 2); });
+  } else list.forEach(r => out.set(r, 3));
+  return out;
+}
+
+function render() {
+  const list = L.visible().sort(mode === 'recent' ? (a, b) => b.added.localeCompare(a.added) : L.byArtist);
+  const cell = 44, gap = 4, W = document.body.clientWidth - 40;
+  const cols = Math.max(7, Math.floor((W + gap) / (cell + gap)));
+  wall.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
+  const sp = spans(list, mode);
+  wall.replaceChildren(...list.map(r => {
+    const n = Math.min(cols, sp.get(r)), t = L.tile(r, '', sp.get(r) >= 4);
+    t.style.gridColumn = t.style.gridRow = `span ${n}`;
+    return t;
+  }));
+  L.setCount(list.length);
+}
+
+function controls() {
+  return `<div class="chips mode">${Object.entries(MODES).map(([k, [l]]) => `<button data-m="${k}" class="${k === mode ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+}
+
+L.load((p, n) => document.getElementById('src').textContent = `Loading Discogs page ${p} of ${n}…`).then(({ recs, source }) => {
+  L.init(recs);
+  document.getElementById('src').textContent = `${recs.length} records · ${source}`;
+  L.bar(document.getElementById('bar'), render, controls());
+  document.querySelector('.mode').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    mode = b.dataset.m; document.querySelectorAll('.mode button').forEach(x => x.classList.toggle('on', x === b));
+    document.getElementById('lead').innerHTML = MODES[mode][1]; render();
+  });
+  document.getElementById('lead').innerHTML = MODES[mode][1];
+  document.getElementById('key').innerHTML = [['CD', 2], ['7″ / DVD', 3], ['10″', 4], ['12″ LP', 5], ['Double / box', 6]]
+    .map(([l, n]) => `<div><i style="width:${n * 9}px;height:${n * 9}px"></i>${l}</div>`).join('');
+  L.wire(wall);
+  render();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+});
+</script>
+</body>
+</html>

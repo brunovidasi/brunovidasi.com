@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 10 — Fisheye</title>
+<link rel="stylesheet" href="lib.css">
+<style>
+body{overflow-x:hidden}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,64px);gap:8px;justify-content:center;max-width:1240px;margin:0 auto;padding:60px 90px 160px}
+#grid .tile{width:64px;height:64px;transition:transform .14s ease-out}
+#grid .tile .sleeve{box-shadow:0 0 0 1px rgba(0,0,0,.5),0 3px 8px rgba(0,0,0,.5)}
+.slider{display:flex;gap:8px;align-items:center;font-size:12px;opacity:.85}
+.slider input{width:110px;accent-color:#C99A2E;padding:0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Fisheye</h1><small id="src">Loading…</small></div>
+  <div id="bar"></div>
+</header>
+<p class="lead">Every cover starts tiny so the whole collection fits on screen. <b>Move the cursor across it</b> — covers near the pointer swell like the macOS dock, and the one under it pushes out its disc. (Touch: drag a finger across.)</p>
+<main id="grid"><div class="msg" style="grid-column:1/-1">Loading your collection…</div></main>
+
+<script src="lib.js"></script>
+<script>
+L.nav('10-fisheye.html');
+const grid = document.getElementById('grid');
+let tiles = [], centers = [], radius = 190, px = -9999, py = -9999, raf = 0;
+const MAX = 3.1, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function render() {
+  const list = L.visible().sort(L.byArtist);
+  tiles = list.map(r => L.tile(r));
+  grid.replaceChildren(...tiles);
+  L.setCount(list.length);
+  requestAnimationFrame(measure);
+}
+function measure() {   // tile centres in page coordinates (unscaled, so measure with no transform applied)
+  tiles.forEach(t => t.style.transform = '');
+  centers = tiles.map(t => { const r = t.getBoundingClientRect(); return [r.left + scrollX + r.width / 2, r.top + scrollY + r.height / 2]; });
+}
+function apply() {
+  raf = 0;
+  const sig = radius / 2.1;
+  tiles.forEach((t, i) => {
+    const dx = centers[i][0] - px, dy = centers[i][1] - py, d2 = dx * dx + dy * dy;
+    if (d2 > (radius * 2.6) ** 2 || reduce) { if (t._s !== 1) { t._s = 1; t.style.transform = ''; t.style.zIndex = ''; } return; }
+    const s = 1 + (MAX - 1) * Math.exp(-d2 / (2 * sig * sig));
+    t._s = s;
+    t.style.transform = `scale(${s.toFixed(3)})`;
+    t.style.zIndex = Math.round(s * 10);
+  });
+}
+const kick = () => { if (!raf) raf = requestAnimationFrame(apply); };
+grid.addEventListener('pointermove', e => { px = e.pageX; py = e.pageY; kick(); });
+grid.addEventListener('pointerleave', () => { px = py = -9999; kick(); });
+addEventListener('resize', () => { measure(); });
+
+const extra = `<label class="slider">Lens size <input type="range" min="90" max="320" value="${radius}" id="rad"></label>`;
+
+L.load((p, n) => document.getElementById('src').textContent = `Loading Discogs page ${p} of ${n}…`).then(({ recs, source }) => {
+  L.init(recs);
+  document.getElementById('src').textContent = `${recs.length} records · ${source}`;
+  L.bar(document.getElementById('bar'), render, extra);
+  document.getElementById('rad').addEventListener('input', e => { radius = +e.target.value; kick(); });
+  L.wire(grid, { upgrade: true });
+  render();
+});
+</script>
+</body>
+</html>

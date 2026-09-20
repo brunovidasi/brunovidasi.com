@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 9 — Staggered & parallax</title>
+<link rel="stylesheet" href="lib.css">
+<style>
+body{overflow-x:hidden}
+#cols{display:flex;justify-content:center;padding:30px 20px 300px}
+.col{display:flex;flex-direction:column;flex:none;will-change:transform}
+.col .tile{flex:none}
+.col:has(.tile.hot){z-index:5}   /* lift the whole column so the disc slides over its neighbour */
+.hex .tile .sleeve{clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);box-shadow:none;border-radius:0}
+.hex .tile .sleeve::after{display:none}
+.hex .tile{filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+.hex .tile.hot .sleeve{transform:scale(1.08)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Staggered columns + parallax</h1><small id="src">Loading…</small></div>
+  <div id="bar"></div>
+</header>
+<p class="lead">Alternate columns are offset like brickwork (or a honeycomb), and each column drifts at its own speed as you <b>scroll</b>. Hover a cover to slide its disc out.</p>
+<main id="cols"><div class="msg">Loading your collection…</div></main>
+
+<script src="lib.js"></script>
+<script>
+L.nav('9-stagger.html');
+const host = document.getElementById('cols');
+let shape = 'brick', para = true, colEls = [];
+const SPEED = [0, -.035, .03, -.02, .04, -.03, .02, -.04];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function render() {
+  const list = L.visible().sort(L.byArtist), hex = shape === 'hex';
+  const tw = 150, th = hex ? Math.round(tw * .866) : tw, gap = hex ? 2 : 14, step = hex ? tw * .75 + gap : tw + gap;
+  const cols = Math.max(2, Math.floor((document.body.clientWidth - 40 - tw) / step) + 1);
+  host.className = hex ? 'hex' : '';
+  colEls = Array.from({ length: cols }, (_, c) => {
+    const el = document.createElement('div'); el.className = 'col';
+    el.style.width = tw + 'px'; el.style.gap = gap + 'px';
+    if (c) el.style.marginLeft = hex ? -tw * .25 + gap + 'px' : gap + 'px';
+    if (c % 2) el.style.paddingTop = (th + gap) / 2 + 'px';
+    return el;
+  });
+  list.forEach((r, i) => { const t = L.tile(r); t.style.width = tw + 'px'; t.style.height = th + 'px'; colEls[i % cols].append(t); });
+  host.replaceChildren(...colEls);
+  L.setCount(list.length);
+  drift();
+}
+
+let ticking = false;
+function drift() {
+  colEls.forEach((el, c) => { el.style.transform = para && !reduce ? `translateY(${(scrollY * SPEED[c % SPEED.length]).toFixed(1)}px)` : ''; });
+  ticking = false;
+}
+addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(drift); } }, { passive: true });
+
+const extra = `<div class="chips shp"><button data-s="brick" class="on">Brick</button><button data-s="hex">Honeycomb</button></div><button class="btn on" id="para">Parallax on</button>`;
+
+L.load((p, n) => document.getElementById('src').textContent = `Loading Discogs page ${p} of ${n}…`).then(({ recs, source }) => {
+  L.init(recs);
+  document.getElementById('src').textContent = `${recs.length} records · ${source}`;
+  L.bar(document.getElementById('bar'), render, extra);
+  document.querySelector('.shp').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    shape = b.dataset.s; document.querySelectorAll('.shp button').forEach(x => x.classList.toggle('on', x === b)); render();
+  });
+  document.getElementById('para').addEventListener('click', e => { para = !para; e.target.classList.toggle('on', para); e.target.textContent = para ? 'Parallax on' : 'Parallax off'; drift(); });
+  L.wire(host, { upgrade: true });
+  render();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+});
+</script>
+</body>
+</html>

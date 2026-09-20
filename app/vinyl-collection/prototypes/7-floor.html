@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 7 — Scattered on the floor</title>
+<link rel="stylesheet" href="lib.css">
+<style>
+body{background:
+  linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.05) 30%,rgba(0,0,0,.45)),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 2px,transparent 2px 190px),
+  repeating-linear-gradient(90deg,#4a3320 0 190px,#412c1b 190px 380px,#4d3722 380px 570px);
+  background-attachment:fixed}
+#floor{max-width:1300px;margin:0 auto;padding:30px 30px 120px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+#floor .tile{margin:calc(var(--w) * -.04);
+  transform:translate(calc(var(--x) * var(--mess) * 1px),calc(var(--y) * var(--mess) * 1px)) rotate(calc(var(--r) * var(--mess) * 1deg));
+  transition:transform .4s cubic-bezier(.2,.8,.25,1)}
+#floor .tile .sleeve{box-shadow:0 0 0 1px rgba(0,0,0,.5),0 10px 22px rgba(0,0,0,.6)}
+#floor .tile.hot{transform:translate(0,-6px) rotate(0deg) scale(1.12)}
+.slider{display:flex;gap:8px;align-items:center;font-size:12px;opacity:.85}
+.slider input{width:120px;accent-color:#C99A2E;padding:0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Scattered on the floor</h1><small id="src">Loading…</small></div>
+  <div id="bar"></div>
+</header>
+<p class="lead">Covers dropped in a pile, each rotated and nudged. Sizes follow the real object (LP big, CD small). Drag the <b>messiness</b> slider from tidy to chaos; hover a record to straighten it and slide its disc out.</p>
+<main id="floor"><div class="msg">Loading your collection…</div></main>
+
+<script src="lib.js"></script>
+<script>
+L.nav('7-floor.html');
+const floor = document.getElementById('floor');
+let mess = 0.7, seed = 1;
+
+const width = r => r.kind === 'vinyl' ? (r.discs.length > 1 || r.box ? 270 : r.discs[0].sz === 7 ? 150 : 250) : r.kind === 'dvd' ? 130 : 112;
+
+function render() {
+  const list = L.visible().sort(L.byArtist);
+  floor.style.setProperty('--mess', mess);
+  floor.replaceChildren(...list.map(r => {
+    const w = width(r), t = L.tile(r, '', w >= 200), h = L.hash(r.artist + r.title + seed);
+    t.style.width = t.style.height = w + 'px';
+    t.style.setProperty('--w', w + 'px');
+    t.style.setProperty('--r', (((h % 2000) / 1000 - 1) * 9).toFixed(2));
+    t.style.setProperty('--x', (((h >> 8) % 1000) / 500 - 1) * 18);
+    t.style.setProperty('--y', (((h >> 14) % 1000) / 500 - 1) * 22);
+    return t;
+  }));
+  L.setCount(list.length);
+}
+
+const extra = `<label class="slider">Messiness <input type="range" min="0" max="1.4" step="0.05" value="${mess}" id="mess"></label><button class="btn" id="shuf">🎲 Shuffle the pile</button>`;
+
+L.load((p, n) => document.getElementById('src').textContent = `Loading Discogs page ${p} of ${n}…`).then(({ recs, source }) => {
+  L.init(recs);
+  document.getElementById('src').textContent = `${recs.length} records · ${source}`;
+  L.bar(document.getElementById('bar'), render, extra);
+  document.getElementById('mess').addEventListener('input', e => { mess = +e.target.value; floor.style.setProperty('--mess', mess); });
+  document.getElementById('shuf').addEventListener('click', () => { seed++; render(); });
+  L.wire(floor, { upgrade: true });
+  render();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 1 — Crate digger</title>
+<style>
+@font-face{font-family:'Fraunces';src:url('../fonts/fraunces-latin.woff2') format('woff2');font-weight:400 700;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url('../fonts/space-grotesk-latin.woff2') format('woff2');font-weight:400 600;font-display:swap}
+
+:root{--ink:#17140F;--paper:#F2EAD8;--gold:#C99A2E;--w:min(42vh,74vw,360px)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{
+  background:radial-gradient(ellipse at 50% 35%,#2d2216 0,#100d09 72%);
+  color:var(--paper);font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+}
+
+/* shared prototype nav */
+.protonav{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:999;display:flex;gap:2px;background:rgba(20,17,13,.85);backdrop-filter:blur(8px);border:1px solid rgba(242,234,216,.2);border-radius:99px;padding:4px;font:500 12px 'Space Grotesk',sans-serif;white-space:nowrap}
+.protonav a{color:#F2EAD8;text-decoration:none;padding:6px 11px;border-radius:99px;opacity:.7}
+.protonav a[aria-current]{background:#C99A2E;color:#17140F;opacity:1}
+
+.title{position:fixed;left:20px;top:58px;z-index:5}
+.title h1{font:600 26px 'Fraunces',serif;margin:0;letter-spacing:-.01em}
+.title small{display:block;opacity:.55;font-size:12px;margin-top:4px}
+.hint{position:fixed;left:20px;bottom:16px;z-index:5;font-size:12px;opacity:.5}
+.shuffle{position:fixed;right:20px;top:58px;z-index:5;background:var(--gold);color:var(--ink);border:0;border-radius:99px;padding:10px 18px;font:600 13px 'Space Grotesk',sans-serif;cursor:pointer}
+.shuffle:hover{filter:brightness(1.1)}
+
+.scene{position:absolute;inset:0;perspective:1400px;perspective-origin:50% 22%;overflow:hidden}
+.rec{position:absolute;left:50%;top:50%;width:var(--w);height:var(--w);margin:calc(var(--w)/-2) 0 0 calc(var(--w)/-2);transform-origin:50% 100%;cursor:pointer;will-change:transform,opacity}
+.face{position:absolute;inset:0;z-index:1;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 10px 30px rgba(0,0,0,.55)}
+.face::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent 40%,rgba(0,0,0,.18))}
+.disc{position:absolute;left:4%;top:0;width:92%;aspect-ratio:1;border-radius:50%;z-index:0;transform:translateY(calc(var(--pull,0)*-34%));
+  background:radial-gradient(circle,#c99a2e 0 14%,#0b0a08 14.5% 15.5%,transparent 16%),repeating-radial-gradient(circle,#0d0d0d 0 2px,#1b1b1b 2px 3px)}
+
+/* generated covers (sample data / broken images) */
+.cv{background-size:cover;background-position:center}
+.ctext{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;font-size:12px;line-height:1.25;color:rgba(255,255,255,.85);text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.ctext b{font:600 20px/1.05 'Fraunces',serif;margin-bottom:4px}
+
+/* the crate */
+.crate{position:absolute;left:50%;transform:translateX(-50%);z-index:550;width:min(98vw,calc(var(--w)*1.6));top:calc(50% + var(--w)/2 - 62px);bottom:-30px;
+  background:repeating-linear-gradient(90deg,#7a4e28 0 46px,#6a4222 46px 48px),linear-gradient(#7a4e28,#4d2f16);
+  background-blend-mode:multiply;border-radius:8px 8px 0 0;
+  box-shadow:0 -10px 30px rgba(0,0,0,.55),inset 0 3px 0 rgba(255,225,170,.28),inset 0 -40px 60px rgba(0,0,0,.4)}
+.crate::before{content:"";position:absolute;left:0;right:0;top:0;height:18px;border-radius:8px 8px 0 0;background:linear-gradient(#a06a38,#7a4e28);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.plate{position:absolute;left:50%;top:40px;transform:translateX(-50%);background:#EFE3C8;color:var(--ink);padding:9px 20px;border-radius:3px;text-align:center;min-width:64%;max-width:92%;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.plate b{display:block;font:600 17px 'Fraunces',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plate span{font-size:12px;opacity:.7}
+
+.info{position:fixed;right:4vw;top:50%;transform:translateY(-50%) translateX(20px);z-index:6;width:230px;opacity:0;pointer-events:none;transition:.35s}
+.info.show{opacity:1;transform:translateY(-50%)}
+.info h2{font:600 24px/1.1 'Fraunces',serif;margin:0 0 4px}
+.info p{margin:0 0 12px;opacity:.7}
+.info .tag{display:inline-block;border:1px solid rgba(242,234,216,.3);border-radius:99px;padding:3px 10px;font-size:11px;margin:0 4px 4px 0}
+.info dl{margin:12px 0 0;font-size:13px}.info dt{opacity:.5;font-size:11px;text-transform:uppercase;letter-spacing:.06em}.info dd{margin:0 0 8px}
+@media (max-width:900px){.info{display:none}}
+</style>
+</head>
+<body>
+<nav class="protonav">
+  <a href="1-crate.html" aria-current="page">1 Crate</a><a href="2-turntable.html">2 Deck</a><a href="3-shelf.html">3 Shelf</a><a href="4-map.html">4 Map</a><a href="5-stats.html">5 Stats</a>
+</nav>
+
+<div class="title"><h1>The Crate</h1><small id="src">Loading…</small></div>
+<button class="shuffle" id="shuffle">🎲 Dig a random one</button>
+<div class="hint">scroll · drag · ← → keys · click the front record to pull it out</div>
+
+<div class="scene" id="scene">
+  <div class="crate" id="crate"><div class="plate"><b id="pTitle"></b><span id="pSub"></span></div></div>
+</div>
+
+<aside class="info" id="info"></aside>
+
+<script>
+/* ---- shared data loader (same source as the real app) ---- */
+const CACHE_KEY='vinyl_collection_cache_v2';
+const SAMPLE=[
+['Pink Floyd','The Dark Side of the Moon',1973,'Rock','Prog Rock','Harvest'],['Miles Davis','Kind of Blue',1959,'Jazz','Modal','Columbia'],
+['Fleetwood Mac','Rumours',1977,'Rock','Soft Rock','Warner Bros.'],['Daft Punk','Random Access Memories',2013,'Electronic','Disco','Columbia'],
+['Stevie Wonder','Songs in the Key of Life',1976,'Funk / Soul','Soul','Tamla'],['Radiohead','OK Computer',1997,'Rock','Alternative Rock','Parlophone'],
+['Nirvana','Nevermind',1991,'Rock','Grunge','DGC'],['Massive Attack','Mezzanine',1998,'Electronic','Trip Hop','Virgin'],
+['John Coltrane','A Love Supreme',1965,'Jazz','Free Jazz','Impulse!'],['Portishead','Dummy',1994,'Electronic','Trip Hop','Go! Discs'],
+['David Bowie','Low',1977,'Rock','Art Rock','RCA'],['Kendrick Lamar','To Pimp a Butterfly',2015,'Hip Hop','Conscious','Interscope'],
+['Talking Heads','Remain in Light',1980,'Rock','New Wave','Sire'],['Joni Mitchell','Blue',1971,'Folk','Singer-Songwriter','Reprise'],
+['Aphex Twin','Selected Ambient Works 85-92',1992,'Electronic','Ambient','R&S'],['The Beatles','Abbey Road',1969,'Rock','Pop Rock','Apple'],
+['Herbie Hancock','Head Hunters',1973,'Jazz','Jazz-Funk','Columbia'],['Amy Winehouse','Back to Black',2006,'Funk / Soul','Soul','Island'],
+['Kraftwerk','Trans-Europe Express',1977,'Electronic','Synth-pop','Kling Klang'],['Nina Simone','Pastel Blues',1965,'Jazz','Vocal','Philips'],
+['Tame Impala','Currents',2015,'Rock','Psychedelic Rock','Modular'],['Lady Gaga','The Fame',2008,'Pop','Synth-pop','Interscope'],
+['Björk','Homogenic',1997,'Electronic','Art Pop','One Little Indian'],['Led Zeppelin','IV',1971,'Rock','Hard Rock','Atlantic'],
+['Frank Ocean','Blonde',2016,'Funk / Soul','Contemporary R&B',"Boys Don't Cry"],['Boards of Canada','Music Has the Right to Children',1998,'Electronic','IDM','Warp'],
+['Bob Marley & The Wailers','Exodus',1977,'Reggae','Roots Reggae','Island'],['Beach House','Depression Cherry',2015,'Rock','Dream Pop','Sub Pop'],
+['A Tribe Called Quest','The Low End Theory',1991,'Hip Hop','Jazzy Hip-Hop','Jive'],['Fela Kuti','Zombie',1977,'Funk / Soul','Afrobeat','Coconut'],
+['The Cure','Disintegration',1989,'Rock','Goth Rock','Fiction'],['Caribou','Swim',2010,'Electronic','House','City Slang'],
+];
+const isVinyl=r=>(r.basic_information.formats||[]).some(f=>f.name==='Vinyl');
+function norm(r){const b=r.basic_information;return{id:r.id,title:b.title,artist:(b.artists||[]).map(a=>a.name.replace(/\s\(\d+\)$/,'')).join(', ')||'Unknown',year:b.year||0,cover:b.cover_image||b.thumb||'',thumb:b.thumb||b.cover_image||'',genres:b.genres||[],styles:b.styles||[],label:((b.labels||[])[0]||{}).name||'',added:r.date_added||''}}
+async function loadRecords(){
+  try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c&&c.data&&c.data.length)return{recs:c.data.filter(isVinyl).map(norm),source:'your cached collection'}}catch(e){}
+  try{const res=await fetch('https://api.discogs.com/users/brunovidasi/collection/folders/0/releases?per_page=100');if(res.ok){const d=await res.json();const v=(d.releases||[]).filter(isVinyl);if(v.length)return{recs:v.map(norm),source:'Discogs (first 100 records)'}}}catch(e){}
+  return{recs:SAMPLE.map((s,i)=>({id:-i-1,artist:s[0],title:s[1],year:s[2],genres:[s[3]],styles:[s[4]],label:s[5],cover:'',thumb:'',added:new Date(2018+(i*7)%8,(i*5)%12,1+i%27).toISOString()})),source:'sample data (Discogs unreachable)'}
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+const fallbackBg=r=>{const h=hash(r.artist+r.title)%360;return `linear-gradient(135deg,hsl(${h} 45% 38%),hsl(${(h+40)%360} 50% 18%))`};
+const coverBg=(r,thumb)=>{const u=thumb?r.thumb:r.cover;return u?`url("${u.replace(/"/g,'%22')}"),${fallbackBg(r)}`:fallbackBg(r)};
+const coverText=r=>r.cover?'':`<span class="ctext"><b>${esc(r.title)}</b>${esc(r.artist)}</span>`;
+/* ---- end shared ---- */
+
+const scene=document.getElementById('scene'),crate=document.getElementById('crate');
+let recs=[],els=[],pos=0,target=0,pull=0,pullT=0,raf=0,shown=-1,snapT=0;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+function build(){
+  recs.forEach((r,i)=>{
+    const el=document.createElement('div');el.className='rec';
+    el.innerHTML='<div class="disc"></div><div class="face cv"></div>';
+    const face=el.querySelector('.face');face.style.backgroundImage=coverBg(r);face.insertAdjacentHTML('beforeend',coverText(r));
+    el.addEventListener('click',()=>{if(moved>6)return;const cur=clamp(Math.round(target),0,recs.length-1);if(i===cur)pullT=pullT?0:1;else{target=i;pullT=0}kick()});
+    scene.insertBefore(el,crate);els.push(el);
+  });
+}
+
+function layout(){
+  const n=recs.length,cur=clamp(Math.round(target),0,n-1);
+  els.forEach((el,i)=>{
+    const d=i-pos;
+    if(d<-1.05||d>14){el.style.display='none';return}
+    el.style.display='';
+    let ty,tz,rx=0,op=1,s=1;
+    if(d>=0){ty=-d*30;tz=-d*70;op=1-Math.max(0,d-9)/5}
+    else{const t=Math.min(1,-d);ty=t*40;tz=0;rx=-t*82;op=1-t*t}
+    const w=pull*Math.max(0,1-Math.abs(d)*2);
+    ty-=w*90;s=1+.12*w;
+    el.style.transform=`translate3d(0,${ty}px,${tz}px) rotateX(${rx}deg) scale(${s})`;
+    el.style.opacity=op;
+    el.style.zIndex=d<0?700:600-i;
+    el.style.setProperty('--pull',w.toFixed(3));
+  });
+  if(cur!==shown){shown=cur;updateInfo()}
+  document.getElementById('info').classList.toggle('show',pullT>0);
+}
+function updateInfo(){
+  const r=recs[shown];if(!r)return;
+  pTitle.textContent=r.title;pSub.textContent=`${r.artist} · ${r.year||'—'} · ${shown+1} / ${recs.length}`;
+  info.innerHTML=`<h2>${esc(r.title)}</h2><p>${esc(r.artist)}</p>${[...r.genres,...r.styles].map(g=>`<span class="tag">${esc(g)}</span>`).join('')}
+    <dl><dt>Released</dt><dd>${esc(r.year||'—')}</dd><dt>Label</dt><dd>${esc(r.label||'—')}</dd><dt>Added</dt><dd>${r.added?new Date(r.added).toLocaleDateString():'—'}</dd></dl>`;
+}
+function tick(){
+  pos+=(target-pos)*.14;pull+=(pullT-pull)*.16;
+  if(Math.abs(target-pos)<.002)pos=target;
+  layout();
+  raf=(pos!==target||Math.abs(pullT-pull)>.002)?requestAnimationFrame(tick):0;
+}
+function kick(){target=clamp(target,0,recs.length-1);if(!raf)raf=requestAnimationFrame(tick)}
+function snap(){target=Math.round(target);kick()}
+
+addEventListener('wheel',e=>{e.preventDefault();target+=(e.deltaY+e.deltaX)/170;pullT=0;kick();clearTimeout(snapT);snapT=setTimeout(snap,140)},{passive:false});
+addEventListener('keydown',e=>{
+  const k=e.key;
+  if(k==='ArrowRight'||k==='ArrowDown'||k===' '){e.preventDefault();target=Math.round(target)+1;pullT=0}
+  else if(k==='ArrowLeft'||k==='ArrowUp'){e.preventDefault();target=Math.round(target)-1;pullT=0}
+  else if(k==='Enter')pullT=pullT?0:1;
+  else if(k==='Escape')pullT=0;
+  kick();
+});
+let drag=null,moved=0;
+scene.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,t:target};moved=0});
+addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved=Math.max(moved,Math.hypot(dx,dy));if(moved>6){target=drag.t+(dy-dx)/70;pullT=0;kick()}});
+addEventListener('pointerup',()=>{if(drag&&moved>6)snap();drag=null;setTimeout(()=>moved=0,0)});
+shuffle.addEventListener('click',()=>{pullT=0;target=Math.floor(Math.random()*recs.length);kick();setTimeout(()=>{pullT=1;kick()},900)});
+
+loadRecords().then(({recs:R,source})=>{
+  recs=R.sort((a,b)=>a.artist.localeCompare(b.artist));
+  document.getElementById('src').textContent=`${recs.length} records · ${source}`;
+  build();layout();
+});
+</script>
+</body>
+</html>

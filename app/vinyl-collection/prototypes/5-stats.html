@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 5 — Stats & spin roulette</title>
+<style>
+@font-face{font-family:'Fraunces';src:url('../fonts/fraunces-latin.woff2') format('woff2');font-weight:400 700;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url('../fonts/space-grotesk-latin.woff2') format('woff2');font-weight:400 600;font-display:swap}
+
+:root{--ink:#17140F;--paper:#F2EAD8;--gold:#C99A2E;--surface:#1c1813;--muted:rgba(242,234,216,.6);--grid:rgba(242,234,216,.1)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#100d09;color:var(--paper);font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+
+.protonav{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:999;display:flex;gap:2px;background:rgba(20,17,13,.85);backdrop-filter:blur(8px);border:1px solid rgba(242,234,216,.2);border-radius:99px;padding:4px;font:500 12px 'Space Grotesk',sans-serif;white-space:nowrap}
+.protonav a{color:#F2EAD8;text-decoration:none;padding:6px 11px;border-radius:99px;opacity:.7}
+.protonav a[aria-current]{background:#C99A2E;color:#17140F;opacity:1}
+
+main{max-width:1100px;margin:0 auto;padding:64px 20px 90px}
+h1{font:600 30px 'Fraunces',serif;margin:0 0 4px;letter-spacing:-.01em}
+.sub{opacity:.55;font-size:12px;margin-bottom:26px}
+h2{font:600 15px 'Space Grotesk',sans-serif;margin:0 0 14px;letter-spacing:.02em}
+
+/* ---------- roulette ---------- */
+.roulette{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;background:var(--surface);border-radius:14px;padding:28px;margin-bottom:22px;background-image:radial-gradient(circle at 15% 20%,rgba(201,154,46,.12),transparent 55%)}
+@media (max-width:760px){.roulette{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.slotwrap{position:relative;width:min(300px,70vw);aspect-ratio:1}
+.slot .disc{position:absolute;left:5%;top:0;width:92%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#c99a2e 0 14%,#0b0a08 14.5% 15.5%,transparent 16%),repeating-radial-gradient(circle,#0d0d0d 0 2px,#1b1b1b 2px 3px);transition:transform .8s cubic-bezier(.2,.8,.3,1)}
+.slot.landed .disc{transform:translateX(12%) rotate(200deg)}
+.slot .face{position:absolute;inset:0;border-radius:3px;box-shadow:0 18px 40px rgba(0,0,0,.6);background-size:cover;background-position:center;transition:filter .2s;background-color:#2a241b}
+.slot.spinning .face{filter:blur(2.5px) saturate(1.3)}
+.slot.landed .face{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.92)}to{transform:none}}
+.ctext{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;font-size:12px;color:rgba(255,255,255,.85);text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.ctext b{font:600 22px/1.05 'Fraunces',serif;margin-bottom:3px}
+.rtext{position:relative;z-index:1}
+.rtext h1{font-size:clamp(26px,3.6vw,38px);line-height:1.05;min-height:2.1em;margin:0 0 4px}
+.rtext .who{font-size:17px;opacity:.75;min-height:1.4em}
+.rtext .meta{font-size:13px;opacity:.5;margin:6px 0 18px;min-height:1.2em}
+.go{background:var(--gold);color:var(--ink);border:0;border-radius:99px;padding:14px 26px;font:600 15px 'Space Grotesk',sans-serif;cursor:pointer;transition:transform .15s}
+.go:hover:not(:disabled){transform:scale(1.04)}.go:disabled{opacity:.6;cursor:default}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 0}
+@media (max-width:760px){.chips{justify-content:center}}
+.chips button{font:500 12px 'Space Grotesk',sans-serif;border:1px solid rgba(242,234,216,.28);background:transparent;color:var(--paper);border-radius:99px;padding:6px 12px;cursor:pointer}
+.chips button.on{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.spun{margin-top:16px;display:flex;gap:6px;min-height:34px;align-items:center;font-size:11px;opacity:.9}
+.spun i{width:34px;height:34px;border-radius:2px;background-size:cover;background-position:center;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+
+/* ---------- stat tiles ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.stat{background:var(--surface);border-radius:10px;padding:16px 14px}
+.stat .n{font:600 24px/1.1 'Fraunces',serif;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .l{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* ---------- charts (single series, one hue, zero baseline) ---------- */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:22px}
+.chart{background:var(--surface);border-radius:10px;padding:18px 18px 12px}
+.bar{display:grid;grid-template-columns:96px 1fr 32px;gap:10px;align-items:center;height:26px;cursor:default}
+.bar .bl{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .bt{height:12px;background:var(--grid);border-radius:0 4px 4px 0;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--gold);border-radius:0 4px 4px 0;min-width:2px;transform-origin:left;animation:grow .7s cubic-bezier(.2,.8,.3,1) both}
+.bar:hover .bt i{filter:brightness(1.2)}
+.bar .bv{font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+@keyframes grow{from{transform:scaleX(0)}}
+.cols{display:flex;align-items:flex-end;gap:6px;height:150px;border-bottom:1px solid var(--grid);padding-top:8px}
+.cols .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;cursor:default}
+.cols .c i{display:block;background:var(--gold);border-radius:4px 4px 0 0;min-height:2px;transform-origin:bottom;animation:up .7s cubic-bezier(.2,.8,.3,1) both}
+.cols .c:hover i{filter:brightness(1.2)}
+@keyframes up{from{transform:scaleY(0)}}
+.xl{display:flex;gap:6px;margin-top:6px}.xl span{flex:1;text-align:center;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.recent{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.recent i{flex:none;width:88px;height:88px;border-radius:3px;background-size:cover;background-position:center;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.foot{font-size:12px;opacity:.5;margin-top:22px;max-width:70ch}
+
+#tip{position:fixed;z-index:1000;pointer-events:none;background:#F2EAD8;color:#17140F;padding:6px 10px;border-radius:5px;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;transition:opacity .1s}
+@media (prefers-reduced-motion:reduce){.bar .bt i,.cols .c i{animation:none}.slot.landed .face{animation:none}}
+</style>
+</head>
+<body>
+<nav class="protonav">
+  <a href="1-crate.html">1 Crate</a><a href="2-turntable.html">2 Deck</a><a href="3-shelf.html">3 Shelf</a><a href="4-map.html">4 Map</a><a href="5-stats.html" aria-current="page">5 Stats</a>
+</nav>
+
+<main>
+  <h1>What should I spin?</h1>
+  <div class="sub" id="src">Loading…</div>
+
+  <section class="roulette">
+    <div class="slotwrap"><div class="slot" id="slot"><div class="disc"></div><div class="face" id="face"></div></div></div>
+    <div class="rtext">
+      <h1 id="rTitle">Feeling lucky?</h1>
+      <div class="who" id="rArtist">Pick a mood, then let the collection decide.</div>
+      <div class="meta" id="rMeta"></div>
+      <button class="go" id="go">🎲 Spin the roulette</button>
+      <div class="chips" id="chips" aria-label="Filter by genre"></div>
+      <div class="spun" id="hist"></div>
+    </div>
+  </section>
+
+  <section class="tiles" id="tiles" aria-label="Collection summary"></section>
+
+  <section class="charts">
+    <div class="chart"><h2>Records by decade</h2><div id="decades"></div></div>
+    <div class="chart"><h2>Top genres</h2><div id="genres"></div></div>
+    <div class="chart"><h2>Top labels</h2><div id="labels"></div></div>
+    <div class="chart"><h2>Records added per year</h2><div class="cols" id="added"></div><div class="xl" id="addedX"></div></div>
+  </section>
+
+  <section class="chart"><h2>Recently added</h2><div class="recent" id="recent"></div></section>
+
+  <p class="foot">Not in this prototype: collection value and “rarest record”. The collection list doesn't include prices or have/want counts, so those need one Discogs call per record (25/min anonymous) — fine as a slow background fill cached in localStorage.</p>
+</main>
+<div id="tip"></div>
+
+<script>
+/* ---- shared data loader (same source as the real app) ---- */
+const CACHE_KEY='vinyl_collection_cache_v2';
+const SAMPLE=[
+['Pink Floyd','The Dark Side of the Moon',1973,'Rock','Prog Rock','Harvest'],['Miles Davis','Kind of Blue',1959,'Jazz','Modal','Columbia'],
+['Fleetwood Mac','Rumours',1977,'Rock','Soft Rock','Warner Bros.'],['Daft Punk','Random Access Memories',2013,'Electronic','Disco','Columbia'],
+['Stevie Wonder','Songs in the Key of Life',1976,'Funk / Soul','Soul','Tamla'],['Radiohead','OK Computer',1997,'Rock','Alternative Rock','Parlophone'],
+['Nirvana','Nevermind',1991,'Rock','Grunge','DGC'],['Massive Attack','Mezzanine',1998,'Electronic','Trip Hop','Virgin'],
+['John Coltrane','A Love Supreme',1965,'Jazz','Free Jazz','Impulse!'],['Portishead','Dummy',1994,'Electronic','Trip Hop','Go! Discs'],
+['David Bowie','Low',1977,'Rock','Art Rock','RCA'],['Kendrick Lamar','To Pimp a Butterfly',2015,'Hip Hop','Conscious','Interscope'],
+['Talking Heads','Remain in Light',1980,'Rock','New Wave','Sire'],['Joni Mitchell','Blue',1971,'Folk','Singer-Songwriter','Reprise'],
+['Aphex Twin','Selected Ambient Works 85-92',1992,'Electronic','Ambient','R&S'],['The Beatles','Abbey Road',1969,'Rock','Pop Rock','Apple'],
+['Herbie Hancock','Head Hunters',1973,'Jazz','Jazz-Funk','Columbia'],['Amy Winehouse','Back to Black',2006,'Funk / Soul','Soul','Island'],
+['Kraftwerk','Trans-Europe Express',1977,'Electronic','Synth-pop','Kling Klang'],['Nina Simone','Pastel Blues',1965,'Jazz','Vocal','Philips'],
+['Tame Impala','Currents',2015,'Rock','Psychedelic Rock','Modular'],['Lady Gaga','The Fame',2008,'Pop','Synth-pop','Interscope'],
+['Björk','Homogenic',1997,'Electronic','Art Pop','One Little Indian'],['Led Zeppelin','IV',1971,'Rock','Hard Rock','Atlantic'],
+['Frank Ocean','Blonde',2016,'Funk / Soul','Contemporary R&B',"Boys Don't Cry"],['Boards of Canada','Music Has the Right to Children',1998,'Electronic','IDM','Warp'],
+['Bob Marley & The Wailers','Exodus',1977,'Reggae','Roots Reggae','Island'],['Beach House','Depression Cherry',2015,'Rock','Dream Pop','Sub Pop'],
+['A Tribe Called Quest','The Low End Theory',1991,'Hip Hop','Jazzy Hip-Hop','Jive'],['Fela Kuti','Zombie',1977,'Funk / Soul','Afrobeat','Coconut'],
+['The Cure','Disintegration',1989,'Rock','Goth Rock','Fiction'],['Caribou','Swim',2010,'Electronic','House','City Slang'],
+];
+const isVinyl=r=>(r.basic_information.formats||[]).some(f=>f.name==='Vinyl');
+function norm(r){const b=r.basic_information;return{id:r.id,title:b.title,artist:(b.artists||[]).map(a=>a.name.replace(/\s\(\d+\)$/,'')).join(', ')||'Unknown',year:b.year||0,cover:b.cover_image||b.thumb||'',thumb:b.thumb||b.cover_image||'',genres:b.genres||[],styles:b.styles||[],label:((b.labels||[])[0]||{}).name||'',added:r.date_added||''}}
+async function loadRecords(){
+  try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c&&c.data&&c.data.length)return{recs:c.data.filter(isVinyl).map(norm),source:'your cached collection'}}catch(e){}
+  try{const res=await fetch('https://api.discogs.com/users/brunovidasi/collection/folders/0/releases?per_page=100');if(res.ok){const d=await res.json();const v=(d.releases||[]).filter(isVinyl);if(v.length)return{recs:v.map(norm),source:'Discogs (first 100 records)'}}}catch(e){}
+  return{recs:SAMPLE.map((s,i)=>({id:-i-1,artist:s[0],title:s[1],year:s[2],genres:[s[3]],styles:[s[4]],label:s[5],cover:'',thumb:'',added:new Date(2018+(i*7)%8,(i*5)%12,1+i%27).toISOString()})),source:'sample data (Discogs unreachable)'}
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+const fallbackBg=r=>{const h=hash(r.artist+r.title)%360;return `linear-gradient(135deg,hsl(${h} 45% 38%),hsl(${(h+40)%360} 50% 18%))`};
+const coverBg=(r,thumb)=>{const u=thumb?r.thumb:r.cover;return u?`url("${u.replace(/"/g,'%22')}"),${fallbackBg(r)}`:fallbackBg(r)};
+const coverText=r=>r.cover?'':`<span class="ctext"><b>${esc(r.title)}</b>${esc(r.artist)}</span>`;
+/* ---- end shared ---- */
+
+const $=id=>document.getElementById(id);
+let recs=[],filter='',rolling=false,spun=[];
+const tally=(items,n)=>{const m=new Map();items.forEach(x=>x&&m.set(x,(m.get(x)||0)+1));return[...m].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(b[0])).slice(0,n)};
+
+/* ---------- roulette ---------- */
+function show(r){$('face').style.backgroundImage=coverBg(r);$('face').innerHTML=coverText(r)}
+function roll(){
+  if(rolling)return;
+  const pool=recs.filter(r=>!filter||r.genres.includes(filter)||r.styles.includes(filter));if(!pool.length)return;
+  rolling=true;$('go').disabled=true;
+  const slot=$('slot');slot.classList.remove('landed');slot.classList.add('spinning');
+  $('rTitle').textContent='…';$('rArtist').textContent='';$('rMeta').textContent='';
+  const pick=()=>pool[Math.floor(Math.random()*pool.length)],final=pick();
+  let i=0,delay=45;const steps=22;
+  (function step(){
+    if(i<steps){show(pick());i++;delay*=1.09;setTimeout(step,delay);return}
+    show(final);slot.classList.remove('spinning');slot.classList.add('landed');
+    $('rTitle').textContent=final.title;$('rArtist').textContent=final.artist;
+    $('rMeta').textContent=[final.year||'',final.label,[...final.genres,...final.styles].slice(0,3).join(' · ')].filter(Boolean).join(' · ');
+    spun=[final,...spun].slice(0,8);
+    $('hist').innerHTML=spun.length>1?'<span>Earlier:</span>'+spun.slice(1).map((r,k)=>`<i title="${esc(r.artist+' — '+r.title)}" data-k="${k}"></i>`).join(''):'';
+    $('hist').querySelectorAll('i').forEach(el=>el.style.backgroundImage=coverBg(spun[+el.dataset.k+1],true));
+    rolling=false;$('go').disabled=false;$('go').textContent='🎲 Spin again';
+  })();
+}
+$('go').addEventListener('click',roll);
+
+function renderChips(){
+  const gs=tally(recs.flatMap(r=>r.genres),7).map(g=>g[0]);
+  $('chips').innerHTML=['Anything',...gs].map(g=>`<button data-g="${esc(g==='Anything'?'':g)}" class="${(g==='Anything'?'':g)===filter?'on':''}">${esc(g)}</button>`).join('');
+}
+$('chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;filter=b.dataset.g;renderChips()});
+
+/* ---------- stats ---------- */
+function bars(el,items,unit){
+  const max=Math.max(...items.map(i=>i[1]),1);
+  el.innerHTML=items.map(([l,v])=>`<div class="bar" data-tip="${esc(l)}: ${v} ${unit}"><span class="bl">${esc(l)}</span><span class="bt"><i style="width:${v/max*100}%"></i></span><span class="bv">${v}</span></div>`).join('');
+}
+function render(){
+  const years=recs.map(r=>r.year).filter(Boolean),dec=tally(years.map(y=>Math.floor(y/10)*10),20).sort((a,b)=>a[0]-b[0]).map(([d,n])=>[`${d}s`,n]);
+  const topDec=[...dec].sort((a,b)=>b[1]-a[1])[0],topGenre=tally(recs.flatMap(r=>r.genres),1)[0],topLabel=tally(recs.map(r=>r.label),1)[0];
+  const stats=[
+    [recs.length,'records'],[new Set(recs.map(r=>r.artist)).size,'artists'],
+    [years.length?`${Math.min(...years)}–${Math.max(...years)}`:'—','oldest to newest'],
+    [topDec?topDec[0]:'—',`favourite decade (${topDec?topDec[1]:0})`],
+    [topGenre?topGenre[0]:'—',`top genre (${topGenre?topGenre[1]:0})`],
+    [topLabel?topLabel[0]:'—',`top label (${topLabel?topLabel[1]:0})`],
+  ];
+  $('tiles').innerHTML=stats.map(([n,l])=>`<div class="stat"><div class="n" title="${esc(n)}">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join('');
+
+  bars($('decades'),dec,'records');
+  bars($('genres'),tally(recs.flatMap(r=>r.genres),6),'records');
+  bars($('labels'),tally(recs.map(r=>r.label),6),'records');
+
+  const byYear=new Map();recs.forEach(r=>{if(r.added){const y=new Date(r.added).getFullYear();byYear.set(y,(byYear.get(y)||0)+1)}});
+  const ys=[...byYear.keys()].sort(),first=ys[0],last=ys[ys.length-1],all=[];
+  for(let y=first;y<=last;y++)all.push([y,byYear.get(y)||0]);
+  const max=Math.max(...all.map(a=>a[1]),1);
+  $('added').innerHTML=all.map(([y,n])=>`<div class="c" data-tip="${y}: ${n} added"><i style="height:${n/max*100}%"></i></div>`).join('');
+  $('addedX').innerHTML=all.map(([y])=>`<span>${all.length>8?String(y).slice(2):y}</span>`).join('');
+
+  const recent=recs.filter(r=>r.added).sort((a,b)=>new Date(b.added)-new Date(a.added)).slice(0,10);
+  $('recent').innerHTML=recent.map((r,i)=>`<i data-tip="${esc(r.title)} — ${esc(r.artist)}" data-i="${i}"></i>`).join('');
+  $('recent').querySelectorAll('i').forEach(el=>el.style.backgroundImage=coverBg(recent[+el.dataset.i],true));
+}
+
+/* tooltip */
+const tip=$('tip');
+document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(!t){tip.style.opacity=0;return}tip.textContent=t.dataset.tip;tip.style.opacity=1});
+document.addEventListener('mousemove',e=>{tip.style.left=Math.min(e.clientX+14,innerWidth-200)+'px';tip.style.top=(e.clientY+16)+'px'});
+
+loadRecords().then(r=>{
+  recs=r.recs;$('src').textContent=`${recs.length} records · ${r.source}`;
+  render();renderChips();show(recs[Math.floor(Math.random()*recs.length)]);
+});
+</script>
+</body>
+</html>

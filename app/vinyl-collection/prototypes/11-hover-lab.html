@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 11 — Hover lab</title>
+<link rel="stylesheet" href="lib.css">
+<style>
+body{overflow-x:hidden}
+#stage{max-width:1240px;margin:0 auto;padding:30px 30px 140px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;max-width:1240px;margin:0 auto;padding:4px 20px 0}
+.tabs button{font:500 13px 'Space Grotesk',sans-serif;border:1px solid rgba(242,234,216,.28);background:transparent;color:var(--paper);border-radius:99px;padding:8px 15px;cursor:pointer}
+.tabs button.on{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.note{max-width:70ch;opacity:.6;font-size:14px;margin:0 0 30px}
+.note b{color:var(--gold);font-weight:500}
+
+.wrap{display:flex;flex-wrap:wrap;gap:46px 120px;align-items:flex-end}
+.cell .cap{margin-top:12px;font-size:12px;opacity:.75}
+
+/* C: neighbours make room */
+.rowC{display:flex;gap:18px;margin-bottom:46px}
+.rowC .tile{flex:none;transition:margin .5s cubic-bezier(.2,.8,.25,1)}
+.rowC .tile.hot{margin-right:calc(var(--w) * .44)}
+
+/* D: tilt + glare */
+.tiltT .tile .sleeve{transition:transform .15s ease-out}
+.tiltT .tile.hot .sleeve{transform:perspective(650px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(1.03)}
+.glare{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .2s;mix-blend-mode:soft-light;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.85),transparent 55%)}
+.tile.hot .glare{opacity:1}
+
+/* E: drawer */
+#drawer{position:fixed;right:0;top:0;bottom:0;width:360px;max-width:92vw;z-index:900;background:#1c1813;border-left:1px solid rgba(242,234,216,.15);padding:64px 26px 26px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.8,.25,1);box-shadow:-20px 0 50px rgba(0,0,0,.5)}
+#drawer.open{transform:none}
+#drawer .x{position:absolute;right:16px;top:60px;background:none;border:0;color:var(--paper);font-size:20px;cursor:pointer;opacity:.7}
+.dbig{position:relative;width:300px;height:200px;margin:26px 0 30px}
+.dsleeve{position:absolute;left:0;top:0;width:200px;height:200px;z-index:2;border-radius:2px;background:#333 center/cover;box-shadow:0 12px 30px rgba(0,0,0,.6)}
+#bigDisc{position:absolute;left:0;top:5px;width:190px;height:190px;transform:translateX(104px)}
+#drawer h2{font:600 26px/1.1 'Fraunces',serif;margin:0 0 6px}
+#drawer p{margin:0 0 10px;opacity:.7}
+
+/* F: tap to reveal */
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);z-index:1200;background:var(--gold);color:var(--ink);padding:10px 18px;border-radius:99px;font:600 13px 'Space Grotesk',sans-serif;opacity:0;transition:.3s;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Hover lab</h1><small id="src">Loading…</small></div>
+</header>
+<div class="tabs" id="tabs"></div>
+<main id="stage"><div class="msg">Loading your collection…</div></main>
+<aside id="drawer"></aside>
+<div id="toast"></div>
+
+<script src="lib.js"></script>
+<script>
+L.nav('11-hover-lab.html');
+const stage = document.getElementById('stage'), drawer = document.getElementById('drawer'), toast = document.getElementById('toast');
+let pool = [], vin = [], cds = [], demo = [];
+const $$ = (h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstChild; };
+const say = m => { toast.textContent = m; toast.classList.add('on'); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove('on'), 2600); };
+const size = (t, w) => { t.style.width = t.style.height = w + 'px'; t.style.setProperty('--w', w + 'px'); return t; };
+
+/* ---- A: every kind of disc ---- */
+function A() {
+  const specs = [
+    ['12″ black LP', [{ t: 'v' }], 210], ['Red translucent', [{ t: 'v', c: '#c8322b', tr: 1 }], 210], ['Clear vinyl', [{ t: 'v', c: '#dfe8ec', tr: 1 }], 210],
+    ['Picture disc', [{ t: 'v', pic: 1 }], 210], ['Double LP · two colours', [{ t: 'v', c: '#f06aa8' }, { t: 'v', c: '#3cc6d4' }], 210], ['7″ single', [{ t: 'v', sz: 7 }], 122],
+    ['CD · printed art', [{ t: 'cd' }], 100], ['CD · silver', [{ t: 'cd', plain: 1 }], 100], ['Double CD', [{ t: 'cd' }, { t: 'cd' }], 100], ['DVD', [{ t: 'dvd' }], 120],
+  ];
+  stage.replaceChildren($$('<p class="note">The disc that slides out <b>matches the pressing</b>: colour, translucency, picture discs, one disc or several, and CDs / DVDs with a rainbow sheen. Sleeve sizes follow the real objects (a CD is much smaller than an LP). All of these come from the Discogs format data you already load.</p>'));
+  const wrap = $$('<div class="wrap"></div>');
+  specs.forEach(([label, discs, w], i) => {
+    const base = pool[(i * 7 + 3) % pool.length], cell = $$('<div class="cell"></div>');
+    cell.append(size(L.tile({ ...base, discs, fmt: label }), w), $$(`<div class="cap">${label}</div>`));
+    wrap.append(cell);
+  });
+  stage.append(wrap); L.wire(wrap);
+}
+
+/* ---- B: text curved around the rim ---- */
+function B() {
+  stage.replaceChildren($$('<p class="note">Instead of a caption, <b>artist · title · year wraps around the rim</b> of the disc and spins with it. The centre label stays the cover art.</p>'));
+  const wrap = $$('<div class="wrap"></div>');
+  demo.slice(0, 8).forEach(r => wrap.append(size(L.tile(r), 190)));
+  stage.append(wrap); L.wire(wrap, { ring: true, tip: false });
+}
+
+/* ---- C: neighbours make room ---- */
+function C() {
+  stage.replaceChildren($$('<p class="note">The hovered sleeve <b>shoves its neighbours aside</b> so the disc never covers the next record. Works best in a single row or a carousel.</p>'));
+  for (let i = 0; i < 2; i++) {
+    const row = $$('<div class="rowC"></div>');
+    demo.slice(i * 5, i * 5 + 5).forEach(r => row.append(size(L.tile(r), 150)));
+    stage.append(row); L.wire(row);
+  }
+}
+
+/* ---- D: tilt + glare ---- */
+function D() {
+  stage.replaceChildren($$('<p class="note">The sleeve <b>tilts toward the cursor</b> with a moving glare, like a glossy shrink-wrap, while the disc slides out from behind it.</p>'));
+  const wrap = $$('<div class="wrap tiltT"></div>');
+  demo.slice(0, 6).forEach(r => { const t = size(L.tile(r), 210); t.querySelector('.sleeve').append($$('<i class="glare"></i>')); wrap.append(t); });
+  wrap.addEventListener('pointermove', e => {
+    const t = e.target.closest('.tile'); if (!t) return;
+    const rc = t.getBoundingClientRect(), x = (e.clientX - rc.left) / rc.width, y = (e.clientY - rc.top) / rc.height;
+    t.style.setProperty('--rx', ((y - .5) * -14).toFixed(1) + 'deg'); t.style.setProperty('--ry', ((x - .5) * 14).toFixed(1) + 'deg');
+    t.style.setProperty('--gx', (x * 100).toFixed(0) + '%'); t.style.setProperty('--gy', (y * 100).toFixed(0) + '%');
+  });
+  stage.append(wrap); L.wire(wrap);
+}
+
+/* ---- E: disc flies into the drawer ---- */
+function E() {
+  stage.replaceChildren($$('<p class="note"><b>Click a record.</b> Its disc flies across the screen into the detail drawer and lands in the same spot, so the hover and the drawer feel like one gesture.</p>'));
+  const wrap = $$('<div class="wrap"></div>');
+  demo.slice(0, 8).forEach(r => wrap.append(size(L.tile(r), 170)));
+  wrap.addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) openDrawer(t); });
+  stage.append(wrap); L.wire(wrap);
+}
+function openDrawer(t) {
+  const r = t._r, d = t.querySelector('.d'); if (!d) return;
+  const from = d.getBoundingClientRect();
+  drawer.innerHTML = `<button class="x" aria-label="Close">✕</button><div class="dbig"><div class="flat spin" id="bigDisc"></div><div class="dsleeve" style="background-image:url('${L.esc(r.cover || r.thumb)}')"></div></div>
+    <h2>${L.esc(r.title)}</h2><p>${L.esc(r.artist)}${r.year ? ' · ' + r.year : ''}</p><p>${L.esc(r.fmt)}</p>`;
+  const big = drawer.querySelector('#bigDisc'); big.append(L.discEl(r, 0)); big.style.visibility = 'hidden';
+  drawer.classList.add('open');
+  setTimeout(() => {
+    const to = big.getBoundingClientRect(), fly = document.createElement('div');
+    fly.className = 'fly flat spin'; Object.assign(fly.style, { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.width + 'px', transformOrigin: '0 0' });
+    fly.append(L.discEl(r, 0)); document.body.append(fly);
+    const a = fly.animate([{ transform: 'none' }, { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${to.width / from.width})` }], { duration: 700, easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'forwards' });
+    a.onfinish = () => { fly.remove(); big.style.visibility = 'visible'; };
+  }, 330);
+}
+drawer.addEventListener('click', e => { if (e.target.closest('.x')) drawer.classList.remove('open'); });
+addEventListener('keydown', e => { if (e.key === 'Escape') drawer.classList.remove('open'); });
+
+/* ---- F: touch — tap to reveal, tap again to open ---- */
+function F() {
+  stage.replaceChildren($$('<p class="note">Phones have no hover. <b>First tap reveals the disc, second tap opens the record.</b> Click a tile once, then again. (Click elsewhere to put the disc back.)</p>'));
+  const wrap = $$('<div class="wrap"></div>');
+  demo.slice(0, 8).forEach(r => wrap.append(size(L.tile(r), 170)));
+  const closeAll = () => wrap.querySelectorAll('.tile.hot').forEach(L.conceal);
+  wrap.addEventListener('click', e => {
+    const t = e.target.closest('.tile'); e.stopPropagation();
+    if (!t) return closeAll();
+    if (t.classList.contains('hot')) { say(`Opening “${t._r.title}”…`); return; }
+    closeAll(); L.reveal(t);
+  });
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) closeAll(); });
+  stage.append(wrap);
+}
+
+const VARIANTS = { A: ['Disc types', A], B: ['Text on the rim', B], C: ['Neighbours make room', C], D: ['Tilt + glare', D], E: ['Disc → drawer', E], F: ['Tap to reveal (touch)', F] };
+let cur = 'A';
+function show(k) {
+  cur = k; drawer.classList.remove('open'); L.tipEl.style.opacity = 0;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.k === k));
+  VARIANTS[k][1]();
+}
+
+L.load((p, n) => document.getElementById('src').textContent = `Loading Discogs page ${p} of ${n}…`).then(({ recs, source }) => {
+  L.init(recs);
+  document.getElementById('src').textContent = `${recs.length} records · ${source}`;
+  pool = recs.filter(r => r.cover); if (!pool.length) pool = recs;
+  vin = pool.filter(r => r.kind === 'vinyl'); cds = pool.filter(r => r.kind !== 'vinyl');
+  demo = [...vin.slice(0, 5), ...cds.slice(0, 11)].slice(0, 10); if (demo.length < 10) demo = pool.slice(0, 10);
+  document.getElementById('tabs').innerHTML = Object.entries(VARIANTS).map(([k, [l]]) => `<button data-k="${k}">${k} · ${l}</button>`).join('');
+  document.getElementById('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(b.dataset.k); });
+  show(cur);
+});
+</script>
+</body>
+</html>
