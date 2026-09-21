@@ -118,7 +118,9 @@ a { color: inherit; text-underline-offset: 3px; }
 
 .page-head h1 { font-size: 1.8rem; }
 .page-head p { margin: 0.35rem 0 0; opacity: 0.65; font-size: 0.9rem; max-width: 60ch; }
-.page-head .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.page-head .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+/* Sync and Delete on the edit page are forms of their own, sitting in the row. */
+.page-head .actions form { margin: 0; display: inline-flex; }
 
 /* ---------- Cards ---------- */
 
@@ -249,7 +251,54 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .table .thumb img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; display: block; background: var(--paper-dim); }
 .table .title b { display: block; }
 .table .title small { opacity: 0.6; }
-.table .right { text-align: right; }
+.table .right { text-align: right; white-space: nowrap; }
+.table .title .pill { margin-left: 0.3rem; }
+.table .none { opacity: 0.35; }
+.table .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
+/* A value the record doesn't have of its own: Discogs' is showing through. */
+.table .derived { opacity: 0.6; }
+/* The year is the short form; the full release date is in its tooltip, which
+   is drawn here rather than left to title="" so it appears at once. */
+.table .hover-date { position: relative; cursor: help; text-decoration: underline dotted rgba(23, 20, 15, 0.4); text-underline-offset: 3px; }
+.table .hover-date::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+  z-index: 20;
+}
+.table .hover-date:hover::after, .table .hover-date:focus-visible::after { opacity: 1; }
+
+/* Sortable headings: links on the server-sorted list, clicked by table.js on
+   the short ones. */
+.table th.sortable { padding: 0; }
+.table th.sortable > a, .table th.sortable > .sort-label { display: flex; align-items: center; gap: 0.35em; padding: 0.5rem 0.6rem; color: inherit; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.table th.sortable:hover, .table th.sorted { opacity: 1; }
+/* The arrow is a small triangle, as on the shelf: not there until the heading is
+   pointed at (a faint preview of the first click), solid on the sorted column. */
+.table .sort-arrow {
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+  border-top: 0;
+  border-bottom: 5px solid currentColor;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.table th.sortable:hover .sort-arrow, .table th.sortable a:focus-visible .sort-arrow, .table th.sortable .sort-label:focus-visible .sort-arrow { opacity: 0.5; }
+.table th.sorted .sort-arrow { opacity: 1; color: var(--teal); }
+.table th.sorted.desc .sort-arrow { transform: rotate(180deg); }
 
 /* ---------- Chips, tags, badges ---------- */
 
@@ -287,6 +336,85 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .filters { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1rem; }
 .filters .field { margin: 0; min-width: 150px; }
 .filters .field.grow { flex: 1 1 260px; }
+
+/* ---------- Filter bar (the item lists) ----------
+   A grid rather than a wrapping row: every control has its own cell whether or
+   not it has anything to filter, so nothing appears, disappears or falls onto
+   a second line when a choice is made. */
+
+.filterbar {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) repeat(4, minmax(0, 1fr));
+  gap: 0.75rem 0.8rem;
+  align-items: end;
+  padding: 0.85rem 1rem 1rem;
+  margin-bottom: 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.filterbar .field { margin: 0; min-width: 0; }
+
+.filterbar input[type="search"], .filterbar select {
+  height: 2.55rem;
+  padding-block: 0;
+  text-overflow: ellipsis;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.filterbar input[type="search"] {
+  padding-left: 2.4rem;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2317140F' stroke-opacity='0.5' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M20 20l-4.7-4.7'/%3E%3C/svg%3E") no-repeat 0.85rem center;
+}
+.filterbar input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 15px;
+  cursor: pointer;
+  opacity: 0.5;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2317140F' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.filterbar input[type="search"]::-webkit-search-cancel-button:hover { opacity: 1; }
+
+.filterbar input:hover, .filterbar select:hover { border-color: rgba(23, 20, 15, 0.5); }
+
+/* A control that is filtering says so. */
+.filterbar .is-active input, .filterbar .is-active select {
+  border-color: var(--gold);
+  background-color: #fffaf0;
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+.filterbar .is-active label { opacity: 0.9; color: #8a6716; }
+
+/* What is filtering, as chips that remove themselves. */
+.filter-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: -0.1rem 0 1rem; }
+
+.filter-chips .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  padding: 0.25rem 0.35rem 0.25rem 0.75rem;
+  border: 1px solid rgba(201, 154, 46, 0.55);
+  border-radius: 999px;
+  background: rgba(201, 154, 46, 0.14);
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.filter-chips .chip:hover { background: rgba(201, 154, 46, 0.26); }
+.filter-chips .chip .k { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.6; }
+.filter-chips .chip .x { display: grid; place-items: center; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: rgba(23, 20, 15, 0.09); font-size: 0.95rem; line-height: 1; }
+.filter-chips .chip:hover .x { background: var(--rust); color: #fff; }
+.filter-chips .clear-all { margin-left: 0.3rem; font-size: 0.8rem; opacity: 0.6; }
+.filter-chips .clear-all:hover { opacity: 1; }
+
+@media (max-width: 1000px) {
+  .filterbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filterbar .field.search { grid-column: 1 / -1; }
+}
 
 /* ---------- Flash ---------- */
 
@@ -344,6 +472,13 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .picker img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 7px; display: block; background: var(--paper-dim); }
 .picker label:has(input:checked) { border-color: var(--gold); background: rgba(201, 154, 46, 0.18); }
 .picker .none { display: grid; place-items: center; aspect-ratio: 1; border: 1px dashed var(--line-strong); border-radius: 7px; font-size: 0.75rem; opacity: 0.6; }
+.card h3.sub { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; margin: 0 0 0.6rem; }
+.discs { margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
+.disc-count { max-width: 260px; }
+.disc-art { margin-top: 1.1rem; }
+.disc-art[hidden] { display: none; }
+.disc-art h4 { margin: 0 0 0.5rem; font-family: 'Fraunces', Georgia, serif; font-size: 0.95rem; }
+.disc-art h4 span { font: 400 0.78rem 'Space Grotesk', system-ui, sans-serif; opacity: 0.55; }
 .picker small { display: block; text-align: center; font-size: 0.68rem; opacity: 0.55; margin-top: 0.25rem; }
 
 /* ---------- Field toggles ---------- */
@@ -352,6 +487,20 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .field-grid h3 { font-size: 0.95rem; margin-bottom: 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--line); }
 .field-grid .check { margin-bottom: 0.35rem; }
 .field-grid .group-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; margin: 0.8rem 0 0.4rem; }
+
+/* The drawer-fields grid: one row per fact, one column per format, and an All
+   column in front that ticks a row across every format at once. */
+
+.matrix-wrap { overflow-x: auto; }
+.matrix { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 560px; }
+.matrix th, .matrix td { padding: 0.4rem 0.6rem; text-align: center; border-bottom: 1px solid var(--line); }
+.matrix thead th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; border-bottom-color: var(--line-strong); white-space: nowrap; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; width: 34%; }
+.matrix .group-row th { text-align: left; padding-top: 1.1rem; font-family: 'Fraunces', Georgia, serif; font-size: 0.95rem; font-weight: 600; text-transform: none; letter-spacing: 0; opacity: 1; border-bottom-color: var(--line-strong); }
+.matrix tbody tr:not(.group-row):hover td { background: rgba(201, 154, 46, 0.07); }
+.matrix .all-col { background: rgba(23, 20, 15, 0.04); border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+.matrix input[type="checkbox"] { width: 1.05rem; height: 1.05rem; accent-color: var(--teal); cursor: pointer; vertical-align: middle; margin: 0; }
+.matrix .na { opacity: 0.25; }
 
 /* ---------- Sign-in ---------- */
 
@@ -370,7 +519,29 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .empty { text-align: center; padding: 2.5rem 1rem; opacity: 0.6; font-size: 0.9rem; }
 
 @media (max-width: 720px) {
+  .table-wrap { overflow-x: auto; }
   .admin-bar { padding: 0.8rem 1rem; }
   .wrap { padding: 1.2rem 1rem 3rem; }
   .table .hide-sm { display: none; }
 }
+
+/* ---------- The disc colour picker on the edit page ---------- */
+
+.colour-pick { margin-top: 0.5rem; }
+.colour-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.colour-row input[type="color"] { width: 2.4rem; height: 2rem; padding: 0.1rem; border: 1px solid var(--line-strong); border-radius: 4px; background: none; cursor: pointer; }
+.colour-state { font-size: 0.8rem; opacity: 0.7; margin-top: 0.4rem; }
+.colour-pick.manual .colour-state { opacity: 1; font-weight: 600; }
+.colour-pick .sub-label { margin-top: 0.7rem; }
+.colour-pick .swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
+.swatch { width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; border: 1px solid var(--line-strong); cursor: pointer; }
+.swatch:hover, .swatch:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+/* The colour of a vinyl in the items list; dashed when no colour was recognised. */
+.disc-dot { display: inline-block; width: 0.85rem; height: 0.85rem; margin-left: 0.35rem; border-radius: 50%; border: 1px solid var(--line-strong); vertical-align: -0.1rem; }
+.disc-dot.unknown { background: #131313; border: 1px dashed var(--gold); }
+
+/* The read-only Discogs facts: the value wraps inside the card (a long format
+   or label line would otherwise run off it), the label keeps to one line. */
+.table.facts .label { opacity: 0.6; white-space: nowrap; vertical-align: top; }
+.table.facts .right { white-space: normal; overflow-wrap: anywhere; vertical-align: top; }

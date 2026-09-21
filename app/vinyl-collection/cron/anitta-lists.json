@@ -1,0 +1,486 @@
+{
+ "artist": "anitta",
+ "eras": [
+  {
+   "slug": "anitta",
+   "replaces": null,
+   "name": "Anitta",
+   "years": "2012–2014",
+   "tagline": "Anitta · Show das Poderosas"
+  },
+  {
+   "slug": "ritmo-perfeito",
+   "replaces": null,
+   "name": "Ritmo Perfeito",
+   "years": "2014–2015",
+   "tagline": "Ritmo Perfeito · Meu Lugar"
+  },
+  {
+   "slug": "bang",
+   "replaces": null,
+   "name": "Bang",
+   "years": "2015–2016",
+   "tagline": "Bang · Deixa Ele Sofrer"
+  },
+  {
+   "slug": "collabs-compilations",
+   "replaces": null,
+   "name": "Collabs & Compilations",
+   "years": "2016–2023",
+   "tagline": "Ginza · Grandes Sucessos · Back For More"
+  },
+  {
+   "slug": "kisses",
+   "replaces": null,
+   "name": "Kisses",
+   "years": "2019",
+   "tagline": "Medicina · Banana"
+  },
+  {
+   "slug": "versions-of-me",
+   "replaces": null,
+   "name": "Versions of Me",
+   "years": "2021–2022",
+   "tagline": "Envolver · Boys Don't Cry"
+  },
+  {
+   "slug": "funk-generation",
+   "replaces": null,
+   "name": "Funk Generation",
+   "years": "2024",
+   "tagline": "Funk Rave · Mil Veces"
+  }
+ ],
+ "rules": [
+  {
+   "era": "anitta",
+   "master": 873669,
+   "rank": 0
+  },
+  {
+   "era": "anitta",
+   "master": 873601,
+   "rank": 2
+  },
+  {
+   "era": "anitta",
+   "master": 789176,
+   "rank": 3
+  },
+  {
+   "era": "anitta",
+   "master": 873595,
+   "rank": 4
+  },
+  {
+   "era": "anitta",
+   "master": 873578,
+   "rank": 5
+  },
+  {
+   "era": "anitta",
+   "master": 873555,
+   "rank": 6
+  },
+  {
+   "era": "anitta",
+   "master": 873580,
+   "rank": 7
+  },
+  {
+   "era": "ritmo-perfeito",
+   "master": 873652,
+   "rank": 0
+  },
+  {
+   "era": "ritmo-perfeito",
+   "master": 2486668,
+   "rank": 1
+  },
+  {
+   "era": "ritmo-perfeito",
+   "master": 873554,
+   "rank": 2
+  },
+  {
+   "era": "ritmo-perfeito",
+   "master": 909864,
+   "rank": 3
+  },
+  {
+   "era": "ritmo-perfeito",
+   "master": 909868,
+   "rank": 4
+  },
+  {
+   "era": "ritmo-perfeito",
+   "master": 873613,
+   "rank": 5
+  },
+  {
+   "era": "bang",
+   "master": 897627,
+   "rank": 0
+  },
+  {
+   "era": "bang",
+   "master": 873582,
+   "rank": 1
+  },
+  {
+   "era": "bang",
+   "master": 914948,
+   "rank": 2
+  },
+  {
+   "era": "collabs-compilations",
+   "master": 907887,
+   "rank": 0
+  },
+  {
+   "era": "collabs-compilations",
+   "master": 3923838,
+   "rank": 1
+  },
+  {
+   "era": "collabs-compilations",
+   "master": 3240235,
+   "rank": 4
+  },
+  {
+   "era": "funk-generation",
+   "master": 3487099,
+   "rank": 0
+  }
+ ],
+ "items": [
+  {
+   "instance_id": 2084188030,
+   "label": "CD Promocional K2L · - · BR",
+   "era": "anitta",
+   "rank": 0,
+   "fields": {
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo",
+    "catalog_number": "K2L"
+   }
+  },
+  {
+   "instance_id": 2098739202,
+   "label": "CD Promocional K2L · - · BR",
+   "era": "anitta",
+   "rank": 1,
+   "fields": {
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo",
+    "catalog_number": "K2L"
+   },
+   "notes": "Alt Cover"
+  },
+  {
+   "instance_id": 1953108810,
+   "label": "Anitta · 825646432196 · BR",
+   "era": "anitta",
+   "rank": 2,
+   "fields": {
+    "barcode": "825646432196",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2186431331,
+   "label": "Meiga e Abusada · 825646473526 · BR",
+   "era": "anitta",
+   "rank": 3,
+   "fields": {
+    "barcode": "825646473526",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo",
+    "release_date": "2012-07-06"
+   }
+  },
+  {
+   "instance_id": 2186431349,
+   "label": "Show Das Poderosas · 825646431472 · BR",
+   "era": "anitta",
+   "rank": 4,
+   "fields": {
+    "barcode": "825646431472",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo",
+    "catalog_number": "AA0002000"
+   }
+  },
+  {
+   "instance_id": 2171692350,
+   "label": "Não Para · 825646431489 · BR",
+   "era": "anitta",
+   "rank": 5,
+   "fields": {
+    "barcode": "825646431489",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171695222,
+   "label": "Zen · 825646368532 · BR",
+   "era": "anitta",
+   "rank": 6,
+   "fields": {
+    "barcode": "825646368532",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171691675,
+   "label": "Na Batida · 825646264490 · BR",
+   "era": "anitta",
+   "rank": 7,
+   "fields": {
+    "barcode": "825646264490",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 1953109386,
+   "label": "Ritmo Perfeito · 825646279531 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 0,
+   "fields": {
+    "barcode": "825646279531",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album",
+    "catalog_number": "AA0030000"
+   }
+  },
+  {
+   "instance_id": 2171694551,
+   "label": "Anitta Remixes · 825646458820 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 1,
+   "fields": {
+    "barcode": "825646458820",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171693749,
+   "label": "Bla Bla Bla - Ao Vivo · 825646310258 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 2,
+   "fields": {
+    "barcode": "825646310258",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171693484,
+   "label": "Ritmo Perfeito · 825646187249 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 3,
+   "fields": {
+    "barcode": "825646187249",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171694019,
+   "label": "No Meu Talento · 825646137152 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 4,
+   "fields": {
+    "barcode": "825646137152",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 1953111150,
+   "label": "Meu Lugar · 825646312542 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 5,
+   "fields": {
+    "barcode": "825646312542",
+    "region": "BR",
+    "media": "DVD",
+    "item_type": "dvd"
+   }
+  },
+  {
+   "instance_id": 2171731917,
+   "label": "Meu Lugar · 825646264193 · BR",
+   "era": "ritmo-perfeito",
+   "rank": 6,
+   "fields": {
+    "barcode": "825646264193",
+    "region": "BR",
+    "media": "CD + DVD",
+    "item_type": "live album"
+   }
+  },
+  {
+   "instance_id": 1953109005,
+   "label": "Bang · 825646038541 · BR",
+   "era": "bang",
+   "rank": 0,
+   "fields": {
+    "barcode": "825646038541",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2171692911,
+   "label": "Deixa Ele Sofrer · 825646087150 · BR",
+   "era": "bang",
+   "rank": 1,
+   "fields": {
+    "barcode": "825646087150",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171695524,
+   "label": "Bang · 825646012930 · BR",
+   "era": "bang",
+   "rank": 2,
+   "fields": {
+    "barcode": "825646012930",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2171695700,
+   "label": "Essa Mina É Louca · 825646490141 · BR",
+   "era": "bang",
+   "rank": 3,
+   "fields": {
+    "barcode": "825646490141",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2125739692,
+   "label": "J Balvin Ginza · - · BR",
+   "era": "collabs-compilations",
+   "rank": 0,
+   "fields": {
+    "region": "BR",
+    "media": "CD",
+    "item_type": "promo",
+    "catalog_number": "AA0000500"
+   }
+  },
+  {
+   "instance_id": 2022347870,
+   "label": "Grandes Sucessos · 7897724202086 · BR",
+   "era": "collabs-compilations",
+   "rank": 1,
+   "fields": {
+    "barcode": "7897724202086",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "compilation"
+   }
+  },
+  {
+   "instance_id": 2186431409,
+   "label": "Grandes Sucessos · 7898473922034 · BR",
+   "era": "collabs-compilations",
+   "rank": 2,
+   "fields": {
+    "barcode": "7898473922034",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "compilation"
+   },
+   "notes": "Alt Cover"
+  },
+  {
+   "instance_id": 2110799239,
+   "label": "DJ Snake Fuego · - · FR",
+   "era": "collabs-compilations",
+   "rank": 3,
+   "fields": {
+    "region": "FR",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2160176984,
+   "label": "Back For More · 196922589737 · US",
+   "era": "collabs-compilations",
+   "rank": 4,
+   "fields": {
+    "barcode": "196922589737",
+    "region": "US",
+    "media": "CD",
+    "item_type": "single"
+   }
+  },
+  {
+   "instance_id": 2186431460,
+   "label": "Back For More Remix · 196922589744 · US",
+   "era": "collabs-compilations",
+   "rank": 5,
+   "fields": {
+    "barcode": "196922589744",
+    "region": "US",
+    "media": "CD",
+    "item_type": "single"
+   }
+  },
+  {
+   "instance_id": 1953200601,
+   "label": "Funk Generation · 602465568783 · US",
+   "era": "funk-generation",
+   "rank": 0,
+   "fields": {
+    "barcode": "602465568783",
+    "region": "US",
+    "media": "CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2055177083,
+   "label": "Funk Generation · 602465744163 · US",
+   "era": "funk-generation",
+   "rank": 1,
+   "fields": {
+    "barcode": "602465744163",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "item_type": "album"
+   }
+  }
+ ]
+}

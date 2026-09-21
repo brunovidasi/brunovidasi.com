@@ -33,6 +33,7 @@ $catalog = field_catalog();
 
 $pageTitle = 'Drawer fields';
 $pageIntro = 'What the drawer shows when a record is clicked on the site.';
+$pageScript = 'js/admin-fields.js';
 
 require __DIR__ . '/../includes/admin_layout_top.php';
 ?>
@@ -41,27 +42,40 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   <?= csrf_field() ?>
 
   <div class="card">
-    <div class="field-grid">
-      <?php foreach (MEDIA_KINDS as $kind => $kindLabel): ?>
-        <div>
-          <h3><?= e($kindLabel) ?></h3>
-
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Fact</th>
+            <th class="all-col" title="Tick or untick this fact for every format that has it">All</th>
+            <?php foreach (MEDIA_KINDS as $kindLabel): ?>
+              <th><?= e($kindLabel) ?></th>
+            <?php endforeach; ?>
+          </tr>
+        </thead>
+        <tbody>
           <?php
           $groups = ['mine' => 'Yours', 'discogs' => 'From Discogs'];
           foreach ($groups as $group => $groupLabel):
-              $keys = array_filter(fields_for_kind($kind), fn ($key) => $catalog[$key]['group'] === $group);
-              if (!$keys) { continue; }
           ?>
-            <div class="group-label"><?= e($groupLabel) ?></div>
-            <?php foreach ($keys as $key): ?>
-              <label class="check">
-                <input type="checkbox" name="show[<?= e($kind) ?>][<?= e($key) ?>]" value="1"<?= $config[$kind][$key] ? ' checked' : '' ?>>
-                <?= e($catalog[$key]['label']) ?>
-              </label>
+            <tr class="group-row"><th colspan="<?= 2 + count(MEDIA_KINDS) ?>"><?= e($groupLabel) ?></th></tr>
+            <?php foreach ($catalog as $key => $def): ?>
+              <?php if ($def['group'] !== $group) { continue; } ?>
+              <tr>
+                <td><?= e($def['label']) ?></td>
+                <td class="all-col"><input type="checkbox" class="all-toggle" aria-label="<?= e($def['label']) ?> for every format"></td>
+                <?php foreach (MEDIA_KINDS as $kind => $kindLabel): ?>
+                  <?php if (in_array($key, fields_for_kind($kind), true)): ?>
+                    <td><input type="checkbox" name="show[<?= e($kind) ?>][<?= e($key) ?>]" value="1"<?= $config[$kind][$key] ? ' checked' : '' ?> aria-label="<?= e($def['label'] . ' on ' . $kindLabel) ?>"></td>
+                  <?php else: ?>
+                    <td class="na" title="Doesn't apply to <?= e($kindLabel) ?>">–</td>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </tr>
             <?php endforeach; ?>
           <?php endforeach; ?>
-        </div>
-      <?php endforeach; ?>
+        </tbody>
+      </table>
     </div>
 
     <div class="form-actions">

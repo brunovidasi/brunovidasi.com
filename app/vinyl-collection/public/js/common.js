@@ -171,7 +171,7 @@ function renderDrawerBody(item, error) {
     ${sections}`;
 }
 
-async function openDrawer(id, fromHash) {
+async function openDrawer(id, fromHash, source) {
   currentItemId = id;
 
   // The drawer is addressable: /lady-gaga#item-412 opens straight into that
@@ -190,6 +190,8 @@ async function openDrawer(id, fromHash) {
     : coverFallbackSVG();
 
   $('drawer').scrollTop = 0;
+  // the record stands up on the left of the page while the drawer opens on the right
+  if (typeof Spotlight !== 'undefined') Spotlight.open(id, source);
   $('overlay').classList.add('open');
   $('drawer').classList.add('open');
 
@@ -213,6 +215,7 @@ function closeDrawer(fromHash) {
   currentItemId = null;
   $('overlay').classList.remove('open');
   $('drawer').classList.remove('open');
+  if (typeof Spotlight !== 'undefined') Spotlight.close();
 
   if (!fromHash && location.hash.startsWith('#item-')) {
     history.pushState({}, '', location.pathname + location.search);
@@ -230,6 +233,7 @@ function wireDrawer() {
     const thumb = event.target.closest('[data-cover]');
     if (thumb) {
       $('drawerCover').innerHTML = `<img src="${esc(thumb.dataset.cover)}" alt="">`;
+      if (typeof Spotlight !== 'undefined') Spotlight.cover(thumb.dataset.cover);
       return;
     }
     if (event.target.closest('[data-retry]') && currentItemId !== null) {

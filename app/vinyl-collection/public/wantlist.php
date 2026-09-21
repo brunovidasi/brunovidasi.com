@@ -34,6 +34,7 @@ $count = (int) db()->query("
 <link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset_url('css/artist.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/spotlight.css')) ?>">
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
 
@@ -94,6 +95,7 @@ $count = (int) db()->query("
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
+<script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
 <script src="<?= e(asset_url('js/wantlist.js')) ?>"></script>
 
 </body>

@@ -1,0 +1,140 @@
+/* ---------- The spotlight ----------
+ *
+ * What js/spotlight.js needs: the layer the record stands in, on top of the
+ * dimmed page and under the drawer; the discs' further slide-out; the title
+ * block; and the drawer with its own cover and title left out, since the record
+ * on the left already says both.
+ *
+ * The layer, and everything in it, ignores the pointer: a click anywhere but on
+ * the drawer reaches the overlay underneath and closes it.
+ */
+
+.spot {
+  position: fixed;
+  inset: 0;
+  z-index: 1101; /* over the overlay (1100); the drawer follows it in the page and so stays on top */
+  overflow: hidden;
+  pointer-events: none;
+}
+.spot * { pointer-events: none !important; }
+
+/* ---------- The page behind ---------- */
+
+/* Not a flat dim: a pool of light left on the record, the page falling away
+   around it. js/spotlight.js says where the pool is (--spot-x, --spot-y). It
+   stays in the page while the spotlight is up so that it can fade out as well as in. */
+body.spot-on .overlay {
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 65% 75% at var(--spot-x, 30%) var(--spot-y, 65%), rgba(8,5,2,.3), rgba(8,5,2,.9));
+  /* a little out of focus, so the page's own type doesn't fight the title */
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  transition: opacity .6s ease;
+}
+body.spot-on .overlay.open { opacity: 1; pointer-events: auto; }
+
+/* ---------- The record ---------- */
+
+.spot-tile {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  cursor: default;
+}
+.spot-tile .sleeve { box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 26px 50px rgba(0,0,0,.7); }
+/* the hover's small step aside for the discs: the sleeve stands square to the text here */
+.spot-tile.hot .sleeve { transform: none; }
+
+/* Its own reach, further than the hover's third, and slower: the discs arrive
+   after the sleeve has lifted off. Both are on the disc so they can differ (--reach2). */
+.spot-tile .d {
+  --out2: calc((var(--reach2, 1.6) - (1 + var(--dd)) / 2) / var(--dd));
+  transition-duration: .95s;
+  box-shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+.spot-tile.spot-out .d { transform: translateX(calc(var(--out2) * 100%)); }
+
+/* a disc in the hand is a disc being played */
+.spot-tile .sp { animation: dspin 5s linear infinite; }
+
+/* and the floor under it, so it stands on something */
+.spot-floor {
+  position: absolute;
+  height: 34px;
+  background: radial-gradient(closest-side, rgba(0,0,0,.7), rgba(0,0,0,0));
+  animation: spotFade .9s ease .25s backwards;
+  transition: opacity .3s ease;
+}
+.spot.leaving .spot-floor { opacity: 0; }
+
+/* ---------- The title block ---------- */
+
+.spot-info {
+  position: absolute;
+  color: var(--text);
+  text-shadow: 0 2px 22px rgba(0,0,0,.65);
+  transition: opacity .25s ease;
+}
+.spot.leaving .spot-info { opacity: 0; }
+
+.spot-info > * {
+  margin: 0;
+  animation: spotUp .85s cubic-bezier(.2,.8,.25,1) backwards;
+  animation-delay: calc(.3s + var(--n, 0) * 90ms);
+}
+@keyframes spotUp { from { opacity: 0; transform: translateY(22px); } }
+@keyframes spotFade { from { opacity: 0; } }
+
+.spot-eyebrow {
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.spot-info h2 {
+  font-size: clamp(1.9rem, 3.4vw, 3.2rem);
+  /* The clamp below clips at the line boxes, and Fraunces' descenders (g, y, p) and
+     accents reach past a tight one: this is as tight as it goes without cutting them.
+     Padding would do it too, but lets the top of a fourth, clamped line show through. */
+  line-height: 1.25;
+  margin: calc(0.55rem - 0.1em) 0 -0.1em;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+.spot-who { font-size: 1.15rem; opacity: 0.88; }
+.spot-rest { margin-top: 0.7rem; font-size: 0.88rem; opacity: 0.6; }
+
+/* ---------- The drawer beside it ---------- */
+
+.drawer.spot-on { transition: transform .65s cubic-bezier(.2,.8,.25,1); }
+.drawer.spot-on .drawer-cover { display: none; }
+/* room for the close button where the cover was */
+.drawer.spot-on .drawer-body { padding-top: 4.2rem; }
+/* The title and artist are on the left now; they stay for a screen reader. */
+.drawer.spot-on .drawer-body > h2,
+.drawer.spot-on .drawer-body > .artist {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Without the motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .spot-tile .sp { animation: none; }
+  .spot-tile .d { transition-duration: .01s; }
+  .spot-info > *, .spot-floor { animation: none; }
+  body.spot-on .overlay, .drawer.spot-on { transition-duration: .01s; }
+}

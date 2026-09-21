@@ -1,0 +1,2905 @@
+{
+ "artist": "lady-gaga",
+ "eras": [
+  {
+   "slug": "the-fame",
+   "replaces": null,
+   "name": "The Fame Era",
+   "years": "2008–2009",
+   "tagline": "Just Dance · Poker Face · Paparazzi"
+  },
+  {
+   "slug": "wale-chillin",
+   "replaces": null,
+   "name": "Wale - Chillin",
+   "years": "2009",
+   "tagline": "Chillin · Wale featuring Lady Gaga"
+  },
+  {
+   "slug": "the-fame-monster",
+   "replaces": null,
+   "name": "The Fame Monster Era",
+   "years": "2009–2010",
+   "tagline": "Bad Romance · Telephone · Alejandro"
+  },
+  {
+   "slug": "born-this-way",
+   "replaces": null,
+   "name": "Born This Way Era",
+   "years": "2011–2023",
+   "tagline": "Born This Way · Judas · The Edge of Glory · Bloody Mary"
+  },
+  {
+   "slug": "artpop",
+   "replaces": null,
+   "name": "ARTPOP Era",
+   "years": "2013–2014",
+   "tagline": "Applause · Do What U Want · G.U.Y."
+  },
+  {
+   "slug": "cheek-to-cheek",
+   "replaces": null,
+   "name": "Cheek To Cheek",
+   "years": "2014",
+   "tagline": "With Tony Bennett"
+  },
+  {
+   "slug": "joanne",
+   "replaces": null,
+   "name": "Joanne Era",
+   "years": "2016–2017",
+   "tagline": "Perfect Illusion · Million Reasons"
+  },
+  {
+   "slug": "the-cure",
+   "replaces": null,
+   "name": "The Cure Single",
+   "years": "2017",
+   "tagline": "The Cure"
+  },
+  {
+   "slug": "a-star-is-born",
+   "replaces": null,
+   "name": "A Star Is Born",
+   "years": "2018",
+   "tagline": "Shallow · Always Remember Us This Way"
+  },
+  {
+   "slug": "chromatica",
+   "replaces": null,
+   "name": "Chromatica Era",
+   "years": "2020–2022",
+   "tagline": "Stupid Love · Rain On Me · 911"
+  },
+  {
+   "slug": "love-for-sale",
+   "replaces": null,
+   "name": "Love For Sale",
+   "years": "2021",
+   "tagline": "With Tony Bennett"
+  },
+  {
+   "slug": "rolling-stones",
+   "replaces": "top-gun-wednesday",
+   "name": "Rolling Stones",
+   "years": "2022–2023",
+   "tagline": "Sweet Sounds of Heaven · Top Gun: Maverick"
+  },
+  {
+   "slug": "harlequin",
+   "replaces": null,
+   "name": "Harlequin",
+   "years": "2024",
+   "tagline": "Harlequin · Joker: Folie à Deux"
+  },
+  {
+   "slug": "hold-my-hand",
+   "replaces": null,
+   "name": "Hold My Hand Single",
+   "years": "2022",
+   "tagline": "Top Gun: Maverick"
+  },
+  {
+   "slug": "mayhem",
+   "replaces": null,
+   "name": "Mayhem Era",
+   "years": "2025",
+   "tagline": "Abracadabra · Die With A Smile"
+  },
+  {
+   "slug": "devil-wears-prada-2",
+   "replaces": null,
+   "name": "The Devil Wears Prada 2",
+   "years": "2026",
+   "tagline": "Music From The Motion Picture"
+  }
+ ],
+ "rules": [
+  {
+   "era": "rolling-stones",
+   "master": 2650322,
+   "rank": 0
+  },
+  {
+   "era": "rolling-stones",
+   "master": 3259852,
+   "rank": 1
+  },
+  {
+   "era": "hold-my-hand",
+   "master": 2623907,
+   "rank": 0
+  },
+  {
+   "era": "born-this-way",
+   "master": 3041759,
+   "rank": 8
+  },
+  {
+   "era": "wale-chillin",
+   "master": 397264,
+   "rank": 0
+  },
+  {
+   "era": "the-cure",
+   "master": 1167109,
+   "rank": 0
+  },
+  {
+   "era": "devil-wears-prada-2",
+   "master": 4303020,
+   "rank": 0
+  },
+  {
+   "era": "the-fame-monster",
+   "master": 386717,
+   "rank": 5
+  },
+  {
+   "era": "joanne",
+   "master": 3799812,
+   "rank": 2
+  }
+ ],
+ "items": [
+  {
+   "instance_id": 2070320003,
+   "label": "The Fame · 602517854772 · US",
+   "era": "the-fame",
+   "rank": 0,
+   "fields": {
+    "barcode": "602517854772",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Standard Vinyl SEALED"
+  },
+  {
+   "instance_id": 2082040295,
+   "label": "The Fame · 602455826114 · EU",
+   "era": "the-fame",
+   "rank": 1,
+   "fields": {
+    "barcode": "602455826114",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Transparent Blue",
+    "item_type": "album"
+   },
+   "notes": "15th Anniversary / glow in the dark"
+  },
+  {
+   "instance_id": 2089803680,
+   "label": "The Fame · 602455845795 · EU",
+   "era": "the-fame",
+   "rank": 2,
+   "fields": {
+    "barcode": "602455845795",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "White",
+    "item_type": "album"
+   },
+   "notes": "15th Anniversary"
+  },
+  {
+   "instance_id": 2136055437,
+   "label": "Love Game · 602527203188 · EU",
+   "era": "the-fame",
+   "rank": 3,
+   "fields": {
+    "barcode": "602527203188",
+    "region": "EU",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2115009423,
+   "label": "Paparazzi · 602527121192 · EU",
+   "era": "the-fame",
+   "rank": 4,
+   "fields": {
+    "barcode": "602527121192",
+    "region": "EU",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2140243042,
+   "label": "Just Dance The Remixes · 602517717411 · US",
+   "era": "the-fame",
+   "rank": 5,
+   "fields": {
+    "barcode": "602517717411",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "remixes"
+   },
+   "notes": "Generic Sleeve"
+  },
+  {
+   "instance_id": 2130456359,
+   "label": "Love Game The Remixes · 602527088877 · US",
+   "era": "the-fame",
+   "rank": 6,
+   "fields": {
+    "barcode": "602527088877",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2160480302,
+   "label": "Poker Face The Remixes · 602517965379 · US",
+   "era": "the-fame",
+   "rank": 7,
+   "fields": {
+    "barcode": "602517965379",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "White",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2082040350,
+   "label": "The Fame Monster · 602527281353 · US",
+   "era": "the-fame-monster",
+   "rank": 0,
+   "fields": {
+    "barcode": "602527281353",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "ep"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2082040215,
+   "label": "The Fame Monster [Deluxe] · 602508673641 · US",
+   "era": "the-fame-monster",
+   "rank": 1,
+   "fields": {
+    "barcode": "602508673641",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Coke Bottle / Green",
+    "item_type": "album"
+   },
+   "notes": "Urban Outfitters SEALED"
+  },
+  {
+   "instance_id": 2096394243,
+   "label": "The Fame Monster [Deluxe] · 602478337550 · US",
+   "era": "the-fame-monster",
+   "rank": 2,
+   "fields": {
+    "barcode": "602478337550",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Coke Bottle / Green",
+    "item_type": "album"
+   },
+   "notes": "POP Reissue (From LG French website) SEALED"
+  },
+  {
+   "instance_id": 2142861555,
+   "label": "Alejandro · 602527441306 · EU",
+   "era": "the-fame-monster",
+   "rank": 3,
+   "fields": {
+    "barcode": "602527441306",
+    "region": "EU",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070319696,
+   "label": "Born This Way · 602527641263 · EU",
+   "era": "born-this-way",
+   "rank": 0,
+   "fields": {
+    "barcode": "602527641263",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Standard Vinyl SEALED"
+  },
+  {
+   "instance_id": 2140852210,
+   "label": "Born This Way · 602527641263 · US",
+   "era": "born-this-way",
+   "rank": 1,
+   "fields": {
+    "barcode": "602527641263",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Red",
+    "item_type": "album"
+   },
+   "notes": "Urban Outfitters"
+  },
+  {
+   "instance_id": 2070319788,
+   "label": "Born This Way · 602578338205 · EU",
+   "era": "born-this-way",
+   "rank": 2,
+   "fields": {
+    "barcode": "602578338205",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Red",
+    "item_type": "album"
+   },
+   "notes": "POP Reissue"
+  },
+  {
+   "instance_id": 2115004959,
+   "label": "Born This Way [Reimagined] · 602438418190 · US",
+   "era": "born-this-way",
+   "rank": 3,
+   "fields": {
+    "barcode": "602438418190",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "The Tenth Anniversary / Born This Way Reimagined"
+  },
+  {
+   "instance_id": 2186412459,
+   "label": "Born This Way The Remix · 602527893358 · US",
+   "era": "born-this-way",
+   "rank": 4,
+   "fields": {
+    "barcode": "602527893358",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2151421374,
+   "label": "Born This Way · 602527664019 · EU",
+   "era": "born-this-way",
+   "rank": 5,
+   "fields": {
+    "barcode": "602527664019",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": "Exclusive Picture Disc Vinyl"
+  },
+  {
+   "instance_id": 2138126495,
+   "label": "Bloody Mary · 602455166647 · US",
+   "era": "born-this-way",
+   "rank": 6,
+   "fields": {
+    "barcode": "602455166647",
+    "region": "WW",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2083096797,
+   "label": "Bloody Mary · 602455838575 · US",
+   "era": "born-this-way",
+   "rank": 7,
+   "fields": {
+    "barcode": "602455838575",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Glow in the dark",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2134797149,
+   "label": "Bloody Mary · 602458382297 · US",
+   "era": "born-this-way",
+   "rank": 8,
+   "fields": {
+    "barcode": "602458382297",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2141956991,
+   "label": "ARTPOP · 602537543052 · EU",
+   "era": "artpop",
+   "rank": 0,
+   "fields": {
+    "barcode": "602537543052",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "1st press foil cover with track Do What I Want"
+  },
+  {
+   "instance_id": 2070319053,
+   "label": "ARTPOP · 602577517051 · US",
+   "era": "artpop",
+   "rank": 1,
+   "fields": {
+    "barcode": "602577517051",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Standard Reissue Vinyl SEALED"
+  },
+  {
+   "instance_id": 2082272692,
+   "label": "ARTPOP · 602577517051 · US",
+   "era": "artpop",
+   "rank": 2,
+   "fields": {
+    "barcode": "602577517051",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Blue",
+    "item_type": "album"
+   },
+   "notes": "Urban Outfitters"
+  },
+  {
+   "instance_id": 2107493115,
+   "label": "Cheek To Cheek · 602537988976 · US",
+   "era": "cheek-to-cheek",
+   "rank": 0,
+   "fields": {
+    "barcode": "602537988976",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Standard Vinyl"
+  },
+  {
+   "instance_id": 2124639510,
+   "label": "Cheek To Cheek [LIVE] · 602448137937 · US",
+   "era": "cheek-to-cheek",
+   "rank": 1,
+   "fields": {
+    "barcode": "602448137937",
+    "region": "WW",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "live album"
+   },
+   "notes": "Standard Vinyl"
+  },
+  {
+   "instance_id": 2070318948,
+   "label": "Joanne · 602557205152 · EU",
+   "era": "joanne",
+   "rank": 0,
+   "fields": {
+    "barcode": "602557205152",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Standard Vinyl SEALED"
+  },
+  {
+   "instance_id": 2087919582,
+   "label": "Joanne · 602557205152 · EU",
+   "era": "joanne",
+   "rank": 1,
+   "fields": {
+    "barcode": "602557205152",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Mixed Opaque Pink",
+    "item_type": "album"
+   },
+   "notes": "Urban Outfitters"
+  },
+  {
+   "instance_id": 2161447791,
+   "label": "Joanne · 602435248417 · EU",
+   "era": "joanne",
+   "rank": 2,
+   "fields": {
+    "barcode": "602435248417",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Pink Marble Vinyl",
+    "item_type": "album"
+   },
+   "notes": "Reissue"
+  },
+  {
+   "instance_id": 2138127103,
+   "label": "A Star Is Born · 602567775546 · EU",
+   "era": "a-star-is-born",
+   "rank": 0,
+   "fields": {
+    "barcode": "602567775546",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070318664,
+   "label": "Chromatica · 602435824932 · US",
+   "era": "chromatica",
+   "rank": 0,
+   "fields": {
+    "barcode": "602435824932",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Trifold Deluxe Vinyl"
+  },
+  {
+   "instance_id": 2083989268,
+   "label": "Chromatica · 602435720128 · US",
+   "era": "chromatica",
+   "rank": 1,
+   "fields": {
+    "barcode": "602435720128",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Transparent Yellow",
+    "item_type": "album"
+   },
+   "notes": "Trifold Deluxe Vinyl"
+  },
+  {
+   "instance_id": 2186415134,
+   "label": "Chromatica · 602508852978 · EU",
+   "era": "chromatica",
+   "rank": 2,
+   "fields": {
+    "barcode": "602508852978",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Silver",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2120549670,
+   "label": "Chromatica · 602508789045 · US",
+   "era": "chromatica",
+   "rank": 3,
+   "fields": {
+    "barcode": "602508789045",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Milky Clear",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2120549867,
+   "label": "Chromatica · 602508852961 · US",
+   "era": "chromatica",
+   "rank": 4,
+   "fields": {
+    "barcode": "602508852961",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1966541129,
+   "label": "Chromatica · 602508854132 · US",
+   "era": "chromatica",
+   "rank": 5,
+   "fields": {
+    "barcode": "602508854132",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2096391140,
+   "label": "Stupid Love · 602508876165 · EU",
+   "era": "chromatica",
+   "rank": 7,
+   "fields": {
+    "barcode": "602508876165",
+    "region": "EU",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2186412905,
+   "label": "Rain On Me · 602507284183 · US",
+   "era": "chromatica",
+   "rank": 8,
+   "fields": {
+    "barcode": "602507284183",
+    "region": "US",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2115011824,
+   "label": "Rain On Me · 602507311568 · US",
+   "era": "chromatica",
+   "rank": 9,
+   "fields": {
+    "barcode": "602507311568",
+    "region": "US",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Yellow",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070318510,
+   "label": "Dawn Of Chromatica · 602438804399 · US",
+   "era": "chromatica",
+   "rank": 10,
+   "fields": {
+    "barcode": "602438804399",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Transparent",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2098244662,
+   "label": "Love For Sale · 602435741918 · EU",
+   "era": "love-for-sale",
+   "rank": 0,
+   "fields": {
+    "barcode": "602435741918",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Transparent Yellow",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2114623000,
+   "label": "Love For Sale · 602438699902 · US",
+   "era": "love-for-sale",
+   "rank": 1,
+   "fields": {
+    "barcode": "602438699902",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Cream",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2171997168,
+   "label": "Love For Sale · 602435741895 · EU",
+   "era": "love-for-sale",
+   "rank": 2,
+   "fields": {
+    "barcode": "602435741895",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Picture Disc",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2098199797,
+   "label": "Love For Sale [Target Exclusive] · 602435409603 · US",
+   "era": "love-for-sale",
+   "rank": 3,
+   "fields": {
+    "barcode": "602435409603",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Target Exclusive"
+  },
+  {
+   "instance_id": 2140834117,
+   "label": "Sweet Sounds Of Heaven · 602455464651 · US",
+   "era": "rolling-stones",
+   "rank": 0,
+   "fields": {
+    "barcode": "602455464651",
+    "region": "WW",
+    "vinyl_size": "10\"",
+    "vinyl_color": "Black",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070318402,
+   "label": "Harlequin · 602475052876 · US",
+   "era": "harlequin",
+   "rank": 0,
+   "fields": {
+    "barcode": "602475052876",
+    "region": "WW",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Opaque Red",
+    "item_type": "album"
+   },
+   "notes": "SEALED"
+  },
+  {
+   "instance_id": 2070318327,
+   "label": "Harlequin [Alt Cover] · 602475066484 · US",
+   "era": "harlequin",
+   "rank": 1,
+   "fields": {
+    "barcode": "602475066484",
+    "region": "WW",
+    "vinyl_size": "12\"",
+    "vinyl_color": "White",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover"
+  },
+  {
+   "instance_id": 2070318204,
+   "label": "Harlequin [Target Exclusive] · 602475212201 · US",
+   "era": "harlequin",
+   "rank": 2,
+   "fields": {
+    "barcode": "602475212201",
+    "region": "WW",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover"
+  },
+  {
+   "instance_id": 2129834286,
+   "label": "Joker Folie à Deux · 602468081913 · US",
+   "era": "harlequin",
+   "rank": 3,
+   "fields": {
+    "barcode": "602468081913",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Translucid Red",
+    "item_type": "album"
+   },
+   "notes": "Music from the motion picture"
+  },
+  {
+   "instance_id": 2102017510,
+   "label": "Hold My Hand · 602448143624 · US",
+   "era": "hold-my-hand",
+   "rank": 0,
+   "fields": {
+    "barcode": "602448143624",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Coke Bottle Clear Translucid",
+    "item_type": "single"
+   },
+   "notes": "Urban Outfitters Single"
+  },
+  {
+   "instance_id": 2186412982,
+   "label": "Die With A Smile · 602475212003 · US",
+   "era": "mayhem",
+   "rank": 0,
+   "fields": {
+    "barcode": "602475212003",
+    "region": "US",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Black",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2132688947,
+   "label": "Mayhem [Spotify Fans Exclusive] · 602475451082 · EU",
+   "era": "mayhem",
+   "rank": 1,
+   "fields": {
+    "barcode": "602475451082",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Violet Translucid",
+    "item_type": "album"
+   },
+   "notes": "Spotify Fans Exclusive"
+  },
+  {
+   "instance_id": 2140579147,
+   "label": "Mayhem [Interscope Exclusive] · 602475451136 · US",
+   "era": "mayhem",
+   "rank": 2,
+   "fields": {
+    "barcode": "602475451136",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Red / Translucid Ruby",
+    "item_type": "album"
+   },
+   "notes": "Interscope/Hot Topic/Complex Exclusive"
+  },
+  {
+   "instance_id": 2146797638,
+   "label": "Mayhem [Urban Outfitters] · 602475451082 · US",
+   "era": "mayhem",
+   "rank": 3,
+   "fields": {
+    "barcode": "602475451082",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Hot Pink",
+    "item_type": "album"
+   },
+   "notes": "Urban Outfitters Exclusive"
+  },
+  {
+   "instance_id": 2082040615,
+   "label": "Mayhem [Bad World] · 602478822049 · US",
+   "era": "mayhem",
+   "rank": 4,
+   "fields": {
+    "barcode": "602478822049",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Liquid Vinyl / Orange",
+    "item_type": "album"
+   },
+   "notes": "Bad World UK Version"
+  },
+  {
+   "instance_id": 1973626748,
+   "label": "Mayhem [Store Exclusive] · 602475451099 · EU",
+   "era": "mayhem",
+   "rank": 5,
+   "fields": {
+    "barcode": "602475451099",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Black",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover #1 + Can't Stop The High"
+  },
+  {
+   "instance_id": 2083096713,
+   "label": "Mayhem [Store Exclusive] · 602475451099 · US",
+   "era": "mayhem",
+   "rank": 6,
+   "fields": {
+    "barcode": "602475451099",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Silver",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover #1 + Can't Stop The High"
+  },
+  {
+   "instance_id": 2096394064,
+   "label": "Mayhem [Walmart Exclusive] · 602475455110 · EU",
+   "era": "mayhem",
+   "rank": 7,
+   "fields": {
+    "barcode": "602475455110",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Blue",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover #2"
+  },
+  {
+   "instance_id": 2102017543,
+   "label": "Mayhem [Amazon Exclusive] · 602475725718 · EU",
+   "era": "mayhem",
+   "rank": 8,
+   "fields": {
+    "barcode": "602475725718",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "White",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover #3"
+  },
+  {
+   "instance_id": 2082040492,
+   "label": "Mayhem [JB Hi-Fi Exclusive] · 602475455127 · EU",
+   "era": "mayhem",
+   "rank": 9,
+   "fields": {
+    "barcode": "602475455127",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Yellow",
+    "item_type": "album"
+   },
+   "notes": "Alternate Cover #4 + Kill For Love"
+  },
+  {
+   "instance_id": 2172356681,
+   "label": "Mayhem [Zoetrope] · 602475451204 · US",
+   "era": "mayhem",
+   "rank": 10,
+   "fields": {
+    "barcode": "602475451204",
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Picture Disc [Zoetrope]",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2178296851,
+   "label": "Devil Wears Prada 2 Soundtrack · 2026-08-11 · US",
+   "era": "devil-wears-prada-2",
+   "rank": 0,
+   "fields": {
+    "region": "US",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Chroma Translucid",
+    "item_type": "album"
+   },
+   "notes": "Urban Outfitters Exclusive"
+  },
+  {
+   "instance_id": 2172357092,
+   "label": "Devil Wears Prada 2 Soundtrack · BW091 · EU",
+   "era": "devil-wears-prada-2",
+   "rank": 1,
+   "fields": {
+    "catalog_number": "BW091",
+    "region": "EU",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Tridents",
+    "item_type": "album"
+   },
+   "notes": "Bad World Exclusive"
+  },
+  {
+   "instance_id": 2052216605,
+   "label": "The Fame · 602517891388 · US",
+   "era": "the-fame",
+   "rank": 0,
+   "fields": {
+    "barcode": "602517891388",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0011805-02IN02",
+    "item_type": "album"
+   },
+   "notes": "Standard Edition (14 tracks) - Red Written Lady Gaga"
+  },
+  {
+   "instance_id": 1953097065,
+   "label": "The Fame [Super Jewel Case] · 602517913974 · EU",
+   "era": "the-fame",
+   "rank": 2,
+   "fields": {
+    "barcode": "602517913974",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Super Jewel Case Edition"
+  },
+  {
+   "instance_id": 1953097686,
+   "label": "The Fame · 602517814257 · AU",
+   "era": "the-fame",
+   "rank": 3,
+   "fields": {
+    "barcode": "602517814257",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "1781425",
+    "item_type": "album"
+   },
+   "notes": "Standard Edition (14 tracks) + I Like It Rough bonus track"
+  },
+  {
+   "instance_id": 2090980284,
+   "label": "The Fame · 602517814257 · UA",
+   "era": "the-fame",
+   "rank": 4,
+   "fields": {
+    "barcode": "602517814257",
+    "region": "UA",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Ukraine Edition, different back cover"
+  },
+  {
+   "instance_id": 2171705596,
+   "label": "The Fame [Digipack] · 600753213346 · BR",
+   "era": "the-fame",
+   "rank": 5,
+   "fields": {
+    "barcode": "600753213346",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Brazilian Slidepack Version"
+  },
+  {
+   "instance_id": 2128020831,
+   "label": "The Fame [Japan] · 4988005560148 · JP",
+   "era": "the-fame",
+   "rank": 6,
+   "fields": {
+    "barcode": "4988005560148",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-1186",
+    "item_type": "album"
+   },
+   "notes": "Japanese Edition"
+  },
+  {
+   "instance_id": 2186413065,
+   "label": "The Fame [Japan Deluxe] · 4988005569622 · JP",
+   "era": "the-fame",
+   "rank": 7,
+   "fields": {
+    "barcode": "4988005569622",
+    "region": "JP",
+    "media": "CD + DVD",
+    "catalog_number": "UICS-9104",
+    "item_type": "album"
+   },
+   "notes": "Japanese Deluxe Edition, shiny cover standard 14 tracks + 3 bonus tracks (Disco Heaven, Again Again, Retro Dance Freak) + DVD"
+  },
+  {
+   "instance_id": 2120550218,
+   "label": "The Fame [UK Enhanced] · 602517917477 · EU",
+   "era": "the-fame",
+   "rank": 8,
+   "fields": {
+    "barcode": "602517917477",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "1791747",
+    "item_type": "album"
+   },
+   "notes": "Extra UK Bonus Content"
+  },
+  {
+   "instance_id": 2098739224,
+   "label": "The Fame [USB Drive] · 602527035529 · EU",
+   "era": "the-fame",
+   "rank": 9,
+   "fields": {
+    "barcode": "602527035529",
+    "region": "EU",
+    "media": "USB",
+    "catalog_number": "LC06406",
+    "item_type": "usb album"
+   },
+   "notes": "Mega Rare USB Drive"
+  },
+  {
+   "instance_id": 1953103398,
+   "label": "The Fame [10th Anniversary] · 602577001437 · US",
+   "era": "the-fame",
+   "rank": 10,
+   "fields": {
+    "barcode": "602577001437",
+    "region": "US",
+    "media": "USB",
+    "catalog_number": "B0029106-28",
+    "item_type": "usb album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2112377457,
+   "label": "Lady Gaga The DJ Vice Megamix · - · US",
+   "era": "the-fame",
+   "rank": 11,
+   "fields": {
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "INTR-12496-2",
+    "item_type": "promo"
+   },
+   "notes": "DJ Vice Megamix Promo Album"
+  },
+  {
+   "instance_id": 2120549971,
+   "label": "Just Dance [Promo] · - · US",
+   "era": "the-fame",
+   "rank": 12,
+   "fields": {
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "INTR-12386-2",
+    "item_type": "promo"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1963042076,
+   "label": "Just Dance · 602517791039 · AU",
+   "era": "the-fame",
+   "rank": 13,
+   "fields": {
+    "barcode": "602517791039",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "1770103",
+    "item_type": "single"
+   },
+   "notes": "Main + Trevor Simpson Remix"
+  },
+  {
+   "instance_id": 2103980558,
+   "label": "Poker Face · 602517898134 · AU",
+   "era": "the-fame",
+   "rank": 14,
+   "fields": {
+    "barcode": "602517898134",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "1789813",
+    "item_type": "single"
+   },
+   "notes": "Poker Face + Just Dance (Robots To Mars Mix)"
+  },
+  {
+   "instance_id": 2104355483,
+   "label": "Poker Face · 602527003566 · EU",
+   "era": "the-fame",
+   "rank": 15,
+   "fields": {
+    "barcode": "602527003566",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Poker Face + Just Dance"
+  },
+  {
+   "instance_id": 2186413130,
+   "label": "Poker Face · 602527034591 · EU",
+   "era": "the-fame",
+   "rank": 16,
+   "fields": {
+    "barcode": "602527034591",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "2703459",
+    "item_type": "single"
+   },
+   "notes": "Poker Face + Tommy Sparks & The Fury Remix"
+  },
+  {
+   "instance_id": 2102635538,
+   "label": "Eh, Eh (Nothing Else I Can Say) · 602517975682 · AU",
+   "era": "the-fame",
+   "rank": 17,
+   "fields": {
+    "barcode": "602517975682",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "1797568",
+    "item_type": "single"
+   },
+   "notes": "Eh Eh + Poker Face (Space Cowbow Remix)"
+  },
+  {
+   "instance_id": 2122553977,
+   "label": "Eh, Eh (Nothing Else I Can Say) · 602527150093 · FR",
+   "era": "the-fame",
+   "rank": 18,
+   "fields": {
+    "barcode": "602527150093",
+    "region": "FR",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "France Edition Cardboard Sleeve"
+  },
+  {
+   "instance_id": 2186413220,
+   "label": "Love Game · 602527049168 · AU",
+   "era": "the-fame",
+   "rank": 19,
+   "fields": {
+    "barcode": "602527049168",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "2704916",
+    "item_type": "single"
+   },
+   "notes": "Album version + Robots To Mars Remix"
+  },
+  {
+   "instance_id": 2107516946,
+   "label": "Paparazzi · 602627192949 · EU",
+   "era": "the-fame",
+   "rank": 20,
+   "fields": {
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Radio Edit + Chu Fu Ghetto House Radio"
+  },
+  {
+   "instance_id": 2119853592,
+   "label": "Paparazzi [Signed] · 602527121178 · EU",
+   "era": "the-fame",
+   "rank": 21,
+   "fields": {
+    "barcode": "602527121178",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Album Version + Filthy Dukes Remix"
+  },
+  {
+   "instance_id": 2132344651,
+   "label": "Paparazzi · 602527283265 · FR",
+   "era": "the-fame",
+   "rank": 22,
+   "fields": {
+    "barcode": "602527283265",
+    "region": "FR",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "France Edition Cardboard Sleeve"
+  },
+  {
+   "instance_id": 2109462764,
+   "label": "The Cherrytree Sessions · 602517988811 · US",
+   "era": "the-fame",
+   "rank": 23,
+   "fields": {
+    "barcode": "602517988811",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0012675-32IN02",
+    "item_type": "ep"
+   },
+   "notes": "Poker Face + Just Dance + Eh, eh"
+  },
+  {
+   "instance_id": 2070825298,
+   "label": "Just Dance - The Remixes · 602517759251 · US",
+   "era": "the-fame",
+   "rank": 24,
+   "fields": {
+    "barcode": "602517759251",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0011524-32",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2113068953,
+   "label": "Poker Face - The Remixes · 602517965393 · US",
+   "era": "the-fame",
+   "rank": 25,
+   "fields": {
+    "barcode": "602517965393",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0012715-22",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2135067650,
+   "label": "Eh, Eh (Nothing Else I Can Say) Remixes · - · AU",
+   "era": "the-fame",
+   "rank": 26,
+   "fields": {
+    "region": "AU",
+    "media": "CD",
+    "item_type": "promo"
+   },
+   "notes": "Australian version cardboard sleeve"
+  },
+  {
+   "instance_id": 2070823867,
+   "label": "Love Game - The Remixes · 602527131627 · EU",
+   "era": "the-fame",
+   "rank": 27,
+   "fields": {
+    "barcode": "602527131627",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2127791339,
+   "label": "Love Game - The Remixes · 602527088860 · US",
+   "era": "the-fame",
+   "rank": 28,
+   "fields": {
+    "barcode": "602527088860",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0013062-22",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2090421743,
+   "label": "Paparazzi - The Remixes · 602527179865 · EU",
+   "era": "the-fame",
+   "rank": 29,
+   "fields": {
+    "barcode": "602527179865",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2127791434,
+   "label": "Paparazzi - The Remixes · 602527217901 · US",
+   "era": "the-fame",
+   "rank": 30,
+   "fields": {
+    "barcode": "602527217901",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0013571-22",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2115006818,
+   "label": "Lady Gaga Hitmixes CA · 602527153568 · CA",
+   "era": "the-fame",
+   "rank": 31,
+   "fields": {
+    "barcode": "602527153568",
+    "region": "CA",
+    "media": "CD",
+    "catalog_number": "252715356",
+    "item_type": "ep"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2107101677,
+   "label": "Chillin · 602527175171 · EU",
+   "era": "wale-chillin",
+   "rank": 0,
+   "fields": {
+    "barcode": "602527175171",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Wale - Chillin [ft Lady Gaga] + Nike Boots"
+  },
+  {
+   "instance_id": 2127400185,
+   "label": "Chillin · - · US",
+   "era": "wale-chillin",
+   "rank": 1,
+   "fields": {
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "INTR-12582-2",
+    "item_type": "promo"
+   },
+   "notes": "Promo CD - Wale - Chillin [ft Lady Gaga]"
+  },
+  {
+   "instance_id": 1960025756,
+   "label": "The Fame Monster · 602527291567 · US",
+   "era": "the-fame-monster",
+   "rank": 0,
+   "fields": {
+    "barcode": "602527291567",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0013872-02",
+    "item_type": "ep"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2186413398,
+   "label": "The Fame Monster · 602527291567 · US",
+   "era": "the-fame-monster",
+   "rank": 1,
+   "fields": {
+    "barcode": "602527291567",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0013872-02",
+    "item_type": "ep"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2186413319,
+   "label": "The Fame Monster [Japan] · 4988005605955 · JP",
+   "era": "the-fame-monster",
+   "rank": 3,
+   "fields": {
+    "barcode": "4988005605955",
+    "region": "JP",
+    "media": "CD + DVD",
+    "catalog_number": "UICS-1206",
+    "item_type": "ep"
+   },
+   "notes": "Japanese version with DVD"
+  },
+  {
+   "instance_id": 1953097296,
+   "label": "The Fame Monster [Deluxe] · 602527252766 · EU",
+   "era": "the-fame-monster",
+   "rank": 4,
+   "fields": {
+    "barcode": "602527252766",
+    "region": "EU",
+    "media": "2 CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2084176787,
+   "label": "The Fame Monster [Deluxe] · 602527252964 · AU",
+   "era": "the-fame-monster",
+   "rank": 5,
+   "fields": {
+    "barcode": "602527252964",
+    "region": "AU",
+    "media": "2 CD",
+    "catalog_number": "2725296",
+    "item_type": "album"
+   },
+   "notes": "Limited Edition Version - Card sleeve"
+  },
+  {
+   "instance_id": 2137117225,
+   "label": "The Fame Monster [Deluxe] [Japan] · 4988005584106 · JP",
+   "era": "the-fame-monster",
+   "rank": 6,
+   "fields": {
+    "barcode": "4988005584106",
+    "region": "JP",
+    "media": "2 CD",
+    "catalog_number": "UICS-9113/4",
+    "item_type": "album"
+   },
+   "notes": "1st Press Japanese Version"
+  },
+  {
+   "instance_id": 2053455863,
+   "label": "The Fame Monster USB Drive · 602527382791 · EU",
+   "era": "the-fame-monster",
+   "rank": 7,
+   "fields": {
+    "barcode": "602527382791",
+    "region": "EU",
+    "media": "USB",
+    "catalog_number": "LC06406",
+    "item_type": "usb album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2105066969,
+   "label": "Bad Romance · 602527267524 · AU",
+   "era": "the-fame-monster",
+   "rank": 8,
+   "fields": {
+    "barcode": "602527267524",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "2726752",
+    "item_type": "single"
+   },
+   "notes": "Bad Romance + Just Dance (Deewaan Remix)"
+  },
+  {
+   "instance_id": 2144184184,
+   "label": "Bad Romance · 602527308630 · FR",
+   "era": "the-fame-monster",
+   "rank": 9,
+   "fields": {
+    "barcode": "602527308630",
+    "region": "FR",
+    "media": "CD",
+    "catalog_number": "2730863",
+    "item_type": "single"
+   },
+   "notes": "France Edition Cardboard Sleeve"
+  },
+  {
+   "instance_id": 2127400325,
+   "label": "Bad Romance · - · US",
+   "era": "the-fame-monster",
+   "rank": 10,
+   "fields": {
+    "region": "US",
+    "media": "CD",
+    "item_type": "promo"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2102287099,
+   "label": "Telephone · 602527347066 · EU",
+   "era": "the-fame-monster",
+   "rank": 11,
+   "fields": {
+    "barcode": "602527347066",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Album version + Alphabeat Remix"
+  },
+  {
+   "instance_id": 2107492338,
+   "label": "Alejandro · 602527441290 · EU",
+   "era": "the-fame-monster",
+   "rank": 12,
+   "fields": {
+    "barcode": "602527441290",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Album Version + Dave Aude Remix"
+  },
+  {
+   "instance_id": 2132688194,
+   "label": "Alejandro · 600753308974 · GR",
+   "era": "the-fame-monster",
+   "rank": 13,
+   "fields": {
+    "barcode": "600753308974",
+    "region": "GR",
+    "media": "CD",
+    "item_type": "promo"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1975644050,
+   "label": "Lady Gaga The Singles · 4988005638786 · JP",
+   "era": "the-fame-monster",
+   "rank": 14,
+   "fields": {
+    "barcode": "4988005638786",
+    "region": "JP",
+    "media": "CD Box",
+    "catalog_number": "UICS-5041/9",
+    "item_type": "singles"
+   },
+   "notes": "Japanese version 9 Single CDs"
+  },
+  {
+   "instance_id": 1953097869,
+   "label": "Lady Gaga The Remix · 602527382807 · AU",
+   "era": "the-fame-monster",
+   "rank": 15,
+   "fields": {
+    "barcode": "602527382807",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "2738280",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2186413361,
+   "label": "Lady Gaga The Remix · 602527382807 · BR",
+   "era": "the-fame-monster",
+   "rank": 16,
+   "fields": {
+    "barcode": "602527382807",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "Lote AH300",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1953097392,
+   "label": "Lady Gaga The Remix · 602527404684 · EU",
+   "era": "the-fame-monster",
+   "rank": 17,
+   "fields": {
+    "barcode": "602527404684",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "EU Cover"
+  },
+  {
+   "instance_id": 2171704890,
+   "label": "Lady Gaga The Remix [Digipack] · 600753295120 · BR",
+   "era": "the-fame-monster",
+   "rank": 18,
+   "fields": {
+    "barcode": "600753295120",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Brazilian Slidepack Version"
+  },
+  {
+   "instance_id": 2121096587,
+   "label": "Lady Gaga The Remix [Japan] · 4988005605986 · JP",
+   "era": "the-fame-monster",
+   "rank": 19,
+   "fields": {
+    "barcode": "4988005605986",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-9118",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070825353,
+   "label": "Bad Romance - The Remixes · 602527319810 · US",
+   "era": "the-fame-monster",
+   "rank": 20,
+   "fields": {
+    "barcode": "602527319810",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0013969-22",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2107492606,
+   "label": "Telephone - The Remixes · 602527361512 · US",
+   "era": "the-fame-monster",
+   "rank": 21,
+   "fields": {
+    "barcode": "602527361512",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0014166-22",
+    "item_type": "remixes"
+   },
+   "notes": "SEALED"
+  },
+  {
+   "instance_id": 2105388145,
+   "label": "Alejandro - The Remixes · 602527433080 · US",
+   "era": "the-fame-monster",
+   "rank": 22,
+   "fields": {
+    "barcode": "602527433080",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0014501-22",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1953110889,
+   "label": "The Monster Ball Tour · 602527873565 · AU",
+   "era": "the-fame-monster",
+   "rank": 23,
+   "fields": {
+    "barcode": "602527873565",
+    "region": "AU",
+    "media": "DVD",
+    "catalog_number": "2787356",
+    "item_type": "concert"
+   },
+   "notes": "The Monster Ball Tour at Madison Square Garden"
+  },
+  {
+   "instance_id": 2128318948,
+   "label": "The Monster Ball Tour · 602527882819 · US",
+   "era": "the-fame-monster",
+   "rank": 24,
+   "fields": {
+    "barcode": "602527882819",
+    "region": "US",
+    "media": "DVD",
+    "catalog_number": "B0016324-09",
+    "item_type": "concert"
+   },
+   "notes": "Super Jewel Case"
+  },
+  {
+   "instance_id": 2186413519,
+   "label": "The Monster Ball Tour · 602527873558 · AU",
+   "era": "the-fame-monster",
+   "rank": 25,
+   "fields": {
+    "barcode": "602527873558",
+    "region": "AU",
+    "media": "Blu-ray",
+    "catalog_number": "2787355",
+    "item_type": "concert"
+   },
+   "notes": "The Monster Ball Tour at Madison Square Garden"
+  },
+  {
+   "instance_id": 1953097998,
+   "label": "Born This Way · 602527718385 · AU",
+   "era": "born-this-way",
+   "rank": 0,
+   "fields": {
+    "barcode": "602527718385",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "2771838",
+    "item_type": "album"
+   },
+   "notes": "15 Track Album"
+  },
+  {
+   "instance_id": 2112055974,
+   "label": "Born This Way [Japan] · 4988005659033 · JP",
+   "era": "born-this-way",
+   "rank": 1,
+   "fields": {
+    "barcode": "4988005659033",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-9125",
+    "item_type": "album"
+   },
+   "notes": "16 Track Album"
+  },
+  {
+   "instance_id": 2137117593,
+   "label": "Born This Way [Japan] · 4988005659040 · JP",
+   "era": "born-this-way",
+   "rank": 2,
+   "fields": {
+    "barcode": "4988005659040",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-1230",
+    "item_type": "album"
+   },
+   "notes": "16 Track Album"
+  },
+  {
+   "instance_id": 1953098076,
+   "label": "Born This Way [Deluxe] · 602527718408 · AU",
+   "era": "born-this-way",
+   "rank": 3,
+   "fields": {
+    "barcode": "602527718408",
+    "region": "AU",
+    "media": "2 CD",
+    "catalog_number": "2771840",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2134429213,
+   "label": "Born This Way [Deluxe] [Japan] · 4988005659057 · JP",
+   "era": "born-this-way",
+   "rank": 4,
+   "fields": {
+    "barcode": "4988005659057",
+    "region": "JP",
+    "media": "2 CD",
+    "catalog_number": "UICS-1228/9",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2091570218,
+   "label": "Born This Way USB Drive · 602527800509 · TW",
+   "era": "born-this-way",
+   "rank": 5,
+   "fields": {
+    "barcode": "602527800509",
+    "region": "TW",
+    "media": "USB",
+    "catalog_number": "2780050",
+    "item_type": "usb album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1955866466,
+   "label": "Born This Way Reimagined · 602438418176 · US",
+   "era": "born-this-way",
+   "rank": 6,
+   "fields": {
+    "barcode": "602438418176",
+    "region": "US",
+    "media": "2 CD",
+    "catalog_number": "B0034330-02",
+    "item_type": "album"
+   },
+   "notes": "The 10th Anniversary + Reimagined"
+  },
+  {
+   "instance_id": 2123168286,
+   "label": "Born This Way [Japan 2026] · 4988031833186 · JP",
+   "era": "born-this-way",
+   "rank": 7,
+   "fields": {
+    "barcode": "4988031833186",
+    "region": "JP",
+    "media": "CD 7\"",
+    "catalog_number": "UICY-80695",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1953098187,
+   "label": "Born This Way The Remix · 602527870007 · AU",
+   "era": "born-this-way",
+   "rank": 8,
+   "fields": {
+    "barcode": "602527870007",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "2787000",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2124662472,
+   "label": "Born This Way The Remix [Japan] · 4988005693563 · JP",
+   "era": "born-this-way",
+   "rank": 9,
+   "fields": {
+    "barcode": "4988005693563",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-9129",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2090107187,
+   "label": "Born This Way The Collection · 602527873619 · EU",
+   "era": "born-this-way",
+   "rank": 10,
+   "fields": {
+    "barcode": "602527873619",
+    "region": "EU",
+    "media": "CD Box",
+    "catalog_number": "LC06406",
+    "item_type": "albums"
+   },
+   "notes": "Bron This Way + Born This Way The Remix + Monster Ball Tour DVD"
+  },
+  {
+   "instance_id": 2186413558,
+   "label": "Born This Way · 602527657325 · US",
+   "era": "born-this-way",
+   "rank": 11,
+   "fields": {
+    "barcode": "602527657325",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070822977,
+   "label": "Born This Way · 602527657325 · EU",
+   "era": "born-this-way",
+   "rank": 12,
+   "fields": {
+    "barcode": "602527657325",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2090421598,
+   "label": "Judas · 602527727028 · EU",
+   "era": "born-this-way",
+   "rank": 13,
+   "fields": {
+    "barcode": "602527727028",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Judas + Born This Way (Twin Shadow Remix)"
+  },
+  {
+   "instance_id": 2070823670,
+   "label": "The Edge Of Glory · 602527771441 · EU",
+   "era": "born-this-way",
+   "rank": 14,
+   "fields": {
+    "barcode": "602527771441",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Radio Edit + Cahill Club Remix"
+  },
+  {
+   "instance_id": 2090421494,
+   "label": "You And I · 602527836348 · EU",
+   "era": "born-this-way",
+   "rank": 15,
+   "fields": {
+    "barcode": "602527836348",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Radio Edit + Mark Taylor Remix Radio Edit"
+  },
+  {
+   "instance_id": 2090421679,
+   "label": "Marry The Night · 602527910024 · EU",
+   "era": "born-this-way",
+   "rank": 16,
+   "fields": {
+    "barcode": "602527910024",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Album Version + David Jost & Twin Radio Mix"
+  },
+  {
+   "instance_id": 2052216972,
+   "label": "Bloody Mary · 602455673442 · US",
+   "era": "born-this-way",
+   "rank": 17,
+   "fields": {
+    "barcode": "602455673442",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0037916-32",
+    "item_type": "single"
+   },
+   "notes": "Gaga released this single after this song went viral on TikTok because of Netflix Series Wednesday"
+  },
+  {
+   "instance_id": 2146798056,
+   "label": "Judas The Remixes · 602527747217 · US",
+   "era": "born-this-way",
+   "rank": 18,
+   "fields": {
+    "barcode": "602527747217",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "252774721",
+    "item_type": "remixes"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2128317950,
+   "label": "B.T.W. Singles Remix · - · MX",
+   "era": "born-this-way",
+   "rank": 19,
+   "fields": {
+    "region": "MX",
+    "media": "CD",
+    "catalog_number": "202454",
+    "item_type": "promo"
+   },
+   "notes": "Remix released in Mexico only"
+  },
+  {
+   "instance_id": 2186413592,
+   "label": "ARTPOP · 602537543045 · EU",
+   "era": "artpop",
+   "rank": 0,
+   "fields": {
+    "barcode": "602537543045",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Standard Foil Version"
+  },
+  {
+   "instance_id": 1953098676,
+   "label": "ARTPOP · 602537543045 · BR",
+   "era": "artpop",
+   "rank": 1,
+   "fields": {
+    "barcode": "602537543045",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AJ0000500",
+    "item_type": "album"
+   },
+   "notes": "Standard Brazilian Version (No Foil)"
+  },
+  {
+   "instance_id": 2127791738,
+   "label": "ARTPOP [Walmart Exclusive] · 602537621026 · US",
+   "era": "artpop",
+   "rank": 2,
+   "fields": {
+    "barcode": "602537621026",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0019657-02",
+    "item_type": "album"
+   },
+   "notes": "Walmart Exclusive album with 2 exclusive remixes (No Walmart Sticker) Clean Version"
+  },
+  {
+   "instance_id": 1959180197,
+   "label": "ARTPOP [Deluxe] · 602537588138 · AU",
+   "era": "artpop",
+   "rank": 3,
+   "fields": {
+    "barcode": "602537588138",
+    "region": "AU",
+    "media": "CD + DVD",
+    "catalog_number": "3758813",
+    "item_type": "album"
+   },
+   "notes": "CD Foil Version + DVD iTunes Festival 2013 Performance"
+  },
+  {
+   "instance_id": 2108545296,
+   "label": "ARTPOP [Reissue] · 602577512711 · US",
+   "era": "artpop",
+   "rank": 4,
+   "fields": {
+    "barcode": "602577512711",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0029956-02",
+    "item_type": "album"
+   },
+   "notes": "Reissue with 14 tracks (without R. Kelly) (No Foil)"
+  },
+  {
+   "instance_id": 2123208631,
+   "label": "ARTPOP [Japan] · 4988005794604 · JP",
+   "era": "artpop",
+   "rank": 5,
+   "fields": {
+    "barcode": "4988005794604",
+    "region": "JP",
+    "media": "CD + DVD",
+    "catalog_number": "UICS-9140",
+    "item_type": "album"
+   },
+   "notes": "Japan Foil Version with DVD"
+  },
+  {
+   "instance_id": 2123184466,
+   "label": "ARTPOP [10th Anniversary] · 4988031618554 · JP",
+   "era": "artpop",
+   "rank": 6,
+   "fields": {
+    "barcode": "4988031618554",
+    "region": "JP",
+    "media": "CD 7\" + DVD",
+    "catalog_number": "UICS-9182",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2086554516,
+   "label": "Applause · 602537524891 · EU",
+   "era": "artpop",
+   "rank": 7,
+   "fields": {
+    "barcode": "602537524891",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "single"
+   },
+   "notes": "Applause + Applause (Instrumental)"
+  },
+  {
+   "instance_id": 2125740637,
+   "label": "Applause Remixes [Thailand] · - · TH",
+   "era": "artpop",
+   "rank": 8,
+   "fields": {
+    "region": "TH",
+    "media": "CD",
+    "catalog_number": "248880028",
+    "item_type": "promo"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1962910994,
+   "label": "Cheek To Cheek · 602537972289 · AU",
+   "era": "cheek-to-cheek",
+   "rank": 0,
+   "fields": {
+    "barcode": "602537972289",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "3797228",
+    "item_type": "album"
+   },
+   "notes": "Standard album with 11 tracks"
+  },
+  {
+   "instance_id": 2096392246,
+   "label": "Cheek To Cheek · 602547004970 · US",
+   "era": "cheek-to-cheek",
+   "rank": 1,
+   "fields": {
+    "barcode": "602547004970",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0021965-02",
+    "item_type": "album"
+   },
+   "notes": "Starbucks Cardboard Case Limited Edition with 11 tracks"
+  },
+  {
+   "instance_id": 2140243950,
+   "label": "Cheek To Cheek [Target Exclusive] · 602547013156 · US",
+   "era": "cheek-to-cheek",
+   "rank": 2,
+   "fields": {
+    "barcode": "602547013156",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0021861-02",
+    "item_type": "album"
+   },
+   "notes": "Target Exclusive album with 2 extra songs - 17 tracks"
+  },
+  {
+   "instance_id": 1962155774,
+   "label": "Cheek To Cheek [Deluxe] · 602537998845 · EU",
+   "era": "cheek-to-cheek",
+   "rank": 3,
+   "fields": {
+    "barcode": "602537998845",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "3799884",
+    "item_type": "album"
+   },
+   "notes": "Deluxe album with 18 tracks"
+  },
+  {
+   "instance_id": 2096396128,
+   "label": "Cheek To Cheek [Deluxe] · 602537998845 · CA",
+   "era": "cheek-to-cheek",
+   "rank": 4,
+   "fields": {
+    "barcode": "602537998845",
+    "region": "CA",
+    "media": "CD",
+    "catalog_number": "253799884",
+    "item_type": "album"
+   },
+   "notes": "Deluxe album with 18 tracks"
+  },
+  {
+   "instance_id": 2186413623,
+   "label": "Cheek To Cheek Live! · 602547161413 · EU",
+   "era": "cheek-to-cheek",
+   "rank": 5,
+   "fields": {
+    "barcode": "602547161413",
+    "region": "EU",
+    "media": "DVD",
+    "catalog_number": "4716141",
+    "item_type": "concert"
+   },
+   "notes": "Cheek To Cheek Live! With Tony Bennet"
+  },
+  {
+   "instance_id": 2186413661,
+   "label": "Cheek To Cheek Live! · 602547123923 · US",
+   "era": "cheek-to-cheek",
+   "rank": 6,
+   "fields": {
+    "barcode": "602547123923",
+    "region": "US",
+    "media": "Blu-ray",
+    "catalog_number": "B0022494-59",
+    "item_type": "concert"
+   },
+   "notes": "Cheek To Cheek Live! With Tony Bennet"
+  },
+  {
+   "instance_id": 1970241038,
+   "label": "Joanne · 602557186437 · EU",
+   "era": "joanne",
+   "rank": 0,
+   "fields": {
+    "barcode": "602557186437",
+    "region": "EU",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Standard album with 11 tracks"
+  },
+  {
+   "instance_id": 1953098802,
+   "label": "Joanne [Deluxe] · 602557186444 · AU",
+   "era": "joanne",
+   "rank": 1,
+   "fields": {
+    "barcode": "602557186444",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "B0025801-02",
+    "item_type": "album"
+   },
+   "notes": "Deluxe album with 14 tracks"
+  },
+  {
+   "instance_id": 2186413708,
+   "label": "Joanne [Deluxe] · 602557186444 · AU",
+   "era": "joanne",
+   "rank": 2,
+   "fields": {
+    "barcode": "602557186444",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "B0025801-02",
+    "item_type": "album"
+   },
+   "notes": "Deluxe album with 14 tracks and sticker"
+  },
+  {
+   "instance_id": 2115404367,
+   "label": "Joanne [Japan] · 4988031192078 · JP",
+   "era": "joanne",
+   "rank": 3,
+   "fields": {
+    "barcode": "4988031192078",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-1316",
+    "item_type": "album"
+   },
+   "notes": "Japanese version with 2 bonus tracks"
+  },
+  {
+   "instance_id": 2105114802,
+   "label": "Gaga: Five Foot Two · - · US",
+   "era": "joanne",
+   "rank": 4,
+   "fields": {
+    "region": "US",
+    "media": "DVD",
+    "item_type": "promo"
+   },
+   "notes": "A Netflix Original Documentary - Promo DVD"
+  },
+  {
+   "instance_id": 2114658741,
+   "label": "The Cure · - · UK",
+   "era": "the-cure",
+   "rank": 0,
+   "fields": {
+    "region": "UK",
+    "media": "CD",
+    "item_type": "promo"
+   },
+   "notes": "Single Promo Polydor"
+  },
+  {
+   "instance_id": 1953099132,
+   "label": "A Star Is Born [Soundtrack] · 602567775539 · AU",
+   "era": "a-star-is-born",
+   "rank": 0,
+   "fields": {
+    "barcode": "602567775539",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "B0028725-02",
+    "item_type": "album"
+   },
+   "notes": "Standard album"
+  },
+  {
+   "instance_id": 2101940689,
+   "label": "A Star Is Born [Soundtrack] · 602577194061 · EU",
+   "era": "a-star-is-born",
+   "rank": 1,
+   "fields": {
+    "barcode": "602577194061",
+    "region": "EU",
+    "media": "CD Box",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "CD Box with posters and book"
+  },
+  {
+   "instance_id": 2102635047,
+   "label": "A Star Is Born [Soundtrack] · 602508301940 · FR",
+   "era": "a-star-is-born",
+   "rank": 2,
+   "fields": {
+    "barcode": "602508301940",
+    "region": "FR",
+    "media": "CD + DVD",
+    "catalog_number": "083019-4",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2105067791,
+   "label": "Chromatica · 602508854064 · AU",
+   "era": "chromatica",
+   "rank": 0,
+   "fields": {
+    "barcode": "602508854064",
+    "region": "AU",
+    "media": "CD",
+    "catalog_number": "B0032000-02",
+    "item_type": "album"
+   },
+   "notes": "Standard Album"
+  },
+  {
+   "instance_id": 1953099321,
+   "label": "Chromatica [Signed Album] · 602508854064 · US",
+   "era": "chromatica",
+   "rank": 1,
+   "fields": {
+    "barcode": "602508854064",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0032000-02",
+    "item_type": "album"
+   },
+   "notes": "Standard Album with Lady Gaga's Autographed card from the official store"
+  },
+  {
+   "instance_id": 1961247242,
+   "label": "Chromatica [Target Exclusive] · 602508854071 · US",
+   "era": "chromatica",
+   "rank": 2,
+   "fields": {
+    "barcode": "602508854071",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0032001-02",
+    "item_type": "album"
+   },
+   "notes": "Target Exclusive album with 3 more songs"
+  },
+  {
+   "instance_id": 2123168177,
+   "label": "Chromatica [Japan] · 4988031378281 · JP",
+   "era": "chromatica",
+   "rank": 3,
+   "fields": {
+    "barcode": "4988031378281",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-1359",
+    "item_type": "album"
+   },
+   "notes": "Japan Edition (Includes \"Stupid Love – Vitaclub Warehouse Mix\")"
+  },
+  {
+   "instance_id": 1954882374,
+   "label": "Chromatica [Deluxe] · 602508854149 · EU",
+   "era": "chromatica",
+   "rank": 4,
+   "fields": {
+    "barcode": "602508854149",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "CD booklet edition with 3 more songs"
+  },
+  {
+   "instance_id": 2096393062,
+   "label": "Chromatica [Deluxe Box] · 602508854163 · EU",
+   "era": "chromatica",
+   "rank": 5,
+   "fields": {
+    "barcode": "602508854163",
+    "region": "EU",
+    "media": "CD Box",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "CD Pink Box with photos, tattoos, booklet, 6 bonus tracks"
+  },
+  {
+   "instance_id": 2137495450,
+   "label": "Chromatica [Japan Tour Edition] · 4988031529966 · JP",
+   "era": "chromatica",
+   "rank": 6,
+   "fields": {
+    "barcode": "4988031529966",
+    "region": "JP",
+    "media": "CD 7\" + DVD",
+    "catalog_number": "UICS-9180",
+    "item_type": "album"
+   },
+   "notes": "Japan Tour Edition 7\" released in 2022"
+  },
+  {
+   "instance_id": 2070825421,
+   "label": "Stupid Love · 602508881138 · US",
+   "era": "chromatica",
+   "rank": 7,
+   "fields": {
+    "barcode": "602508881138",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0032052-32",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2070825477,
+   "label": "Rain On Me · 602507284206 · US",
+   "era": "chromatica",
+   "rank": 8,
+   "fields": {
+    "barcode": "602507284206",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0032418-32",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1953099405,
+   "label": "Dawn Of Chromatica · 602438850747 · US",
+   "era": "chromatica",
+   "rank": 9,
+   "fields": {
+    "barcode": "602438850747",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0034639-02",
+    "item_type": "album"
+   },
+   "notes": "Album with remixes of Chromatica"
+  },
+  {
+   "instance_id": 1977387387,
+   "label": "Love For Sale · 602435840109 · US",
+   "era": "love-for-sale",
+   "rank": 0,
+   "fields": {
+    "barcode": "602435840109",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0033584-02",
+    "item_type": "album"
+   },
+   "notes": "Standard album with 10 tracks"
+  },
+  {
+   "instance_id": 2104803833,
+   "label": "Love For Sale [Alt Cover #1] · 602438841219 · EU",
+   "era": "love-for-sale",
+   "rank": 1,
+   "fields": {
+    "barcode": "602438841219",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Standard Album Alternate Cover #1 with 10 tracks"
+  },
+  {
+   "instance_id": 2099401668,
+   "label": "Love For Sale [Alt Cover #2] · 602438841271 · EU",
+   "era": "love-for-sale",
+   "rank": 2,
+   "fields": {
+    "barcode": "602438841271",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Standard Album Alternate Cover #2 with 10 tracks"
+  },
+  {
+   "instance_id": 2098198257,
+   "label": "Love For Sale [Alt Cover #3] · 602438841295 · EU",
+   "era": "love-for-sale",
+   "rank": 3,
+   "fields": {
+    "barcode": "602438841295",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Standard Album Alternate Cover #3 with 10 tracks"
+  },
+  {
+   "instance_id": 2098198107,
+   "label": "Love For Sale [Alt Cover #4] · 602438841301 · EU",
+   "era": "love-for-sale",
+   "rank": 4,
+   "fields": {
+    "barcode": "602438841301",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Standard Album Alternate Cover #4 with 10 tracks"
+  },
+  {
+   "instance_id": 1955864468,
+   "label": "Love For Sale [Target Exclusive] · 602435939377 · US",
+   "era": "love-for-sale",
+   "rank": 5,
+   "fields": {
+    "barcode": "602435939377",
+    "region": "US",
+    "media": "CD",
+    "catalog_number": "B0033704-02",
+    "item_type": "album"
+   },
+   "notes": "Target Exclusive with 12 tracks"
+  },
+  {
+   "instance_id": 2098198394,
+   "label": "Love For Sale [Deluxe Box] · 602435492766 · EU",
+   "era": "love-for-sale",
+   "rank": 6,
+   "fields": {
+    "barcode": "602435492766",
+    "region": "EU",
+    "media": "CD Box",
+    "catalog_number": "LC06406",
+    "item_type": "albums"
+   },
+   "notes": "Box with 2 bonus tracks, booklets, photos and bonus audio CD Cheek To Cheek live!"
+  },
+  {
+   "instance_id": 2123168898,
+   "label": "Top Gun Maverick [Soundtrack] · 602445845125 · EU",
+   "era": "rolling-stones",
+   "rank": 0,
+   "fields": {
+    "barcode": "602445845125",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Track 11 Hold My Hand By Lady gaga"
+  },
+  {
+   "instance_id": 2186413778,
+   "label": "Sweet Sounds Of Heaven · 602458122527 · EU",
+   "era": "rolling-stones",
+   "rank": 1,
+   "fields": {
+    "barcode": "602458122527",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC00309",
+    "item_type": "single"
+   },
+   "notes": "Rolling Stones [featuring Lady Gaga]"
+  },
+  {
+   "instance_id": 2186413812,
+   "label": "Harlequin · 602475066491 · EU",
+   "era": "harlequin",
+   "rank": 0,
+   "fields": {
+    "barcode": "602475066491",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Standard Album with 13 tracks"
+  },
+  {
+   "instance_id": 2098198817,
+   "label": "Joker Folie À Deux [Soundtrack] · 602475034742 · EU",
+   "era": "harlequin",
+   "rank": 1,
+   "fields": {
+    "barcode": "602475034742",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Music from the motion picture"
+  },
+  {
+   "instance_id": 2052216915,
+   "label": "Die With A Smile · 602475081173 · US",
+   "era": "mayhem",
+   "rank": 0,
+   "fields": {
+    "barcode": "602475081173",
+    "region": "US",
+    "media": "CD",
+    "item_type": "single"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 1959182384,
+   "label": "Mayhem · 602475451044 · AU",
+   "era": "mayhem",
+   "rank": 1,
+   "fields": {
+    "barcode": "602475451044",
+    "region": "AU",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Standard Album with 14 tracks"
+  },
+  {
+   "instance_id": 1959183245,
+   "label": "Mayhem [Store Exclusive] · 602475451075 · EU",
+   "era": "mayhem",
+   "rank": 2,
+   "fields": {
+    "barcode": "602475451075",
+    "region": "EU",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Lady Gaga's official store exclusive album with bonus track Can't Stop The High"
+  },
+  {
+   "instance_id": 1959183101,
+   "label": "Mayhem [JB Hi-Fi Exclusive] · 602475455134 · AU",
+   "era": "mayhem",
+   "rank": 3,
+   "fields": {
+    "barcode": "602475455134",
+    "region": "AU",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "JB Hi-Fi exclusive album with bonus track Kill For Love"
+  },
+  {
+   "instance_id": 2186413863,
+   "label": "Mayhem [JB Hi-Fi Exclusive] · 602475455134 · AU",
+   "era": "mayhem",
+   "rank": 4,
+   "fields": {
+    "barcode": "602475455134",
+    "region": "AU",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "JB Hi-Fi exclusive album with bonus track Kill For Love (SEALED)"
+  },
+  {
+   "instance_id": 2186413888,
+   "label": "Mayhem [Target Exclusive] · 602475451051 · US",
+   "era": "mayhem",
+   "rank": 5,
+   "fields": {
+    "barcode": "602475451051",
+    "region": "US",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Target exclusive album with bonus track Kill For Love"
+  },
+  {
+   "instance_id": 2171706846,
+   "label": "Mayhem [Brazil] · 602475451044 · BR",
+   "era": "mayhem",
+   "rank": 6,
+   "fields": {
+    "barcode": "602475451044",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": null
+  },
+  {
+   "instance_id": 2186413909,
+   "label": "Mayhem [Japan] · 4988031758274 · JP",
+   "era": "mayhem",
+   "rank": 7,
+   "fields": {
+    "barcode": "4988031758274",
+    "region": "JP",
+    "media": "CD",
+    "catalog_number": "UICS-1413",
+    "item_type": "album"
+   },
+   "notes": "Japanese album with bonus track Can't Stop The High"
+  },
+  {
+   "instance_id": 2186413931,
+   "label": "Mayhem [Japan Deluxe] · 4988031758267 · JP",
+   "era": "mayhem",
+   "rank": 8,
+   "fields": {
+    "barcode": "4988031758267",
+    "region": "JP",
+    "media": "CD 7\"",
+    "catalog_number": "UICS-9185",
+    "item_type": "album"
+   },
+   "notes": "Japanese deluxe 7\" version with photos and booklet"
+  },
+  {
+   "instance_id": 2171707579,
+   "label": "The Devil Wears Prada 2 · 199957934671 · EU",
+   "era": "devil-wears-prada-2",
+   "rank": 0,
+   "fields": {
+    "barcode": "199957934671",
+    "region": "EU",
+    "media": "CD",
+    "catalog_number": "LC06406",
+    "item_type": "album"
+   },
+   "notes": "Music From The Motion Picture"
+  },
+  {
+   "instance_id": 2171732422,
+   "label": "Live in London",
+   "era": "artpop",
+   "rank": 100,
+   "fields": {},
+   "notes": null
+  }
+ ]
+}

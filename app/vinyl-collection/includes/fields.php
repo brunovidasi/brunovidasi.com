@@ -58,6 +58,17 @@ function detect_media_kind(array $formats): string
 /** The item types offered in the admin's Type box. */
 const ITEM_TYPES = ['album', 'single', 'ep', 'promo', 'compilation', 'live', 'other'];
 
+/**
+ * The choices for the Type box: the usual ones, plus whatever the record has
+ * already ("remixes", "usb album" from a list), so saving the form doesn't drop it.
+ */
+function item_type_options(?string $current): array
+{
+    $current = trim((string) $current);
+
+    return $current !== '' && !in_array($current, ITEM_TYPES, true) ? [...ITEM_TYPES, $current] : ITEM_TYPES;
+}
+
 /** Sizes offered for vinyl. Free text is still accepted — these are shortcuts. */
 const VINYL_SIZES = ['7"', '10"', '12"', '5"'];
 

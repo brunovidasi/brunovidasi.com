@@ -1,0 +1,373 @@
+{
+ "artist": "beyonce",
+ "eras": [
+  {
+   "slug": "destinys-child",
+   "replaces": null,
+   "name": "Destiny's Child",
+   "years": "1999–2004",
+   "tagline": "Survivor · Destiny Fulfilled"
+  },
+  {
+   "slug": "dangerously-in-love",
+   "replaces": null,
+   "name": "Dangerously in Love",
+   "years": "2002–2004",
+   "tagline": "Crazy in Love · Baby Boy"
+  },
+  {
+   "slug": "bday",
+   "replaces": null,
+   "name": "B'Day",
+   "years": "2006–2007",
+   "tagline": "Déjà Vu · Irreplaceable"
+  },
+  {
+   "slug": "sasha-fierce",
+   "replaces": null,
+   "name": "I Am… Sasha Fierce",
+   "years": "2008–2010",
+   "tagline": "Single Ladies · Halo"
+  },
+  {
+   "slug": "4",
+   "replaces": null,
+   "name": "4",
+   "years": "2011–2012",
+   "tagline": "Run the World · Love On Top"
+  },
+  {
+   "slug": "beyonce",
+   "replaces": null,
+   "name": "BEYONCÉ",
+   "years": "2013–2015",
+   "tagline": "Drunk in Love · Partition"
+  },
+  {
+   "slug": "lemonade",
+   "replaces": null,
+   "name": "Lemonade",
+   "years": "2016–2017",
+   "tagline": "Formation · Sorry"
+  },
+  {
+   "slug": "everything-is-love",
+   "replaces": null,
+   "name": "Everything Is Love & The Gift",
+   "years": "2018–2019",
+   "tagline": "The Carters · The Lion King"
+  },
+  {
+   "slug": "renaissance",
+   "replaces": null,
+   "name": "Renaissance",
+   "years": "2022–2023",
+   "tagline": "Break My Soul · Cuff It"
+  },
+  {
+   "slug": "cowboy-carter",
+   "replaces": null,
+   "name": "Cowboy Carter",
+   "years": "2024–2025",
+   "tagline": "Texas Hold 'Em · 16 Carriages"
+  }
+ ],
+ "rules": [
+  {
+   "era": "destinys-child",
+   "master": 40948,
+   "rank": 0
+  },
+  {
+   "era": "destinys-child",
+   "master": 41046,
+   "rank": 1
+  },
+  {
+   "era": "destinys-child",
+   "master": 41069,
+   "rank": 2
+  },
+  {
+   "era": "dangerously-in-love",
+   "master": 41127,
+   "rank": 0
+  },
+  {
+   "era": "dangerously-in-love",
+   "master": 41104,
+   "rank": 1
+  },
+  {
+   "era": "dangerously-in-love",
+   "master": 41122,
+   "rank": 2
+  },
+  {
+   "era": "dangerously-in-love",
+   "master": 41113,
+   "rank": 3
+  },
+  {
+   "era": "dangerously-in-love",
+   "master": 41133,
+   "rank": 4
+  },
+  {
+   "era": "bday",
+   "master": 41244,
+   "rank": 0
+  },
+  {
+   "era": "bday",
+   "master": 41579,
+   "rank": 1
+  },
+  {
+   "era": "bday",
+   "master": 41610,
+   "rank": 2
+  },
+  {
+   "era": "bday",
+   "master": 41662,
+   "rank": 3
+  },
+  {
+   "era": "sasha-fierce",
+   "master": 41680,
+   "rank": 0
+  },
+  {
+   "era": "sasha-fierce",
+   "master": 41693,
+   "rank": 1
+  },
+  {
+   "era": "4",
+   "master": 347012,
+   "rank": 0
+  },
+  {
+   "era": "4",
+   "master": 520890,
+   "rank": 1
+  },
+  {
+   "era": "4",
+   "master": 1084980,
+   "rank": 2
+  },
+  {
+   "era": "beyonce",
+   "master": 631282,
+   "rank": 0
+  },
+  {
+   "era": "lemonade",
+   "master": 992029,
+   "rank": 0
+  },
+  {
+   "era": "renaissance",
+   "master": 2726912,
+   "rank": 0
+  },
+  {
+   "era": "cowboy-carter",
+   "master": 3440309,
+   "rank": 0
+  }
+ ],
+ "items": [
+  {
+   "instance_id": 1953202806,
+   "label": "CD The Writing's On The Wall · Australia",
+   "era": "destinys-child",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 1953202944,
+   "label": "CD Survivor · Australia & New Zealand",
+   "era": "destinys-child",
+   "rank": 1,
+   "fields": {}
+  },
+  {
+   "instance_id": 2101287839,
+   "label": "CD Work It Out · Australia & New Zealand",
+   "era": "dangerously-in-love",
+   "rank": 1,
+   "fields": {}
+  },
+  {
+   "instance_id": 2096392736,
+   "label": "CD Baby Boy · Australia",
+   "era": "dangerously-in-love",
+   "rank": 3,
+   "fields": {}
+  },
+  {
+   "instance_id": 2096392618,
+   "label": "CD Crazy In Love · Australia",
+   "era": "dangerously-in-love",
+   "rank": 2,
+   "fields": {}
+  },
+  {
+   "instance_id": 1953106626,
+   "label": "CD Dangerously In Love · Europe",
+   "era": "dangerously-in-love",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2025766298,
+   "label": "CD Me, Myself And I · Australia",
+   "era": "dangerously-in-love",
+   "rank": 4,
+   "fields": {}
+  },
+  {
+   "instance_id": 1953202617,
+   "label": "CD Destiny Fulfilled · Asia",
+   "era": "destinys-child",
+   "rank": 2,
+   "fields": {}
+  },
+  {
+   "instance_id": 2099053817,
+   "label": "CD Déjà Vu · Australia",
+   "era": "bday",
+   "rank": 1,
+   "fields": {}
+  },
+  {
+   "instance_id": 2099053576,
+   "label": "CD Irreplaceable · Australia",
+   "era": "bday",
+   "rank": 2,
+   "fields": {}
+  },
+  {
+   "instance_id": 1953107256,
+   "label": "CD B'Day · Europe",
+   "era": "bday",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2090421290,
+   "label": "CD Beautiful Liar · Europe",
+   "era": "bday",
+   "rank": 3,
+   "fields": {}
+  },
+  {
+   "instance_id": 1953106296,
+   "label": "CD I Am... Sasha Fierce · US",
+   "era": "sasha-fierce",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2110799300,
+   "label": "CD Halo · Australia",
+   "era": "sasha-fierce",
+   "rank": 1,
+   "fields": {}
+  },
+  {
+   "instance_id": 2098245892,
+   "label": "CD I Am... Sasha Fierce · US",
+   "era": "sasha-fierce",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2171731449,
+   "label": "DVD Live At Roseland: Elements Of 4 · Brazil",
+   "era": "4",
+   "rank": 1,
+   "fields": {}
+  },
+  {
+   "instance_id": 2101287909,
+   "label": "CD Heat · USA & Europe",
+   "era": "4",
+   "rank": 2,
+   "fields": {}
+  },
+  {
+   "instance_id": 2092417062,
+   "label": "CD 4 · Australia",
+   "era": "4",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2091572391,
+   "label": "CD Beyoncé · Australia",
+   "era": "beyonce",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 1953107070,
+   "label": "CD Lemonade · Europe",
+   "era": "lemonade",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2125969215,
+   "label": "LP Lemonade · US",
+   "era": "lemonade",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2146797879,
+   "label": "LP Renaissance · US",
+   "era": "renaissance",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2142861834,
+   "label": "LP Renaissance · US",
+   "era": "renaissance",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2091572757,
+   "label": "CD Renaissance · Europe",
+   "era": "renaissance",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2142861905,
+   "label": "LP Cowboy Carter · US",
+   "era": "cowboy-carter",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2098199178,
+   "label": "CD Cowboy Carter · Europe",
+   "era": "cowboy-carter",
+   "rank": 0,
+   "fields": {}
+  },
+  {
+   "instance_id": 2096395162,
+   "label": "LP Cowboy Carter · Europe",
+   "era": "cowboy-carter",
+   "rank": 0,
+   "fields": {}
+  }
+ ]
+}

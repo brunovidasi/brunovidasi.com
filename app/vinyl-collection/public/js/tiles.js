@@ -9,6 +9,10 @@
 
 const KIND_LABEL = { vinyl: 'Vinyl', cd: 'CD', dvd: 'DVD', bd: 'Blu-ray', other: 'Other' };
 
+/* Every card the page has been given, by id, so that the drawer can stand a record
+   up from its id alone (js/spotlight.js). Filled by prepareItems. */
+const cardIndex = new Map();
+
 /* Sleeve size in px at full scale, following the real objects: LP 12.4",
    CD case 5.6", DVD case 5.3 x 7.5", Blu-ray case 5.3 x 6.7". */
 function dims(it) {
@@ -41,10 +45,44 @@ function buildTile(it) {
   t.innerHTML = `<div class="sleeve" style="--fb:linear-gradient(135deg,hsl(${hue} 40% 34%),hsl(${(hue + 40) % 360} 45% 16%))">${src ? `<img loading="lazy" decoding="async" alt="" src="${esc(src)}">` : ''}</div>`;
   const img = t.querySelector('img');
   if (img) img.addEventListener('error', () => img.remove());
+  if (it.discs.length) discWatcher ? discWatcher.observe(t) : preloadDiscs(t);
   return t;
 }
 
 /* ---------- The discs, revealed on hover ---------- */
+
+/* A picture set for this disc in the admin (d.art) is its own; otherwise the
+   record's one disc picture, if it has one, is on every disc. */
+function discArt(it, d) {
+  return d.art || (d.t === 'v' ? (d.pic && it.disc) || it.cover : it.disc);
+}
+
+/* The disc elements only exist once a tile is first hovered, and a CSS
+   background isn't fetched before then, so the picture would start downloading
+   just as the disc slides out. Fetching it as the tile nears the screen, the way
+   the sleeve's lazy <img> is, leaves it in the cache by the time anyone hovers. */
+const preloaded = new Set();
+
+function preloadDiscs(t) {
+  for (const d of t._it.discs) {
+    const art = discArt(t._it, d);
+    if (!art || preloaded.has(art)) continue;
+    preloaded.add(art);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = art;
+  }
+}
+
+const discWatcher = 'IntersectionObserver' in window
+  ? new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        discWatcher.unobserve(e.target);
+        preloadDiscs(e.target);
+      }
+    }, { rootMargin: '400px' })
+  : null;
 
 function discEl(it, k) {
   const d = it.discs[k];
@@ -57,11 +95,12 @@ function discEl(it, k) {
   el.style.setProperty('--reach', (1 + dd / 3 + k * 0.16).toFixed(2)); // a third of the first disc peeks out; later ones a little further, behind it
   el.style.zIndex = String(3 - k);
   if (d.c) el.style.setProperty('--vc', d.c);
-  // Vinyl shows the cover on the label; a CD, DVD or Blu-ray shows the plain
-  // reading side unless a disc image was picked for it in the admin.
-  const art = d.t === 'v' ? it.cover : it.disc;
+  // Vinyl shows the cover on the label, unless it is a picture disc with its own
+  // image picked in the admin; a CD, DVD or Blu-ray shows the plain reading side
+  // unless a disc image was picked for it in the admin.
+  const art = discArt(it, d);
   if (art) el.style.setProperty('--art', `url("${art.replace(/"/g, '%22')}")`);
-  if (d.t !== 'v' && it.disc) el.classList.add('art');
+  if (d.t !== 'v' && (d.art || it.disc)) el.classList.add('art');
   sp.className = 'sp';
   sp.innerHTML = '<b class="lbl"></b>';
   el.appendChild(sp);
@@ -250,12 +289,12 @@ function wireTiles(content, wantsLabel = () => true) {
 
   content.addEventListener('click', e => {
     const el = e.target.closest('.tile, .lrow, .cell');
-    if (el && el._it) openDrawer(el._it.id);
+    if (el && el._it) openDrawer(el._it.id, false, el);
   });
   content.addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const el = e.target.closest('.tile, .lrow, .cell');
-    if (el && el._it) { e.preventDefault(); openDrawer(el._it.id); }
+    if (el && el._it) { e.preventDefault(); openDrawer(el._it.id, false, el); }
   });
 
   addEventListener('pointermove', e => {
@@ -331,7 +370,7 @@ function matchesQuery(it, query) {
  * the CSS is written against, and a haystack to search.
  */
 function prepareItems(list) {
-  return list.map(({ search, ...it }) => ({
+  const cards = list.map(({ search, ...it }) => ({
     ...it,
     kind: it.k,
     hay: fold([
@@ -339,4 +378,8 @@ function prepareItems(list) {
       KIND_LABEL[it.k], it.fmt, search,
     ].join(' | ')),
   }));
+  cards.forEach(card => cardIndex.set(card.id, card));
+  // a drawer opened by a link is waiting for the record it names
+  if (typeof Spotlight !== 'undefined') Spotlight.adopt();
+  return cards;
 }

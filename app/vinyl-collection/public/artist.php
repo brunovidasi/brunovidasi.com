@@ -39,6 +39,7 @@ $others = $others->fetchAll();
 <link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset_url('css/artist.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/spotlight.css')) ?>">
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>" data-slug="<?= e($artist['slug']) ?>" style="--accent: <?= e($accent) ?>">
 
@@ -58,24 +59,33 @@ $others = $others->fetchAll();
     </div>
     <svg id="disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="50" cy="50" r="48" fill="#0B0A08" stroke="#3a352c" stroke-width="1"/>
+      <!-- same light on the grooves and mark on the label as the shelf's disc, so it
+           reads as spinning -->
+      <path d="M50 50 L50 2 A48 48 0 0 1 88.8 21.8 Z" fill="#F2EAD8" opacity="0.07"/>
+      <path d="M50 50 L50 98 A48 48 0 0 1 11.2 78.2 Z" fill="#F2EAD8" opacity="0.045"/>
       <circle cx="50" cy="50" r="46" fill="none" stroke="#2a2620" stroke-width="0.6"/>
       <circle cx="50" cy="50" r="40" fill="none" stroke="#2a2620" stroke-width="0.6"/>
       <circle cx="50" cy="50" r="34" fill="none" stroke="#2a2620" stroke-width="0.6"/>
       <circle cx="50" cy="50" r="28" fill="none" stroke="#2a2620" stroke-width="0.6"/>
       <circle class="accent" cx="50" cy="50" r="16" fill="<?= e($accent) ?>"/>
+      <path d="M50 37.5 A12.5 12.5 0 0 1 60.8 43.75" fill="none" stroke="#0B0A08" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/>
       <circle cx="50" cy="50" r="3" fill="#0B0A08"/>
     </svg>
   </div>
 </header>
 
 <div class="controls">
+  <span class="meta lead" id="countMeta"></span>
   <input type="search" id="search" placeholder="Search title, barcode…" aria-label="Search <?= e($artist['name']) ?> records">
   <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
   <div class="seg" id="viewToggle" role="group" aria-label="View">
     <button type="button" data-view="grid">Grid</button>
     <button type="button" data-view="list">List</button>
   </div>
-  <span class="meta" id="countMeta"></span>
+  <div class="seg" id="orderToggle" role="group" aria-label="Order of eras">
+    <button type="button" data-order="oldest">Oldest first</button>
+    <button type="button" data-order="newest">Newest first</button>
+  </div>
 </div>
 
 <nav class="era-nav" id="eraNav" aria-label="Eras" hidden></nav>
@@ -101,6 +111,7 @@ $others = $others->fetchAll();
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
+<script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
 <script src="<?= e(asset_url('js/artist.js')) ?>"></script>
 
 </body>

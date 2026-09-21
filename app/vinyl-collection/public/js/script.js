@@ -8,7 +8,7 @@
  * Discogs, so it carries Bruno's own fields, his chosen covers, and nothing he
  * has hidden.
  *
- * The floor can also be put in order: "Organise vinyls on a crate" throws the
+ * The floor can also be put in order: "Put albums in a crate" throws the
  * pile into a crate to flip through (js/crate.js), and "Back to the mess" tips it
  * out again. The crate is a state of the floor view, not a fourth view, so it
  * follows the same search and format filter and is left by choosing Grid or List.

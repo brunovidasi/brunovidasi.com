@@ -111,6 +111,9 @@ const VINYL_COLORS = [
     ['brown', '#7a4b2a'], ['clear', '#dfe8ec'], ['black', '#131313'],
 ];
 
+/** The colour a vinyl is drawn in when no word of its colour text matches (the CSS default too). */
+const VINYL_FALLBACK_COLOR = '#131313';
+
 function vinyl_color(string $text): array
 {
     $lower = mb_strtolower($text);
@@ -123,10 +126,49 @@ function vinyl_color(string $text): array
     return ['c' => null, 'tr' => false];
 }
 
+/** A colour picked in the admin as "#rrggbb", lower-cased, or null if it isn't one. */
+function vinyl_hex(?string $text): ?string
+{
+    $text = strtolower(trim((string) $text));
+
+    return preg_match('/^#[0-9a-f]{6}$/', $text) ? $text : null;
+}
+
+/** The most discs one sleeve fans out on the shelf; more than that stops reading as a stack. */
+const MAX_DISCS = 3;
+
+/**
+ * What the admin has said about a record's discs: how many there are (null = as
+ * Discogs' formats say) and the picture on each, "" for a plain disc. `set` is
+ * false for a record the admin has never configured, which still has the single
+ * disc_url of before, shown on every disc.
+ *
+ * @return array{set: bool, count: ?int, art: string[]}
+ */
+function disc_config(array $row): array
+{
+    $raw = json_column($row['disc_config'] ?? null);
+    if (!$raw) {
+        return ['set' => false, 'count' => null, 'art' => array_fill(0, MAX_DISCS, '')];
+    }
+
+    $count = isset($raw['count']) && is_numeric($raw['count']) ? min(MAX_DISCS, max(1, (int) $raw['count'])) : null;
+    $art = [];
+    for ($k = 0; $k < MAX_DISCS; $k++) {
+        $url = trim((string) (($raw['art'] ?? [])[$k] ?? ''));
+        $art[] = safe_http_url($url) ? $url : '';
+    }
+
+    return ['set' => true, 'count' => $count, 'art' => $art];
+}
+
 /**
  * The physical discs inside a sleeve, at most three (more than that and the
  * fan-out stops reading as a stack). A colour typed into the admin wins over
- * the one Discogs guessed at, so a variant can be corrected by hand.
+ * the one Discogs guessed at, and one picked there (vinyl_hex) wins over both,
+ * as does translucent or opaque (vinyl_translucent), so a variant the keywords
+ * get wrong can be corrected by hand; so do the
+ * disc count and each disc's picture (see disc_config()).
  *
  * Something filed as "other" (a cassette, a t-shirt, a book) has no disc to
  * show, so it gets none rather than a made-up CD.
@@ -138,6 +180,17 @@ function item_discs(array $row, array $formats): array
     }
 
     $override = trim((string) ($row['vinyl_color'] ?? ''));
+    $hex = vinyl_hex($row['vinyl_hex'] ?? null);
+    $translucent = match ($row['vinyl_translucent'] ?? null) {
+        1, '1' => true,
+        0, '0' => false,
+        default => null,
+    };
+    $config = disc_config($row);
+    // A single disc picture from before discs were set one by one makes every
+    // vinyl a picture disc, whatever Discogs says. Once discs are configured the
+    // picture is per disc, and applied at the end.
+    $picture = !$config['set'] && trim((string) ($row['disc_url'] ?? '')) !== '';
     $discs = [];
 
     foreach ($formats as $format) {
@@ -150,14 +203,28 @@ function item_discs(array $row, array $formats): array
                 $text = $override !== '' ? $override : (string) ($format['text'] ?? '');
                 $size = trim((string) ($row['vinyl_size'] ?? '')) ?: (formats_vinyl_size($formats) ?? '12"');
                 $discs[] = ['t' => 'v']
-                    + vinyl_color($text)
-                    + ['pic' => in_array('Picture Disc', $descriptions, true), 'sz' => (int) $size];
+                    + ($hex !== null ? ['c' => $hex] + vinyl_color($text) : vinyl_color($text))
+                    + ['pic' => $picture || in_array('Picture Disc', $descriptions, true), 'sz' => (int) $size];
+                if ($translucent !== null) {
+                    $discs[array_key_last($discs)]['tr'] = $translucent;
+                }
             } elseif ($name === 'CD' || $name === 'CDr') {
                 $discs[] = ['t' => 'cd'];
             } elseif ($name === 'DVD' || $name === 'DVDr') {
                 $discs[] = ['t' => 'dvd'];
             } elseif ($name === 'Blu-ray' || $name === 'Blu-ray-R') {
                 $discs[] = ['t' => 'bd'];
+            }
+        }
+    }
+
+    // A disc that isn't tied to a Discogs release has no formats to read; its
+    // Media box says what is in the sleeve ("CD + DVD", "2 CD").
+    if (!$discs && !$formats) {
+        foreach (explode('+', (string) ($row['media'] ?? '')) as $part) {
+            if (preg_match('/^\s*(?:(\d+)\s*[x×]?\s*)?(CD|DVD|Blu-?ray)\s*$/i', $part, $m)) {
+                $type = ['cd' => 'cd', 'dvd' => 'dvd'][strtolower($m[2])] ?? 'bd';
+                array_push($discs, ...array_fill(0, min(3, max(1, (int) $m[1])), ['t' => $type]));
             }
         }
     }
@@ -171,7 +238,30 @@ function item_discs(array $row, array $formats): array
         }];
     }
 
-    return array_slice($discs, 0, 3);
+    $discs = array_slice($discs, 0, MAX_DISCS);
+
+    // A count set in the admin: fewer discs than Discogs lists are dropped from
+    // the back; more are copies of the last one (a second CD is another CD).
+    if ($config['count'] !== null) {
+        $last = end($discs);
+        while (count($discs) < $config['count']) {
+            $discs[] = $last;
+        }
+        $discs = array_slice($discs, 0, $config['count']);
+    }
+
+    // A picture chosen for one disc is that disc's alone, and makes a vinyl one
+    // a picture disc.
+    foreach ($discs as $k => $disc) {
+        if (($config['art'][$k] ?? '') !== '') {
+            $discs[$k]['art'] = $config['art'][$k];
+            if ($disc['t'] === 'v') {
+                $discs[$k]['pic'] = true;
+            }
+        }
+    }
+
+    return $discs;
 }
 
 /**
@@ -217,6 +307,48 @@ function item_sort_date(array $row): string
     }
 
     return '';
+}
+
+/**
+ * The release date the way it reads in a tooltip: "23 November 2009", or
+ * "November 2009" / "2009" where only that much is known. Empty when the record
+ * has no date at all. Built from item_sort_date() so the label always agrees
+ * with the year beside it and with how the list sorts.
+ */
+function release_date_label(array $row): string
+{
+    $date = item_sort_date($row);
+    if ($date === '') {
+        return '';
+    }
+
+    [$year, $month, $day] = array_map('intval', explode('-', $date));
+    if ($month < 1) {
+        return (string) $year;
+    }
+
+    $when = DateTimeImmutable::createFromFormat('!Y-n-j', "$year-$month-" . max(1, $day));
+
+    return $when ? $when->format($day > 0 ? 'j F Y' : 'F Y') : (string) $year;
+}
+
+/**
+ * The year as the admin lists show it, with the full release date in a
+ * tooltip. Where Discogs (and the admin) only know the year, the tooltip says so
+ * instead of repeating it, so a missing date reads as missing rather than as a
+ * tooltip that failed.
+ */
+function year_cell(array $row): string
+{
+    $year = item_year($row);
+    if (!$year) {
+        return '<span class="none">—</span>';
+    }
+
+    $full = release_date_label($row);
+    $tip = $full !== '' && $full !== (string) $year ? $full : 'Only the year is known';
+
+    return '<span class="hover-date" tabindex="0" data-tip="' . e($tip) . '" aria-label="' . e($year . ', ' . $tip) . '">' . $year . '</span>';
 }
 
 /** The first of these that isn't blank, as text; '' if none is. */
@@ -293,7 +425,9 @@ function item_card(array $row): array
         'search'  => item_search_text($row),
         'cover'   => item_cover($row),
         'thumb'   => item_thumb($row),
-        'disc'    => (string) ($row['disc_url'] ?? ''),
+        // The one picture for every disc, for records not yet set disc by disc;
+        // a configured record carries its pictures on each entry of `discs`.
+        'disc'    => disc_config($row)['set'] ? '' : (string) ($row['disc_url'] ?? ''),
         'added'   => (string) ($row['date_added'] ?? ''),
         'kind'    => (string) $row['media_kind'],
         // 'bd' in the view model, 'bluray' in the database: the CSS and the
@@ -376,6 +510,8 @@ function item_drawer(array $row): array
         }
     }
 
+    array_push($mine, ...drawer_box_facts($row));
+
     // 'community' and 'marketplace' read several columns at once, so they are
     // assembled rather than derived one value at a time.
     foreach (['community', 'marketplace'] as $key) {
@@ -406,6 +542,35 @@ function item_drawer(array $row): array
         // it with Object.entries either way, but a list of sections is a lie.
         'sections' => (object) $sections,
     ];
+}
+
+/**
+ * Where a disc from a box set belongs, and what is in a box: the box names its
+ * discs, and each disc names its box. Derived, not typed, so they are not
+ * marked as Bruno's own.
+ */
+function drawer_box_facts(array $row): array
+{
+    $facts = [];
+
+    if (!empty($row['parent_item_id'])) {
+        $box = item_by_id((int) $row['parent_item_id']);
+        $facts[] = $box ? drawer_fact('in_box', 'In the box', item_title($box), 'text') : null;
+    }
+
+    $discs = db()->prepare('
+        SELECT manual_title, media FROM items
+         WHERE parent_item_id = ? AND is_visible = 1 AND missing_since IS NULL
+         ORDER BY id
+    ');
+    $discs->execute([$row['id']]);
+    $lines = array_map(
+        fn ($disc) => implode(' · ', array_filter([$disc['manual_title'], $disc['media']])),
+        $discs->fetchAll()
+    );
+    $facts[] = drawer_fact('inside_box', 'Inside the box', $lines, 'lines');
+
+    return array_map(fn ($fact) => $fact + ['mine' => false], array_filter($facts));
 }
 
 function drawer_section(array $row, string $key, array $def): mixed

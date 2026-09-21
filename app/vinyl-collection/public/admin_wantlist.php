@@ -36,6 +36,7 @@ $wanted = db()->query(ITEM_SELECT . " WHERE i.source = 'wantlist' AND i.missing_
 $hunting = db()->query(ITEM_SELECT . " WHERE i.source = 'searching' ORDER BY i.created_at DESC")->fetchAll();
 
 $pageTitle = 'Wantlist';
+$pageScript = 'js/admin-table.js';
 $pageIntro = count($wanted) . ' on the Discogs wantlist, ' . count($hunting) . ' being hunted by hand.';
 
 require __DIR__ . '/../includes/admin_layout_top.php';
@@ -73,13 +74,23 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   </form>
 
   <?php if ($hunting): ?>
-    <table class="table" style="margin-top:1.2rem;">
+    <table class="table" data-sortable style="margin-top:1.2rem;">
+      <thead>
+        <tr>
+          <th data-sort>Album</th>
+          <th data-sort>Artist</th>
+          <th data-sort>Format</th>
+          <th data-sort class="hide-sm">Note</th>
+          <th class="right"></th>
+        </tr>
+      </thead>
       <tbody>
         <?php foreach ($hunting as $row): ?>
           <tr>
-            <td class="title"><b><?= e(item_title($row)) ?></b><small><?= e(item_artist($row)) ?></small></td>
+            <td class="title"><b><a href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>"><?= e(item_title($row)) ?></a></b></td>
+            <td><?= e(item_artist($row)) ?></td>
             <td><span class="kind <?= e($row['media_kind']) ?>"><?= e(media_kind_label($row['media_kind'])) ?></span></td>
-            <td style="opacity:0.7;"><?= e($row['notes']) ?></td>
+            <td class="hide-sm" style="opacity:0.7;"><?= e($row['notes']) ?></td>
             <td class="right"><a class="btn ghost small" href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>">Edit</a></td>
           </tr>
         <?php endforeach; ?>
@@ -95,17 +106,27 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   <?php if (!$wanted): ?>
     <p class="empty">Nothing yet — run a sync, or add something to your wantlist on Discogs.</p>
   <?php else: ?>
-    <table class="table">
+    <table class="table" data-sortable>
       <thead>
-        <tr><th class="thumb"></th><th>Record</th><th>Format</th><th class="hide-sm">Year</th><th class="right"></th></tr>
+        <tr>
+          <th class="thumb"></th>
+          <th data-sort>Album</th>
+          <th data-sort>Artist</th>
+          <th data-sort>Format</th>
+          <th data-sort class="hide-sm">Year</th>
+          <th class="right"></th>
+        </tr>
       </thead>
       <tbody>
         <?php foreach ($wanted as $row): ?>
           <tr>
             <td class="thumb"><?php if (item_thumb($row)): ?><img src="<?= e(item_thumb($row)) ?>" alt="" loading="lazy"><?php endif; ?></td>
-            <td class="title"><b><?= e(item_title($row)) ?></b><small><?= e(item_artist($row)) ?></small></td>
+            <td class="title"><b><a href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>"><?= e(item_title($row)) ?></a></b></td>
+            <td><?= e(item_artist($row)) ?></td>
             <td><span class="kind <?= e($row['media_kind']) ?>"><?= e(media_kind_label($row['media_kind'])) ?></span></td>
-            <td class="hide-sm"><?= e($row['year'] ?: '—') ?></td>
+            <td class="hide-sm" data-sort-value="<?= e(item_sort_date($row)) ?>">
+              <?= year_cell($row) ?>
+            </td>
             <td class="right"><a class="btn ghost small" href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>">Edit</a></td>
           </tr>
         <?php endforeach; ?>

@@ -144,6 +144,11 @@ header.hero::before {
   #disc { animation: none; }
 }
 
+/* No room for it beside the title on a phone. */
+@media (max-width: 720px) {
+  #disc { display: none; }
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -346,7 +351,7 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 }
 .tile.hot .sp { animation: dspin 5s linear infinite; }
 @keyframes dspin { to { transform: rotate(360deg); } }
-.d.tr .sp { background: repeating-radial-gradient(circle, rgba(255,255,255,.1) 0 1px, rgba(0,0,0,.22) 1px 2.5px), color-mix(in srgb, var(--vc) 60%, transparent); }
+.d.tr .sp { background: repeating-radial-gradient(circle, rgba(255,255,255,.1) 0 1px, rgba(0,0,0,.22) 1px 2.5px), color-mix(in srgb, var(--vc, #131313) 60%, transparent); }
 .lbl { position: absolute; left: 33%; top: 33%; width: 34%; height: 34%; border-radius: 50%; background: var(--art) center/cover, #222; box-shadow: 0 0 0 2px rgba(0,0,0,.35); }
 .lbl::after, .d.pic .sp::after { content: ""; position: absolute; left: 50%; top: 50%; width: 11%; height: 11%; transform: translate(-50%,-50%); border-radius: 50%; background: #0b0a08; box-shadow: 0 0 0 1px rgba(255,255,255,.3); }
 .d.pic .sp::after { width: 3.6%; height: 3.6%; }
@@ -450,6 +455,10 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   aspect-ratio: var(--w) / var(--h);
   transition: transform .35s cubic-bezier(.2,.8,.25,1);
 }
+/* Vinyl steps down from the 12" by the sleeve size dims() picked (7" 150, 10" 200,
+   12" 250): 7" 0.90, 10" 0.95, 12" 1. A 7" stands shorter than a 12" but still
+   taller than a CD (0.84). Boxes and multi-disc sets (270) stay full. */
+.grid .tile.kind-vinyl { --gh: calc(1 - (250 - min(var(--w), 250)) / 1000); }
 .grid .tile.kind-cd { --gh: 0.84; }
 .grid .tile.kind-dvd, .grid .tile.kind-bd { --gh: 0.94; }
 .grid .cell:hover .tile, .grid .tile.hot { transform: translateY(-6px); }
@@ -790,6 +799,15 @@ footer {
 }
 
 .hero-links a:hover { background: var(--text); color: var(--ink); border-color: var(--text); }
+
+/* The wantlist isn't an artist: gold and dashed, like the empty sleeve on its page. */
+.hero-links a.wanted {
+  border-style: dashed;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.hero-links a.wanted:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
 
 /* Bruno's own fields lead the drawer, set off from the Discogs facts below. */
 

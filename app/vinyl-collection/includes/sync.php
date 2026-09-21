@@ -600,6 +600,69 @@ function upsert_release_detail(array $full): void
     ]);
 }
 
+/* ---------- One record, on demand ---------- */
+
+/**
+ * Refreshes a single record from Discogs: the full release detail and, for a
+ * copy on the shelf, the rating and date on its own collection entry. It is the
+ * admin's per-record Sync button — the same writes the full sync makes, for one
+ * release, at the cost of one or two API calls.
+ *
+ * It only ever touches what Discogs owns: the release cache and the Discogs-side
+ * columns of the item (rating, date added, folder). Everything typed in the
+ * admin — corrections, notes, chosen pictures, locked format / artist / era —
+ * lives in other columns and is not written here, which is what makes it safe
+ * to press whenever.
+ *
+ * @return string a sentence saying what happened, for the flash message
+ * @throws DiscogsException if Discogs can't be reached or has no such release
+ */
+function sync_one_item(array $item): string
+{
+    $releaseId = (int) ($item['release_id'] ?? 0);
+    if ($releaseId <= 0) {
+        throw new DiscogsException("This record isn't on Discogs, so there is nothing to sync.");
+    }
+
+    $client = sync_client();
+    $full = $client->release($releaseId);
+    $note = '';
+
+    if ($item['source'] === 'collection' && !empty($item['instance_id'])) {
+        try {
+            $data = $client->request('GET', sprintf(
+                '/users/%s/collection/releases/%d',
+                rawurlencode(discogs_username()),
+                $releaseId
+            ));
+
+            foreach (($data['releases'] ?? []) as $entry) {
+                $basic = $entry['basic_information'] ?? null;
+                if ($basic && (int) ($entry['instance_id'] ?? 0) === (int) $item['instance_id']) {
+                    upsert_release_basic($basic);
+                    upsert_collection_item($entry, $basic);
+                }
+            }
+        } catch (DiscogsException $e) {
+            // The release itself is the point; a copy that has since left the
+            // collection shouldn't stop it being refreshed.
+            $note = " Its collection entry couldn't be refreshed ({$e->getMessage()})";
+        }
+    }
+
+    // After the basics above, so the fuller detail is what stays.
+    upsert_release_detail($full);
+
+    // A format the admin locked stays put; otherwise follow what Discogs now says.
+    db()->prepare("UPDATE items SET media_kind = ?, updated_at = datetime('now') WHERE id = ? AND media_kind_locked = 0")
+        ->execute([detect_media_kind($full['formats'] ?? $full['format'] ?? []), $item['id']]);
+
+    // A changed title or credit can move it to another artist page or era.
+    assign_items_to_artists_and_eras();
+
+    return 'Synced with Discogs. What you typed here was left alone.' . $note;
+}
+
 /* ---------- Filing everything into artists and eras ---------- */
 
 /**

@@ -3,11 +3,12 @@
 /**
  * Editing one record.
  *
- * The form is in the order the work happens: the handful of fields Bruno
- * actually fills in are at the top, where they can be typed and saved without
- * scrolling; filing (format, artist page, era, visibility) is next; the
- * pictures after that; and everything Discogs supplied is at the bottom, read
- * only, as a reference for what an empty box up top will fall back to.
+ * The form is in the order the work happens: the pictures come first, being
+ * what identifies the record; then the handful of fields Bruno actually fills
+ * in; filing (format, artist page, era, visibility) beside them; and everything
+ * Discogs supplied is at the bottom, read only, as a reference for what an
+ * empty box will fall back to. Save, Cancel, Delete and Sync are in the page
+ * header rather than in any one card.
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
@@ -42,6 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('admin_items?source=' . $item['source']);
     }
 
+    if (post('action') === 'sync' && $item && !$isNew) {
+        // A 429 makes the client wait out a whole rate-limit window.
+        set_time_limit(150);
+        try {
+            flash(sync_one_item($item));
+        } catch (DiscogsException $e) {
+            flash('Sync failed: ' . $e->getMessage(), 'error');
+        } catch (Throwable $e) {
+            error_log('Single-item sync failed: ' . $e);
+            flash('Sync failed' . (is_debug() ? ': ' . $e->getMessage() : '. Check the log.'), 'error');
+        }
+        redirect('admin_item?id=' . $item['id']);
+    }
+
     $kind = isset(MEDIA_KINDS[post('media_kind')]) ? post('media_kind') : 'other';
 
     if ($isNew) {
@@ -50,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES ('searching', ?, ?, ?, 1, 1)
         ")->execute([post('manual_title'), post('manual_artist'), $kind]);
         $item = item_by_id((int) db()->lastInsertId());
-        flash('Added to the hunting list.');
     }
 
     // Only the boxes this kind's form actually showed are written, so switching
@@ -67,12 +81,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params[] = nullable(post($key));
     }
 
+    // The colour picked on the swatch, only from a vinyl's form (a CD has no
+    // swatch, and switching one to vinyl shouldn't wipe a colour it had).
+    if ($kind === 'vinyl') {
+        $sets[] = 'vinyl_hex = ?';
+        $params[] = vinyl_hex(post('vinyl_hex'));
+        $sets[] = 'vinyl_translucent = ?';
+        $params[] = ['1' => 1, '0' => 0][post('vinyl_translucent')] ?? null;
+    }
+
     // Discogs' facts corrected on this record. The boxes are always on the form,
     // so an empty one means "use Discogs'" and clears an earlier correction.
     foreach (array_keys(OVERRIDE_FIELDS) as $key) {
         $sets[] = "$key = ?";
         $params[] = nullable(post($key));
     }
+
+    // The discs: how many (blank = as Discogs says) and the picture on each. The
+    // first picture is also kept in disc_url, which the list's "With a picture
+    // disc" filter reads.
+    $countChoice = post('disc_count');
+    $discCount = ctype_digit($countChoice) ? min(MAX_DISCS, max(1, (int) $countChoice)) : null;
+    $posted = is_array($_POST['disc_art'] ?? null) ? $_POST['disc_art'] : [];
+    $discArt = [];
+    for ($k = 0; $k < MAX_DISCS; $k++) {
+        $url = is_string($posted[$k] ?? null) ? trim($posted[$k]) : '';
+        $discArt[] = safe_http_url($url) ? $url : '';
+    }
+    if ($discCount !== null) {
+        // A disc taken away takes its picture with it.
+        $discArt = array_pad(array_slice($discArt, 0, $discCount), MAX_DISCS, '');
+    }
+    $discConfig = $discCount === null && !array_filter($discArt)
+        ? null
+        : json_encode(['count' => $discCount, 'art' => $discArt], JSON_UNESCAPED_SLASHES);
+    $firstDiscArt = array_values(array_filter($discArt))[0] ?? null;
 
     $eraId = (int) post('era_id') ?: null;
 
@@ -88,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $sets = array_merge($sets, [
         'media_kind = ?', 'media_kind_locked = ?', 'artist_id = ?', 'artist_locked = ?', 'era_id = ?', 'era_locked = ?',
-        'cover_url = ?', 'disc_url = ?', 'is_visible = ?', 'is_featured = ?', 'sort_rank = ?',
+        'cover_url = ?', 'disc_url = ?', 'disc_config = ?', 'is_visible = ?', 'is_featured = ?', 'sort_rank = ?',
         'manual_title = ?', 'manual_artist = ?',
         "updated_at = datetime('now')",
     ]);
@@ -104,7 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // can't move it back. Clearing the era unlocks it again.
         $eraId !== null ? 1 : 0,
         nullable(post('cover_url')),
-        nullable(post('disc_url')),
+        $firstDiscArt,
+        $discConfig,
         post('is_visible') !== '' ? 1 : 0,
         post('is_featured') !== '' ? 1 : 0,
         (int) post('sort_rank'),
@@ -118,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // "Every pressing of this album" — writes an era rule keyed on the master,
     // so the CD, the vinyl and next year's reissue all land in the same era on
     // the next sync without anyone opening them.
+    $refiled = false;
     if ($eraId !== null && post('apply_to_master') !== '' && $item['discogs_id']) {
         $useMaster = !empty($item['master_id']);
         db()->prepare('
@@ -130,20 +175,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $useMaster ? 500 : 1000,
         ]);
         assign_items_to_artists_and_eras();
-        flash('Saved, and every pressing of this one now files into that era.');
-    } else {
-        flash('Saved.');
+        $refiled = true;
     }
 
-    redirect('admin_item?id=' . $item['id']);
+    // Back to the list it was opened from: it opens on the filters, sort and page
+    // it was left on, so the next record is where it was. The message names the
+    // record, since the page it appears on no longer shows it.
+    $name = item_title(item_by_id((int) $item['id']));
+    flash($isNew ? "Added \"$name\" to the hunting list."
+        : ($refiled ? "Saved \"$name\", and every pressing of it now files into that era." : "Saved \"$name\"."));
+
+    redirect('admin_items?source=' . $item['source']);
 }
 
 $kind = (string) $item['media_kind'];
 $release = $item['discogs_id'] !== null ? $item : null;
 $catalog = field_catalog();
 $images = json_column($item['images_json'] ?? null);
+
+// A disc from a box set has no release of its own, so its pictures are the
+// box's: the cover and the disc art are picked from the box's gallery.
+$box = !empty($item['parent_item_id']) ? item_by_id((int) $item['parent_item_id']) : null;
+$pictures = $images ?: json_column($box['images_json'] ?? null);
 $artists = all_artists();
 $eras = $item['artist_id'] ? eras_for_artist((int) $item['artist_id']) : [];
+
+// Discs: what Discogs' formats give (the "automatic" count), what has been set,
+// and what each disc's picture is now. A record from before discs were set one
+// by one has a single picture, shown on every disc until it is changed.
+$discCfg = disc_config($item);
+$derivedDiscs = count(item_discs(array_merge($item, ['disc_config' => null, 'disc_url' => null]), json_column($item['formats_json'] ?? null)));
+$shownDiscs = max(1, $discCfg['count'] ?? $derivedDiscs);
+$discArtNow = fn (int $k): string => $discCfg['set'] ? $discCfg['art'][$k] : trim((string) $item['disc_url']);
 
 /**
  * The Discogs value showing through an empty box, for the hint under it. With
@@ -171,23 +234,115 @@ function fallback_hint(array $item, ?array $release, string $key, bool $always =
 
 $pageTitle = item_title($item);
 $pageIntro = item_artist($item) . ($item['year'] ? ' · ' . $item['year'] : '');
-$pageActions = '<a class="btn ghost" href="' . e(url('admin_items?source=' . $item['source'])) . '">← Back to the list</a>'
-    . ($item['discogs_id'] ? ' <a class="btn ghost" target="_blank" rel="noopener" href="https://www.discogs.com/release/' . (int) $item['discogs_id'] . '">On Discogs ↗</a>' : '');
+
+// Save, Cancel and Delete live in the page header with Sync, out of the way of
+// the fields. Save belongs to the big form by its id; Sync and Delete are forms
+// of their own (a form can't nest), so neither can be triggered by pressing
+// Enter in a box.
+$selfUrl = e($isNew ? url('admin_item?new=searching') : url('admin_item?id=' . (int) $item['id']));
+$actions = [];
+if ($item['discogs_id']) {
+    $actions[] = '<a class="btn ghost" target="_blank" rel="noopener" href="https://www.discogs.com/release/' . (int) $item['discogs_id'] . '">On Discogs ↗</a>';
+    $actions[] = '<form method="post" action="' . $selfUrl . '" id="syncForm">' . csrf_field()
+        . '<input type="hidden" name="action" value="sync">'
+        . '<button type="submit" class="ghost" title="Refresh this record from Discogs. What you typed is never overwritten.">Sync with Discogs</button></form>';
+}
+if (!$isNew) {
+    $actions[] = '<form method="post" action="' . $selfUrl . '" id="deleteForm">' . csrf_field()
+        . '<input type="hidden" name="action" value="delete">'
+        . '<button type="submit" class="danger">Delete</button></form>';
+}
+$actions[] = '<a class="btn ghost" href="' . e(url('admin_items?source=' . $item['source'])) . '">Cancel</a>';
+$actions[] = '<button type="submit" form="itemForm" class="gold">Save</button>';
+$pageActions = implode("\n", $actions);
 $pageScript = 'js/admin-item.js';
 
 require __DIR__ . '/../includes/admin_layout_top.php';
 ?>
 
 <?php if ($item['missing_since']): ?>
-  <div class="flash error">This copy wasn't in the last sync of your Discogs collection (since <?= e(format_date($item['missing_since'])) ?>). It's kept here because it holds your own notes — delete it below if it really is gone.</div>
+  <div class="flash error">This copy wasn't in the last sync of your Discogs collection (since <?= e(format_date($item['missing_since'])) ?>). It's kept here because it holds your own notes — delete it with the button at the top if it really is gone.</div>
 <?php endif; ?>
 
 <?php if ($item['discogs_id'] && $item['detail_fetched_at'] === null): ?>
   <div class="flash ok">Discogs' full detail for this release hasn't been fetched yet, so the boxes below have little to fall back on. It arrives with the next sync.</div>
 <?php endif; ?>
 
-<form method="post" action="<?= e($isNew ? url('admin_item?new=searching') : url('admin_item?id=' . (int) $item['id'])) ?>">
+<form method="post" id="itemForm" action="<?= e($isNew ? url('admin_item?new=searching') : url('admin_item?id=' . (int) $item['id'])) ?>">
   <?= csrf_field() ?>
+
+  <div class="card">
+    <h2>Pictures</h2>
+    <p>Pick the sleeve the site shows, then how many discs are inside and the picture on each<?= $kind === 'vinyl' ? ' (for a picture disc)' : '' ?>.</p>
+    <?php if ($box && $pictures): ?>
+      <p class="hint">This disc comes from <b><?= e(item_title($box)) ?></b>, so these are the box's pictures.</p>
+    <?php endif; ?>
+
+    <?php if (!$pictures): ?>
+      <p class="empty">Discogs hasn't given any images for this release yet — they arrive with the full detail on the next sync.</p>
+    <?php else: ?>
+      <h3 class="sub">Cover</h3>
+      <div class="picker">
+        <label>
+          <input type="radio" name="cover_url" value=""<?= $item['cover_url'] ? '' : ' checked' ?>>
+          <span class="none">Discogs' own</span>
+          <small>default</small>
+        </label>
+        <?php foreach ($pictures as $image): ?>
+          <?php if (empty($image['uri'])) { continue; } ?>
+          <label>
+            <input type="radio" name="cover_url" value="<?= e($image['uri']) ?>"<?= $item['cover_url'] === $image['uri'] ? ' checked' : '' ?>>
+            <img src="<?= e($image['uri150'] ?? $image['uri']) ?>" alt="" loading="lazy">
+            <small><?= e($image['type'] ?? '') ?></small>
+          </label>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+
+    <div class="discs" id="discs" data-derived="<?= (int) $derivedDiscs ?>">
+      <h3 class="sub">Discs</h3>
+      <div class="field disc-count">
+        <label for="disc_count">Discs in the sleeve</label>
+        <select id="disc_count" name="disc_count">
+          <option value="">As Discogs says (<?= (int) $derivedDiscs ?>)</option>
+          <?php for ($n = 1; $n <= MAX_DISCS; $n++): ?>
+            <option value="<?= $n ?>"<?= $discCfg['count'] === $n ? ' selected' : '' ?>><?= $n ?> disc<?= $n > 1 ? 's' : '' ?></option>
+          <?php endfor; ?>
+        </select>
+        <div class="hint">A 2-CD set is two discs on the shelf, each with its own picture below. Up to <?= MAX_DISCS ?>.</div>
+      </div>
+
+      <?php if ($pictures): ?>
+        <?php for ($k = 0; $k < MAX_DISCS; $k++): ?>
+          <?php
+          $current = $discArtNow($k);
+          $uris = array_column($pictures, 'uri');
+          // A picture that is no longer in the gallery is still offered, so saving
+          // the form doesn't quietly drop it.
+          $extra = $current !== '' && !in_array($current, $uris, true) ? [['uri' => $current, 'type' => 'current']] : [];
+          ?>
+          <div class="disc-art" data-disc="<?= $k ?>"<?= $k >= $shownDiscs ? ' hidden' : '' ?>>
+            <h4>Disc <?= $k + 1 ?> <span><?= $kind === 'vinyl' ? '— picture on the disc' : '— image printed on the disc' ?></span></h4>
+            <div class="picker">
+              <label>
+                <input type="radio" name="disc_art[<?= $k ?>]" value=""<?= $current === '' ? ' checked' : '' ?><?= $k >= $shownDiscs ? ' disabled' : '' ?>>
+                <span class="none">None</span>
+                <small><?= $kind === 'vinyl' ? 'plain vinyl' : 'plain disc' ?></small>
+              </label>
+              <?php foreach (array_merge($extra, $pictures) as $image): ?>
+                <?php if (empty($image['uri'])) { continue; } ?>
+                <label>
+                  <input type="radio" name="disc_art[<?= $k ?>]" value="<?= e($image['uri']) ?>"<?= $current === $image['uri'] ? ' checked' : '' ?><?= $k >= $shownDiscs ? ' disabled' : '' ?>>
+                  <img src="<?= e($image['uri150'] ?? $image['uri']) ?>" alt="" loading="lazy">
+                  <small><?= e($image['type'] ?? '') ?></small>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endfor; ?>
+      <?php endif; ?>
+    </div>
+  </div>
 
   <div class="cards">
     <div>
@@ -217,7 +372,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
               <?php if ($key === 'item_type'): ?>
                 <select id="f_<?= e($key) ?>" name="<?= e($key) ?>">
                   <option value="">— from Discogs —</option>
-                  <?php foreach (ITEM_TYPES as $type): ?>
+                  <?php foreach (item_type_options($item['item_type']) as $type): ?>
                     <option value="<?= e($type) ?>"<?= $item['item_type'] === $type ? ' selected' : '' ?>><?= e(ucfirst($type)) ?></option>
                   <?php endforeach; ?>
                 </select>
@@ -228,6 +383,42 @@ require __DIR__ . '/../includes/admin_layout_top.php';
               <?php endif; ?>
               <?php if ($hint !== ''): ?>
                 <div class="inherited">Discogs: <b><?= e($hint) ?></b></div>
+              <?php endif; ?>
+              <?php if ($key === 'vinyl_color'): ?>
+                <?php
+                // What the disc is drawn in when nothing is picked: the keyword
+                // match on the text above, which is what the site has been using.
+                $colourText = (string) item_field_value($item, $release, 'vinyl_color');
+                $pickedHex = vinyl_hex($item['vinyl_hex'] ?? null);
+                $autoHex = vinyl_color($colourText)['c'];
+                $palette = [];
+                foreach (VINYL_COLORS as [$word, $hex]) {
+                    $palette[$hex] ??= $word;
+                }
+                ?>
+                <div class="colour-pick" id="colourPick"
+                     data-palette="<?= e(json_encode(VINYL_COLORS)) ?>"
+                     data-discogs="<?= e(fallback_hint($item, $release, 'vinyl_color', true)) ?>"
+                     data-fallback="<?= e(VINYL_FALLBACK_COLOR) ?>">
+                  <div class="colour-row">
+                    <input type="color" id="vinylHexPicker" value="<?= e($pickedHex ?? $autoHex ?? VINYL_FALLBACK_COLOR) ?>" aria-label="Disc colour">
+                    <input type="hidden" name="vinyl_hex" id="vinylHex" value="<?= e($pickedHex ?? '') ?>">
+                    <button type="button" class="ghost small" id="colourReset">Use automatic</button>
+                  </div>
+                  <div class="colour-state" id="colourState" aria-live="polite"></div>
+                  <div class="swatches">
+                    <?php foreach ($palette as $hex => $word): ?>
+                      <button type="button" class="swatch" data-hex="<?= e($hex) ?>" title="<?= e(ucfirst($word)) ?>" aria-label="<?= e(ucfirst($word)) ?>" style="background:<?= e($hex) ?>"></button>
+                    <?php endforeach; ?>
+                  </div>
+                  <label for="vinylTranslucent" class="sub-label">Transparency</label>
+                  <select id="vinylTranslucent" name="vinyl_translucent">
+                    <option value="">Automatic</option>
+                    <option value="1"<?= (string) ($item['vinyl_translucent'] ?? '') === '1' ? ' selected' : '' ?>>Translucent</option>
+                    <option value="0"<?= (string) ($item['vinyl_translucent'] ?? '') === '0' ? ' selected' : '' ?>>Opaque</option>
+                  </select>
+                  <div class="hint">The disc on the shelf is drawn in this colour. Left on automatic, colour and transparency follow the text above ("Clear", "Transparent" and so on); set them here where that gets it wrong.</div>
+                </div>
               <?php endif; ?>
             </div>
           <?php endforeach; ?>
@@ -254,7 +445,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
                   <?php if ($key === 'item_type'): ?>
                     <select id="s_<?= e($key) ?>" name="<?= e($key) ?>">
                       <option value="">— from Discogs —</option>
-                      <?php foreach (ITEM_TYPES as $type): ?>
+                      <?php foreach (item_type_options($item['item_type']) as $type): ?>
                         <option value="<?= e($type) ?>"<?= $item['item_type'] === $type ? ' selected' : '' ?>><?= e(ucfirst($type)) ?></option>
                       <?php endforeach; ?>
                     </select>
@@ -331,53 +522,6 @@ require __DIR__ . '/../includes/admin_layout_top.php';
           </div>
         </details>
       </div>
-
-      <div class="card">
-        <h2>Pictures</h2>
-        <p>Pick the sleeve the site shows<?= $kind === 'vinyl' ? '' : ', and which image is the disc itself' ?>.</p>
-
-        <?php if (!$images): ?>
-          <p class="empty">Discogs hasn't given any images for this release yet — they arrive with the full detail on the next sync.</p>
-        <?php else: ?>
-          <h3 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.6;margin-bottom:0.6rem;">Cover</h3>
-          <div class="picker">
-            <label>
-              <input type="radio" name="cover_url" value=""<?= $item['cover_url'] ? '' : ' checked' ?>>
-              <span class="none">Discogs' own</span>
-              <small>default</small>
-            </label>
-            <?php foreach ($images as $image): ?>
-              <?php if (empty($image['uri'])) { continue; } ?>
-              <label>
-                <input type="radio" name="cover_url" value="<?= e($image['uri']) ?>"<?= $item['cover_url'] === $image['uri'] ? ' checked' : '' ?>>
-                <img src="<?= e($image['uri150'] ?? $image['uri']) ?>" alt="" loading="lazy">
-                <small><?= e($image['type'] ?? '') ?></small>
-              </label>
-            <?php endforeach; ?>
-          </div>
-
-          <?php if ($kind !== 'vinyl'): ?>
-            <h3 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.6;margin:1.2rem 0 0.6rem;">Disc art</h3>
-            <div class="picker">
-              <label>
-                <input type="radio" name="disc_url" value=""<?= $item['disc_url'] ? '' : ' checked' ?>>
-                <span class="none">None</span>
-                <small>plain disc</small>
-              </label>
-              <?php foreach ($images as $image): ?>
-                <?php if (empty($image['uri'])) { continue; } ?>
-                <label>
-                  <input type="radio" name="disc_url" value="<?= e($image['uri']) ?>"<?= $item['disc_url'] === $image['uri'] ? ' checked' : '' ?>>
-                  <img src="<?= e($image['uri150'] ?? $image['uri']) ?>" alt="" loading="lazy">
-                  <small><?= e($image['type'] ?? '') ?></small>
-                </label>
-              <?php endforeach; ?>
-            </div>
-          <?php else: ?>
-            <input type="hidden" name="disc_url" value="<?= e($item['disc_url']) ?>">
-          <?php endif; ?>
-        <?php endif; ?>
-      </div>
     </div>
 
     <div>
@@ -451,19 +595,12 @@ require __DIR__ . '/../includes/admin_layout_top.php';
           <input type="number" id="sort_rank" name="sort_rank" value="<?= (int) $item['sort_rank'] ?>">
           <div class="hint">Higher floats to the front of the shelf. Leave at 0 for the normal order.</div>
         </div>
-
-        <div class="form-actions">
-          <button type="submit" class="gold">Save</button>
-          <a class="btn ghost" href="<?= e(url('admin_items?source=' . $item['source'])) ?>">Cancel</a>
-          <button type="submit" name="action" value="delete" class="danger small" style="margin-left:auto;"
-                  onclick="return confirm('Delete this record and everything you typed about it?')">Delete</button>
-        </div>
       </div>
 
       <div class="card">
         <h2>From Discogs</h2>
         <p>Read only — a sync refreshes all of it. What you've corrected on the left is kept and shown instead.</p>
-        <table class="table">
+        <table class="table facts">
           <tbody>
             <?php
             $readonly = [
@@ -488,7 +625,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
             foreach ($readonly as $label => $value):
               if ($value === null || $value === '') { continue; }
             ?>
-              <tr><td style="opacity:0.6;"><?= e($label) ?></td><td class="right"><?= e($value) ?></td></tr>
+              <tr><td class="label"><?= e($label) ?></td><td class="right"><?= e($value) ?></td></tr>
             <?php endforeach; ?>
           </tbody>
         </table>

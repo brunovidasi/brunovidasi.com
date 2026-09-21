@@ -18,6 +18,9 @@ const CACHE_TTL = 1000 * 60 * 60 * 6;
 // Grid first: an era is an album's pressings side by side, and lining them up
 // is how you compare them. The list is a click away for the details.
 const VIEWS = ['grid', 'list'];
+// Which end of the discography the page starts from. Oldest first is the order
+// the eras are filed in; the wantlist stays at the bottom either way.
+const ORDERS = ['oldest', 'newest'];
 
 // The order formats appear in within an era. 'bd', not 'bluray', matching the CSS.
 const GROUPS = [
@@ -35,10 +38,11 @@ const prefs = loadPrefs();
 
 function loadPrefs() {
   // An era reads oldest first: the records in the order they came out.
-  const defaults = { view: 'grid', fmt: 'all', sort: { key: 'date', dir: 'asc' } };
+  const defaults = { view: 'grid', fmt: 'all', order: 'oldest', sort: { key: 'date', dir: 'asc' } };
   try {
     const p = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
     if (!VIEWS.includes(p.view)) p.view = defaults.view;
+    if (!ORDERS.includes(p.order)) p.order = defaults.order;
     p.sort = validSort(p.sort, defaults.sort);
     return p;
   } catch (e) { return defaults; }
@@ -160,9 +164,9 @@ function render() {
   const query = $('search').value.trim();
 
   $('countMeta').textContent = [
-    owned === total ? `${total} records` : `${owned} of ${total} records`,
+    owned === total ? `${total} items` : `${owned} of ${total} items`,
     wantedTotal && (missing === wantedTotal ? `${wantedTotal} wanted` : `${missing} of ${wantedTotal} wanted`),
-  ].filter(Boolean).join(' · ');
+  ].filter(Boolean).join(' - ');
 
   if (!shown) { renderEmpty(query); return; }
 
@@ -171,6 +175,14 @@ function render() {
   const withNumbers = visible
     .map((section, index) => ({ section, index }))
     .filter(entry => entry.section.items.length);
+
+  // Newest first flips the eras, not what sits after them: the "More" catch-all
+  // and the wantlist keep their place at the bottom.
+  if (prefs.order === 'newest') {
+    const eras = withNumbers.filter(({ section }) => !section.wanted && section.slug !== 'more');
+    const rest = withNumbers.filter(({ section }) => section.wanted || section.slug === 'more');
+    withNumbers.splice(0, withNumbers.length, ...eras.reverse(), ...rest);
+  }
 
   const nav = $('eraNav');
   nav.innerHTML = `<div class="era-nav-inner">${withNumbers.map(({ section }) =>
@@ -209,6 +221,19 @@ $('viewToggle').addEventListener('click', e => {
   prefs.view = b.dataset.view;
   savePrefs();
   syncViewToggle();
+  render();
+});
+
+function syncOrderToggle() {
+  document.querySelectorAll('#orderToggle button').forEach(b => b.classList.toggle('on', b.dataset.order === prefs.order));
+}
+
+$('orderToggle').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  prefs.order = b.dataset.order;
+  savePrefs();
+  syncOrderToggle();
   render();
 });
 
@@ -262,4 +287,5 @@ async function init(force) {
 }
 
 syncViewToggle();
+syncOrderToggle();
 init(false);

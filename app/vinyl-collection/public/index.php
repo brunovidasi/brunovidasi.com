@@ -23,6 +23,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 <link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset_url('css/crate.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset_url('css/morph.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/spotlight.css')) ?>">
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
 
@@ -37,7 +38,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
             <a href="<?= e(url($artist['slug'])) ?>"><?= e($artist['name']) ?></a>
           <?php endforeach; ?>
           <?php if (setting('show_wantlist', true)): ?>
-            <a href="<?= e(url('wantlist')) ?>">Wantlist</a>
+            <a class="wanted" href="<?= e(url('wantlist')) ?>">Wantlist</a>
           <?php endif; ?>
         </nav>
       <?php endif; ?>
@@ -74,8 +75,8 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
     <button type="button" data-view="grid">Grid</button>
     <button type="button" data-view="list">List</button>
   </div>
+  <button type="button" class="crate-btn" id="crateBtn">Put albums in a crate</button>
   <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.7" aria-label="Messiness of the pile"></label>
-  <button type="button" class="crate-btn" id="crateBtn">Organise vinyls on a crate</button>
   <label class="organise" id="organiseWrap" hidden>Organise by <select id="organiseBy" aria-label="Organise the crate by"></select></label>
   <button type="button" class="crate-btn" id="digBtn" hidden>🎲 Dig a random one</button>
   <button type="button" class="ghost" id="messBtn" hidden>Back to the mess</button>
@@ -103,6 +104,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
+<script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
 <script src="<?= e(asset_url('js/crate.js')) ?>"></script>
 <script src="<?= e(asset_url('js/morph.js')) ?>"></script>
 <script src="<?= e(asset_url('js/script.js')) ?>"></script>

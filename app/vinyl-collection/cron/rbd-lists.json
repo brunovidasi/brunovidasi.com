@@ -1,0 +1,1199 @@
+{
+ "artist": "rbd",
+ "eras": [
+  {
+   "slug": "rebelde",
+   "replaces": null,
+   "name": "Rebelde",
+   "years": "2004–2005",
+   "tagline": "Rebelde · Sólo Quédate en Silencio"
+  },
+  {
+   "slug": "tour-generacion-rbd",
+   "replaces": null,
+   "name": "Tour Generación RBD [En Vivo]",
+   "years": "2005",
+   "tagline": "Live album · DVD"
+  },
+  {
+   "slug": "nuestro-amor",
+   "replaces": null,
+   "name": "Nuestro Amor",
+   "years": "2005–2006",
+   "tagline": "Nuestro Amor · Aún Hay Algo"
+  },
+  {
+   "slug": "live-in-hollywood",
+   "replaces": null,
+   "name": "Live in Hollywood [En Vivo]",
+   "years": "2005–2006",
+   "tagline": "Live album · DVD"
+  },
+  {
+   "slug": "rbd-lexmark",
+   "replaces": null,
+   "name": "RBD Lexmark",
+   "years": "2006",
+   "tagline": "Promo CD"
+  },
+  {
+   "slug": "que-hay-detras-de-rbd",
+   "replaces": null,
+   "name": "¿Qué Hay Detrás de RBD?",
+   "years": "2006",
+   "tagline": "Documentary DVD"
+  },
+  {
+   "slug": "live-in-rio",
+   "replaces": null,
+   "name": "Live in Rio",
+   "years": "2006–2026",
+   "tagline": "Live DVD · 20th Anniversary LP"
+  },
+  {
+   "slug": "celestial",
+   "replaces": null,
+   "name": "Celestial",
+   "years": "2006–2007",
+   "tagline": "Ser o Parecer · Bésame Sin Miedo"
+  },
+  {
+   "slug": "karaoke",
+   "replaces": null,
+   "name": "Karaoke",
+   "years": "2007",
+   "tagline": "Karaoke for PC"
+  },
+  {
+   "slug": "rebels",
+   "replaces": null,
+   "name": "Rebels",
+   "years": "2006",
+   "tagline": "Rebels · Tu Amor"
+  },
+  {
+   "slug": "tour-celestial-2007",
+   "replaces": null,
+   "name": "Tour Celestial 2007 Hecho En España",
+   "years": "2007",
+   "tagline": "Live album"
+  },
+  {
+   "slug": "empezar-desde-cero",
+   "replaces": null,
+   "name": "Empezar Desde Cero",
+   "years": "2007–2008",
+   "tagline": "Inalcanzable · Y No Puedo Olvidarte"
+  },
+  {
+   "slug": "rbd-la-familia",
+   "replaces": null,
+   "name": "RBD La Familia",
+   "years": "2007–2008",
+   "tagline": "Compilation · DVD"
+  },
+  {
+   "slug": "greatest-hits",
+   "replaces": null,
+   "name": "Greatest Hits",
+   "years": "2008",
+   "tagline": "Compilation"
+  },
+  {
+   "slug": "best-of-rbd",
+   "replaces": null,
+   "name": "Best of RBD",
+   "years": "2008",
+   "tagline": "Compilations · Karaoke"
+  },
+  {
+   "slug": "hits-em-portugues",
+   "replaces": null,
+   "name": "Hits em Português",
+   "years": "2008",
+   "tagline": "Compilation"
+  },
+  {
+   "slug": "best-of-remixes",
+   "replaces": null,
+   "name": "Best of Remixes",
+   "years": "2009",
+   "tagline": "Remix album"
+  },
+  {
+   "slug": "live-in-brasilia",
+   "replaces": null,
+   "name": "Live In Brasilia",
+   "years": "2009",
+   "tagline": "Live album · DVD"
+  },
+  {
+   "slug": "para-olvidarte-de-mi",
+   "replaces": null,
+   "name": "Para Olvidarte de Mí",
+   "years": "2009",
+   "tagline": "Para Olvidarte de Mí"
+  },
+  {
+   "slug": "soy-rebelde-tour",
+   "replaces": null,
+   "name": "Soy Rebelde Tour",
+   "years": "2023",
+   "tagline": "The reunion"
+  }
+ ],
+ "rules": [
+  {
+   "era": "rebelde",
+   "master": 367693,
+   "rank": 0
+  },
+  {
+   "era": "tour-generacion-rbd",
+   "master": 401084,
+   "rank": 0
+  },
+  {
+   "era": "tour-generacion-rbd",
+   "master": 411214,
+   "rank": 3
+  },
+  {
+   "era": "nuestro-amor",
+   "master": 367699,
+   "rank": 0
+  },
+  {
+   "era": "nuestro-amor",
+   "master": 1421379,
+   "rank": 7
+  },
+  {
+   "era": "live-in-hollywood",
+   "master": 1073087,
+   "rank": 0
+  },
+  {
+   "era": "live-in-hollywood",
+   "master": 411215,
+   "rank": 2
+  },
+  {
+   "era": "que-hay-detras-de-rbd",
+   "master": 1030080,
+   "rank": 0
+  },
+  {
+   "era": "live-in-rio",
+   "master": 1029200,
+   "rank": 0
+  },
+  {
+   "era": "live-in-rio",
+   "master": 4333155,
+   "rank": 1
+  },
+  {
+   "era": "celestial",
+   "master": 367691,
+   "rank": 0
+  },
+  {
+   "era": "celestial",
+   "master": 1851159,
+   "rank": 6
+  },
+  {
+   "era": "celestial",
+   "master": 411222,
+   "rank": 7
+  },
+  {
+   "era": "rebels",
+   "master": 401109,
+   "rank": 0
+  },
+  {
+   "era": "rebels",
+   "master": 367690,
+   "rank": 1
+  },
+  {
+   "era": "tour-celestial-2007",
+   "master": 1289528,
+   "rank": 0
+  },
+  {
+   "era": "empezar-desde-cero",
+   "master": 367696,
+   "rank": 0
+  },
+  {
+   "era": "empezar-desde-cero",
+   "master": 409521,
+   "rank": 5
+  },
+  {
+   "era": "greatest-hits",
+   "master": 1526427,
+   "rank": 0
+  },
+  {
+   "era": "best-of-rbd",
+   "master": 1526420,
+   "rank": 0
+  },
+  {
+   "era": "para-olvidarte-de-mi",
+   "master": 1289596,
+   "rank": 0
+  }
+ ],
+ "items": [
+  {
+   "instance_id": 2022343915,
+   "label": "Rebelde [Edição em Espanhol] · 724386364524 · BR",
+   "era": "rebelde",
+   "rank": 0,
+   "fields": {
+    "barcode": "724386364524",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 1953105072,
+   "label": "Rebelde [Reissue] · 602435068213 · MX",
+   "era": "rebelde",
+   "rank": 2,
+   "fields": {
+    "barcode": "602435068213",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Reissue"
+  },
+  {
+   "instance_id": 2061327754,
+   "label": "Rebelde [Edición Diamante] · 94635710229 · MX",
+   "era": "rebelde",
+   "rank": 3,
+   "fields": {
+    "barcode": "094635710229",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2132345190,
+   "label": "Rebelde [Spain] · 94637066720 · ES",
+   "era": "rebelde",
+   "rank": 4,
+   "fields": {
+    "barcode": "094637066720",
+    "region": "ES",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 1953104214,
+   "label": "Rebelde [Edição Brasil] · 94634710220 · BR",
+   "era": "rebelde",
+   "rank": 5,
+   "fields": {
+    "barcode": "094634710220",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 1966541852,
+   "label": "Rebelde [Vinyl] · 602435429915 · MX",
+   "era": "rebelde",
+   "rank": 7,
+   "fields": {
+    "barcode": "602435429915",
+    "region": "MX",
+    "item_type": "album",
+    "vinyl_size": "12\"",
+    "vinyl_color": "White"
+   },
+   "notes": "1x 12\" White Vinyl"
+  },
+  {
+   "instance_id": 2112377334,
+   "label": "Sálvame · 602488014083 · US",
+   "era": "rebelde",
+   "rank": 8,
+   "fields": {
+    "barcode": "602488014083",
+    "region": "US",
+    "item_type": "single",
+    "vinyl_size": "7\"",
+    "vinyl_color": "Translucid Pink"
+   },
+   "notes": "1x 7\" Translucid Pink Vinyl"
+  },
+  {
+   "instance_id": 2140833275,
+   "label": "En Blockbuster Canta Como RBD · 115145 · MX",
+   "era": "rebelde",
+   "rank": 9,
+   "fields": {
+    "barcode": "115145",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "karaoke"
+   }
+  },
+  {
+   "instance_id": 2186423255,
+   "label": "Tour Generación RBD [En Vivo] · 94633192102 · BR",
+   "era": "tour-generacion-rbd",
+   "rank": 0,
+   "fields": {
+    "barcode": "094633192102",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "live album"
+   }
+  },
+  {
+   "instance_id": 2125738143,
+   "label": "Tour Generacion [Edición Diamante] · 94635710502 · MX",
+   "era": "tour-generacion-rbd",
+   "rank": 2,
+   "fields": {
+    "barcode": "094635710502",
+    "region": "MX",
+    "media": "2 CD",
+    "item_type": "live album"
+   }
+  },
+  {
+   "instance_id": 2186423282,
+   "label": "Tour Generación RBD [En Vivo] [DVD] · 94634423496 · BR",
+   "era": "tour-generacion-rbd",
+   "rank": 3,
+   "fields": {
+    "barcode": "094634423496",
+    "region": "BR",
+    "media": "DVD",
+    "item_type": "dvd"
+   }
+  },
+  {
+   "instance_id": 2022343992,
+   "label": "Nuestro Amor [Edição em Espanhol] · 94633590229 · BR",
+   "era": "nuestro-amor",
+   "rank": 0,
+   "fields": {
+    "barcode": "094633590229",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 1953104940,
+   "label": "Nuestro Amor [Reissue] · 602435065526 · MX",
+   "era": "nuestro-amor",
+   "rank": 2,
+   "fields": {
+    "barcode": "602435065526",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Reissue"
+  },
+  {
+   "instance_id": 2061328007,
+   "label": "Nuestro Amor [Edición Diamante] · 94633590205 · MX",
+   "era": "nuestro-amor",
+   "rank": 3,
+   "fields": {
+    "barcode": "094633590205",
+    "region": "MX",
+    "media": "2 CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2132345405,
+   "label": "Nuestro Amor [Spain] · 94637689608 · ES",
+   "era": "nuestro-amor",
+   "rank": 4,
+   "fields": {
+    "barcode": "094637689608",
+    "region": "ES",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 1953104700,
+   "label": "Nosso Amor Rebelde [Edição Brasil] · 94635970302 · BR",
+   "era": "nuestro-amor",
+   "rank": 5,
+   "fields": {
+    "barcode": "094635970302",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2125001805,
+   "label": "Nuestro Amor [Single] · 94633878020 · US",
+   "era": "nuestro-amor",
+   "rank": 7,
+   "fields": {
+    "barcode": "094633878020",
+    "region": "US",
+    "media": "CD",
+    "item_type": "promo"
+   }
+  },
+  {
+   "instance_id": 2186418548,
+   "label": "Nuestro Amor [Vinyl] · 602435430386 · MX",
+   "era": "nuestro-amor",
+   "rank": 8,
+   "fields": {
+    "barcode": "602435430386",
+    "region": "MX",
+    "item_type": "album",
+    "vinyl_size": "12\"",
+    "vinyl_color": "Orange"
+   },
+   "notes": "2x 12\" Orange Vinyl"
+  },
+  {
+   "instance_id": 2186418570,
+   "label": "Live in Hollywood · 94636784229 · BR",
+   "era": "live-in-hollywood",
+   "rank": 0,
+   "fields": {
+    "barcode": "094636784229",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "live album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2186418591,
+   "label": "Live in Hollywood [DVD] · 94635812190 · BR",
+   "era": "live-in-hollywood",
+   "rank": 2,
+   "fields": {
+    "barcode": "094635812190",
+    "region": "BR",
+    "media": "DVD",
+    "item_type": "dvd"
+   },
+   "notes": "With Portuguese subtitles"
+  },
+  {
+   "instance_id": 2121096796,
+   "label": "RBD Lexmark · - · MX",
+   "era": "rbd-lexmark",
+   "rank": 0,
+   "fields": {
+    "region": "MX",
+    "media": "CD",
+    "item_type": "promo"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2186418605,
+   "label": "¿Qué Hay Detrás de RBD? [DVD] · 94635589498 · BR",
+   "era": "que-hay-detras-de-rbd",
+   "rank": 0,
+   "fields": {
+    "barcode": "094635589498",
+    "region": "BR",
+    "media": "DVD",
+    "catalog_number": "AB0031000",
+    "item_type": "dvd"
+   },
+   "notes": "Documentary DVD"
+  },
+  {
+   "instance_id": 2186418643,
+   "label": "Live in Rio [DVD] · 94638740995 · BR",
+   "era": "live-in-rio",
+   "rank": 0,
+   "fields": {
+    "barcode": "094638740995",
+    "region": "BR",
+    "media": "DVD",
+    "catalog_number": "AA0025000",
+    "item_type": "dvd"
+   }
+  },
+  {
+   "instance_id": 2185048970,
+   "label": "Live In Rio · 199957941860 · MX",
+   "era": "live-in-rio",
+   "rank": 1,
+   "fields": {
+    "barcode": "199957941860",
+    "region": "WW",
+    "catalog_number": "199957941860",
+    "item_type": "live album"
+   },
+   "notes": "20th Anniversary Edition"
+  },
+  {
+   "instance_id": 2022344288,
+   "label": "Celestial · 94637713907 · MX",
+   "era": "celestial",
+   "rank": 0,
+   "fields": {
+    "barcode": "094637713907",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2061328130,
+   "label": "Celestial [Fan Edition] · 5099950425808 · MX",
+   "era": "celestial",
+   "rank": 2,
+   "fields": {
+    "barcode": "5099950425808",
+    "region": "MX",
+    "media": "CD + DVD",
+    "item_type": "album"
+   },
+   "notes": "With Slipcover"
+  },
+  {
+   "instance_id": 1953104436,
+   "label": "Celestial [Versão Brasil] · 94638111009 · BR",
+   "era": "celestial",
+   "rank": 3,
+   "fields": {
+    "barcode": "094638111009",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2171998188,
+   "label": "Celestial [Vinyl] · 602435433141 · MX",
+   "era": "celestial",
+   "rank": 5,
+   "fields": {
+    "barcode": "602435433141",
+    "region": "MX",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2121096846,
+   "label": "Celestial · 94638882121 · MX",
+   "era": "celestial",
+   "rank": 6,
+   "fields": {
+    "barcode": "094638882121",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "single"
+   }
+  },
+  {
+   "instance_id": 2186423329,
+   "label": "Ser O Parecer · - · MX",
+   "era": "celestial",
+   "rank": 7,
+   "fields": {
+    "region": "MX",
+    "media": "CD",
+    "item_type": "single"
+   }
+  },
+  {
+   "instance_id": 2171698665,
+   "label": "Grandes Exitos de RBD en Karaoke para tu PC · 94639151103 · CL",
+   "era": "karaoke",
+   "rank": 0,
+   "fields": {
+    "barcode": "094639151103",
+    "region": "CL",
+    "media": "CD",
+    "item_type": "compilation"
+   }
+  },
+  {
+   "instance_id": 2186418688,
+   "label": "Tu Amor - TO ARRIVE · 94637642320 · US",
+   "era": "rebels",
+   "rank": 0,
+   "fields": {
+    "barcode": "094637642320",
+    "region": "US",
+    "media": "CD",
+    "item_type": "single"
+   },
+   "notes": "Promotional CD"
+  },
+  {
+   "instance_id": 2186418728,
+   "label": "Rebels · 94637139820 · US",
+   "era": "rebels",
+   "rank": 1,
+   "fields": {
+    "barcode": "094637139820",
+    "region": "US",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2061328244,
+   "label": "Rebels [Deluxe Edition] · 94638267928 · US",
+   "era": "rebels",
+   "rank": 4,
+   "fields": {
+    "barcode": "094638267928",
+    "region": "US",
+    "media": "CD + DVD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2171999018,
+   "label": "Rebels [Vinyl] · 602435433134 · MX",
+   "era": "rebels",
+   "rank": 5,
+   "fields": {
+    "barcode": "602435433134",
+    "region": "MX",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2186418765,
+   "label": "Tour Celestial 2007 Hecho En España · 5099950948420 · BR",
+   "era": "tour-celestial-2007",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099950948420",
+    "region": "BR",
+    "media": "2 CD",
+    "item_type": "live album"
+   }
+  },
+  {
+   "instance_id": 2022344439,
+   "label": "Empezar Desde Cero · 5099951169008 · BR",
+   "era": "empezar-desde-cero",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099951169008",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   },
+   "notes": "With Slipcover"
+  },
+  {
+   "instance_id": 2054840725,
+   "label": "Empezar Desde Cero [Fan Edition] · 5099922925909 · MX",
+   "era": "empezar-desde-cero",
+   "rank": 2,
+   "fields": {
+    "barcode": "5099922925909",
+    "region": "MX",
+    "media": "CD + DVD",
+    "item_type": "album"
+   },
+   "notes": "With Slipcover"
+  },
+  {
+   "instance_id": 2061328200,
+   "label": "Empezar Desde Cero [Fan Edition] · 5099923449107 · MX",
+   "era": "empezar-desde-cero",
+   "rank": 3,
+   "fields": {
+    "barcode": "5099923449107",
+    "region": "MX",
+    "media": "CD + DVD",
+    "item_type": "album"
+   },
+   "notes": "SEALED"
+  },
+  {
+   "instance_id": 2171997882,
+   "label": "Empezar Desde Cero [Vinyl] · 602435433578 · MX",
+   "era": "empezar-desde-cero",
+   "rank": 4,
+   "fields": {
+    "barcode": "602435433578",
+    "region": "MX",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2121096891,
+   "label": "Inalcanzable · 5099951485627 · MX",
+   "era": "empezar-desde-cero",
+   "rank": 5,
+   "fields": {
+    "barcode": "5099951485627",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "single"
+   }
+  },
+  {
+   "instance_id": 2121096930,
+   "label": "RBD La Familia [Edición de Colección SKY] · 94638917502 · MX",
+   "era": "rbd-la-familia",
+   "rank": 0,
+   "fields": {
+    "barcode": "094638917502",
+    "region": "MX",
+    "media": "CD",
+    "catalog_number": "94638917502",
+    "item_type": "compilation"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2186423600,
+   "label": "RBD La Familia [DVD] · 000799472521 80 · US",
+   "era": "rbd-la-familia",
+   "rank": 1,
+   "fields": {
+    "barcode": "000799472521 80",
+    "region": "US",
+    "media": "DVD",
+    "catalog_number": "000799803929 80",
+    "item_type": "dvd"
+   }
+  },
+  {
+   "instance_id": 2129854600,
+   "label": "Greatest Hits · 5099926455501 · US",
+   "era": "greatest-hits",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099926455501",
+    "region": "US",
+    "media": "CD",
+    "item_type": "compilation"
+   },
+   "notes": "Enhanced CD"
+  },
+  {
+   "instance_id": 2171700625,
+   "label": "Best of RBD · 5099924368124 · MX",
+   "era": "best-of-rbd",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099924368124",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "compilation"
+   }
+  },
+  {
+   "instance_id": 2125740539,
+   "label": "Best of RBD · 5099921772900 · MX",
+   "era": "best-of-rbd",
+   "rank": 1,
+   "fields": {
+    "barcode": "5099921772900",
+    "region": "MX",
+    "media": "CD + DVD",
+    "item_type": "compilation"
+   }
+  },
+  {
+   "instance_id": 2171699646,
+   "label": "Best of Karaoke · 5099926747996 · MX",
+   "era": "best-of-rbd",
+   "rank": 2,
+   "fields": {
+    "barcode": "5099926747996",
+    "region": "MX",
+    "media": "CD",
+    "item_type": "compilation"
+   }
+  },
+  {
+   "instance_id": 2171700345,
+   "label": "Hits em Português · 5099924301022 · BR",
+   "era": "hits-em-portugues",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099924301022",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "compilation"
+   }
+  },
+  {
+   "instance_id": 2171701170,
+   "label": "Best Of Remixes · 5099960690227 · BR",
+   "era": "best-of-remixes",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099960690227",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "remix album"
+   }
+  },
+  {
+   "instance_id": 2186418843,
+   "label": "Para Olvidarte de Mi · 5099969435522 · BR",
+   "era": "para-olvidarte-de-mi",
+   "rank": 0,
+   "fields": {
+    "barcode": "5099969435522",
+    "region": "BR",
+    "media": "CD",
+    "item_type": "album"
+   }
+  },
+  {
+   "instance_id": 2171998556,
+   "label": "Para Olvidarte de Mi [Vinyl] · 602435433745 · MXq",
+   "era": "para-olvidarte-de-mi",
+   "rank": 2,
+   "fields": {
+    "barcode": "602435433745",
+    "region": "MX",
+    "item_type": "album"
+   }
+  }
+ ],
+ "discs": [
+  {
+   "box": 1953105273,
+   "label": "Rebelde [Reissue] · 602435068213 · BR (in Siempre Rebelde)",
+   "era": "rebelde",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435068213",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506821",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Rebelde",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/x1Bvk0Jc_IIUXHgu9cmEfV1iEzd9aPpq4TfmZQs-KwI/rs:fit/g:sm/q:90/h:597/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM2/NTctMTE4NS5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/k5_J8Xe5LOG7P5i2g1A0MzrMOBD8Chd4c8We4nAzCsg/rs:fit/g:sm/q:90/h:598/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM2/NjktNDI4OC5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue",
+    "tracklist": "1. Rebelde\n2. Solo Quédate En Silencio\n3. Otro Día Que Va\n4. Un Poco De Tu Amor\n5. Enséñame\n6. Futuro Ex-Novio\n7. Tenerte Y Quererte\n8. Cuando El Amor Se Acaba\n9. Santa No Soy\n10. Fuego\n11. Sálvame"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Rebelde [Edição Portugues] · 602435068220 · BR (in Siempre Rebelde)",
+   "era": "rebelde",
+   "rank": 6,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435068220",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506822",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Rebelde (Edição Português)",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/SkAS5zR2axyFWWa44rcanfdsnFDl53wywqZUWBDP4Gk/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM2/OTQtMTU1Ni5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/7zEZm1dLoi8ipERcCOGm81p-S1iFzdQBZ-2E2aybVos/rs:fit/g:sm/q:90/h:600/w:594/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM2/OTUtMzYxNS5qcGVn.jpeg",
+    "formats": "CD, Album, Mispress, Reissue",
+    "tracklist": "1. Rebelde\n2. Fique Em Silêncio\n3. Um Pouco Desse Amor\n4. Ensina-me\n5. Querer-te\n6. Quando O Amor Acaba\n7. Salva-me\n8. Otro Día Que Va\n9. Futuro Ex-Novio\n10. Santa No Soy\n11. Fuego"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Nuestro Amor [Reissue] · 602435065526 · BR (in Siempre Rebelde)",
+   "era": "nuestro-amor",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435065526",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506552",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Nuestro Amor",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/VVEBkc1QohZsLDfBsofogUMJcn3Y_AlYb2fAhuznfbg/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM3/MjYtNDUzMy5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/ZXIXEsKCZh2SjEmlYnsDOTXm6a59V2W0L67rkRmcMkw/rs:fit/g:sm/q:90/h:599/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM3/MjctNzU3Mi5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue",
+    "tracklist": "1. Nuestro Amor\n2. Me Voy\n3. Feliz Cumpleaños\n4. Este Corazón\n5. Así Soy Yo\n6. Aún Hay Algo\n7. A Tu Lado\n8. Fuera\n9. Qué Fue Del Amor\n10. Qué Hay Detrás\n11. Tras De Mí\n12. Solo Para Ti\n13. Una Canción\n14. Liso, Sensual"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Nosso Amor Rebelde [Reissue] · 602435068060 · BR (in Siempre Rebelde)",
+   "era": "nuestro-amor",
+   "rank": 6,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435068060",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506806",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Nosso Amor Rebelde",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/NuEauFXuVodKeIsiMAZzOdUw-96FIN8nKc0bxIXiXUs/rs:fit/g:sm/q:90/h:600/w:598/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM3/NTAtNjU0NS5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/v3c40FfCOz8yYyGzyL7xo8hGCp_r2sQrc2VNI933Fvw/rs:fit/g:sm/q:90/h:597/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM3/NDktOTE5My5qcGVn.jpeg",
+    "formats": "CD, Album, Mispress, Reissue",
+    "tracklist": "1. Nosso Amor\n2. Feliz Aniversário\n3. Esse Coração\n4. Venha De Novo O Amor\n5. Ao Seu Lado\n6. Fora\n7. O Que Houve Com O Amor\n8. O Que Há Por Trás\n9. Atrás De Mim\n10. Só Para Você\n11. Uma Canção\n12. Así Soy Yo\n13. Me Voy"
+   }
+  },
+  {
+   "box": 1953105273,
+   "label": "Celestial [Reissue] · 602435119205 · BR (in Siempre Rebelde)",
+   "era": "celestial",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435119205",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243511920",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Celestial",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/EnN8GpKDfj1I0Q3MpVp0H1Wca_H7ueuxi6ER-3Takt4/rs:fit/g:sm/q:90/h:600/w:595/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM3/ODEtMTgwMy5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/h6qjMDOJ2f1VkwIrz0kEygNX0oKVed4buo0XENdrasA/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM3/ODEtNzA3OC5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue",
+    "tracklist": "1. Tal Vez Después\n2. Ser O Parecer\n3. Dame\n4. Celestial\n5. Quizá\n6. Bésame Sin Miedo\n7. Tu Dulce Voz\n8. Algún Día\n9. Me Cansé\n10. Aburrida Y Sola\n11. Es Por Amor\n12. Quisiera Ser"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Celestial [Versão Portugues] · 602435068121 · BR (in Siempre Rebelde)",
+   "era": "celestial",
+   "rank": 4,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435068121",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506812",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Celestial (Versão Português)",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/AjfkAZ9jg3lcGCoN6gv3gKH4XF3YoI5dVyMiUTdILZE/rs:fit/g:sm/q:90/h:598/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/MDQtNzU5My5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/5MxJkDSTuJ_398r3SnCzMaxHcoG6v2aHXQDNa8-snEQ/rs:fit/g:sm/q:90/h:596/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/MDQtOTU0OC5qcGVn.jpeg",
+    "formats": "CD, Album, Mispress, Reissue",
+    "tracklist": "1. Ser Ou Parecer\n2. Celestial\n3. Talvez Depois\n4. Me Dar\n5. Me Cansei\n6. Sua Doce Voz\n7. Beija-me Sem Medo\n8. Quem Sabe\n9. Es Por Amor\n10. Aburrida Y Sola\n11. Algún Día"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Rebels [Reissue] · 602435068183 · BR (in Siempre Rebelde)",
+   "era": "rebels",
+   "rank": 3,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435068183",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506818",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Rebels",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/bXY-km3tKBmpCXAYTp5yVl4suNA5f0qQJFNEZjFvsPc/rs:fit/g:sm/q:90/h:600/w:598/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/MjEtNDg5MC5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/HJCWfOa8ujo5hI3nU8i9OuoXSnJDXZ7yaKrHKT_3XqM/rs:fit/g:sm/q:90/h:599/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/MjEtODM1Ni5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue",
+    "tracklist": "1. Tu Amor\n2. Wanna Play\n3. My Philosophy\n4. Connected\n5. I Wanna Be The Rain\n6. Cariño Mío\n7. Era La Música\n8. Keep It Down Low\n9. Happy Worst Day\n10. This Is Love\n11. Save Me\n12. Money Money\n13. Tu Amor (Navidad Mix)"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Empezar Desde Cero [Reissue] · 602435065502 · BR (in Siempre Rebelde)",
+   "era": "empezar-desde-cero",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435065502",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506550",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Empezar Desde Cero",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/U-5FPu854gf3KK57k8_b-Cowd5ibnAR1M3It4nFgHPU/rs:fit/g:sm/q:90/h:599/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/NTEtMzk2MS5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/2MW0_ztouh6lK5TA0K0j9w3ZvNQz6lwXxOhF_M8hchQ/rs:fit/g:sm/q:90/h:599/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/NTEtNzAyNy5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue",
+    "tracklist": "1. Empezar Desde Cero\n2. Y No Puedo Olvidarte\n3. Inalcanzable\n4. No Digas Nada\n5. El Mundo Detrás\n6. Hoy Que Te Vas\n7. Llueve En Mi Corazón\n8. Fui La Niña\n9. A La Orilla\n10. Amor Fugaz\n11. Sueles Volver\n12. Si No Estás Aquí\n13. Extraña Sensación"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105273,
+   "label": "Para Olvidarte de Mi [Reissue] · 602435065519 · BR (in Siempre Rebelde)",
+   "era": "para-olvidarte-de-mi",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435065519",
+    "region": "BR",
+    "media": "CD",
+    "catalog_number": "AB0001500\n060243506551",
+    "item_type": "album",
+    "release_date": "2020-12-03",
+    "manual_title": "Para Olvidarte De Mí",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/FBNmsGdic5y9tTLbSVrRPVvISo2UUFPi3cVT-tvb3t4/rs:fit/g:sm/q:90/h:599/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/NzQtOTE5Ni5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/3ZTjMH1MY04Ts_9ZG2a72xtLROeB1IR_FUpdxvArFcA/rs:fit/g:sm/q:90/h:596/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2MzEy/MTYxLTE3NjQzMDM4/NzQtODA0OS5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue",
+    "tracklist": "1. Camino Al Sol\n2. Mírame\n3. Para Olvidarte De Mí\n4. ¿Quién Te Crees?\n5. Esté Donde Esté\n6. Más Tuya Que Mía\n7. Hace Un Instante\n8. Desapareció\n9. Olvidar\n10. Yo Vivo Por Ti\n11. Lágrimas Perdidas\n12. Puedes Ver Pero No Tocar\n13. Adiós"
+   },
+   "notes": "Reissue RBD Box"
+  },
+  {
+   "box": 1953105573,
+   "label": "Tour Generación RBD [En Vivo] · 602435243764 · BR (in ¡En Vivo!)",
+   "era": "tour-generacion-rbd",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435243764",
+    "region": "BR",
+    "media": "CD + DVD",
+    "item_type": "live album",
+    "release_date": "2021",
+    "manual_title": "Tour Generación (En Vivo)",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/uJbN54n6XLNV126b5SZGJp0STQnZoaH0LPw2M8IJAoc/rs:fit/g:sm/q:90/h:600/w:594/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY1/OTMtMzY3Ny5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/xZjk2s_1qJabDZQBgN5svi3WC9Ij4Mm4lb8jUqmSvqE/rs:fit/g:sm/q:90/h:598/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY2/MzItMTEwNS5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue\nDVD, DVD-Video, Reissue",
+    "tracklist": "[CD1-1] Rebelde\n[CD1-2] Otro Día Que Va\n[CD1-3] Medley 1: Me He Enamorado de Un Fan / No Sé Si Es Amor / Ámame Hasta con Los Dientes / Rayo Rebelde (Greased Lightin) / Baile Del Sapo / Me Vale\n[CD1-4] Enséñame\n[CD1-5] Futuro Ex - Novio\n[CD1-6] A Rabiar\n[CD1-7] Una Canción\n[CD1-8] Medley 2: Cuando Baja La Marea / Te Quiero / Verano Peligroso / Devuélveme a Mi Chica / La Chica Del Bikini Azul / Viviendo de Noche / De Música Ligera / Es Mejor Así\n[CD1-9] Fuego\n[CD1-10] Sálvame\n[CD1-11] Tenerte Y Quererte\n[CD1-12] Un Poco De Tu Amor\n[CD1-13] Sólo Quédate En Silencio\n[CD1-14] Rebelde (Versión Cumbia)\n[DVD1-1] Rebelde\n[DVD1-2] Otro Día Que Va\n[DVD1-3] Santa No Soy\n[DVD1-4] Medley 1: Me He Enamorado de Un Fan / No Sé Si Es Amor / Ámame Hasta con Los Dientes / Rayo Rebelde (Greased Lightin) / Baile Del Sapo / Me Vale\n[DVD1-5] Enséñame\n[DVD1-6] Futuro Ex - Novio\n[DVD1-7] Cuando El Amor Se Acaba\n[DVD1-8] Liso Sensual\n[DVD1-9] A Rabiar\n[DVD1-10] Una Canción\n[DVD1-11] Medley 2: Cuando Baja La Marea / Te Quiero / Verano Peligroso / Devuélveme a Mi Chica / La Chica Del Bikini Azul / Viviendo de Noche / De Música Ligera / Es Mejor Así\n[DVD1-12] Fuego\n[DVD1-13] Sálvame\n[DVD1-14] Tenerte Y Quererte\n[DVD1-15] Un Poco De Tu Amor\n[DVD1-16] Sólo Quédate En Silencio\n[DVD1-17] Rebelde (Cumbia Mix)\n[DVD1-18] Documental RBD\n[DVD1-19] Galería de Fotos",
+    "catalog_number": "060243524976"
+   },
+   "notes": "Reissue RBD En Vivo Box"
+  },
+  {
+   "box": 1953105573,
+   "label": "Live in Hollywood [Reissue] · 602435243788 · BR (in ¡En Vivo!)",
+   "era": "live-in-hollywood",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435243788",
+    "region": "BR",
+    "media": "CD + DVD",
+    "item_type": "live album",
+    "release_date": "2021",
+    "manual_title": "Live In Hollywood",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/BsdxugQIiYc4qhBLoxIGjQeolrTlQyswPco93OWsSHI/rs:fit/g:sm/q:90/h:600/w:594/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY2/ODktMjUxMC5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/pmNH7yaWLGKSmXDPH2HcTFxnjWIp48sXABC4Pxxs_NY/rs:fit/g:sm/q:90/h:600/w:599/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY3/NDQtODc0Ni5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue\nDVD, DVD-Video, Reissue",
+    "tracklist": "[CD2-1] Trás De Mi\n[CD2-2] Me Voy\n[CD2-3] Nuestro Amor\n[CD2-4] Así Soy Yo\n[CD2-5] Que Fué Del Amor\n[CD2-6] A Tu Lado\n[CD2-7] No Pares\n[CD2-8] Fuera\n[CD2-9] Solo Para Ti\n[CD2-10] Este Corazón\n[CD2-11] Aún Hay Algo\n[CD2-12] Que Hay Detrás\n[CD2-13] Medley (Rebelde / Solo Quédate En Silencio / Sálvame)\n[CD2-14] Feliz Cumpleaños\n[CD2-15] No Pares (Bonus Track · Sólo en CD)\n[DVD2-1] Trás De Mi\n[DVD2-2] Me Voy\n[DVD2-3] Nuestro Amor\n[DVD2-4] Así Soy Yo\n[DVD2-5] Que Fué Del Amor\n[DVD2-6] A Tu Lado\n[DVD2-7] No Pares\n[DVD2-8] Fuera\n[DVD2-9] Solo Para Ti\n[DVD2-10] Este Corazón\n[DVD2-11] Aún Hay Algo\n[DVD2-12] Que Hay Detrás\n[DVD2-13] Medley (Rebelde / Solo Quédate En Silencio / Sálvame)\n[DVD2-14] Feliz Cumpleaños"
+   },
+   "notes": "Reissue RBD En Vivo Box"
+  },
+  {
+   "box": 1953105573,
+   "label": "Tour Celestial 2007 Hecho En España [Reissue] · 602435243801 · BR (in ¡En Vivo!)",
+   "era": "tour-celestial-2007",
+   "rank": 1,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435243801",
+    "region": "BR",
+    "media": "CD + DVD",
+    "item_type": "live album",
+    "release_date": "2021",
+    "manual_title": "Tour Celestial 2007 (Hecho En España)",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/gNo2DBmgaaD-TjInE8L3FuEsKNphzW7Xh_orcWAALus/rs:fit/g:sm/q:90/h:600/w:594/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY3/ODAtMjUyOS5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/UCo9sFZgpbFhmb9LKNOql85EK3zCViyOR-ZqTZssF4k/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY4/NTItMzY5MS5qcGVn.jpeg",
+    "formats": "CD, Album, Reissue\nDVD, DVD-Video, Reissue",
+    "tracklist": "[CD3-1] Obertura Celestial\n[CD3-2] Cariño Mio\n[CD3-3] Ser O Parecer\n[CD3-4] Wanna Play\n[CD3-5] Dame\n[CD3-6] Money Money\n[CD3-7] Quiero Poder\n[CD3-8] Sálvame\n[CD3-9] Bésame Sin Miedo\n[CD3-10] I Wanna Be The Rain\n[CD3-11] Algún Día\n[CD3-12] Medley - Quizá / Este Corazón\n[CD3-13] No Pares\n[CD3-14] Tu Amor\n[CD3-15] Nuestro Amor\n[CD3-16] Aún Hay Algo\n[CD3-17] Tras de Mí\n[CD3-18] Celestial\n[CD3-19] Rebelde\n[CD3-20] Cariño Mio (Reprise)\n[DVD3-1] Obertura Celestial\n[DVD3-2] Cariño Mio\n[DVD3-3] Ser O Parecer\n[DVD3-4] Wanna Play\n[DVD3-5] Bienvenida Maite\n[DVD3-6] Dame\n[DVD3-7] Money Money\n[DVD3-8] Diálogo Dulce\n[DVD3-9] Quiero Poder\n[DVD3-10] Intro Sálvame\n[DVD3-11] Sálvame\n[DVD3-12] Medley - Sólo Quédate En Silencio / Enséñame / Cuando El Amor Se Acaba / Un Poco De Tu Amor / Otro Día Que Va\n[DVD3-13] Video Music Show\n[DVD3-14] Intro Bésame\n[DVD3-15] Bésame Sin miedo\n[DVD3-16] Besos Puente Musical\n[DVD3-17] I Wanna Be The Rain\n[DVD3-18] Presentación Músicos (Medley) - Claro de Luna / Solo Gonzalo / Rosanna / Gipsy Train / Solo Guido / Ensamble Inédito / Santa No Soy\n[DVD3-19] Anahí Presente Algún Día\n[DVD3-20] Algún Día\n[DVD3-21] Medley - Quizá / Este Corazón\n[DVD3-22] Poema Dulce\n[DVD3-23] No Pares\n[DVD3-24] Tu Amor\n[DVD3-25] Intro Fuera\n[DVD3-26] Nuestro Amor\n[DVD3-27] Aún Hay Algo\n[DVD3-28] Intro Tras De Mí\n[DVD3-29] Tras De Mí\n[DVD3-30] Celestial\n[DVD3-31] Rebelde\n[DVD3-32] Soy Gitano\n[DVD3-33] Cariño Mio (Reprise)\n[DVD3-34] Despedida\n[DVD3-35] Detrás de RBD"
+   },
+   "notes": "Reissue RBD En Vivo Box"
+  },
+  {
+   "box": 1953105573,
+   "label": "Live in Brasilia [Reissue] · 602435971230 · BR (in ¡En Vivo!)",
+   "era": "live-in-brasilia",
+   "rank": 0,
+   "media_kind": "cd",
+   "fields": {
+    "barcode": "602435971230",
+    "region": "BR",
+    "media": "2 CD",
+    "catalog_number": "AA0005000",
+    "item_type": "live album",
+    "release_date": "2021",
+    "manual_title": "Live In Brasilia",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/Atu5HA1Q3emFaSlUBQbmj935SEek7XkpMgMh66iIZsk/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTY5/MTMtMzMxMi5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/ZRedE2kaQRi79CEpSh3c_XNCUlLEOp334CH0eN7mUI4/rs:fit/g:sm/q:90/h:598/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTcw/MDItMTc2OC5qcGVn.jpeg",
+    "formats": "2 × CD, Album, Reissue",
+    "tracklist": "[CD4-1] Intro (Desde Cero)\n[CD4-2] Fui La Niña\n[CD4-3] Money Money\n[CD4-4] Me Voy\n[CD4-5] Ser O Parecer\n[CD4-6] Dame\n[CD4-7] Medley Rebelde: Tenerte Y Quererte / Un Poco De Tu Amor / Otro Día Que Va / Solo Quedate En SIlencio\n[CD4-8] Inalcanzable\n[CD4-9] I Wanna Be The Rain\n[CD4-10] Besame Sin Miedo\n[CD4-11] Este Corazón\n[CD5-1] A Tu Lado\n[CD5-2] Sálvame\n[CD5-3] Y No Puedo Olvidarte\n[CD5-4] No Pares\n[CD5-5] Empezar Desde Cero\n[CD5-6] Medley Solos: No Digas Nada / Si No Serás Aquí / El Mundo Detrás / Sueles Volver\n[CD5-7] Extraña Sensación\n[CD5-8] Celestial\n[CD5-9] Aún Hay Algo\n[CD5-10] Tras De Mí\n[CD5-11] Rebelde"
+   },
+   "notes": "Reissue RBD En Vivo Box"
+  },
+  {
+   "box": 1953105573,
+   "label": "Live in Brasilia [DVD] · 602435244006 · BR (in ¡En Vivo!)",
+   "era": "live-in-brasilia",
+   "rank": 1,
+   "media_kind": "dvd",
+   "fields": {
+    "barcode": "602435244006",
+    "region": "BR",
+    "media": "DVD",
+    "catalog_number": "AA0005000",
+    "item_type": "live album",
+    "release_date": "2021",
+    "manual_title": "Live In Brasilia (DVD)",
+    "manual_artist": "RBD",
+    "cover_url": "https://i.discogs.com/B00UNJMorNPQIZNl4AbH49P-EXaGTvqEip1XcnKbBMk/rs:fit/g:sm/q:90/h:600/w:595/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTcw/MTgtNjU4OS5qcGVn.jpeg",
+    "disc_url": "https://i.discogs.com/5fpRwVicVk9NyTS4kJfZbumVFiFwvlzBl-fu1-DRAzg/rs:fit/g:sm/q:90/h:598/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MjIw/NzEzLTE3NTIzNTcw/NTUtODk2NS5qcGVn.jpeg",
+    "formats": "DVD, DVD-Video, Reissue",
+    "tracklist": "[DVD4-1] Intro (Desde Cero)\n[DVD4-2] Fui La Niña\n[DVD4-3] Money Money\n[DVD4-4] Me Voy\n[DVD4-5] Ser O Parecer\n[DVD4-6] Dame\n[DVD4-7] Medley Rebelde: Tenerte y Quererte / Un Poco De Tu Amor / Otro Día Que Va / Solo Quédate En Silencio\n[DVD4-8] Inalcanzable\n[DVD4-9] I Wanna Be The Rain\n[DVD4-10] Bésame Sin Miedo\n[DVD4-11] Este Corazón\n[DVD4-12] A Tu Lado\n[DVD4-13] Sálvame\n[DVD4-14] Y No Puedo Olvidarte\n[DVD4-15] No Pares\n[DVD4-16] Empezar Desde Cero\n[DVD4-17] Medley Solos: No Digas Nada / Si No Estas Aquí / El Mundo Detrás / Sueles Volver\n[DVD4-18] Extraña Sensación\n[DVD4-19] Celestial\n[DVD4-20] Aún Hay Algo\n[DVD4-21] Tras De Mi\n[DVD4-22] Rebelde"
+   },
+   "notes": "Reissue RBD En Vivo Box"
+  }
+ ]
+}

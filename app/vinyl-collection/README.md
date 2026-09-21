@@ -34,6 +34,13 @@ The front end no longer calls Discogs at all. It reads `api/collection`,
 to show Bruno's notes, his chosen cover, and only the fields he ticked in
 **Drawer fields**.
 
+A box set is one release on Discogs, but its discs can each be a record of their
+own (`items.parent_item_id` names the box). Such a disc has no Discogs release; its
+title, tracklist, cover and the rest are copied from the box's release into the
+fields the admin overrides, and the drawer says "In the box" on the disc and
+"Inside the box" on the box. It has no `instance_id`, so a sync never flags it as
+gone. `cron/apply_lists.php` builds them from a lists file (its `discs` key).
+
 The crate (`js/crate.js`, `css/crate.css`) belongs to the shelf page alone. It is
 a state of the floor view, not a fourth view, so it follows the same search and
 format filter, and it holds whatever the floor is showing — pick the Vinyl chip
@@ -43,6 +50,15 @@ on hover, so a pressing comes out of the crate in its own colour.
 Switching between Floor and Grid uses the same idea without the crate
 (`js/morph.js`, `css/morph.css`): each record on screen is carried from where the
 old view had it to where the new one lays it.
+
+Clicking a record does the same with the drawer (`js/spotlight.js`,
+`css/spotlight.css`): a copy of the sleeve, with the hover's third of a disc,
+flies to the left of the page while the drawer opens on the right, the discs
+slide the rest of the way out, and the title and basics come in above it. The
+drawer keeps everything else. Closing plays it backwards, home to wherever the
+page has that record now. It works from a floor tile, a grid cell, a list row
+or a `#item-…` link, and stays out of the crate and off windows too narrow to
+leave room beside the drawer, where the drawer opens as it always did.
 
 Every public page draws a record the same way — `js/tiles.js` builds the sleeve,
 the case and the discs that slide out of it, over the wooden floor in
@@ -91,6 +107,10 @@ Because of phase 3, nothing tries to do it all in one web request:
   doing ~12 seconds of work and reporting progress. Closing the tab is harmless.
 - **The cron URL** loops the same steps for up to 15 minutes, then stops; the
   next night's run continues the same job.
+- **Sync with Discogs** on a record's edit page refreshes just that one record
+  (`sync_one_item()`: its release detail plus its own collection entry — one or
+  two API calls). It writes the same Discogs-side columns a full sync does and
+  nothing Bruno typed.
 
 After the first full sync, a nightly run only fetches what's new plus anything
 whose detail has gone stale (45 days by default, in **Settings**), so it is
