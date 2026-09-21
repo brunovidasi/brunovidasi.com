@@ -531,7 +531,11 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .colour-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .colour-row input[type="color"] { width: 2.4rem; height: 2rem; padding: 0.1rem; border: 1px solid var(--line-strong); border-radius: 4px; background: none; cursor: pointer; }
 .colour-state { font-size: 0.8rem; opacity: 0.7; margin-top: 0.4rem; }
-.colour-pick.manual .colour-state { opacity: 1; font-weight: 600; }
+.colour-disc.manual .colour-state { opacity: 1; font-weight: 600; }
+.colour-disc + .colour-disc { margin-top: 1.1rem; }
+.colour-disc[hidden] { display: none; }
+.colour-disc-title { display: none; margin: 0 0 0.5rem; font-family: 'Fraunces', Georgia, serif; font-size: 0.95rem; }
+.colour-pick.multi .colour-disc-title { display: block; }
 .colour-pick .sub-label { margin-top: 0.7rem; }
 .colour-pick .swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
 .swatch { width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; border: 1px solid var(--line-strong); cursor: pointer; }
@@ -545,3 +549,13 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
    or label line would otherwise run off it), the label keeps to one line. */
 .table.facts .label { opacity: 0.6; white-space: nowrap; vertical-align: top; }
 .table.facts .right { white-space: normal; overflow-wrap: anywhere; vertical-align: top; }
+
+/* The header picture picker on an artist: a long list of covers, scrolling rather than pushing the form down. */
+.picker.artist-covers { max-height: 22rem; overflow-y: auto; padding: 0.2rem; margin-bottom: 1rem; }
+.picker.artist-covers small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The artist's current picture, beside their name in the list. */
+.pill-pic { float: left; width: 34px; height: 34px; margin: 0 0.7rem 0 0; border-radius: 50%; object-fit: cover; background: var(--paper-dim); }
+
+/* A sub-heading straight after a run of checkboxes needs air above it. */
+.check + h3.sub { margin-top: 1.4rem; }

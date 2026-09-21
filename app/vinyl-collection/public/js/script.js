@@ -12,6 +12,8 @@
  * pile into a crate to flip through (js/crate.js), and "Back to the mess" tips it
  * out again. The crate is a state of the floor view, not a fourth view, so it
  * follows the same search and format filter and is left by choosing Grid or List.
+ * It is a crate of records, so entering it picks the Vinyl format, and leaving
+ * it goes back to All.
  */
 
 const CACHE_KEY = 'vinyl_collection_v5';
@@ -59,6 +61,7 @@ function syncSortMenu() {
   custom.hidden = Boolean(choice);
   custom.textContent = `Sorted by ${SORT_BY[prefs.sort.key].label} ${prefs.sort.dir === 'asc' ? '↑' : '↓'}`;
   $('sort').value = choice || 'custom';
+  dropdownSync($('sort'));
 }
 
 function visibleItems() {
@@ -172,7 +175,11 @@ $('viewToggle').addEventListener('click', e => {
   if (!b) return;
   if (crateOn && b.dataset.view === 'floor') return; // already on the floor, just in the crate
   // Grid and List have no crate: choosing one puts it away, and cuts short any flight to or from it
-  if (crateOn || (Crate.busy && b.dataset.view !== 'floor')) { crateOn = false; Crate.destroy(); }
+  if (crateOn || (Crate.busy && b.dataset.view !== 'floor')) {
+    if (crateOn) setFormat('all');
+    crateOn = false;
+    Crate.destroy();
+  }
   // Floor and Grid are the same records laid out two ways, so they are carried across
   const before = Morph.capture($('content'));
   prefs.view = b.dataset.view;
@@ -195,10 +202,21 @@ $('organiseBy').innerHTML = Object.entries(CRATE_ORDERS)
   .map(([key, { label }]) => `<option value="${key}">${esc(label)}</option>`)
   .join('');
 
+/** Sets the format filter, keeping the chips in step; false when there is nothing of that format to show. */
+function setFormat(fmt) {
+  if (fmt !== 'all' && !items.some(it => it.kind === fmt)) return false;
+  prefs.fmt = fmt;
+  renderChips();
+  return true;
+}
+
 $('crateBtn').addEventListener('click', () => {
   if (crateOn || Crate.busy || prefs.view !== 'floor') return;
+  const before = prefs.fmt;
+  setFormat('vinyl');
   const list = visibleItems();
-  if (!list.length) return;
+  if (!list.length) { setFormat(before); return; }
+  savePrefs();
   crateOn = true;
   syncControls();
   Crate.enter(list, prefs.organise, prefs.mess);
@@ -207,6 +225,8 @@ $('crateBtn').addEventListener('click', () => {
 $('messBtn').addEventListener('click', () => {
   if (!crateOn || Crate.busy) return;
   crateOn = false;
+  setFormat('all');
+  savePrefs();
   syncControls();
   Crate.exit(visibleItems(), prefs.mess);
 });
@@ -251,5 +271,7 @@ async function init(force) {
 
 $('mess').value = prefs.mess;
 $('organiseBy').value = prefs.organise;
+dropdown($('sort'));
+dropdown($('organiseBy'));
 syncViewToggle();
 init(false);

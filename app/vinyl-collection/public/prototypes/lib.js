@@ -99,7 +99,7 @@ const L = (() => {
 
   /* ---------- rendering ---------- */
   function nav(current) {
-    const items = [['6-bento.html', '6 Bento'], ['7-floor.html', '7 Floor'], ['8-stacks.html', '8 Stacks'], ['9-stagger.html', '9 Stagger'], ['10-fisheye.html', '10 Fisheye'], ['11-hover-lab.html', '11 Hover lab']];
+    const items = [['6-bento.html', '6 Bento'], ['7-floor.html', '7 Floor'], ['8-stacks.html', '8 Stacks'], ['9-stagger.html', '9 Stagger'], ['10-fisheye.html', '10 Fisheye'], ['11-hover-lab.html', '11 Hover lab'], ['12-header.html', '12 Header']];
     const n = document.createElement('nav'); n.className = 'protonav';
     n.innerHTML = items.map(([h, l]) => `<a href="${h}"${h === current ? ' aria-current="page"' : ''}>${l}</a>`).join('') + '<a class="dim" href="1-crate.html">← first set</a>';
     document.body.prepend(n);

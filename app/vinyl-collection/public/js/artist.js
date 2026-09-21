@@ -191,7 +191,52 @@ function render() {
   nav.hidden = false;
 
   $('content').replaceChildren(...withNumbers.map(({ section, index }) => eraEl(section, index)));
+  markCurrentEra();
 }
+
+/* ---------- The era you are in ----------
+   The nav lights the era whose heading has scrolled up under it, and slides
+   itself along so that chip stays in view. Before the first era gets that far
+   nothing is lit; at the very bottom the last one is, since a short final era
+   (the wantlist) may never reach the line. */
+
+function markCurrentEra() {
+  const nav = $('eraNav');
+  if (nav.hidden) return;
+
+  const eras = [...document.querySelectorAll('#content .era')];
+  const line = nav.offsetHeight + 24;
+  let current = eras.filter(era => era.getBoundingClientRect().top <= line).pop();
+
+  const atBottom = window.scrollY > 0 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+  if (atBottom && eras.length) current = eras[eras.length - 1];
+
+  nav.querySelectorAll('a').forEach(link => {
+    const on = Boolean(current) && link.hash === `#${current.id}`;
+    if (on === link.classList.contains('current')) return;
+    link.classList.toggle('current', on);
+    if (on) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
+    if (on) revealInNav(nav.firstElementChild, link);
+  });
+}
+
+/** Scroll the nav sideways, not the page, until the chip is in view. */
+function revealInNav(strip, link) {
+  const room = 16;
+  if (link.offsetLeft < strip.scrollLeft + room) strip.scrollTo({ left: link.offsetLeft - room, behavior: 'smooth' });
+  else if (link.offsetLeft + link.offsetWidth > strip.scrollLeft + strip.clientWidth - room) {
+    strip.scrollTo({ left: link.offsetLeft + link.offsetWidth - strip.clientWidth + room, behavior: 'smooth' });
+  }
+}
+
+let eraFrame = 0;
+function scheduleCurrentEra() {
+  if (eraFrame) return;
+  eraFrame = requestAnimationFrame(() => { eraFrame = 0; markCurrentEra(); });
+}
+
+window.addEventListener('scroll', scheduleCurrentEra, { passive: true });
+window.addEventListener('resize', scheduleCurrentEra);
 
 // The grid captions every sleeve and the list names every row, so the floating
 // label would only repeat them.

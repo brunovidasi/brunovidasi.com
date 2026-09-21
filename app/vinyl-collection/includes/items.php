@@ -139,36 +139,73 @@ const MAX_DISCS = 3;
 
 /**
  * What the admin has said about a record's discs: how many there are (null = as
- * Discogs' formats say) and the picture on each, "" for a plain disc. `set` is
- * false for a record the admin has never configured, which still has the single
- * disc_url of before, shown on every disc.
+ * Discogs' formats say), the picture on each ("" for a plain disc), and the
+ * colour picked for each vinyl (`hex`, null = not picked) with whether it is
+ * translucent (`tr`, null = as the colour text says). `set` is false for a
+ * record the admin has never configured, which still has the single disc_url of
+ * before, shown on every disc.
  *
- * @return array{set: bool, count: ?int, art: string[]}
+ * @return array{set: bool, count: ?int, art: string[], hex: (?string)[], tr: (?bool)[]}
  */
 function disc_config(array $row): array
 {
     $raw = json_column($row['disc_config'] ?? null);
     if (!$raw) {
-        return ['set' => false, 'count' => null, 'art' => array_fill(0, MAX_DISCS, '')];
+        return [
+            'set' => false, 'count' => null, 'art' => array_fill(0, MAX_DISCS, ''),
+            'hex' => array_fill(0, MAX_DISCS, null), 'tr' => array_fill(0, MAX_DISCS, null),
+        ];
     }
 
     $count = isset($raw['count']) && is_numeric($raw['count']) ? min(MAX_DISCS, max(1, (int) $raw['count'])) : null;
-    $art = [];
+    $art = $hex = $tr = [];
     for ($k = 0; $k < MAX_DISCS; $k++) {
         $url = trim((string) (($raw['art'] ?? [])[$k] ?? ''));
         $art[] = safe_http_url($url) ? $url : '';
+        $hex[] = vinyl_hex(is_string($raw['hex'][$k] ?? null) ? $raw['hex'][$k] : null);
+        $tr[] = match ($raw['tr'][$k] ?? null) {
+            1, '1', true => true,
+            0, '0', false => false,
+            default => null,
+        };
     }
 
-    return ['set' => true, 'count' => $count, 'art' => $art];
+    return ['set' => true, 'count' => $count, 'art' => $art, 'hex' => $hex, 'tr' => $tr];
+}
+
+/**
+ * The colour picked for each disc, falling back to the one picked for the whole
+ * record before colours were set disc by disc (the vinyl_hex and
+ * vinyl_translucent columns). Only what the admin chose: a disc left on
+ * automatic has null here, and follows the colour text.
+ *
+ * @return array{hex: (?string)[], tr: (?bool)[]}
+ */
+function disc_colours(array $row): array
+{
+    $config = disc_config($row);
+    $hex = vinyl_hex($row['vinyl_hex'] ?? null);
+    $tr = match ($row['vinyl_translucent'] ?? null) {
+        1, '1' => true,
+        0, '0' => false,
+        default => null,
+    };
+
+    foreach (array_keys($config['hex']) as $k) {
+        $config['hex'][$k] ??= $hex;
+        $config['tr'][$k] ??= $tr;
+    }
+
+    return ['hex' => $config['hex'], 'tr' => $config['tr']];
 }
 
 /**
  * The physical discs inside a sleeve, at most three (more than that and the
  * fan-out stops reading as a stack). A colour typed into the admin wins over
- * the one Discogs guessed at, and one picked there (vinyl_hex) wins over both,
- * as does translucent or opaque (vinyl_translucent), so a variant the keywords
- * get wrong can be corrected by hand; so do the
- * disc count and each disc's picture (see disc_config()).
+ * the one Discogs guessed at, and one picked there for a disc wins over both,
+ * as does translucent or opaque, so a variant the keywords get wrong can be
+ * corrected by hand, disc by disc (see disc_colours()); so do the disc count
+ * and each disc's picture (see disc_config()).
  *
  * Something filed as "other" (a cassette, a t-shirt, a book) has no disc to
  * show, so it gets none rather than a made-up CD.
@@ -180,13 +217,8 @@ function item_discs(array $row, array $formats): array
     }
 
     $override = trim((string) ($row['vinyl_color'] ?? ''));
-    $hex = vinyl_hex($row['vinyl_hex'] ?? null);
-    $translucent = match ($row['vinyl_translucent'] ?? null) {
-        1, '1' => true,
-        0, '0' => false,
-        default => null,
-    };
     $config = disc_config($row);
+    $colours = disc_colours($row);
     // A single disc picture from before discs were set one by one makes every
     // vinyl a picture disc, whatever Discogs says. Once discs are configured the
     // picture is per disc, and applied at the end.
@@ -203,11 +235,8 @@ function item_discs(array $row, array $formats): array
                 $text = $override !== '' ? $override : (string) ($format['text'] ?? '');
                 $size = trim((string) ($row['vinyl_size'] ?? '')) ?: (formats_vinyl_size($formats) ?? '12"');
                 $discs[] = ['t' => 'v']
-                    + ($hex !== null ? ['c' => $hex] + vinyl_color($text) : vinyl_color($text))
+                    + vinyl_color($text)
                     + ['pic' => $picture || in_array('Picture Disc', $descriptions, true), 'sz' => (int) $size];
-                if ($translucent !== null) {
-                    $discs[array_key_last($discs)]['tr'] = $translucent;
-                }
             } elseif ($name === 'CD' || $name === 'CDr') {
                 $discs[] = ['t' => 'cd'];
             } elseif ($name === 'DVD' || $name === 'DVDr') {
@@ -248,6 +277,20 @@ function item_discs(array $row, array $formats): array
             $discs[] = $last;
         }
         $discs = array_slice($discs, 0, $config['count']);
+    }
+
+    // A colour picked for one vinyl is that disc's alone; a disc left on
+    // automatic keeps what the colour text says.
+    foreach ($discs as $k => $disc) {
+        if ($disc['t'] !== 'v') {
+            continue;
+        }
+        if ($colours['hex'][$k] !== null) {
+            $discs[$k]['c'] = $colours['hex'][$k];
+        }
+        if ($colours['tr'][$k] !== null) {
+            $discs[$k]['tr'] = $colours['tr'][$k];
+        }
     }
 
     // A picture chosen for one disc is that disc's alone, and makes a vinyl one

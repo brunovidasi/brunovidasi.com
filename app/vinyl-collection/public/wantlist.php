@@ -16,7 +16,6 @@ if (!setting('show_wantlist', true)) {
     exit;
 }
 
-$artists = db()->query('SELECT slug, name FROM artists WHERE is_published = 1 ORDER BY position, name')->fetchAll();
 $count = (int) db()->query("
     SELECT COUNT(*) FROM items
      WHERE source IN ('wantlist', 'searching') AND is_visible = 1 AND missing_since IS NULL
@@ -38,39 +37,32 @@ $count = (int) db()->query("
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
 
-<header class="hero">
+<header class="hero<?= hero_classes() ?>">
   <div class="hero-inner">
     <div class="hero-text">
       <a class="back" href="<?= e(url('')) ?>">← The Collection</a>
-      <div class="display">Still Wanted</div>
+      <div class="display"><?= hero_title('Still Wanted') ?></div>
+      <?= hero_rule() ?>
       <p><?= $count ?> records that aren't on the shelf yet.</p>
-      <?php if ($artists): ?>
-        <nav class="hero-links" aria-label="Artist pages">
-          <?php foreach ($artists as $artist): ?>
-            <a href="<?= e(url($artist['slug'])) ?>"><?= e($artist['name']) ?></a>
-          <?php endforeach; ?>
-        </nav>
-      <?php endif; ?>
+      <?= hero_links() ?>
     </div>
-    <svg id="disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="50" cy="50" r="48" fill="#0B0A08" stroke="#3a352c" stroke-width="1"/>
-      <!-- an empty sleeve rather than a record: nothing here is owned yet -->
-      <circle cx="50" cy="50" r="40" fill="none" stroke="#2a2620" stroke-width="0.6" stroke-dasharray="4 3"/>
-      <circle cx="50" cy="50" r="28" fill="none" stroke="#2a2620" stroke-width="0.6" stroke-dasharray="4 3"/>
-      <circle cx="50" cy="50" r="16" fill="none" stroke="#C99A2E" stroke-width="1.6" stroke-dasharray="3 3"/>
-      <circle cx="50" cy="50" r="3" fill="#0B0A08" stroke="#3a352c" stroke-width="0.8"/>
-    </svg>
   </div>
+  <?= hero_platter('sleeve') ?>
 </header>
 
 <div class="controls">
-  <input type="search" id="search" placeholder="Search title, artist, barcode…" aria-label="Search the wantlist">
-  <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
-  <div class="seg" id="viewToggle" role="group" aria-label="View">
-    <button type="button" data-view="floor">Floor</button>
-    <button type="button" data-view="grid">Grid</button>
+  <div class="controls-inner">
+    <input type="search" id="search" placeholder="Search title, artist, barcode…" aria-label="Search the wantlist">
+    <div class="seg" id="viewToggle" role="group" aria-label="View">
+      <button type="button" data-view="floor">Floor</button>
+      <button type="button" data-view="grid">Grid</button>
+    </div>
+    <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.6" aria-label="Messiness of the pile"></label>
   </div>
-  <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.6" aria-label="Messiness of the pile"></label>
+</div>
+
+<div class="filters">
+  <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
   <span class="meta" id="countMeta"></span>
 </div>
 

@@ -81,15 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params[] = nullable(post($key));
     }
 
-    // The colour picked on the swatch, only from a vinyl's form (a CD has no
-    // swatch, and switching one to vinyl shouldn't wipe a colour it had).
-    if ($kind === 'vinyl') {
-        $sets[] = 'vinyl_hex = ?';
-        $params[] = vinyl_hex(post('vinyl_hex'));
-        $sets[] = 'vinyl_translucent = ?';
-        $params[] = ['1' => 1, '0' => 0][post('vinyl_translucent')] ?? null;
-    }
-
     // Discogs' facts corrected on this record. The boxes are always on the form,
     // so an empty one means "use Discogs'" and clears an earlier correction.
     foreach (array_keys(OVERRIDE_FIELDS) as $key) {
@@ -112,9 +103,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // A disc taken away takes its picture with it.
         $discArt = array_pad(array_slice($discArt, 0, $discCount), MAX_DISCS, '');
     }
-    $discConfig = $discCount === null && !array_filter($discArt)
+
+    // The colour picked on each vinyl's swatch. Only a vinyl's form has swatches
+    // (a CD has none, and switching one to vinyl shouldn't wipe a colour it
+    // had), so any other kind keeps what is stored. The record-wide colour of
+    // before is folded into the discs (the form showed it on each) and cleared,
+    // or "Use automatic" on one disc would keep coming back.
+    $discHex = array_fill(0, MAX_DISCS, null);
+    $discTr = array_fill(0, MAX_DISCS, null);
+    if ($kind === 'vinyl') {
+        $postedHex = is_array($_POST['vinyl_hex'] ?? null) ? $_POST['vinyl_hex'] : [];
+        $postedTr = is_array($_POST['vinyl_translucent'] ?? null) ? $_POST['vinyl_translucent'] : [];
+        for ($k = 0; $k < MAX_DISCS; $k++) {
+            $discHex[$k] = vinyl_hex(is_string($postedHex[$k] ?? null) ? $postedHex[$k] : null);
+            $discTr[$k] = ['1' => true, '0' => false][is_string($postedTr[$k] ?? null) ? $postedTr[$k] : ''] ?? null;
+        }
+        $sets[] = 'vinyl_hex = NULL';
+        $sets[] = 'vinyl_translucent = NULL';
+    } else {
+        ['hex' => $discHex, 'tr' => $discTr] = disc_colours($item);
+    }
+    if ($discCount !== null) {
+        // A disc taken away takes its colour with it.
+        $discHex = array_pad(array_slice($discHex, 0, $discCount), MAX_DISCS, null);
+        $discTr = array_pad(array_slice($discTr, 0, $discCount), MAX_DISCS, null);
+    }
+
+    $discConfig = $discCount === null && !array_filter($discArt) && !array_filter($discHex) && !array_filter($discTr, 'is_bool')
         ? null
-        : json_encode(['count' => $discCount, 'art' => $discArt], JSON_UNESCAPED_SLASHES);
+        : json_encode(['count' => $discCount, 'art' => $discArt, 'hex' => $discHex, 'tr' => $discTr], JSON_UNESCAPED_SLASHES);
     $firstDiscArt = array_values(array_filter($discArt))[0] ?? null;
 
     $eraId = (int) post('era_id') ?: null;
@@ -207,6 +224,11 @@ $discCfg = disc_config($item);
 $derivedDiscs = count(item_discs(array_merge($item, ['disc_config' => null, 'disc_url' => null]), json_column($item['formats_json'] ?? null)));
 $shownDiscs = max(1, $discCfg['count'] ?? $derivedDiscs);
 $discArtNow = fn (int $k): string => $discCfg['set'] ? $discCfg['art'][$k] : trim((string) $item['disc_url']);
+
+// What kind of disc sits at each of the three places, so only a vinyl gets a
+// colour picker (a CD in the same sleeve has none), and the colour each shows.
+$discTypes = array_column(item_discs(array_merge($item, ['disc_config' => json_encode(['count' => MAX_DISCS])]), json_column($item['formats_json'] ?? null)), 't');
+$discColours = disc_colours($item);
 
 /**
  * The Discogs value showing through an empty box, for the hint under it. With
@@ -386,10 +408,9 @@ require __DIR__ . '/../includes/admin_layout_top.php';
               <?php endif; ?>
               <?php if ($key === 'vinyl_color'): ?>
                 <?php
-                // What the disc is drawn in when nothing is picked: the keyword
+                // What each disc is drawn in when nothing is picked: the keyword
                 // match on the text above, which is what the site has been using.
                 $colourText = (string) item_field_value($item, $release, 'vinyl_color');
-                $pickedHex = vinyl_hex($item['vinyl_hex'] ?? null);
                 $autoHex = vinyl_color($colourText)['c'];
                 $palette = [];
                 foreach (VINYL_COLORS as [$word, $hex]) {
@@ -400,24 +421,35 @@ require __DIR__ . '/../includes/admin_layout_top.php';
                      data-palette="<?= e(json_encode(VINYL_COLORS)) ?>"
                      data-discogs="<?= e(fallback_hint($item, $release, 'vinyl_color', true)) ?>"
                      data-fallback="<?= e(VINYL_FALLBACK_COLOR) ?>">
-                  <div class="colour-row">
-                    <input type="color" id="vinylHexPicker" value="<?= e($pickedHex ?? $autoHex ?? VINYL_FALLBACK_COLOR) ?>" aria-label="Disc colour">
-                    <input type="hidden" name="vinyl_hex" id="vinylHex" value="<?= e($pickedHex ?? '') ?>">
-                    <button type="button" class="ghost small" id="colourReset">Use automatic</button>
-                  </div>
-                  <div class="colour-state" id="colourState" aria-live="polite"></div>
-                  <div class="swatches">
-                    <?php foreach ($palette as $hex => $word): ?>
-                      <button type="button" class="swatch" data-hex="<?= e($hex) ?>" title="<?= e(ucfirst($word)) ?>" aria-label="<?= e(ucfirst($word)) ?>" style="background:<?= e($hex) ?>"></button>
-                    <?php endforeach; ?>
-                  </div>
-                  <label for="vinylTranslucent" class="sub-label">Transparency</label>
-                  <select id="vinylTranslucent" name="vinyl_translucent">
-                    <option value="">Automatic</option>
-                    <option value="1"<?= (string) ($item['vinyl_translucent'] ?? '') === '1' ? ' selected' : '' ?>>Translucent</option>
-                    <option value="0"<?= (string) ($item['vinyl_translucent'] ?? '') === '0' ? ' selected' : '' ?>>Opaque</option>
-                  </select>
-                  <div class="hint">The disc on the shelf is drawn in this colour. Left on automatic, colour and transparency follow the text above ("Clear", "Transparent" and so on); set them here where that gets it wrong.</div>
+                  <?php foreach ($discTypes as $k => $type): ?>
+                    <?php
+                    if ($type !== 'v') { continue; }
+                    $pickedHex = $discColours['hex'][$k];
+                    $pickedTr = $discColours['tr'][$k];
+                    $off = $k >= $shownDiscs;
+                    ?>
+                    <div class="colour-disc" data-disc="<?= $k ?>"<?= $off ? ' hidden' : '' ?>>
+                      <h4 class="colour-disc-title">Disc <?= $k + 1 ?></h4>
+                      <div class="colour-row">
+                        <input type="color" class="colour-input" value="<?= e($pickedHex ?? $autoHex ?? VINYL_FALLBACK_COLOR) ?>" aria-label="Disc <?= $k + 1 ?> colour">
+                        <input type="hidden" class="colour-hex" name="vinyl_hex[<?= $k ?>]" value="<?= e($pickedHex ?? '') ?>"<?= $off ? ' disabled' : '' ?>>
+                        <button type="button" class="ghost small colour-reset">Use automatic</button>
+                      </div>
+                      <div class="colour-state" aria-live="polite"></div>
+                      <div class="swatches">
+                        <?php foreach ($palette as $hex => $word): ?>
+                          <button type="button" class="swatch" data-hex="<?= e($hex) ?>" title="<?= e(ucfirst($word)) ?>" aria-label="<?= e(ucfirst($word)) ?>" style="background:<?= e($hex) ?>"></button>
+                        <?php endforeach; ?>
+                      </div>
+                      <label for="vinylTranslucent<?= $k ?>" class="sub-label">Transparency</label>
+                      <select id="vinylTranslucent<?= $k ?>" class="colour-clarity" name="vinyl_translucent[<?= $k ?>]"<?= $off ? ' disabled' : '' ?>>
+                        <option value="">Automatic</option>
+                        <option value="1"<?= $pickedTr === true ? ' selected' : '' ?>>Translucent</option>
+                        <option value="0"<?= $pickedTr === false ? ' selected' : '' ?>>Opaque</option>
+                      </select>
+                    </div>
+                  <?php endforeach; ?>
+                  <div class="hint">Each disc on the shelf is drawn in its own colour, so a split or two-tone pressing can be set disc by disc (the number of discs is under Discs, above). Left on automatic, colour and transparency follow the text above ("Clear", "Transparent" and so on); set them here where that gets it wrong.</div>
                 </div>
               <?php endif; ?>
             </div>

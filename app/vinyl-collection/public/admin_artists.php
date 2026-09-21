@@ -38,9 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $slug = slugify(post('slug') ?: $name);
 
+    // The picture on their header pill: an address typed in wins over one ticked
+    // in the picker, and only a web address is kept. Blank is "automatic".
+    $heroCover = trim(post('hero_cover_url')) ?: trim(post('hero_cover'));
+    $heroCover = preg_match('#^https?://\S+$#i', $heroCover) ? $heroCover : null;
+
     if ($id) {
-        db()->prepare('UPDATE artists SET slug = ?, name = ?, match_names = ?, tagline = ?, intro = ?, accent = ?, position = ?, is_published = ? WHERE id = ?')
-            ->execute([$slug, $name, json_encode($matchNames, JSON_UNESCAPED_UNICODE), nullable(post('tagline')), nullable(post('intro')), nullable(post('accent')), (int) post('position'), post('is_published') !== '' ? 1 : 0, $id]);
+        db()->prepare('UPDATE artists SET slug = ?, name = ?, match_names = ?, tagline = ?, intro = ?, accent = ?, hero_cover = ?, position = ?, is_published = ? WHERE id = ?')
+            ->execute([$slug, $name, json_encode($matchNames, JSON_UNESCAPED_UNICODE), nullable(post('tagline')), nullable(post('intro')), nullable(post('accent')), $heroCover, (int) post('position'), post('is_published') !== '' ? 1 : 0, $id]);
         flash('Saved ' . $name . '.');
     } else {
         db()->prepare('INSERT INTO artists (slug, name, match_names, tagline, intro, accent, position, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
@@ -61,6 +66,18 @@ $counts = array_column(db()->query("
      WHERE source = 'collection' AND missing_since IS NULL AND artist_id IS NOT NULL
      GROUP BY artist_id
 ")->fetchAll(), 'n', 'artist_id');
+
+// The covers to pick the header picture from: this artist's records, one of each
+// picture, in the order their page starts with.
+$covers = [];
+if ($editing) {
+    foreach (public_items('collection', ['i.artist_id = ?'], [$editing['id']]) as $row) {
+        $thumb = item_thumb($row);
+        if ($thumb !== '' && !isset($covers[$thumb])) {
+            $covers[$thumb] = item_title($row);
+        }
+    }
+}
 
 $pageTitle = 'Artists & eras';
 $pageIntro = 'Each of these gets its own page, split into eras.';
@@ -102,6 +119,34 @@ require __DIR__ . '/../includes/admin_layout_top.php';
         <input type="text" id="tagline" name="tagline" value="<?= e($editing['tagline'] ?? '') ?>" placeholder="Every CD and vinyl in the collection, era by era.">
       </div>
 
+      <?php if ($editing): ?>
+        <h3 class="sub">Picture on the header</h3>
+        <p class="hint">The small round cover on <?= e($editing['name']) ?>'s link at the top of the site. Left on automatic it is the first record on their page with a cover.</p>
+        <?php $mine = (string) ($editing['hero_cover'] ?? ''); ?>
+        <div class="picker artist-covers">
+          <label>
+            <input type="radio" name="hero_cover" value=""<?= $mine === '' ? ' checked' : '' ?>>
+            <span class="none">Automatic</span>
+            <small>default</small>
+          </label>
+          <?php foreach ($covers as $thumb => $title): ?>
+            <label title="<?= e($title) ?>">
+              <input type="radio" name="hero_cover" value="<?= e($thumb) ?>"<?= $mine === $thumb ? ' checked' : '' ?>>
+              <img src="<?= e($thumb) ?>" alt="" loading="lazy">
+              <small><?= e($title) ?></small>
+            </label>
+          <?php endforeach; ?>
+        </div>
+        <div class="field">
+          <label for="hero_cover_url">Or any picture, by address</label>
+          <input type="text" id="hero_cover_url" name="hero_cover_url" placeholder="https://…"
+                 value="<?= e($mine !== '' && !isset($covers[$mine]) ? $mine : '') ?>">
+          <div class="hint">Filled in, this wins over the picker. Square works best; it is cropped round.</div>
+        </div>
+      <?php else: ?>
+        <p class="hint">Once the page is saved you can choose the picture on its header link here.</p>
+      <?php endif; ?>
+
       <div class="field">
         <label for="match_names">Discogs names</label>
         <textarea id="match_names" name="match_names" placeholder="One per line"><?= e(implode("\n", json_column($editing['match_names'] ?? null, [$editing['name'] ?? '']))) ?></textarea>
@@ -135,6 +180,10 @@ require __DIR__ . '/../includes/admin_layout_top.php';
         <?php $eras = eras_for_artist((int) $artist['id']); ?>
         <tr>
           <td class="title">
+            <?php $pic = hero_artist_cover($artist); ?>
+            <?php if ($pic !== ''): ?>
+              <img class="pill-pic" src="<?= e($pic) ?>" alt="" width="34" height="34" loading="lazy">
+            <?php endif; ?>
             <b><?= e($artist['name']) ?></b>
             <small><?= e($artist['tagline']) ?></small>
           </td>

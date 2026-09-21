@@ -74,6 +74,11 @@ function run_migrations(PDO $db): void
             'styles'         => 'TEXT',
             'tracklist'      => 'TEXT',
         ],
+        'artists' => [
+            // The picture on this artist's pill in the header, a URL. Blank means
+            // their first record with a cover; see hero_artist_cover().
+            'hero_cover' => 'TEXT',
+        ],
     ];
 
     foreach ($columns as $table => $cols) {

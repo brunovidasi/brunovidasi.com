@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 12 — Header ideas</title>
+<!-- The real stylesheet, so "Current" is the live header and every idea is layered on top of it. -->
+<link rel="stylesheet" href="../css/floor.css">
+<style>
+/* ---------- the prototype's own tab bar (not part of the site) ---------- */
+.ptabs{position:sticky;top:0;z-index:999;display:flex;gap:4px;align-items:center;overflow-x:auto;scrollbar-width:none;padding:8px 14px;background:rgba(16,13,9,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);font:500 12px 'Space Grotesk',sans-serif}
+.ptabs button,.ptabs a{font:inherit;color:var(--text);background:transparent;border:1px solid var(--line-strong);border-radius:99px;padding:6px 12px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.ptabs button:hover,.ptabs a:hover{background:rgba(242,234,216,.1)}
+.ptabs button.on{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.ptabs .grow{flex:1}
+.ptabs .star{border-color:rgba(201,154,46,.6);color:var(--gold)}
+.ptabs .star.on{color:var(--ink)}
+.pnote{max-width:1300px;margin:0 auto;padding:14px 1.5rem 0;font-size:.85rem;color:rgba(242,234,216,.6);min-height:3.2em}
+.pnote b{color:var(--gold);font-weight:500}
+
+/* ============================================================
+   IDEA 1 — the disc as the hero, with a tonearm
+   ============================================================ */
+header.hero{overflow:visible}
+.hero.f-big{padding-bottom:3rem}
+.hero.f-big .hero-inner{position:relative;min-height:260px}
+.hero.f-big .hero-text{position:relative;z-index:2}
+.hero.f-big #disc{display:none}
+.platter{position:absolute;z-index:1;right:-40px;top:50%;width:340px;height:340px;margin-top:-170px;pointer-events:none}
+.platter .spinner{position:absolute;inset:0;border-radius:50%;animation:spin 14s linear infinite;
+  box-shadow:0 22px 40px rgba(0,0,0,.6),0 0 0 1px rgba(242,234,216,.06),0 0 90px rgba(201,154,46,.10)}
+.platter .spinner svg{display:block;width:100%;height:100%}
+/* the light on the grooves stays put while the record turns under it */
+.platter::after{content:"";position:absolute;inset:0;border-radius:50%;mix-blend-mode:screen;
+  background:conic-gradient(from 25deg,transparent 0 12%,rgba(255,244,214,.20) 20%,transparent 30% 62%,rgba(255,244,214,.14) 70%,transparent 80%)}
+.arm{position:absolute;inset:0;overflow:visible;width:100%;height:100%;z-index:2;filter:drop-shadow(6px 10px 7px rgba(0,0,0,.55))}
+@media (max-width:720px){
+  .hero.f-big .hero-inner{min-height:200px}
+  .platter{width:240px;height:240px;margin-top:-120px;right:-90px;opacity:.5}
+  .hero.f-big .arm{display:none}
+}
+
+/* ============================================================
+   IDEA 2 — stats strip
+   ============================================================ */
+.stats{display:flex;flex-wrap:wrap;margin-top:1.4rem}
+.stat{padding:0 1.4rem;border-left:1px solid var(--line-strong)}
+.stat:first-child{padding-left:0;border-left:0}
+.stat b{display:block;font:600 2rem/1 'Fraunces',serif;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:.35rem;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,234,216,.55)}
+@media (max-width:520px){.stat{padding:0 .75rem}.stat b{font-size:1.4rem}.stat span{font-size:.58rem;letter-spacing:.1em}}
+.hero-text{min-width:0;max-width:100%}
+
+/* ============================================================
+   IDEA 3 — typographic treatment
+   ============================================================ */
+.eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem;font-size:.7rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.eyebrow::before{content:"";width:1.8rem;height:1px;background:var(--gold)}
+.f-type .display b{font-weight:700;background:linear-gradient(180deg,#fff3d2,#e0b850 60%,#b98a26);-webkit-background-clip:text;background-clip:text;color:transparent}
+.f-type .display span{font-weight:400;opacity:.72;margin-right:.25em}
+.f-type .display{text-shadow:0 2px 24px rgba(0,0,0,.45)}
+.rule{display:flex;align-items:center;gap:.5rem;width:9rem;margin:.9rem 0 .1rem}
+.rule::before{content:"";width:7px;height:7px;border-radius:50%;border:1.5px solid var(--gold)}
+.rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold),rgba(201,154,46,0))}
+
+/* ============================================================
+   IDEA 4 — a nav with covers and counts
+   ============================================================ */
+.f-nav .hero-links{gap:.55rem}
+.f-nav .hero-links a{display:inline-flex;align-items:center;gap:.55rem;padding:.28rem .8rem .28rem .28rem;font-size:.85rem;background:rgba(16,13,9,.45);backdrop-filter:blur(3px)}
+.f-nav .hero-links .pcover{width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface-2) center/cover;box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.12);position:relative}
+.f-nav .hero-links .pcover::after{content:"";position:absolute;left:50%;top:50%;width:.32rem;height:.32rem;margin:-.16rem 0 0 -.16rem;border-radius:50%;background:#0b0a08;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+.f-nav .hero-links a i{font-style:normal;font-size:.72rem;padding:.08rem .4rem;border-radius:99px;background:rgba(242,234,216,.14);color:rgba(242,234,216,.85)}
+.f-nav .hero-links a:hover i{background:rgba(23,20,15,.15);color:var(--ink)}
+.f-nav .hero-links a.wanted{background:rgba(201,154,46,.14);padding-left:.8rem}
+.f-nav .hero-links a.wanted:hover{background:var(--gold)}
+
+/* ============================================================
+   IDEA 5 — a frame: frosted panel on a walnut lip
+   ============================================================ */
+.hero.f-frame{padding:1.6rem 1.5rem 0}
+.hero.f-frame::before{display:none}
+.hero.f-frame .hero-inner{
+  position:relative;max-width:1300px;padding:2.2rem 2.4rem;border-radius:6px 6px 0 0;
+  border:1px solid rgba(242,234,216,.16);border-bottom:0;
+  border-top:1px solid rgba(255,225,160,.32);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 .95  0 0 0 0 .85  0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E"),
+    linear-gradient(180deg,rgba(38,32,24,.78),rgba(20,16,11,.86));
+  backdrop-filter:blur(10px);
+  box-shadow:0 -1px 0 rgba(0,0,0,.6),0 24px 50px rgba(0,0,0,.45);
+  overflow:hidden;
+}
+/* the walnut lip the panel stands on */
+.hero.f-frame .lip{height:14px;max-width:1300px;margin:0 auto;border-radius:0 0 4px 4px;
+  background:linear-gradient(180deg,#6a4a30,#4b3220 45%,#33220f);
+  box-shadow:inset 0 1px 0 rgba(255,220,170,.4),0 14px 24px rgba(0,0,0,.5)}
+.hero.f-frame.f-big .platter{right:-60px}
+.f-frame .hero-inner::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,225,160,.7),transparent)}
+
+/* ============================================================
+   IDEA 6 — now spinning
+   ============================================================ */
+.now{display:flex;align-items:center;gap:1.1rem;flex-shrink:0}
+.now .rec{position:relative;width:132px;height:132px;flex-shrink:0}
+.now .rec .spinner{position:absolute;inset:0;border-radius:50%;animation:spin 9s linear infinite;box-shadow:0 12px 26px rgba(0,0,0,.55)}
+.now .rec svg{display:block;width:100%;height:100%}
+.now .rec::after{content:"";position:absolute;inset:0;border-radius:50%;mix-blend-mode:screen;pointer-events:none;
+  background:conic-gradient(from 25deg,transparent 0 12%,rgba(255,244,214,.2) 20%,transparent 30% 62%,rgba(255,244,214,.14) 70%,transparent 80%)}
+.now .cap{max-width:15ch}
+.cap small{display:flex;align-items:center;gap:.45rem;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.cap small::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 rgba(201,154,46,.6);animation:ping 2s ease-out infinite}
+@keyframes ping{to{box-shadow:0 0 0 8px rgba(201,154,46,0)}}
+.cap b{display:block;margin-top:.4rem;font:600 1rem/1.15 'Fraunces',serif}
+.cap em{display:block;margin-top:.2rem;font-style:normal;font-size:.78rem;color:rgba(242,234,216,.6)}
+.cap a{color:inherit;text-decoration:none}
+/* when the big platter is there, the caption sits under it instead */
+.f-big .now-cap{position:absolute;z-index:3;right:1.5rem;bottom:1.1rem;text-align:right;max-width:20ch;
+  padding:.7rem .9rem;background:rgba(16,13,9,.72);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:4px}
+.f-big .now-cap small{justify-content:flex-end}
+@media (max-width:720px){.now .rec{display:none}.f-big .now-cap{display:none}}
+
+/* ============================================================
+   IDEA 7 — a quiet entrance (replay it with the button)
+   ============================================================ */
+.enter .eyebrow,.enter .display,.enter .rule,.enter .hero-text p,.enter .stats,.enter .hero-links,.enter .now,.enter .now-cap{animation:rise .7s cubic-bezier(.2,.8,.25,1) both}
+.enter .display{animation-delay:.06s}.enter .rule{animation-delay:.12s}.enter .hero-text p{animation-delay:.16s}
+.enter .stats{animation-delay:.24s}.enter .hero-links{animation-delay:.32s}.enter .now,.enter .now-cap{animation-delay:.4s}
+.enter .platter{animation:platterIn 1.1s cubic-bezier(.2,.8,.25,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes platterIn{from{opacity:0;transform:translateX(70px) rotate(-25deg)}}
+
+@media (prefers-reduced-motion:reduce){
+  .platter .spinner,.now .rec .spinner,.cap small::before{animation:none}
+  .enter *{animation:none!important}
+}
+
+/* ---------- a strip of floor under the controls, so the header can be judged in place ---------- */
+.strip{max-width:1300px;margin:2.2rem auto 0;padding:0 1.5rem 6rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+.strip .c{width:170px;height:170px;margin:-6px;border-radius:2px;background:var(--surface-2) center/cover;
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),0 10px 22px rgba(0,0,0,.6);transform:translate(var(--x),var(--y)) rotate(var(--r))}
+.strip .c::after{content:"";display:block;height:100%;background:linear-gradient(120deg,rgba(255,255,255,.14),transparent 38%,rgba(0,0,0,.16))}
+@media (max-width:720px){.strip .c{width:110px;height:110px}}
+</style>
+</head>
+<body>
+
+<div class="ptabs" id="tabs"></div>
+<div class="pnote" id="note"></div>
+
+<div id="mount"></div>
+
+<div class="controls" aria-hidden="true">
+  <input type="search" placeholder="Search title, artist, barcode…" tabindex="-1">
+  <div class="chips" id="chips"></div>
+  <select tabindex="-1"><option>Release date, newest first</option></select>
+  <div class="seg"><button type="button" class="on" tabindex="-1">Floor</button><button type="button" tabindex="-1">Grid</button><button type="button" tabindex="-1">List</button></div>
+  <span class="meta" id="countMeta"></span>
+</div>
+
+<div class="strip" id="strip" aria-hidden="true"></div>
+
+<script>
+/* ---------- the header, assembled from features so each idea can be shown alone or combined ---------- */
+const TABS = [
+  ['current', 'Current',            [],                                                       'The header as it is now, on the live stylesheet, for comparison.'],
+  ['big',     '1 Big disc',         ['big'],                                                  '<b>Idea 1.</b> The record is the hero: large, off the edge of the page, with a tonearm resting on it and the light sweeping over the grooves while it turns.'],
+  ['stats',   '2 Stats',            ['stats'],                                                '<b>Idea 2.</b> A row of big numerals from the live collection under the intro. The counts count up on load.'],
+  ['type',    '3 Type',             ['type'],                                                 '<b>Idea 3.</b> An eyebrow, the title split light / bold with a gold gradient on the last word, and a small rule under it.'],
+  ['nav',     '4 Nav',              ['nav'],                                                  '<b>Idea 4.</b> The artist pills get a round cover (a little record) and a count. The wantlist is filled gold instead of just outlined.'],
+  ['frame',   '5 Frame',            ['frame'],                                                '<b>Idea 5.</b> The header becomes a frosted panel with film grain, a gold hairline on top and a walnut lip it stands on, so the floor starts below it.'],
+  ['now',     '6 Now spinning',     ['now'],                                                  '<b>Idea 6.</b> A random record from the collection is on the platter: its cover is the label, with a caption. Reload the tab for another one.'],
+  ['combo',   '★ 1+2+3',            ['big', 'stats', 'type'],                                 '<b>My pick.</b> Big disc and tonearm, eyebrow and split title, stats strip. All in the existing gold / cream / wood palette, no new assets.'],
+  ['combo2',  '★ 1+2+3+4',          ['big', 'stats', 'type', 'nav', 'now'],                   '<b>The pick plus the extras.</b> Adds the cover pills (4) and the now-spinning caption (6), with the label of the big disc showing the cover.'],
+  ['all',     '★ Everything',       ['big', 'stats', 'type', 'nav', 'now', 'frame'],          '<b>All of it.</b> Probably too much, but it shows how far it goes: the frame holds the whole thing.'],
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- data: the live shelf if the API answers, else a small stand-in ---------- */
+const SAMPLE = [
+  ['Lady Gaga', 'The Fame', 2008, 'vinyl'], ['Lady Gaga', 'Born This Way', 2011, 'cd'], ['Lady Gaga', 'Chromatica', 2020, 'vinyl'], ['RBD', 'Rebelde', 2004, 'cd'],
+  ['RBD', 'Nuestro Amor', 2005, 'cd'], ['Lady Gaga', 'Joanne', 2016, 'vinyl'], ['RBD', 'Celestial', 2006, 'cd'], ['Lady Gaga', 'Mayhem', 2025, 'vinyl'],
+  ['Lady Gaga', 'Artpop', 2013, 'cd'], ['RBD', 'Empezar Desde Cero', 2007, 'cd'], ['Lady Gaga', 'Cheek to Cheek', 2014, 'vinyl'], ['Lady Gaga', 'Harlequin', 2024, 'vinyl'],
+].map(([artist, title, year, kind], i) => ({ id: -i - 1, artist, title, year, kind, cover: '', thumb: '' }));
+
+async function loadShelf() {
+  try {
+    const r = await fetch('../api/collection');
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    if (!j.items || !j.items.length) throw 0;
+    return { items: j.items, live: true };
+  } catch (e) { return { items: SAMPLE, live: false }; }
+}
+
+function figures(items) {
+  const vinyl = items.filter(i => i.kind === 'vinyl').length;
+  const years = items.map(i => +i.year).filter(y => y > 1900);
+  const counts = new Map();
+  items.forEach(i => counts.set(i.artist, (counts.get(i.artist) || 0) + 1));
+  const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name, n]) => {
+    const withArt = items.find(i => i.artist === name && (i.thumb || i.cover));
+    return { name, n, art: withArt ? (withArt.thumb || withArt.cover) : '' };
+  });
+  return { total: items.length, vinyl, other: items.length - vinyl, oldest: years.length ? Math.min(...years) : 0, top };
+}
+
+/* ---------- pieces ---------- */
+/* One record. `label` is a cover URL for the centre; without it the label is gold, as on the site. */
+function recordSVG(id, label) {
+  const centre = label
+    ? `<clipPath id="lc${id}"><circle cx="50" cy="50" r="16"/></clipPath>
+       <circle cx="50" cy="50" r="16" fill="#C99A2E"/>
+       <image href="${esc(label)}" x="34" y="34" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#lc${id})"/>
+       <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(0,0,0,.4)" stroke-width=".6"/>`
+    : `<circle cx="50" cy="50" r="16" fill="#C99A2E"/>
+       <path d="M50 37.5 A12.5 12.5 0 0 1 60.8 43.75" fill="none" stroke="#0B0A08" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/>`;
+  const grooves = [46, 43, 40, 37, 34, 31, 28, 25, 22].map(r => `<circle cx="50" cy="50" r="${r}" fill="none" stroke="#2a2620" stroke-width="0.5"/>`).join('');
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="50" cy="50" r="49.5" fill="#0B0A08" stroke="#3a352c" stroke-width=".8"/>
+    <path d="M50 50 L50 1 A49 49 0 0 1 89 20.5 Z" fill="#F2EAD8" opacity="0.06"/>
+    <path d="M50 50 L50 99 A49 49 0 0 1 11 79.5 Z" fill="#F2EAD8" opacity="0.04"/>
+    ${grooves}${centre}
+    <circle cx="50" cy="50" r="2.6" fill="#0B0A08"/>
+  </svg>`;
+}
+
+function tonearm() {
+  /* drawn on the platter's 0-100 grid: the pivot stands just off the rim, the needle lands on the grooves (radius ~25 from the centre) */
+  return `<svg class="arm" viewBox="0 0 100 100" aria-hidden="true">
+    <line x1="78" y1="0" x2="85" y2="-9" stroke="#7b7362" stroke-width="4.4" stroke-linecap="round"/>
+    <path d="M78 0 L64 15 L58 22" fill="none" stroke="#d8cfba" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M78 0 L64 15 L58 22" fill="none" stroke="rgba(255,255,255,.5)" stroke-width=".5" stroke-linecap="round" transform="translate(-.5,-.5)"/>
+    <g transform="translate(58 22) rotate(133)">
+      <rect x="-1" y="-1.9" width="6.4" height="3.8" rx=".8" fill="#2a2620" stroke="#5a5342" stroke-width=".4"/>
+      <rect x="3.6" y="-1" width="2.6" height="2" fill="#C99A2E"/>
+    </g>
+    <circle cx="78" cy="0" r="6" fill="#26211a" stroke="#5a5342" stroke-width=".7"/>
+    <circle cx="78" cy="0" r="2.4" fill="#C99A2E"/>
+  </svg>`;
+}
+
+function titleHTML(title, split) {
+  if (!split) return esc(title);
+  const words = title.trim().split(/\s+/);
+  if (words.length < 2) return `<b>${esc(title)}</b>`;
+  const last = words.pop();
+  return `<span>${esc(words.join(' '))}</span><b>${esc(last)}</b>`;
+}
+
+let uid = 0;
+function buildHeader(features, data, pick) {
+  const has = f => features.includes(f);
+  const f = data.f, title = 'The Collection', intro = 'Every record, CD and disc Bruno owns, straight from the Discogs shelf.';
+  const label = has('now') && pick ? (pick.thumb || pick.cover) : '';
+  const now = has('now') && pick ? `
+      <div class="cap"><small>Now spinning</small><b>${esc(pick.title)}</b><em>${esc(pick.artist)}${pick.year ? ' · ' + pick.year : ''}</em></div>` : '';
+
+  const pills = f.top.map(a => has('nav')
+    ? `<a href="#"><span class="pcover"${a.art ? ` style="background-image:url('${esc(a.art)}')"` : ''}></span>${esc(a.name)}<i>${a.n}</i></a>`
+    : `<a href="#">${esc(a.name)}</a>`).join('');
+  const wanted = `<a class="wanted" href="#">${has('nav') ? '♡ ' : ''}Wantlist</a>`;
+
+  const stats = has('stats') ? `
+      <div class="stats" aria-label="The collection in numbers">
+        <div class="stat"><b data-n="${f.total}">${f.total}</b><span>Records</span></div>
+        <div class="stat"><b data-n="${f.vinyl}">${f.vinyl}</b><span>On vinyl</span></div>
+        <div class="stat"><b data-n="${f.other}">${f.other}</b><span>CDs &amp; DVDs</span></div>
+        ${f.oldest ? `<div class="stat"><b>${f.oldest}</b><span>Oldest pressing</span></div>` : ''}
+      </div>` : '';
+
+  const platter = has('big') ? `
+    <div class="platter" aria-hidden="true">
+      <div class="spinner">${recordSVG('b' + (++uid), label)}</div>
+      ${tonearm()}
+    </div>` : '';
+
+  const small = !has('big') ? (has('now') ? `
+      <div class="now"><div class="rec"><div class="spinner">${recordSVG('n' + (++uid), label)}</div></div>${now}</div>` : `
+      <div id="disc-slot"></div>`) : '';
+
+  const nowCap = has('big') && has('now') && pick ? `<div class="now-cap cap"><small>Now spinning</small><b>${esc(pick.title)}</b><em>${esc(pick.artist)}${pick.year ? ' · ' + pick.year : ''}</em></div>` : '';
+
+  const cls = ['hero', ...features.map(x => 'f-' + x)].join(' ');
+  return `
+<header class="${cls} enter">
+  <div class="hero-inner">
+    <div class="hero-text">
+      ${has('type') ? '<div class="eyebrow">Bruno’s Vinyl · Private collection</div>' : ''}
+      <div class="display">${titleHTML(title, has('type'))}</div>
+      ${has('type') ? '<div class="rule" aria-hidden="true"></div>' : ''}
+      <p>${esc(intro)}</p>
+      ${stats}
+      <nav class="hero-links" aria-label="Artist pages">${pills}${wanted}</nav>
+    </div>
+    ${small}
+    ${has('frame') ? platter + nowCap : ''}
+  </div>
+  ${has('frame') ? '' : platter + nowCap}
+  ${has('frame') ? '<div class="lip"></div>' : ''}
+</header>`;
+}
+
+/* The site's own small disc, so "Current" is exactly what is live. */
+const SITE_DISC = `<svg id="disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="50" cy="50" r="48" fill="#0B0A08" stroke="#3a352c" stroke-width="1"/>
+  <path d="M50 50 L50 2 A48 48 0 0 1 88.8 21.8 Z" fill="#F2EAD8" opacity="0.07"/>
+  <path d="M50 50 L50 98 A48 48 0 0 1 11.2 78.2 Z" fill="#F2EAD8" opacity="0.045"/>
+  <circle cx="50" cy="50" r="46" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+  <circle cx="50" cy="50" r="34" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+  <circle cx="50" cy="50" r="28" fill="none" stroke="#2a2620" stroke-width="0.6"/>
+  <circle cx="50" cy="50" r="16" fill="#C99A2E"/>
+  <path d="M50 37.5 A12.5 12.5 0 0 1 60.8 43.75" fill="none" stroke="#0B0A08" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/>
+  <circle cx="50" cy="50" r="3" fill="#0B0A08"/>
+</svg>`;
+
+/* ---------- page ---------- */
+let shelf, data, pick, current = 'combo';
+
+function countUp() {
+  document.querySelectorAll('.stat b[data-n]').forEach(el => {
+    const to = +el.dataset.n;
+    if (reduced || to < 2) return;
+    const t0 = performance.now(), dur = 900;
+    const tick = t => {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(to * e);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    el.textContent = 0;
+    requestAnimationFrame(tick);
+  });
+}
+
+function show(key) {
+  const tab = TABS.find(t => t[0] === key) || TABS[0];
+  current = tab[0];
+  history.replaceState(null, '', '#' + current);
+  $('#mount').innerHTML = buildHeader(tab[2], data, pick);
+  const slot = $('#disc-slot'); if (slot) slot.outerHTML = SITE_DISC;
+  $('#note').innerHTML = tab[3];
+  document.querySelectorAll('#tabs button[data-k]').forEach(b => b.classList.toggle('on', b.dataset.k === current));
+  countUp();
+}
+
+function replay() {
+  const h = $('#mount header'); if (!h) return;
+  h.classList.remove('enter'); void h.offsetWidth; h.classList.add('enter');
+  countUp();
+}
+
+loadShelf().then(({ items, live }) => {
+  shelf = items; data = { f: figures(items) };
+  const withArt = items.filter(i => i.thumb || i.cover);
+  pick = (withArt.length ? withArt : items)[Math.floor(Math.random() * (withArt.length || items.length))];
+
+  $('#tabs').innerHTML =
+    TABS.map(t => `<button type="button" data-k="${t[0]}"${t[0].startsWith('combo') || t[0] === 'all' ? ' class="star"' : ''}>${t[1]}</button>`).join('') +
+    '<span class="grow"></span><button type="button" id="replay">↻ Replay intro</button><a href="11-hover-lab.html">← other prototypes</a>';
+  $('#tabs').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.id === 'replay') replay(); else if (b.dataset.k) show(b.dataset.k);
+  });
+
+  const f = data.f;
+  $('#chips').innerHTML = `<button class="on" tabindex="-1">All <i>${f.total}</i></button><button tabindex="-1">Vinyl <i>${f.vinyl}</i></button><button tabindex="-1">CD <i>${f.other}</i></button>`;
+  $('#countMeta').textContent = `${f.total} records` + (live ? '' : ' (sample data — the API didn’t answer)');
+
+  const covers = items.filter(i => i.thumb || i.cover).slice(0, 14);
+  const seeds = [[-6, 4, -5], [8, -6, 4], [-4, 8, -2], [6, 2, 6], [-8, -4, 3], [4, 6, -6], [-2, -8, 5]];
+  $('#strip').innerHTML = Array.from({ length: 10 }, (_, i) => {
+    const c = covers[i % (covers.length || 1)], s = seeds[i % seeds.length];
+    return `<div class="c" style="--x:${s[0]}px;--y:${s[1]}px;--r:${s[2]}deg;${c ? `background-image:url('${esc(c.cover || c.thumb)}')` : ''}"></div>`;
+  }).join('');
+
+  show(location.hash.slice(1) || 'combo');
+});
+</script>
+</body>
+</html>

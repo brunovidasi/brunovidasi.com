@@ -7,6 +7,7 @@
 if (!function_exists('url')) {
     require_once __DIR__ . '/../includes/config.php';
 }
+require_once __DIR__ . '/../includes/hero.php';
 
 http_response_code(404);
 ?>
@@ -21,19 +22,16 @@ http_response_code(404);
 </head>
 <body>
 
-<header class="hero">
+<header class="hero<?= hero_classes() ?>">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="display">Not in the crate</div>
+      <div class="display"><?= hero_title('Not in the crate') ?></div>
+      <?= hero_rule() ?>
       <p>That page isn't here. It may have been filed somewhere else.</p>
       <p style="margin-top:1.2rem;"><a class="back" href="<?= htmlspecialchars(url('')) ?>">← The Collection</a></p>
     </div>
-    <svg id="disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="50" cy="50" r="48" fill="#0B0A08" stroke="#3a352c" stroke-width="1"/>
-      <circle cx="50" cy="50" r="16" fill="#C99A2E"/>
-      <circle cx="50" cy="50" r="3" fill="#0B0A08"/>
-    </svg>
   </div>
+  <?= hero_platter() ?>
 </header>
 
 </body>

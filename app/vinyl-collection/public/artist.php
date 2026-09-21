@@ -23,9 +23,6 @@ if ($artist === null || !$artist['is_published']) {
 }
 
 $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artist['accent'] : '#C99A2E';
-$others = db()->prepare('SELECT slug, name FROM artists WHERE is_published = 1 AND id != ? ORDER BY position, name');
-$others->execute([$artist['id']]);
-$others = $others->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,52 +40,40 @@ $others = $others->fetchAll();
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>" data-slug="<?= e($artist['slug']) ?>" style="--accent: <?= e($accent) ?>">
 
-<header class="hero">
+<header class="hero<?= hero_classes() ?>">
   <div class="hero-inner">
     <div class="hero-text">
       <a class="back" href="<?= e(url('')) ?>">← The Collection</a>
-      <div class="display"><?= e($artist['name']) ?></div>
+      <div class="display"><?= hero_title($artist['name']) ?></div>
+      <?= hero_rule() ?>
       <p><?= e($artist['tagline'] ?: 'Every record in the collection, era by era.') ?></p>
-      <?php if ($others): ?>
-        <nav class="hero-links" aria-label="Other artists">
-          <?php foreach ($others as $other): ?>
-            <a href="<?= e(url($other['slug'])) ?>"><?= e($other['name']) ?></a>
-          <?php endforeach; ?>
-        </nav>
-      <?php endif; ?>
+      <?= hero_stats(hero_figures((int) $artist['id'])) ?>
+      <?= hero_links((int) $artist['id'], false, 'Other artists') ?>
     </div>
-    <svg id="disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="50" cy="50" r="48" fill="#0B0A08" stroke="#3a352c" stroke-width="1"/>
-      <!-- same light on the grooves and mark on the label as the shelf's disc, so it
-           reads as spinning -->
-      <path d="M50 50 L50 2 A48 48 0 0 1 88.8 21.8 Z" fill="#F2EAD8" opacity="0.07"/>
-      <path d="M50 50 L50 98 A48 48 0 0 1 11.2 78.2 Z" fill="#F2EAD8" opacity="0.045"/>
-      <circle cx="50" cy="50" r="46" fill="none" stroke="#2a2620" stroke-width="0.6"/>
-      <circle cx="50" cy="50" r="40" fill="none" stroke="#2a2620" stroke-width="0.6"/>
-      <circle cx="50" cy="50" r="34" fill="none" stroke="#2a2620" stroke-width="0.6"/>
-      <circle cx="50" cy="50" r="28" fill="none" stroke="#2a2620" stroke-width="0.6"/>
-      <circle class="accent" cx="50" cy="50" r="16" fill="<?= e($accent) ?>"/>
-      <path d="M50 37.5 A12.5 12.5 0 0 1 60.8 43.75" fill="none" stroke="#0B0A08" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/>
-      <circle cx="50" cy="50" r="3" fill="#0B0A08"/>
-    </svg>
   </div>
+  <?= hero_platter('record', $accent) ?>
 </header>
 
 <div class="controls">
-  <span class="meta lead" id="countMeta"></span>
-  <input type="search" id="search" placeholder="Search title, barcode…" aria-label="Search <?= e($artist['name']) ?> records">
-  <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
-  <div class="seg" id="viewToggle" role="group" aria-label="View">
-    <button type="button" data-view="grid">Grid</button>
-    <button type="button" data-view="list">List</button>
-  </div>
-  <div class="seg" id="orderToggle" role="group" aria-label="Order of eras">
-    <button type="button" data-order="oldest">Oldest first</button>
-    <button type="button" data-order="newest">Newest first</button>
+  <div class="controls-inner">
+    <input type="search" id="search" placeholder="Search title, barcode…" aria-label="Search <?= e($artist['name']) ?> records">
+    <div class="seg" id="orderToggle" role="group" aria-label="Order of eras">
+      <button type="button" data-order="oldest">Oldest first</button>
+      <button type="button" data-order="newest">Newest first</button>
+    </div>
+    <div class="seg" id="viewToggle" role="group" aria-label="View">
+      <button type="button" data-view="grid">Grid</button>
+      <button type="button" data-view="list">List</button>
+    </div>
   </div>
 </div>
 
 <nav class="era-nav" id="eraNav" aria-label="Eras" hidden></nav>
+
+<div class="filters">
+  <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
+  <span class="meta" id="countMeta"></span>
+</div>
 
 <main>
   <div id="content">
@@ -110,6 +95,7 @@ $others = $others->fetchAll();
 </aside>
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
+<script src="<?= e(asset_url('js/hero.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
 <script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
 <script src="<?= e(asset_url('js/artist.js')) ?>"></script>

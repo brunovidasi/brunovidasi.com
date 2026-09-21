@@ -421,7 +421,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
               <?php if ($row['disc'] && ($row['disc']['c'] !== null || !$row['disc']['pic'])): ?>
                 <a class="disc-dot<?= $row['disc']['c'] === null ? ' unknown' : '' ?>" href="<?= e($editUrl) ?>#colourPick"
                    style="<?= $row['disc']['c'] !== null ? 'background:' . e($row['disc']['c']) : '' ?>"
-                   title="<?= e($row['disc']['c'] === null ? 'No colour recognised (shows as black)' : ($row['vinyl_hex'] ? 'Picked by hand' : 'Automatic')) ?>"
+                   title="<?= e($row['disc']['c'] === null ? 'No colour recognised (shows as black)' : (array_filter(disc_colours($row)['hex']) ? 'Picked by hand' : 'Automatic')) ?>"
                    aria-label="Vinyl colour: <?= e($row['disc']['c'] ?? 'not recognised') ?>"></a>
               <?php endif; ?>
             </td>

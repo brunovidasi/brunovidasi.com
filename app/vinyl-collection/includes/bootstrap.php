@@ -9,6 +9,7 @@ require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/fields.php';
 require_once __DIR__ . '/regions.php';
 require_once __DIR__ . '/items.php';
+require_once __DIR__ . '/hero.php';
 require_once __DIR__ . '/DiscogsClient.php';
 require_once __DIR__ . '/sync.php';
 
