@@ -47,8 +47,20 @@ function db(): PDO
 function run_migrations(PDO $db): void
 {
     $columns = [
-        // (nothing yet — the schema is new. Add entries here, never edit a
-        //  CREATE TABLE in schema.sql, once a database exists in production.)
+        // Add entries here, never edit a CREATE TABLE in schema.sql, once a
+        // database exists in production.
+        'items' => [
+            // Set when the artist page was chosen by hand, so a sync keeps it.
+            'artist_locked' => 'INTEGER NOT NULL DEFAULT 0',
+            // Discogs' facts corrected by hand (see OVERRIDE_FIELDS). A sync
+            // rewrites the release cache and never these.
+            'labels'         => 'TEXT',
+            'catalog_number' => 'TEXT',
+            'formats'        => 'TEXT',
+            'genres'         => 'TEXT',
+            'styles'         => 'TEXT',
+            'tracklist'      => 'TEXT',
+        ],
     ];
 
     foreach ($columns as $table => $cols) {

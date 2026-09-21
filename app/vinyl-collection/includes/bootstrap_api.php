@@ -14,6 +14,7 @@ require_once __DIR__ . '/runtime.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/fields.php';
+require_once __DIR__ . '/regions.php';
 require_once __DIR__ . '/items.php';
 
 date_default_timezone_set(app_timezone());

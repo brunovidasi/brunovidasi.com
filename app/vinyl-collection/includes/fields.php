@@ -62,6 +62,26 @@ const ITEM_TYPES = ['album', 'single', 'ep', 'promo', 'compilation', 'live', 'ot
 const VINYL_SIZES = ['7"', '10"', '12"', '5"'];
 
 /**
+ * Discogs' facts that a record can override, and the shape each is typed in.
+ * The value is stored on the item under the same name, so item_field_value()
+ * finds it with Bruno's other fields and a sync, which only writes the release
+ * cache, never touches it. (Title and artist have their own boxes:
+ * manual_title and manual_artist.)
+ *
+ *   lines  — one per line, the way the drawer prints them
+ *   list   — separated by commas or new lines ("Pop, Rock")
+ *   tracks — the tracklist, one track per line (see tracklist_from_text())
+ */
+const OVERRIDE_FIELDS = [
+    'labels'         => 'lines',
+    'catalog_number' => 'lines',
+    'formats'        => 'lines',
+    'genres'         => 'list',
+    'styles'         => 'list',
+    'tracklist'      => 'tracks',
+];
+
+/**
  * Every field the drawer can show, in the order it would show them.
  *
  * group:  'mine'    — stored on items, edited in the admin
@@ -89,7 +109,9 @@ function field_catalog(): array
         'item_type'    => ['label' => 'Type',           'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'text'],
         'notes'        => ['label' => 'Notes',          'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'html'],
 
-        // ---- Discogs'. Everything below here is overwritten by every sync. ----
+        // ---- Discogs'. Everything below here is refreshed by every sync. The
+        //      ones in OVERRIDE_FIELDS can be corrected on a record, and what was
+        //      typed is shown in place of Discogs' and kept through every sync. ----
         'artist'          => ['label' => 'Artist',          'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
         'year'            => ['label' => 'Year',            'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
         'country'         => ['label' => 'Country',         'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
@@ -180,6 +202,103 @@ function drawer_shows(string $kind, string $key): bool
     $config ??= drawer_field_config();
 
     return $config[$kind][$key] ?? false;
+}
+
+/* ---------- Overriding Discogs' values ---------- */
+
+/**
+ * A line break in typed text. Not \R: without the /u flag that also matches the
+ * single byte 0x85, which ends characters like "★" and many Japanese ones, and
+ * would cut a title in half.
+ */
+const LINE_BREAK = '/\r\n|\r|\n/';
+
+/** What was typed into an override box, as the list of values the drawer draws. */
+function override_value(string $key, string $text): array
+{
+    return match (OVERRIDE_FIELDS[$key]) {
+        'tracks' => tracklist_from_text($text),
+        'list'   => array_values(array_filter(array_map('trim', preg_split('/[,\n]/', $text)))),
+        default  => array_values(array_filter(array_map('trim', preg_split(LINE_BREAK, $text)))),
+    };
+}
+
+/** A position simple enough to type as "1." or "A2)": 7, 12, A1, 3b. */
+const TRACK_POSITION = '[A-Za-z]?\\d{1,3}[A-Za-z]?';
+
+/** A record's own value for an overridable fact, or null where it hasn't set one. */
+function item_override(array $row, string $key): ?array
+{
+    $text = trim((string) ($row[$key] ?? ''));
+
+    return $text !== '' ? override_value($key, $text) : null;
+}
+
+/**
+ * The tracklist as typed: one track a line, "1. Poker Face 3:58". The leading
+ * position and the trailing length are optional; a line with neither is just a
+ * title, numbered by where it falls. A plain position is written "1." or "A2)";
+ * anything Discogs might have ("Video", "10.1", "CD1-3") goes in brackets:
+ * "[Video] Beautiful".
+ */
+function tracklist_from_text(string $text): array
+{
+    $tracks = [];
+
+    foreach (preg_split(LINE_BREAK, $text) as $line) {
+        $line = trim($line);
+        if ($line === '') {
+            continue;
+        }
+
+        $position = '';
+        if (preg_match('/^(?:\[([^\]]{1,20})\]|(' . TRACK_POSITION . ')[.)])\s+(.+)$/', $line, $m)) {
+            [$position, $line] = [$m[1] !== '' ? $m[1] : $m[2], $m[3]];
+        }
+
+        $duration = '';
+        if (preg_match('/^(.*\S)\s+(\d{1,2}:\d{2})$/', $line, $m)) {
+            [$line, $duration] = [$m[1], $m[2]];
+        }
+
+        $tracks[] = [
+            'position' => $position !== '' ? $position : (string) (count($tracks) + 1),
+            'type_'    => 'track',
+            'title'    => $line,
+            'duration' => $duration,
+        ];
+    }
+
+    return $tracks;
+}
+
+/** Discogs' tracklist in the same shape, as a starting point to correct. */
+function tracklist_to_text(array $tracks): string
+{
+    $lines = [];
+
+    foreach ($tracks as $track) {
+        if (($track['type_'] ?? 'track') === 'heading') {
+            continue;
+        }
+        // An index track carries its parts as sub-tracks; those are the songs.
+        foreach (($track['sub_tracks'] ?? null) ?: [$track] as $part) {
+            $title = trim((string) ($part['title'] ?? ''));
+            if ($title === '') {
+                continue;
+            }
+            $position = trim((string) ($part['position'] ?? ''));
+            $duration = trim((string) ($part['duration'] ?? ''));
+            $prefix = match (true) {
+                $position === '' => '',
+                (bool) preg_match('/^' . TRACK_POSITION . '$/', $position) => "$position. ",
+                default => "[$position] ",
+            };
+            $lines[] = $prefix . $title . ($duration !== '' ? " $duration" : '');
+        }
+    }
+
+    return implode("\n", $lines);
 }
 
 /* ---------- Deriving Discogs values ---------- */
@@ -387,9 +506,14 @@ function clean_discogs_markup(?string $text): string
  */
 function item_field_value(array $item, ?array $release, string $key): mixed
 {
+    // The year follows a release date typed in the admin, so the two never disagree.
+    if ($key === 'year') {
+        return item_year($item) ?: null;
+    }
+
     $mine = trim((string) ($item[$key] ?? ''));
     if ($mine !== '') {
-        return $mine;
+        return isset(OVERRIDE_FIELDS[$key]) ? override_value($key, $mine) : $mine;
     }
 
     if ($release === null) {

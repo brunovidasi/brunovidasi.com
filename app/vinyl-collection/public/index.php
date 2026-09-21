@@ -20,7 +20,9 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 <link rel="icon" href="<?= e(url('../assets/favicon.ico')) ?>">
 <link rel="preload" href="<?= e(url('fonts/fraunces-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="<?= e(url('css/floor.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/crate.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/morph.css')) ?>">
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
 
@@ -58,13 +60,14 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 </header>
 
 <div class="controls">
-  <input type="search" id="search" placeholder="Search by artist or title…" aria-label="Search collection">
+  <input type="search" id="search" placeholder="Search title, artist, barcode…" aria-label="Search collection">
   <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
   <select id="sort" aria-label="Sort collection">
     <option value="date-desc">Release date, newest first</option>
     <option value="date-asc">Release date, oldest first</option>
     <option value="artist">Artist, A–Z</option>
     <option value="added">Recently added</option>
+    <option value="custom" disabled hidden></option>
   </select>
   <div class="seg" id="viewToggle" role="group" aria-label="View">
     <button type="button" data-view="floor">Floor</button>
@@ -72,6 +75,10 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
     <button type="button" data-view="list">List</button>
   </div>
   <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.7" aria-label="Messiness of the pile"></label>
+  <button type="button" class="crate-btn" id="crateBtn">Organise vinyls on a crate</button>
+  <label class="organise" id="organiseWrap" hidden>Organise by <select id="organiseBy" aria-label="Organise the crate by"></select></label>
+  <button type="button" class="crate-btn" id="digBtn" hidden>🎲 Dig a random one</button>
+  <button type="button" class="ghost" id="messBtn" hidden>Back to the mess</button>
   <span class="meta" id="countMeta"></span>
 </div>
 
@@ -82,7 +89,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 </main>
 
 <footer>
-  <span>&copy; 2026<?php if (setting('last_successful_sync')): ?> · last synced <?= e(time_ago(setting('last_successful_sync'))) ?><?php endif; ?></span>
+  <span>&copy; 2026</span>
   <span>Made with &#10084;&#65039; by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></span>
 </footer>
 
@@ -94,9 +101,11 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
 
-<script src="<?= e(url('js/common.js')) ?>"></script>
-<script src="<?= e(url('js/tiles.js')) ?>"></script>
-<script src="<?= e(url('js/script.js')) ?>"></script>
+<script src="<?= e(asset_url('js/common.js')) ?>"></script>
+<script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
+<script src="<?= e(asset_url('js/crate.js')) ?>"></script>
+<script src="<?= e(asset_url('js/morph.js')) ?>"></script>
+<script src="<?= e(asset_url('js/script.js')) ?>"></script>
 
 </body>
 </html>

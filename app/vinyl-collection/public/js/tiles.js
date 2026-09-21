@@ -90,12 +90,99 @@ function reveal(t) {
   t.classList.add('hot');
 }
 
+/* ---------- Sorting ---------- */
+
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+/* What each column sorts by. `date` is the full release date as a sortable
+   "YYYY-MM-DD" (00 where the month or day isn't known), which is why the Year
+   column orders by day and not just by year; those and `added` compare as plain
+   text. `added` has no column, but the shelf's sort menu offers it. */
+const SORT_BY = {
+  title:   { label: 'Title',   value: it => it.title },
+  barcode: { label: 'Barcode', value: it => it.barcode },
+  artist:  { label: 'Artist',  value: it => it.artist },
+  date:    { label: 'Year',    value: it => it.date, plain: true },
+  region:  { label: 'Region',  value: it => it.region },
+  kind:    { label: 'Format',  value: it => KIND_LABEL[it.kind] },
+  details: { label: 'Details', value: it => it.fmtRest },
+  added:   { label: 'Added',   value: it => it.added, plain: true },
+};
+
+const DEFAULT_SORT = { key: 'date', dir: 'desc' };
+
+const compareText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
+function validSort(sort, fallback = DEFAULT_SORT) {
+  return sort && SORT_BY[sort.key] && (sort.dir === 'asc' || sort.dir === 'desc')
+    ? { key: sort.key, dir: sort.dir }
+    : fallback;
+}
+
+/** What clicking a column header does: a new column runs ascending, the same one flips. */
+function nextSort(sort, key) {
+  return { key, dir: sort.key === key && sort.dir === 'asc' ? 'desc' : 'asc' };
+}
+
+/** A sorted copy. Records with nothing in the column go last whichever way it runs. */
+function sortList(list, { key, dir }) {
+  const { value, plain } = SORT_BY[key];
+  const compare = plain ? compareText : collator.compare;
+  const sign = dir === 'desc' ? -1 : 1;
+  // Within a tie: the earlier release, then artist, then title.
+  const tie = (a, b) => compareText(a.date, b.date) || collator.compare(a.artist, b.artist) || collator.compare(a.title, b.title);
+
+  return [...list].sort((a, b) => {
+    const x = value(a) || '';
+    const y = value(b) || '';
+    if (!x || !y) return (!x - !y) || tie(a, b);
+    return sign * compare(x, y) || tie(a, b);
+  });
+}
+
 /* ---------- The list: one row per record ---------- */
 
-function listEl(list) {
+function listHead(columns, sort) {
+  const head = document.createElement('div');
+  head.className = 'lrow lhead';
+  head.innerHTML = '<span></span>' + columns.map(key => {
+    const { label } = SORT_BY[key];
+    const on = sort && sort.key === key;
+    const state = on ? `, sorted ${sort.dir === 'asc' ? 'ascending' : 'descending'}` : '';
+    return `<span><button type="button" class="lsort${on ? ` on ${sort.dir}` : ''}" data-key="${key}" aria-label="Sort by ${label}${state}">${label}<i aria-hidden="true"></i></button></span>`;
+  }).join('');
+  return head;
+}
+
+/**
+ * One row per record, under headers that sort.
+ *
+ * The list is drawn in the order it is given; the page sorts it (sortList) and
+ * keeps the sort, so every table on a page follows the same one.
+ *
+ * @param {object[]} list
+ * @param {object} options
+ * @param {boolean} [options.artist=true] false on an artist's own page, where a
+ *        column of the same name down every row says nothing.
+ * @param {{key: string, dir: string}} [options.sort] the sort the list is in, for the arrows.
+ * @param {(key: string) => void} [options.onSort] called with a column's key when its header is clicked.
+ */
+function listEl(list, { artist = true, sort, onSort } = {}) {
   const wrap = document.createElement('div');
-  wrap.className = 'list';
-  wrap.innerHTML = '<div class="lrow lhead"><span></span><span>Title</span><span>Artist</span><span>Year</span><span>Format</span><span>Added</span></div>';
+  wrap.className = artist ? 'list' : 'list no-artist';
+  wrap.appendChild(listHead(artist
+    ? ['title', 'barcode', 'artist', 'date', 'region', 'kind', 'details']
+    : ['title', 'barcode', 'date', 'region', 'kind', 'details'], sort));
+
+  wrap.addEventListener('click', e => {
+    const button = e.target.closest('.lsort');
+    if (!button || !onSort) return;
+    const at = [...document.querySelectorAll('.list')].indexOf(wrap);
+    onSort(button.dataset.key);
+    // The click drew the tables again; put the keyboard back on the header it was on.
+    document.querySelectorAll('.list')[at]?.querySelector(`.lsort[data-key="${button.dataset.key}"]`)?.focus({ preventScroll: true });
+  });
+
   list.forEach(it => {
     const row = document.createElement('div');
     row.className = 'lrow';
@@ -106,10 +193,12 @@ function listEl(list) {
     row.innerHTML = `
       <span class="lthumb">${it.thumb ? `<img loading="lazy" decoding="async" alt="" src="${esc(it.thumb)}">` : ''}</span>
       <span class="ltitle"><b title="${esc(it.title)}">${esc(it.title)}</b><small>${esc(it.artist)}</small></span>
-      <span class="lartist" title="${esc(it.artist)}">${esc(it.artist)}</span>
-      <span class="lyear">${esc(it.year || '—')}</span>
-      <span class="lfmt"><i class="kc ${it.kind}">${KIND_LABEL[it.kind]}</i>${esc(it.fmtRest)}</span>
-      <span class="ladded">${esc(formatDate(it.added))}</span>`;
+      <span class="lbarcode">${esc(it.barcode)}</span>
+      ${artist ? `<span class="lartist" title="${esc(it.artist)}">${esc(it.artist)}</span>` : ''}
+      <span class="lyear"${it.released ? ` title="${esc(it.released)}"` : ''}>${esc(it.year || '—')}</span>
+      <span class="lregion" title="${esc(it.regionName)}">${esc(it.region)}</span>
+      <span class="lfmt"><i class="kc ${it.kind}">${KIND_LABEL[it.kind]}</i></span>
+      <span class="ldetails" title="${esc(it.fmtRest)}">${esc(it.fmtRest)}</span>`;
     const img = row.querySelector('img');
     if (img) img.addEventListener('error', () => img.remove());
     wrap.appendChild(row);
@@ -216,14 +305,38 @@ function gridEl(list) {
   return grid;
 }
 
+/** Lower case with the accents off, so "beyonce" finds Beyoncé. */
+function fold(text) {
+  return String(text).normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+}
+
+/**
+ * Whether a record matches what was typed. Every word has to be somewhere in
+ * the record — its table columns and the details the server sent along — in any
+ * order, so "gaga clear vinyl" works. A barcode typed the way it is printed on
+ * the sleeve ("6 02537 51737 4") matches the bare digits too.
+ */
+function matchesQuery(it, query) {
+  const words = fold(query).split(/\s+/).filter(Boolean);
+  if (!words.length) return true;
+
+  const digits = query.replace(/[\s-]/g, '');
+  if (/^\d{8,}$/.test(digits) && it.barcode.includes(digits)) return true;
+
+  return words.every(word => it.hay.includes(word));
+}
+
 /**
  * The API's card shape, plus what only the browser needs: the short kind name
  * the CSS is written against, and a haystack to search.
  */
 function prepareItems(list) {
-  return list.map(it => ({
+  return list.map(({ search, ...it }) => ({
     ...it,
     kind: it.k,
-    hay: `${it.artist} ${it.title} ${it.fmt}`.toLowerCase(),
+    hay: fold([
+      it.title, it.artist, it.barcode, it.year || '', it.released, it.region, it.regionName,
+      KIND_LABEL[it.k], it.fmt, search,
+    ].join(' | ')),
   }));
 }

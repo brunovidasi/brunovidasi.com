@@ -34,10 +34,12 @@ let wantedTotal = 0;
 const prefs = loadPrefs();
 
 function loadPrefs() {
-  const defaults = { view: 'grid', fmt: 'all' };
+  // An era reads oldest first: the records in the order they came out.
+  const defaults = { view: 'grid', fmt: 'all', sort: { key: 'date', dir: 'asc' } };
   try {
     const p = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
     if (!VIEWS.includes(p.view)) p.view = defaults.view;
+    p.sort = validSort(p.sort, defaults.sort);
     return p;
   } catch (e) { return defaults; }
 }
@@ -50,12 +52,12 @@ function savePrefs() {
 
 /** Every section, with its items narrowed by the search box and the chips. */
 function visibleSections() {
-  const query = $('search').value.trim().toLowerCase();
+  const query = $('search').value.trim();
 
   return sections.map(section => ({
     ...section,
     items: section.items.filter(it =>
-      (prefs.fmt === 'all' || it.kind === prefs.fmt) && (!query || it.hay.includes(query))),
+      (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
   }));
 }
 
@@ -118,9 +120,9 @@ function eraEl(section, index) {
   era.appendChild(eraHead(section, index));
 
   // The list already says what each record is in its Format column, so an era
-  // is one table, in the same format order the grid uses.
+  // is one table, in whatever order its headers were last clicked to.
   if (prefs.view === 'list') {
-    era.appendChild(listEl(GROUPS.flatMap(([kind]) => section.items.filter(it => it.kind === kind))));
+    era.appendChild(listEl(sortList(section.items, prefs.sort), { artist: false, sort: prefs.sort, onSort: sortBy }));
     return era;
   }
 
@@ -136,6 +138,12 @@ function eraEl(section, index) {
   });
 
   return era;
+}
+
+function sortBy(key) {
+  prefs.sort = nextSort(prefs.sort, key);
+  savePrefs();
+  render();
 }
 
 function render() {

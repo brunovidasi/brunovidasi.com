@@ -4,7 +4,9 @@ Bruno's records, CDs, DVDs and Blu-rays — a public site built on his own copy 
 the Discogs data, with an admin behind it for everything Discogs doesn't know.
 
 - **The shelf** — `/vinyl-collection/` — the whole collection as a pile on the
-  floor, a grid or a list.
+  floor, a grid or a list. On the floor, **Organise vinyls on a crate** throws
+  the pile into a wooden crate to flip through, by artist, release year, title,
+  format, region or when it was added; **Back to the mess** tips it out again.
 - **Artist pages** — `/vinyl-collection/lady-gaga`, `/beyonce`, `/anitta`,
   `/rbd` — one page per artist, split into eras, each era split by format.
 - **Wantlist** — `/vinyl-collection/wantlist` — what isn't on the shelf yet.
@@ -31,6 +33,16 @@ The front end no longer calls Discogs at all. It reads `api/collection`,
 `api/artist` and `api/item` from this site, which is what makes the drawer able
 to show Bruno's notes, his chosen cover, and only the fields he ticked in
 **Drawer fields**.
+
+The crate (`js/crate.js`, `css/crate.css`) belongs to the shelf page alone. It is
+a state of the floor view, not a fourth view, so it follows the same search and
+format filter, and it holds whatever the floor is showing — pick the Vinyl chip
+first for a crate of records only. Its discs are the ones the floor slides out
+on hover, so a pressing comes out of the crate in its own colour.
+
+Switching between Floor and Grid uses the same idea without the crate
+(`js/morph.js`, `css/morph.css`): each record on screen is carried from where the
+old view had it to where the new one lays it.
 
 Every public page draws a record the same way — `js/tiles.js` builds the sleeve,
 the case and the discs that slide out of it, over the wooden floor in

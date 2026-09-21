@@ -64,15 +64,27 @@ function item_by_id(int $id): ?array
     return $stmt->fetch() ?: null;
 }
 
-/** The record's title and artist, falling back to what was typed by hand. */
+/**
+ * The record's title and artist: what was typed on the record if anything was
+ * (a correction of Discogs', or the whole of it for something not on Discogs),
+ * else Discogs'.
+ */
 function item_title(array $row): string
 {
-    return (string) ($row['title'] ?: $row['manual_title'] ?: 'Untitled');
+    return (string) ($row['manual_title'] ?: $row['title'] ?: 'Untitled');
 }
 
 function item_artist(array $row): string
 {
-    return (string) ($row['artists_text'] ?: $row['manual_artist'] ?: 'Unknown artist');
+    return (string) ($row['manual_artist'] ?: $row['artists_text'] ?: 'Unknown artist');
+}
+
+/** The year a record came out: the one in a release date typed in the admin, else Discogs' (0 if neither). */
+function item_year(array $row): int
+{
+    $own = parse_release_date((string) ($row['release_date'] ?? ''));
+
+    return $own !== null ? (int) substr($own, 0, 4) : (int) ($row['year'] ?? 0);
 }
 
 /** The cover: the one chosen in the admin, else what Discogs leads with. */
@@ -207,12 +219,58 @@ function item_sort_date(array $row): string
     return '';
 }
 
+/** The first of these that isn't blank, as text; '' if none is. */
+function card_text(mixed ...$candidates): string
+{
+    foreach ($candidates as $candidate) {
+        $text = trim((string) $candidate);
+        if ($text !== '' && $text !== '0') {
+            return $text;
+        }
+    }
+
+    return '';
+}
+
+/**
+ * What the search box looks through beyond what the list already prints: the
+ * details the drawer opens on — labels and catalogue numbers, genres and styles,
+ * the format line, the tracklist, and Bruno's own notes and colour. One string
+ * per record, so a query like "Interscope", "house" or a song title finds it
+ * without opening every drawer. The browser adds the columns it already has.
+ */
+function item_search_text(array $row): string
+{
+    $labels = json_column($row['labels_json'] ?? null);
+
+    $parts = [
+        ...(item_override($row, 'formats') ?? [$row['formats_text'] ?? '']),
+        ...(item_override($row, 'labels') ?? labels_lines($labels)),
+        ...(item_override($row, 'catalog_number') ?? catalog_numbers($labels)),
+        ...(item_override($row, 'genres') ?? json_column($row['genres_json'] ?? null)),
+        ...(item_override($row, 'styles') ?? json_column($row['styles_json'] ?? null)),
+        ...array_column(item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null), 'title'),
+        $row['vinyl_color'] ?? '',
+        $row['vinyl_size'] ?? '',
+        $row['media'] ?? '',
+        $row['notes'] ?? '',
+    ];
+
+    $parts = array_map(fn ($part) => trim((string) $part), array_filter($parts, 'is_scalar'));
+
+    return implode(' | ', array_unique(array_filter($parts, fn ($part) => $part !== '')));
+}
+
 /** The small payload: one sleeve on the shelf. */
 function item_card(array $row): array
 {
     $formats = json_column($row['formats_json'] ?? null);
+    $region = card_text($row['region'] ?? null, $row['country'] ?? null);
+    // Discogs writes "none" where a release has no barcode.
+    $barcode = card_text($row['barcode'] ?? null, $row['release_barcode'] ?? null);
     $first = $formats[0] ?? [];
-    $extras = array_filter(array_merge(
+    // The format line typed on the record replaces Discogs' description of it.
+    $extras = item_override($row, 'formats') ?? array_filter(array_merge(
         [(string) ($first['descriptions'][0] ?? '')],
         [trim((string) ($first['text'] ?? ''))]
     ));
@@ -221,8 +279,18 @@ function item_card(array $row): array
         'id'      => (int) $row['id'],
         'title'   => item_title($row),
         'artist'  => item_artist($row),
-        'year'    => (int) ($row['year'] ?? 0),
+        // The year shown is the one in the release date if one was typed in the
+        // admin, so the column and its hover never disagree.
+        'year'    => item_year($row),
         'date'    => item_sort_date($row),
+        // The list's Year column shows the year and puts this on hover. The
+        // release's barcode comes from its own column, not the identifiers
+        // JSON item_field_value() would parse, because a shelf is hundreds of cards.
+        'released' => card_text($row['release_date'] ?? null, $row['released_formatted'] ?? null, $row['released'] ?? null, $row['year'] ?? null),
+        'barcode' => strcasecmp($barcode, 'none') === 0 ? '' : $barcode,
+        'region'  => region_for_list((string) ($row['region'] ?? ''), (string) ($row['country'] ?? '')),
+        'regionName' => $region,
+        'search'  => item_search_text($row),
         'cover'   => item_cover($row),
         'thumb'   => item_thumb($row),
         'disc'    => (string) ($row['disc_url'] ?? ''),
@@ -297,9 +365,9 @@ function item_drawer(array $row): array
             continue;
         }
 
-        // Whose value is this? The drawer marks Bruno's own notes differently
-        // from a fact Discogs supplied.
-        $fact['mine'] = $def['group'] === 'mine' && trim((string) ($row[$key] ?? '')) !== '';
+        // Whose value is this? The drawer marks Bruno's own notes, and a fact
+        // he corrected, differently from one Discogs supplied.
+        $fact['mine'] = ($def['group'] === 'mine' || isset(OVERRIDE_FIELDS[$key])) && trim((string) ($row[$key] ?? '')) !== '';
 
         if ($def['group'] === 'mine') {
             $mine[] = $fact;
@@ -325,7 +393,7 @@ function item_drawer(array $row): array
         'id'       => (int) $row['id'],
         'title'    => item_title($row),
         'artist'   => item_artist($row),
-        'year'     => (int) ($row['year'] ?? 0),
+        'year'     => item_year($row),
         'kind'     => $kind,
         'kindLabel'=> media_kind_label($kind),
         'cover'    => item_cover($row),
@@ -352,7 +420,7 @@ function drawer_section(array $row, string $key, array $def): mixed
             array_filter(json_column($row['images_json'] ?? null), fn ($i) => !empty($i['uri']))
         )) ?: null,
 
-        'tracklist' => json_column($row['tracklist_json'] ?? null) ?: null,
+        'tracklist' => (item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null)) ?: null,
 
         'credits' => drawer_credits(json_column($row['extraartists_json'] ?? null)) ?: null,
 

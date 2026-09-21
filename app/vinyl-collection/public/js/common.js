@@ -24,12 +24,6 @@ function hash(s) {
   return h;
 }
 
-function formatDate(iso) {
-  if (!iso) return '';
-  const date = new Date(iso);
-  return isNaN(date) ? '' : date.toLocaleDateString();
-}
-
 function formatSeconds(total) {
   const s = Number(total) || 0;
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;

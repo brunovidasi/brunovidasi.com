@@ -29,12 +29,12 @@ function savePrefs() {
 }
 
 function visibleSections() {
-  const query = $('search').value.trim().toLowerCase();
+  const query = $('search').value.trim();
 
   return sections.map(section => ({
     ...section,
     items: section.items.filter(it =>
-      (prefs.fmt === 'all' || it.kind === prefs.fmt) && (!query || it.hay.includes(query))),
+      (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
   }));
 }
 

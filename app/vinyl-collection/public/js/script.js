@@ -7,6 +7,11 @@
  * The data comes from api/collection on this site (see js/common.js), not from
  * Discogs, so it carries Bruno's own fields, his chosen covers, and nothing he
  * has hidden.
+ *
+ * The floor can also be put in order: "Organise vinyls on a crate" throws the
+ * pile into a crate to flip through (js/crate.js), and "Back to the mess" tips it
+ * out again. The crate is a state of the floor view, not a fourth view, so it
+ * follows the same search and format filter and is left by choosing Grid or List.
  */
 
 const CACHE_KEY = 'vinyl_collection_v5';
@@ -16,15 +21,18 @@ const CACHE_TTL = 1000 * 60 * 60 * 6;
 const VIEWS = ['floor', 'grid', 'list'];
 
 let items = [];
+let crateOn = false;
 const prefs = loadPrefs();
 
-/* ---------- Preferences (view, messiness, format filter) ---------- */
+/* ---------- Preferences (view, messiness, format filter, sort, crate order) ---------- */
 
 function loadPrefs() {
-  const defaults = { view: 'floor', mess: 0.7, fmt: 'all' };
+  const defaults = { view: 'floor', mess: 0.7, fmt: 'all', sort: DEFAULT_SORT, organise: DEFAULT_CRATE_ORDER };
   try {
     const p = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
     if (!VIEWS.includes(p.view)) p.view = defaults.view;
+    if (!CRATE_ORDERS[p.organise]) p.organise = defaults.organise;
+    p.sort = validSort(p.sort);
     return p;
   } catch (e) { return defaults; }
 }
@@ -35,28 +43,36 @@ function savePrefs() {
 
 /* ---------- Filtering & sorting ---------- */
 
-/* `date` is the full release date as a sortable "YYYY-MM-DD" (00 where the
-   month or day isn't known) or '' when it isn't known at all. Records with no
-   date go last whichever way the list runs; within a date, artist then title. */
-const byDate = dir => (a, b) => {
-  if (!a.date || !b.date) return !a.date - !b.date;
-  return dir * (a.date < b.date ? -1 : a.date > b.date ? 1 : 0)
-    || a.artist.localeCompare(b.artist) || a.title.localeCompare(b.title);
+/* The sort menu and the list's column headers are two ways to change the same
+   sort (prefs.sort, see js/tiles.js), so the menu's choices are written as it. */
+const SORT_CHOICES = {
+  'date-desc': { key: 'date', dir: 'desc' },
+  'date-asc': { key: 'date', dir: 'asc' },
+  'artist': { key: 'artist', dir: 'asc' },
+  'added': { key: 'added', dir: 'desc' },
 };
 
-const DEFAULT_SORT = 'date-desc';
-const SORTS = {
-  'date-desc': byDate(-1),
-  'date-asc': byDate(1),
-  'artist': (a, b) => a.artist.localeCompare(b.artist) || byDate(1)(a, b),
-  'added': (a, b) => new Date(b.added) - new Date(a.added),
-};
+/** Point the menu at the current sort; one the menu has no choice for (a column's) shows as its own line. */
+function syncSortMenu() {
+  const [choice] = Object.entries(SORT_CHOICES).find(([, c]) => c.key === prefs.sort.key && c.dir === prefs.sort.dir) || [];
+  const custom = $('sort').querySelector('option[value="custom"]');
+  custom.hidden = Boolean(choice);
+  custom.textContent = `Sorted by ${SORT_BY[prefs.sort.key].label} ${prefs.sort.dir === 'asc' ? '↑' : '↓'}`;
+  $('sort').value = choice || 'custom';
+}
 
 function visibleItems() {
-  const query = $('search').value.trim().toLowerCase();
-  return items
-    .filter(it => (prefs.fmt === 'all' || it.kind === prefs.fmt) && (!query || it.hay.includes(query)))
-    .sort(SORTS[$('sort').value] || SORTS[DEFAULT_SORT]);
+  const query = $('search').value.trim();
+  return sortList(
+    items.filter(it => (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
+    prefs.sort
+  );
+}
+
+function setSort(sort) {
+  prefs.sort = sort;
+  savePrefs();
+  render();
 }
 
 function renderChips() {
@@ -95,20 +111,36 @@ function renderEmpty(query) {
 }
 
 function renderList(list) {
-  $('content').replaceChildren(listEl(list));
+  $('content').replaceChildren(listEl(list, { sort: prefs.sort, onSort: key => setSort(nextSort(prefs.sort, key)) }));
+}
+
+/** Which controls belong to what is on screen: the pile's, the crate's, or the grid's and list's. */
+function syncControls() {
+  const floor = prefs.view === 'floor';
+  $('sort').hidden = crateOn;
+  $('messWrap').hidden = !floor || crateOn;
+  $('crateBtn').hidden = !floor || crateOn;
+  $('organiseWrap').hidden = !crateOn;
+  $('digBtn').hidden = !crateOn;
+  $('messBtn').hidden = !crateOn;
 }
 
 function render() {
   if (!items.length) return;
-  VIEWS.forEach(v => document.body.classList.toggle('view-' + v, prefs.view === v));
-  $('messWrap').hidden = prefs.view !== 'floor';
+  // a flight is in the air: draw once it has landed, from whatever the controls say by then
+  if (Crate.busy) { Crate.whenIdle(render); return; }
 
+  VIEWS.forEach(v => document.body.classList.toggle('view-' + v, prefs.view === v));
+  syncControls();
+
+  syncSortMenu();
   const list = visibleItems();
   const query = $('search').value.trim();
   $('countMeta').textContent = list.length === items.length ? `${items.length} items` : `${list.length} of ${items.length} items`;
 
   if (!list.length) { renderEmpty(query); return; }
-  if (prefs.view === 'list') renderList(list);
+  if (crateOn) Crate.show(list, prefs.organise);
+  else if (prefs.view === 'list') renderList(list);
   else if (prefs.view === 'grid') $('content').replaceChildren(gridEl(list));
   else $('content').replaceChildren(floorEl(list, prefs.mess));
 }
@@ -120,7 +152,7 @@ wireDrawer();
 /* ---------- Controls ---------- */
 
 $('search').addEventListener('input', render);
-$('sort').addEventListener('change', render);
+$('sort').addEventListener('change', e => { if (SORT_CHOICES[e.target.value]) setSort(SORT_CHOICES[e.target.value]); });
 
 $('formats').addEventListener('click', e => {
   const b = e.target.closest('button');
@@ -138,10 +170,16 @@ function syncViewToggle() {
 $('viewToggle').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (!b) return;
+  if (crateOn && b.dataset.view === 'floor') return; // already on the floor, just in the crate
+  // Grid and List have no crate: choosing one puts it away, and cuts short any flight to or from it
+  if (crateOn || (Crate.busy && b.dataset.view !== 'floor')) { crateOn = false; Crate.destroy(); }
+  // Floor and Grid are the same records laid out two ways, so they are carried across
+  const before = Morph.capture($('content'));
   prefs.view = b.dataset.view;
   savePrefs();
   syncViewToggle();
   render();
+  Morph.play(before, $('content'));
 });
 
 $('mess').addEventListener('input', e => {
@@ -150,6 +188,36 @@ $('mess').addEventListener('input', e => {
   if (floor) floor.style.setProperty('--mess', prefs.mess);
   savePrefs();
 });
+
+/* ---------- The crate ---------- */
+
+$('organiseBy').innerHTML = Object.entries(CRATE_ORDERS)
+  .map(([key, { label }]) => `<option value="${key}">${esc(label)}</option>`)
+  .join('');
+
+$('crateBtn').addEventListener('click', () => {
+  if (crateOn || Crate.busy || prefs.view !== 'floor') return;
+  const list = visibleItems();
+  if (!list.length) return;
+  crateOn = true;
+  syncControls();
+  Crate.enter(list, prefs.organise, prefs.mess);
+});
+
+$('messBtn').addEventListener('click', () => {
+  if (!crateOn || Crate.busy) return;
+  crateOn = false;
+  syncControls();
+  Crate.exit(visibleItems(), prefs.mess);
+});
+
+$('organiseBy').addEventListener('change', e => {
+  prefs.organise = e.target.value;
+  savePrefs();
+  render();
+});
+
+$('digBtn').addEventListener('click', () => Crate.dig());
 
 function setItems(list) {
   items = prepareItems(list);
@@ -182,5 +250,6 @@ async function init(force) {
 }
 
 $('mess').value = prefs.mess;
+$('organiseBy').value = prefs.organise;
 syncViewToggle();
 init(false);

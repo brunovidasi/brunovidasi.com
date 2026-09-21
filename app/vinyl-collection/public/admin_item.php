@@ -67,19 +67,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params[] = nullable(post($key));
     }
 
+    // Discogs' facts corrected on this record. The boxes are always on the form,
+    // so an empty one means "use Discogs'" and clears an earlier correction.
+    foreach (array_keys(OVERRIDE_FIELDS) as $key) {
+        $sets[] = "$key = ?";
+        $params[] = nullable(post($key));
+    }
+
     $eraId = (int) post('era_id') ?: null;
-    $artistId = (int) post('artist_id') ?: null;
+
+    // "Automatic" leaves the artist page to the sync; anything else was chosen
+    // by hand and is kept, "not on an artist page" included.
+    $artistChoice = post('artist_id');
+    $artistLocked = $artistChoice !== '' ? 1 : 0;
+    $artistId = match ($artistChoice) {
+        '' => $item['artist_id'],
+        'none' => null,
+        default => (int) $artistChoice ?: null,
+    };
 
     $sets = array_merge($sets, [
-        'media_kind = ?', 'media_kind_locked = ?', 'artist_id = ?', 'era_id = ?', 'era_locked = ?',
+        'media_kind = ?', 'media_kind_locked = ?', 'artist_id = ?', 'artist_locked = ?', 'era_id = ?', 'era_locked = ?',
         'cover_url = ?', 'disc_url = ?', 'is_visible = ?', 'is_featured = ?', 'sort_rank = ?',
         'manual_title = ?', 'manual_artist = ?',
         "updated_at = datetime('now')",
     ]);
     $params = array_merge($params, [
         $kind,
-        post('media_kind_locked') !== '' ? 1 : 0,
+        // A format changed here is kept without having to say so: the sync
+        // would otherwise put back what Discogs' formats suggest.
+        (post('media_kind_locked') !== '' || $kind !== $item['media_kind']) ? 1 : 0,
         $artistId,
+        $artistLocked,
         $eraId,
         // An era chosen by hand is locked, so the next sync's automatic filing
         // can't move it back. Clearing the era unlocks it again.
@@ -126,10 +145,14 @@ $images = json_column($item['images_json'] ?? null);
 $artists = all_artists();
 $eras = $item['artist_id'] ? eras_for_artist((int) $item['artist_id']) : [];
 
-/** The Discogs value showing through an empty box, for the hint under it. */
-function fallback_hint(array $item, ?array $release, string $key): string
+/**
+ * The Discogs value showing through an empty box, for the hint under it. With
+ * $always, the value is given even where the box has been filled in, so a
+ * correction can be compared with what it corrects.
+ */
+function fallback_hint(array $item, ?array $release, string $key, bool $always = false): string
 {
-    if (trim((string) ($item[$key] ?? '')) !== '' || $release === null) {
+    if ($release === null || (!$always && trim((string) ($item[$key] ?? '')) !== '')) {
         return '';
     }
 
@@ -183,9 +206,6 @@ require __DIR__ . '/../includes/admin_layout_top.php';
               <input type="text" id="manual_artist" name="manual_artist" value="<?= e($item['manual_artist']) ?>">
             </div>
           </div>
-        <?php else: ?>
-          <input type="hidden" name="manual_title" value="<?= e($item['manual_title']) ?>">
-          <input type="hidden" name="manual_artist" value="<?= e($item['manual_artist']) ?>">
         <?php endif; ?>
 
         <div class="grid-fields">
@@ -247,6 +267,69 @@ require __DIR__ . '/../includes/admin_layout_top.php';
             </div>
           </details>
         <?php endif; ?>
+
+        <?php
+        $isHunting = $item['source'] === 'searching';
+        $corrected = array_filter(array_map(
+            fn ($key) => trim((string) ($item[$key] ?? '')),
+            array_merge(array_keys(OVERRIDE_FIELDS), $isHunting ? [] : ['manual_title', 'manual_artist'])
+        ));
+        $overrideLabels = ['labels' => 'Label', 'catalog_number' => 'Catalogue no.', 'formats' => 'Format details', 'genres' => 'Genres', 'styles' => 'Styles'];
+        $overrideHelp = [
+            'labels' => 'One per line.',
+            'catalog_number' => 'One per line.',
+            'formats' => 'What the list shows under Details, one per line: "LP", "Album", "Pink".',
+            'genres' => 'Separated by commas.',
+            'styles' => 'Separated by commas.',
+        ];
+        $discogsTracks = tracklist_to_text(json_column($item['tracklist_json'] ?? null));
+        ?>
+        <details<?= $corrected ? ' open' : '' ?>>
+          <summary style="cursor:pointer;font-size:0.85rem;opacity:0.7;margin:0.4rem 0 0.8rem;">Correct what Discogs says</summary>
+          <p class="hint" style="margin-bottom:0.8rem;">Anything typed here is shown instead of Discogs' and is kept through every sync. Leave a box empty to use Discogs'. Label, Catalogue no., Genres and Styles appear in the drawer only where they're switched on under <a href="<?= e(url('admin_fields')) ?>">Fields</a>.</p>
+
+          <div class="grid-fields">
+            <?php if (!$isHunting): ?>
+              <div class="field">
+                <label for="manual_title">Title</label>
+                <input type="text" id="manual_title" name="manual_title" value="<?= e($item['manual_title']) ?>" placeholder="<?= e((string) $item['title']) ?>">
+                <?php if (trim((string) $item['manual_title']) !== '' && $release !== null): ?><div class="inherited">Discogs: <b><?= e($item['title']) ?></b></div><?php endif; ?>
+              </div>
+              <div class="field">
+                <label for="manual_artist">Artist</label>
+                <input type="text" id="manual_artist" name="manual_artist" value="<?= e($item['manual_artist']) ?>" placeholder="<?= e((string) $item['artists_text']) ?>">
+                <?php if (trim((string) $item['manual_artist']) !== '' && $release !== null): ?><div class="inherited">Discogs: <b><?= e($item['artists_text']) ?></b></div><?php endif; ?>
+              </div>
+            <?php endif; ?>
+
+            <?php foreach ($overrideLabels as $key => $label): ?>
+              <?php $hint = fallback_hint($item, $release, $key, true); ?>
+              <div class="field">
+                <label for="o_<?= e($key) ?>"><?= e($label) ?></label>
+                <?php if (OVERRIDE_FIELDS[$key] === 'list'): ?>
+                  <input type="text" id="o_<?= e($key) ?>" name="<?= e($key) ?>" value="<?= e($item[$key]) ?>" placeholder="<?= e($hint) ?>">
+                <?php else: ?>
+                  <textarea id="o_<?= e($key) ?>" name="<?= e($key) ?>" rows="2" style="min-height:0;" placeholder="<?= e($hint) ?>"><?= e($item[$key]) ?></textarea>
+                <?php endif; ?>
+                <?php if ($hint !== '' && trim((string) $item[$key]) !== ''): ?><div class="inherited">Discogs: <b><?= e($hint) ?></b></div><?php endif; ?>
+                <div class="hint"><?= e($overrideHelp[$key]) ?></div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+
+          <div class="field" style="margin-top:0.9rem;">
+            <label for="o_tracklist">Tracklist</label>
+            <textarea id="o_tracklist" name="tracklist" rows="10" data-discogs="<?= e($discogsTracks) ?>"
+                      placeholder="1. Track title 3:45"><?= e($item['tracklist']) ?></textarea>
+            <div class="hint">
+              One track per line, like <b>1. Poker Face 3:58</b>. The number and the length are optional.
+              <?php if ($discogsTracks !== ''): ?>
+                Discogs has <?= substr_count($discogsTracks, "\n") + 1 ?> tracks.
+                <button type="button" class="ghost small" id="copyDiscogsTracks">Start from Discogs' list</button>
+              <?php endif; ?>
+            </div>
+          </div>
+        </details>
       </div>
 
       <div class="card">
@@ -310,19 +393,21 @@ require __DIR__ . '/../includes/admin_layout_top.php';
           </select>
           <label class="check" style="margin-top:0.5rem;">
             <input type="checkbox" name="media_kind_locked" value="1"<?= $item['media_kind_locked'] ? ' checked' : '' ?>>
-            Keep this even if a sync disagrees
+            Keep this even if a sync disagrees (a format you change here is kept anyway)
           </label>
         </div>
 
         <div class="field">
           <label for="artist_id">Artist page</label>
+          <?php $automatic = array_column($artists, 'name', 'id')[(int) $item['artist_id']] ?? null; ?>
           <select id="artist_id" name="artist_id">
-            <option value="">Not on an artist page</option>
+            <option value=""<?= !$item['artist_locked'] ? ' selected' : '' ?>>Automatic — <?= $automatic !== null ? e($automatic) : 'not on an artist page' ?></option>
+            <option value="none"<?= $item['artist_locked'] && $item['artist_id'] === null ? ' selected' : '' ?>>Not on an artist page</option>
             <?php foreach ($artists as $artist): ?>
-              <option value="<?= (int) $artist['id'] ?>"<?= (int) $item['artist_id'] === (int) $artist['id'] ? ' selected' : '' ?>><?= e($artist['name']) ?></option>
+              <option value="<?= (int) $artist['id'] ?>"<?= $item['artist_locked'] && (int) $item['artist_id'] === (int) $artist['id'] ? ' selected' : '' ?>><?= e($artist['name']) ?></option>
             <?php endforeach; ?>
           </select>
-          <div class="hint">Worked out from the credits on each sync; change it only to override that.</div>
+          <div class="hint">Automatic works it out from the credits on each sync. Pick one here to keep it whatever a sync says.</div>
         </div>
 
         <div class="field">
@@ -377,7 +462,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
 
       <div class="card">
         <h2>From Discogs</h2>
-        <p>Read only — a sync overwrites all of it.</p>
+        <p>Read only — a sync refreshes all of it. What you've corrected on the left is kept and shown instead.</p>
         <table class="table">
           <tbody>
             <?php

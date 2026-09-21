@@ -1,0 +1,244 @@
+/* ---------- The crate ----------
+ *
+ * The floor's records stood up in a wooden crate, on the left of the shelf page
+ * only (js/crate.js draws it; the artist pages never load this file). Sizes come
+ * from three variables on the stage: --H, how tall the stage is, --cw, how wide a
+ * 12" sleeve is in the crate, and --board, how much of the bottom is the crate's
+ * front board.
+ */
+
+.controls [hidden] { display: none !important; }
+
+.crate-btn {
+  padding: 0.7rem 1.1rem;
+  border: 0;
+  border-radius: 3px;
+  background: var(--gold);
+  color: var(--ink);
+  font: 600 0.85rem 'Space Grotesk', sans-serif;
+  cursor: pointer;
+}
+.crate-btn:hover { filter: brightness(1.1); }
+.crate-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+.organise { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: rgba(242,234,216,0.8); }
+
+/* ---------- The stage ---------- */
+
+.crate-stage {
+  --H: clamp(480px, calc(100svh - 150px), 800px);
+  --cw: min(calc(var(--H) * 0.48), 340px, calc((100vw - 3.5rem) / 1.6));
+  --board: clamp(150px, calc(var(--H) * 0.27), 220px);
+  position: relative;
+  height: var(--H);
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 5rem);
+}
+
+/* While the crate and the floor cross-fade the crate lies on top of the floor. */
+.crate-stage.over { position: absolute; top: 0; left: 0; right: 0; z-index: 5; }
+#content.crating { position: relative; }
+
+.crate-box {
+  position: relative;
+  flex: 0 0 auto;
+  width: calc(var(--cw) * 1.6);
+  height: 100%;
+  isolation: isolate;
+  outline: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.crate-box:focus-visible .crate-front { box-shadow: 0 0 0 2px var(--gold), 0 -10px 30px rgba(0,0,0,.55), 0 20px 34px rgba(0,0,0,.55), inset 0 3px 0 rgba(255,225,170,.28), inset 0 -40px 60px rgba(0,0,0,.4); }
+
+/* The records recede up and back from a point above, so the ones behind show as
+   a stack of edges; the ones far back fade into the top of the stage. */
+.crate-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  perspective: 1400px;
+  perspective-origin: 50% 22%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 90px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 90px);
+}
+
+/* The flight is drawn between the records and the front board, so that whatever
+   is dropped in disappears behind the board. */
+.crate-flyers { position: absolute; inset: 0; z-index: 2; }
+/* a disc that has slid out of a tile turns pointer events back on (floor.css), and a
+   flyer under the cursor would then show its label and open its drawer */
+.crate-flyers, .crate-flyers * { pointer-events: none !important; }
+.crate-flyers .tile { position: absolute; left: 0; top: 0; cursor: default; will-change: transform, opacity; }
+.crate-flyers .tile .sleeve { box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 10px 22px rgba(0,0,0,.6); }
+
+/* ---------- A record in the crate ---------- */
+
+.rec {
+  position: absolute;
+  left: 50%;
+  /* the bottom edge sits 62px behind the board, so every record is standing in it */
+  bottom: calc(var(--board) - 62px);
+  width: calc(var(--cw) * var(--fw));
+  height: calc(var(--cw) * var(--fh));
+  margin-left: calc(var(--cw) * var(--fw) / -2);
+  transform-origin: 50% 100%;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+.rec-body { position: absolute; inset: 0; }
+
+.rec .face {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--fb, #333);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.55);
+}
+.rec .face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rec .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,.14), transparent 40%, rgba(0,0,0,.18)); }
+
+/* a cover that hasn't got a picture is drawn from its title */
+.rec .ctext {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.25;
+  color: rgba(255,255,255,.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.rec .ctext b { font: 600 20px/1.05 'Fraunces', serif; margin-bottom: 4px; }
+
+/* The disc comes out of the top of the sleeve, in its own colour: it is the same
+   disc the floor slides out on hover (js/tiles.js discEl), moved up instead of
+   sideways by how far the record has been pulled. A second disc rides a little
+   higher, behind the first. The label spins while it is held. */
+.rec .discs { z-index: 0; }
+.rec .d {
+  transition: none;
+  transform: translateY(calc(var(--pull, 0) * (-35% - var(--k) * 11%)));
+}
+.rec.pulled .sp { animation: dspin 5s linear infinite; }
+
+@keyframes recIn {
+  from { opacity: 0; transform: translateY(90px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes recOut {
+  to { opacity: 0; transform: translateY(-70px) scale(0.96); }
+}
+.rec.enter .rec-body {
+  animation: recIn 0.6s cubic-bezier(.2,.8,.25,1) both;
+  animation-delay: calc(var(--base, 0ms) + var(--i, 0) * 50ms);
+}
+.crate-stage.emptying .rec .rec-body {
+  animation: recOut 0.5s ease-in both;
+  animation-delay: calc(var(--i, 0) * 35ms);
+}
+
+/* ---------- The crate itself ---------- */
+
+.crate-front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--board);
+  z-index: 3;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg, #7a4e28 0 46px, #6a4222 46px 48px),
+    linear-gradient(#7a4e28, #4d2f16);
+  background-blend-mode: multiply;
+  box-shadow: 0 -10px 30px rgba(0,0,0,.55), 0 20px 34px rgba(0,0,0,.55), inset 0 3px 0 rgba(255,225,170,.28), inset 0 -40px 60px rgba(0,0,0,.4);
+}
+.crate-front::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 18px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(#a06a38, #7a4e28);
+  box-shadow: 0 2px 0 rgba(0,0,0,.35);
+}
+
+/* the hand holes at either end of a crate */
+.crate-front .handle {
+  position: absolute;
+  left: 6%;
+  top: calc(50% + 6px);
+  width: 14%;
+  height: 26px;
+  margin-top: -13px;
+  border-radius: 13px;
+  background: #170e06;
+  box-shadow: inset 0 4px 7px rgba(0,0,0,.85), 0 1px 0 rgba(255,225,170,.2);
+}
+.crate-front .handle.r { left: auto; right: 6%; }
+
+.plate {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 6px);
+  transform: translate(-50%, -50%);
+  width: 52%;
+  padding: 9px 12px;
+  border-radius: 3px;
+  text-align: center;
+  background: #EFE3C8;
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+.plate b { display: block; font: 600 17px 'Fraunces', serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plate span { font-size: 12px; opacity: .7; }
+
+/* ---------- Beside the crate ---------- */
+
+.crate-info { flex: 1 1 0; min-width: 0; max-width: 460px; }
+.crate-info .eyebrow { margin: 0; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.55; font-variant-numeric: tabular-nums; }
+.crate-info h2 { margin: 0.45rem 0 0.5rem; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height: 1.05; overflow-wrap: anywhere; }
+.crate-info .who { margin: 0; font-size: 1.05rem; opacity: 0.8; }
+.crate-info .what { margin: 0.9rem 0 1.4rem; font-size: 0.85rem; opacity: 0.75; }
+.crate-info .hint { margin: 1.4rem 0 0; font-size: 0.8rem; opacity: 0.45; max-width: 34ch; }
+
+/* ---------- Coming and going ---------- */
+
+.crate-stage.arriving .crate-front,
+.crate-stage.arriving .crate-info { animation: crateIn 0.7s cubic-bezier(.2,.8,.25,1) both; }
+.crate-stage.arriving .crate-info { animation-delay: 0.25s; }
+@keyframes crateIn { from { opacity: 0; transform: translateY(26px); } }
+
+.crate-stage.emptying .crate-info { opacity: 0; transition: opacity 0.3s; }
+.crate-stage.leaving .crate-front { opacity: 0; transition: opacity 0.5s; }
+
+/* The drawer opens beside the crate; it shouldn't black out the record just pulled. */
+body.crate-on .overlay { background: rgba(0,0,0,0.3); }
+
+@media (max-width: 900px) {
+  .crate-stage {
+    --H: clamp(420px, calc(100svh - 260px), 640px);
+    height: auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .crate-box { height: var(--H); }
+  .crate-info { max-width: 34rem; text-align: center; padding-bottom: 1rem; }
+  .crate-info .hint { margin-left: auto; margin-right: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rec.enter .rec-body, .crate-stage.arriving .crate-front, .crate-stage.arriving .crate-info { animation: none; }
+  .rec.pulled .sp { animation: none; }
+}

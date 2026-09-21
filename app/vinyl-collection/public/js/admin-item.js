@@ -24,3 +24,17 @@ if (artistSelect && eraSelect && optionsTag) {
     });
   });
 }
+
+/* Starts the tracklist box from Discogs' list, for correcting one title rather
+ * than retyping the lot. Asks first if the box already has something in it. */
+
+const copyTracks = document.getElementById('copyDiscogsTracks');
+const tracklistBox = document.getElementById('o_tracklist');
+
+if (copyTracks && tracklistBox) {
+  copyTracks.addEventListener('click', () => {
+    if (tracklistBox.value.trim() && !confirm("Replace what's in the tracklist box with Discogs' list?")) return;
+    tracklistBox.value = tracklistBox.dataset.discogs;
+    tracklistBox.focus();
+  });
+}

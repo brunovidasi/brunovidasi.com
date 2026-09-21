@@ -132,6 +132,17 @@ function url(string $path = ''): string
     return app_path() . ltrim($path, '/');
 }
 
+/**
+ * The URL of a file under public/ that changes when the file does, so a browser
+ * that cached last week's script can't run it against this week's API.
+ */
+function asset_url(string $path): string
+{
+    $mtime = (int) @filemtime(dirname(__DIR__) . '/public/' . ltrim($path, '/'));
+
+    return url($path) . '?v=' . $mtime;
+}
+
 function is_debug(): bool
 {
     return (bool) (env_config()['debug'] ?? !is_production());

@@ -37,8 +37,8 @@ $others = $others->fetchAll();
 <link rel="icon" href="<?= e(url('../assets/favicon.ico')) ?>">
 <link rel="preload" href="<?= e(url('fonts/fraunces-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="<?= e(url('css/floor.css')) ?>">
-<link rel="stylesheet" href="<?= e(url('css/artist.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset_url('css/artist.css')) ?>">
 </head>
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>" data-slug="<?= e($artist['slug']) ?>" style="--accent: <?= e($accent) ?>">
 
@@ -69,7 +69,7 @@ $others = $others->fetchAll();
 </header>
 
 <div class="controls">
-  <input type="search" id="search" placeholder="Search by title or edition…" aria-label="Search <?= e($artist['name']) ?> records">
+  <input type="search" id="search" placeholder="Search title, barcode…" aria-label="Search <?= e($artist['name']) ?> records">
   <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
   <div class="seg" id="viewToggle" role="group" aria-label="View">
     <button type="button" data-view="grid">Grid</button>
@@ -87,7 +87,7 @@ $others = $others->fetchAll();
 </main>
 
 <footer>
-  <span>&copy; 2026<?php if (setting('last_successful_sync')): ?> · last synced <?= e(time_ago(setting('last_successful_sync'))) ?><?php endif; ?></span>
+  <span>&copy; 2026</span>
   <span>Made with &#10084;&#65039; by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></span>
 </footer>
 
@@ -99,9 +99,9 @@ $others = $others->fetchAll();
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
 
-<script src="<?= e(url('js/common.js')) ?>"></script>
-<script src="<?= e(url('js/tiles.js')) ?>"></script>
-<script src="<?= e(url('js/artist.js')) ?>"></script>
+<script src="<?= e(asset_url('js/common.js')) ?>"></script>
+<script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
+<script src="<?= e(asset_url('js/artist.js')) ?>"></script>
 
 </body>
 </html>

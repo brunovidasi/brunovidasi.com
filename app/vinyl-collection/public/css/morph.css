@@ -1,0 +1,18 @@
+/* ---------- Floor <-> grid ----------
+ *
+ * What js/morph.js needs on top of the tiles' own styles (css/floor.css): the
+ * discs sliding out on a class of their own, so a tile that is travelling isn't
+ * also given the hover's lift, and the grid's captions arriving after the sleeves.
+ */
+
+.tile.morph-hot .sleeve { transform: translateX(calc(var(--sg) * -2%)); }
+.tile.morph-hot .d { transform: translateX(calc(var(--sg) * var(--out) * 100%)); }
+.tile.morph-hot .sp { animation: dspin 5s linear infinite; }
+
+@keyframes capIn { from { opacity: 0; } }
+.grid.morphing .cap { animation: capIn 0.5s ease 0.45s backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile.morph-hot .sp { animation: none; }
+  .grid.morphing .cap { animation: none; }
+}

@@ -135,12 +135,17 @@ function json_cache_headers(int $seconds = 300): void
  * edit to any item in the admin. The pages carry it and the browser keys its
  * cache and its API requests on it, so a new cover or disc image shows up on
  * the next page load instead of when the old copy expires.
+ *
+ * The card-building code counts too: a new field on the cards changes what the
+ * API returns without any data changing, and the old copy would otherwise be
+ * served for as long as the browser kept it.
  */
 function data_version(): string
 {
     $latest = db()->query('SELECT MAX(updated_at) FROM items')->fetchColumn();
+    $shape = (int) @filemtime(__DIR__ . '/items.php');
 
-    return substr(md5(setting('last_successful_sync', '') . '|' . $latest), 0, 10);
+    return substr(md5(setting('last_successful_sync', '') . '|' . $latest . '|' . $shape), 0, 10);
 }
 
 /* ---------- Lookups the admin pages share ---------- */

@@ -606,9 +606,9 @@ function upsert_release_detail(array $full): void
  * Works out which artist page an item belongs on, and which era within it.
  *
  * Both are recomputed from scratch on every sync — except where the admin has
- * locked an era by hand (era_locked), which always wins. That way adding a
- * master id to an era in the admin re-files every pressing of that album on the
- * next sync without anyone touching an item.
+ * chosen one by hand (artist_locked, era_locked), which always wins. That way
+ * adding a master id to an era in the admin re-files every pressing of that
+ * album on the next sync without anyone touching an item.
  */
 function assign_items_to_artists_and_eras(): void
 {
@@ -634,7 +634,7 @@ function assign_items_to_artists_and_eras(): void
     }
 
     $rows = db()->query('
-        SELECT i.id, i.era_locked, i.artist_id, i.era_id, i.era_rank,
+        SELECT i.id, i.artist_locked, i.era_locked, i.artist_id, i.era_id, i.era_rank,
                r.discogs_id, r.master_id, r.artists_json, r.primary_artist
           FROM items i
           LEFT JOIN releases r ON r.discogs_id = i.release_id
@@ -655,6 +655,10 @@ function assign_items_to_artists_and_eras(): void
             }
         }
         $artistId ??= $byName[mb_strtolower((string) $row['primary_artist'])] ?? null;
+
+        if ($row['artist_locked']) {
+            $artistId = $row['artist_id'] !== null ? (int) $row['artist_id'] : null;
+        }
 
         if ($row['era_locked']) {
             $eraId = $row['era_id'] !== null ? (int) $row['era_id'] : null;
