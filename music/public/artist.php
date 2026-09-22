@@ -31,7 +31,11 @@ $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artis
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($artist['name']) ?> — Bruno's Collection</title>
 <meta name="description" content="<?= e($artist['tagline'] ?: "Every record by {$artist['name']} in Bruno's collection, era by era.") ?>">
-<link rel="icon" href="<?= e(url('../assets/favicon.ico')) ?>">
+<link rel="icon" type="image/svg+xml" href="<?= e(url('favicon/favicon.svg')) ?>">
+<link rel="icon" type="image/png" sizes="32x32" href="<?= e(url('favicon/favicon-32x32.png')) ?>">
+<link rel="icon" type="image/png" sizes="16x16" href="<?= e(url('favicon/favicon-16x16.png')) ?>">
+<link rel="apple-touch-icon" sizes="180x180" href="<?= e(url('favicon/apple-touch-icon.png')) ?>">
+<link rel="manifest" href="<?= e(url('favicon/site.webmanifest')) ?>">
 <link rel="preload" href="<?= e(url('fonts/fraunces-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">

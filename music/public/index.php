@@ -16,7 +16,11 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($title) ?> — Bruno's Vinyl</title>
-<link rel="icon" href="<?= e(url('../assets/favicon.ico')) ?>">
+<link rel="icon" type="image/svg+xml" href="<?= e(url('favicon/favicon.svg')) ?>">
+<link rel="icon" type="image/png" sizes="32x32" href="<?= e(url('favicon/favicon-32x32.png')) ?>">
+<link rel="icon" type="image/png" sizes="16x16" href="<?= e(url('favicon/favicon-16x16.png')) ?>">
+<link rel="apple-touch-icon" sizes="180x180" href="<?= e(url('favicon/apple-touch-icon.png')) ?>">
+<link rel="manifest" href="<?= e(url('favicon/site.webmanifest')) ?>">
 <link rel="preload" href="<?= e(url('fonts/fraunces-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
