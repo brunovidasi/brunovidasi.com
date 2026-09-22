@@ -6,9 +6,19 @@ function e(mixed $value): string
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * $path is normally a bare page name ('admin', 'admin_items?x=1') and gets run
+ * through url() to become a full app path. But login.php also passes this an
+ * already-absolute path recovered from $_SERVER['REQUEST_URI'] (the page the
+ * user was on before being sent to log in) — running that through url() again
+ * would double the mount prefix, e.g. '/music/music/admin' in production. The
+ * app_path() check tells the two cases apart without needing a second
+ * parameter at every other call site.
+ */
 function redirect(string $path): never
 {
-    header('Location: ' . (str_starts_with($path, 'http') ? $path : url($path)));
+    $isAbsolute = str_starts_with($path, 'http') || str_starts_with($path, app_path());
+    header('Location: ' . ($isAbsolute ? $path : url($path)));
     exit;
 }
 

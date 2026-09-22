@@ -38,6 +38,13 @@ DirectoryIndex index.php index.html
     # Apache gives up with a 500.
     RewriteRule ^public/ - [L]
 
+    # The bare root. Left to the generic "everything else" rule below, this
+    # would rewrite to the directory "public/" and rely on Apache's
+    # DirectoryIndex to substitute index.php for it — an internal-rewrite ->
+    # DirectoryIndex handoff that isn't reliable on every host (it 500s on
+    # this one). Targeting the file directly avoids that.
+    RewriteRule ^$ public/index.php [L]
+
     # The JSON API the frontend reads: /api/collection -> public/api/collection.php
     RewriteCond %{DOCUMENT_ROOT}/music/public/api/$1.php -f
     RewriteRule ^api/([A-Za-z0-9_]+)$ public/api/$1.php [L,QSA]

@@ -56,13 +56,17 @@ html, body {
   color: var(--text);
   font-family: 'Space Grotesk', sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* the hero record hangs off the right edge of the page on purpose (see
+     .hero-platter); clip it on both html and body, since some mobile
+     browsers only honour overflow-x set on the body as a scroll container,
+     not as the thing that stops the viewport itself from scrolling */
+  overflow-x: hidden;
 }
 
 /* The dark wooden floor, under every view and every page: the grid and the list
    are the same records on the same floor, just stood up and lined up. */
 body {
   min-height: 100vh;
-  overflow-x: hidden;
   background:
     linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.1) 30%, rgba(0,0,0,.55)),
     repeating-linear-gradient(90deg, rgba(0,0,0,.32) 0 2px, transparent 2px 190px),
