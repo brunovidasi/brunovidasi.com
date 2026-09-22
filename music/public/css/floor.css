@@ -949,6 +949,12 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
     gap: 1.5rem 1rem;
   }
   .grid .stage { height: 130px; }
+
+  /* Each tile stands centred on the stage above it, so its caption (title,
+     artist, format, year) is centred underneath it too rather than hugging
+     the left edge of the cell. */
+  .grid .cap { text-align: center; }
+  .grid .cap .m { justify-content: center; }
 }
 
 /* ---------- List view ---------- */
