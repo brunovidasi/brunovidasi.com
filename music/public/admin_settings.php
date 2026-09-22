@@ -205,7 +205,10 @@ require __DIR__ . '/../includes/admin_layout_top.php';
 </form>
 
 <div class="card">
-  <h2>Recent syncs</h2>
+  <h2 style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;">
+    Recent syncs
+    <a class="btn ghost small" href="<?= e(url('admin_sync_runs')) ?>">See all →</a>
+  </h2>
   <?php if (!$runs): ?>
     <p class="empty">Nothing yet.</p>
   <?php else: ?>

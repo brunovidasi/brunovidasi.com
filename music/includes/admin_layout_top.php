@@ -6,12 +6,13 @@
  */
 
 $navItems = [
-    'admin'          => 'Dashboard',
-    'admin_items'    => 'Collection',
-    'admin_wantlist' => 'Wantlist',
-    'admin_artists'  => 'Artists & eras',
-    'admin_fields'   => 'Drawer fields',
-    'admin_settings' => 'Settings',
+    'admin'           => 'Dashboard',
+    'admin_items'     => 'Collection',
+    'admin_wantlist'  => 'Wantlist',
+    'admin_artists'   => 'Artists & eras',
+    'admin_fields'    => 'Drawer fields',
+    'admin_sync_runs' => 'Sync history',
+    'admin_settings'  => 'Settings',
 ];
 
 $page = current_page();
