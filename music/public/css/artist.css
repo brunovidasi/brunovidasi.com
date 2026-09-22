@@ -87,11 +87,22 @@ html { scroll-behavior: smooth; }
 }
 
 .era-num {
+  flex-shrink: 0;
   font-family: 'Fraunces', serif;
   font-size: 2.6rem;
   font-weight: 600;
   line-height: 1;
   color: var(--accent, var(--gold));
+}
+
+/* Grow to fill the row and allow its own text to wrap, rather than the whole
+   title getting pushed onto its own flex line below the number. */
+.era-title {
+  /* flex-basis: 0, not auto — with auto, the long era-sub line (dates and
+     highlight tracks) sets the item's content width, which is enough on its
+     own to push the whole title below the number instead of just growing. */
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .era-title h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); line-height: 1.05; }

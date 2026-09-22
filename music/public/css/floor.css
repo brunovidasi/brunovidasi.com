@@ -63,6 +63,16 @@ html, body {
   overflow-x: hidden;
 }
 
+html {
+  /* Mobile Safari paints the rubber-band overscroll area (and the strip
+     under the notch/status bar) from html's own background-color, not
+     body's — body's gradient/pattern below doesn't reach it, so without
+     this it flashes white (or the system's default canvas colour) above
+     and below the page. */
+  background-color: var(--bg);
+  color-scheme: dark;
+}
+
 /* The dark wooden floor, under every view and every page: the grid and the list
    are the same records on the same floor, just stood up and lined up. */
 body {
@@ -1320,6 +1330,7 @@ footer {
 @media (max-width: 720px) {
   .hero-links { display: none; }
   .hero-pick { display: flex; align-items: center; gap: 0.55rem; margin-top: 1.1rem; }
+  footer { justify-content: center; text-align: center; }
 }
 
 /* The menu's button is one of the pills, with a chevron. */

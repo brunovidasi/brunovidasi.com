@@ -82,7 +82,7 @@ $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artis
 </main>
 
 <footer>
-  <span>&copy; 2026</span>
+  <span>&copy; 2026 | Data from Discogs API | <a href="https://brunovida.si/contact" target="_blank" rel="noopener">Contact Bruno</a></span>
   <span>Made with &#10084;&#65039; by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></span>
 </footer>
 
