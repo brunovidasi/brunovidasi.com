@@ -410,13 +410,17 @@ function card_text(mixed ...$candidates): string
 /**
  * What the search box looks through beyond what the list already prints: the
  * details the drawer opens on — labels and catalogue numbers, genres and styles,
- * the format line, the tracklist, and Bruno's own notes and colour. One string
- * per record, so a query like "Interscope", "house" or a song title finds it
- * without opening every drawer. The browser adds the columns it already has.
+ * the format line, the tracklist (titles and the artists and credits on each
+ * track), the release's own credits, and Bruno's own notes and colour. One
+ * string per record, so a query like "Interscope", "house", a song title or a
+ * featured artist finds it without opening every drawer. The browser adds the
+ * columns it already has.
  */
 function item_search_text(array $row): string
 {
     $labels = json_column($row['labels_json'] ?? null);
+    $tracklist = item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null);
+    $credits = json_column($row['extraartists_json'] ?? null);
 
     $parts = [
         ...(item_override($row, 'formats') ?? [$row['formats_text'] ?? '']),
@@ -424,7 +428,8 @@ function item_search_text(array $row): string
         ...(item_override($row, 'catalog_number') ?? catalog_numbers($labels)),
         ...(item_override($row, 'genres') ?? json_column($row['genres_json'] ?? null)),
         ...(item_override($row, 'styles') ?? json_column($row['styles_json'] ?? null)),
-        ...array_column(item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null), 'title'),
+        ...tracklist_search_terms($tracklist),
+        ...array_map(fn ($c) => clean_artist_name((string) ($c['name'] ?? '')), $credits),
         $row['vinyl_color'] ?? '',
         $row['vinyl_size'] ?? '',
         $row['media'] ?? '',
@@ -434,6 +439,28 @@ function item_search_text(array $row): string
     $parts = array_map(fn ($part) => trim((string) $part), array_filter($parts, 'is_scalar'));
 
     return implode(' | ', array_unique(array_filter($parts, fn ($part) => $part !== '')));
+}
+
+/**
+ * Every title and artist name in a tracklist, sub-tracks included — a medley
+ * or a suite lists its parts there, and a feature ("Lady Gaga") often lives on
+ * the track's own artists or extraartists rather than the release's.
+ */
+function tracklist_search_terms(array $tracks): array
+{
+    $terms = [];
+
+    foreach ($tracks as $track) {
+        $terms[] = (string) ($track['title'] ?? '');
+        foreach ([...($track['artists'] ?? []), ...($track['extraartists'] ?? [])] as $artist) {
+            $terms[] = clean_artist_name((string) ($artist['name'] ?? ''));
+        }
+        if (!empty($track['sub_tracks'])) {
+            array_push($terms, ...tracklist_search_terms($track['sub_tracks']));
+        }
+    }
+
+    return $terms;
 }
 
 /** The small payload: one sleeve on the shelf. */
