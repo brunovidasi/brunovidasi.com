@@ -62,6 +62,10 @@ function run_migrations(PDO $db): void
             // A vinyl's colour picked by hand, "#rrggbb". Blank means the
             // keyword match on the colour text; see vinyl_color() in includes/items.php.
             'vinyl_hex'      => 'TEXT',
+            // For a DVD that actually came in a CD-sized jewel case: 'cd' draws
+            // that case instead of the tall DVD one. Blank/NULL means the DVD
+            // case, and it's ignored on every other format; see item_card().
+            'case_kind'      => 'TEXT',
             // 1 = translucent, 0 = opaque, NULL = as the colour text says
             // ("Clear", "Transparent"…); see item_discs() in includes/items.php.
             'vinyl_translucent' => 'INTEGER',

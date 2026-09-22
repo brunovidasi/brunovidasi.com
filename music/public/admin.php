@@ -85,35 +85,33 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   <pre class="sync-log" id="syncLog" hidden></pre>
 </div>
 
-<div class="cards">
-  <div class="card">
-    <h2>Daily sync by cron</h2>
-    <p>Give this URL to any scheduler that can fetch a page once a day. It answers immediately and keeps working in the background.</p>
+<div class="card">
+  <h2>Daily sync by cron</h2>
+  <p>Give this URL to any scheduler that can fetch a page once a day. It answers immediately and keeps working in the background.</p>
 
-    <?php if ($cronUrl === null): ?>
-      <div class="flash error">No <code>cron_token</code> is set in the config, so the endpoint is switched off. Generate one with <code>php -r "echo bin2hex(random_bytes(24));"</code> and add it.</div>
-    <?php else: ?>
-      <code class="token-url" id="cronUrl"><?= e($cronUrl) ?></code>
-      <div class="form-actions">
-        <button type="button" class="ghost small" id="copyCron">Copy URL</button>
-        <span class="hint" style="font-size:0.76rem;opacity:0.6;">Treat it like a password — anyone with it can start a sync.</span>
-      </div>
-    <?php endif; ?>
-  </div>
+  <?php if ($cronUrl === null): ?>
+    <div class="flash error">No <code>cron_token</code> is set in the config, so the endpoint is switched off. Generate one with <code>php -r "echo bin2hex(random_bytes(24));"</code> and add it.</div>
+  <?php else: ?>
+    <code class="token-url" id="cronUrl"><?= e($cronUrl) ?></code>
+    <div class="form-actions">
+      <button type="button" class="ghost small" id="copyCron">Copy URL</button>
+      <span class="hint" style="font-size:0.76rem;opacity:0.6;">Treat it like a password — anyone with it can start a sync.</span>
+    </div>
+  <?php endif; ?>
+</div>
 
-  <div class="card">
-    <h2>Where things are</h2>
-    <table class="table">
-      <tbody>
-        <tr><td>Discogs account</td><td class="right"><?= e(discogs_username() ?: '— not set —') ?></td></tr>
-        <tr><td>API token</td><td class="right"><?= $client->hasToken() ? '<span class="pill good">set</span>' : '<span class="pill warn">missing</span>' ?></td></tr>
-        <tr><td>Environment</td><td class="right"><?= e(app_env()) ?></td></tr>
-        <tr><td>Config file</td><td class="right" style="font-size:0.78rem;word-break:break-all;"><?= e(config_path()) ?></td></tr>
-        <tr><td>Database</td><td class="right" style="font-size:0.78rem;word-break:break-all;"><?= e(db_path()) ?></td></tr>
-        <tr><td>Last successful sync</td><td class="right"><?= e(time_ago(setting('last_successful_sync'))) ?></td></tr>
-      </tbody>
-    </table>
-  </div>
+<div class="card">
+  <h2>Where things are</h2>
+  <table class="table">
+    <tbody>
+      <tr><td>Discogs account</td><td class="right"><?= e(discogs_username() ?: '— not set —') ?></td></tr>
+      <tr><td>API token</td><td class="right"><?= $client->hasToken() ? '<span class="pill good">set</span>' : '<span class="pill warn">missing</span>' ?></td></tr>
+      <tr><td>Environment</td><td class="right"><?= e(app_env()) ?></td></tr>
+      <tr><td>Config file</td><td class="right" style="font-size:0.78rem;word-break:break-all;"><?= e(config_path()) ?></td></tr>
+      <tr><td>Database</td><td class="right" style="font-size:0.78rem;word-break:break-all;"><?= e(db_path()) ?></td></tr>
+      <tr><td>Last successful sync</td><td class="right"><?= e(time_ago(setting('last_successful_sync'))) ?></td></tr>
+    </tbody>
+  </table>
 </div>
 
 <?php if ($lastRun && !empty($lastRun['log'])): ?>

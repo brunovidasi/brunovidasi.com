@@ -79,7 +79,7 @@ const Crate = (() => {
     // real proportions, but nothing so small that its cover can't be read
     const f = clamp(w / 250, 0.6, 1);
     const el = document.createElement('div');
-    el.className = `rec kind-${it.kind}`;
+    el.className = `rec kind-${it.shape}`;
     el.style.setProperty('--fw', f.toFixed(3));
     el.style.setProperty('--fh', (f * h / w).toFixed(3));
     el.innerHTML = '<div class="rec-body"><div class="discs"></div><div class="face"></div></div>';

@@ -476,6 +476,9 @@ function item_card(array $row): array
         // 'bd' in the view model, 'bluray' in the database: the CSS and the
         // floor view were written against the short form.
         'k'       => $row['media_kind'] === 'bluray' ? 'bd' : (string) $row['media_kind'],
+        // The case drawn on the shelf, where it differs from the format: a DVD
+        // that actually shipped in a CD-sized jewel case. Null everywhere else.
+        'case'    => $row['media_kind'] === 'dvd' && $row['case_kind'] === 'cd' ? 'cd' : null,
         'discs'   => item_discs($row, $formats),
         'box'     => (bool) array_filter($formats, fn ($f) => ($f['name'] ?? '') === 'Box Set'),
         'fmt'     => implode(' · ', array_filter([$first['name'] ?? '', ...$extras])),

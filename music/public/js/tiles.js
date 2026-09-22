@@ -14,11 +14,13 @@ const KIND_LABEL = { vinyl: 'Vinyl', cd: 'CD', dvd: 'DVD', bd: 'Blu-ray', other:
 const cardIndex = new Map();
 
 /* Sleeve size in px at full scale, following the real objects: LP 12.4",
-   CD case 5.6", DVD case 5.3 x 7.5", Blu-ray case 5.3 x 6.7". */
+   CD case 5.6", DVD case 5.3 x 7.5", Blu-ray case 5.3 x 6.7". Goes by the case
+   actually drawn (it.shape), which for most records is just the format — a DVD
+   set by hand to show its CD-sized case is the one exception. */
 function dims(it) {
-  if (it.kind === 'dvd') return [116, 163];
-  if (it.kind === 'bd') return [116, 147];
-  if (it.kind === 'cd' || it.kind === 'other') return [112, 112];
+  if (it.shape === 'dvd') return [116, 163];
+  if (it.shape === 'bd') return [116, 147];
+  if (it.shape === 'cd' || it.shape === 'other') return [112, 112];
   const d = it.discs[0] || {};
   const w = d.sz === 7 ? 150 : d.sz === 10 ? 200 : (it.discs.length > 1 || it.box) ? 270 : 250;
   return [w, w];
@@ -28,7 +30,7 @@ function buildTile(it) {
   const [w, h] = dims(it);
   const hs = hash(String(it.id));
   const t = document.createElement('div');
-  t.className = `tile kind-${it.kind}`;
+  t.className = `tile kind-${it.shape}`;
   t.tabIndex = 0;
   t.setAttribute('role', 'button');
   t.setAttribute('aria-label', `${it.title} — ${it.artist}. Open details`);
@@ -373,6 +375,9 @@ function prepareItems(list) {
   const cards = list.map(({ search, ...it }) => ({
     ...it,
     kind: it.k,
+    // The case actually drawn: the format's own, unless one was set by hand
+    // (a DVD in a CD-sized jewel case) — see dims() and buildTile().
+    shape: it.case || it.k,
     hay: fold([
       it.title, it.artist, it.barcode, it.year || '', it.released, it.region, it.regionName,
       KIND_LABEL[it.k], it.fmt, search,

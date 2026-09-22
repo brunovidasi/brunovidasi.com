@@ -134,6 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         : json_encode(['count' => $discCount, 'art' => $discArt, 'hex' => $discHex, 'tr' => $discTr], JSON_UNESCAPED_SLASHES);
     $firstDiscArt = array_values(array_filter($discArt))[0] ?? null;
 
+    // Only a DVD's form offers the Case box; any other kind keeps it clear.
+    $caseKind = $kind === 'dvd' && post('case_kind') === 'cd' ? 'cd' : null;
+
     $eraId = (int) post('era_id') ?: null;
 
     // "Automatic" leaves the artist page to the sync; anything else was chosen
@@ -147,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     };
 
     $sets = array_merge($sets, [
-        'media_kind = ?', 'media_kind_locked = ?', 'artist_id = ?', 'artist_locked = ?', 'era_id = ?', 'era_locked = ?',
+        'media_kind = ?', 'media_kind_locked = ?', 'case_kind = ?', 'artist_id = ?', 'artist_locked = ?', 'era_id = ?', 'era_locked = ?',
         'cover_url = ?', 'disc_url = ?', 'disc_config = ?', 'is_visible = ?', 'is_featured = ?', 'sort_rank = ?',
         'manual_title = ?', 'manual_artist = ?',
         "updated_at = datetime('now')",
@@ -157,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // A format changed here is kept without having to say so: the sync
         // would otherwise put back what Discogs' formats suggest.
         (post('media_kind_locked') !== '' || $kind !== $item['media_kind']) ? 1 : 0,
+        $caseKind,
         $artistId,
         $artistLocked,
         $eraId,
@@ -572,6 +576,17 @@ require __DIR__ . '/../includes/admin_layout_top.php';
             Keep this even if a sync disagrees (a format you change here is kept anyway)
           </label>
         </div>
+
+        <?php if ($kind === 'dvd'): ?>
+          <div class="field">
+            <label for="case_kind">Case</label>
+            <select id="case_kind" name="case_kind">
+              <option value=""<?= $item['case_kind'] !== 'cd' ? ' selected' : '' ?>>DVD case</option>
+              <option value="cd"<?= $item['case_kind'] === 'cd' ? ' selected' : '' ?>>CD case</option>
+            </select>
+            <div class="hint">Some DVDs came in a CD-sized jewel case rather than the tall DVD one — pick which one the shelf draws.</div>
+          </div>
+        <?php endif; ?>
 
         <div class="field">
           <label for="artist_id">Artist page</label>

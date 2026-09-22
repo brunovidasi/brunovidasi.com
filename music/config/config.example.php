@@ -6,13 +6,14 @@
  * folder sits under public_html, so the Discogs token and your password hash
  * must be neither committable nor web-reachable.
  *
- * Instead, create a directory named 'vinyl-instance' ABOVE public_html:
+ * Instead, create a directory named 'music-instance' ABOVE public_html:
  *
- *   /home/<user>/domains/<domain>/vinyl-instance/config.php   <- this file's contents
- *   /home/<user>/domains/<domain>/vinyl-instance/data/        <- SQLite database
+ *   /home/<user>/domains/<domain>/music-instance/config.php   <- this file's contents
+ *   /home/<user>/domains/<domain>/music-instance/data/        <- SQLite database
  *
  * The app walks up the directory tree to find it, so no absolute server path is
- * ever hardcoded in the repo. /admin_status reports which one it found.
+ * ever hardcoded in the repo. The admin dashboard's "Where things are" card
+ * reports which one it found.
  */
 
 return [
@@ -43,7 +44,7 @@ return [
 
         // Sent as User-Agent on every call. Discogs requires something
         // identifying, and blocks generic library defaults.
-        'user_agent' => 'BrunoVinylCollection/1.0 +https://app.brunovidasi.com/vinyl-collection',
+        'user_agent' => 'BrunoVinylCollection/1.0 +https://brunovida.si/music',
 
         // Requests per minute to stay under. Discogs allows 60 authenticated /
         // 25 anonymous; the client throttles itself to this and also obeys the
@@ -52,7 +53,7 @@ return [
     ],
 
     // Shared secret for the daily cron URL:
-    //   https://app.brunovidasi.com/vinyl-collection/cron_sync.php?token=…
+    //   https://brunovida.si/music/cron_sync.php?token=…
     // Generate with:  php -r "echo bin2hex(random_bytes(24));"
     // Leave empty to keep the endpoint disabled — without a token it must never
     // be possible to trigger a sync anonymously.
@@ -68,7 +69,7 @@ return [
             'db_file'  => 'collection.development.sqlite',
         ],
         'production' => [
-            'base_url' => 'https://app.brunovidasi.com/vinyl-collection',
+            'base_url' => 'https://brunovida.si/music',
             'debug'    => false,
             'data_dir' => null,
             'db_file'  => 'collection.production.sqlite',

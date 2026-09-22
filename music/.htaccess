@@ -1,9 +1,8 @@
 # The Collection — front controller.
 #
-# The app is deployed at https://app.brunovidasi.com/vinyl-collection, i.e. a
-# subfolder of the app.brunovidasi.com document root (public_html/app). Only
-# public/ may ever be reachable over HTTP — config/, includes/, cron/, sql/ and
-# data/ must not be.
+# The app is deployed at https://brunovida.si/music, i.e. a subfolder of the
+# main site's document root (public_html/music). Only public/ may ever be
+# reachable over HTTP — config/, includes/, cron/, sql/ and data/ must not be.
 #
 # Rather than flattening the project to suit the host, every request is mapped
 # into public/. That keeps the layout on the server byte-identical to the repo,
@@ -20,7 +19,7 @@ DirectoryIndex index.php index.html
     RewriteEngine On
 
     # Must match the URL path this app is mounted at.
-    RewriteBase /vinyl-collection/
+    RewriteBase /music/
 
     # Force HTTPS. The second condition covers a proxy terminating TLS upstream,
     # which would otherwise leave %{HTTPS} off and cause a redirect loop.
@@ -28,11 +27,11 @@ DirectoryIndex index.php index.html
     RewriteCond %{HTTP:X-Forwarded-Proto} !=https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-    # Send anyone who reaches for /vinyl-collection/public/... to the canonical
+    # Send anyone who reaches for /music/public/... to the canonical
     # URL. THE_REQUEST holds the original request line and is untouched by the
     # internal rewrites below, so this only fires for a real client request.
-    RewriteCond %{THE_REQUEST} \s/vinyl-collection/public/ [NC]
-    RewriteRule ^public/(.*)$ /vinyl-collection/$1 [L,R=301]
+    RewriteCond %{THE_REQUEST} \s/music/public/ [NC]
+    RewriteRule ^public/(.*)$ /music/$1 [L,R=301]
 
     # Stop condition. In per-directory context the ruleset re-runs after a
     # rewrite, so without this the path would grow public/public/... until
@@ -40,13 +39,13 @@ DirectoryIndex index.php index.html
     RewriteRule ^public/ - [L]
 
     # The JSON API the frontend reads: /api/collection -> public/api/collection.php
-    RewriteCond %{DOCUMENT_ROOT}/vinyl-collection/public/api/$1.php -f
+    RewriteCond %{DOCUMENT_ROOT}/music/public/api/$1.php -f
     RewriteRule ^api/([A-Za-z0-9_]+)$ public/api/$1.php [L,QSA]
 
     # Pretty URLs for the pages. Every link in the app is written without .php,
     # so this is the rule that serves them: /admin -> public/admin.php. The -f
     # test means an unknown name falls through to the artist rule below.
-    RewriteCond %{DOCUMENT_ROOT}/vinyl-collection/public/$1.php -f
+    RewriteCond %{DOCUMENT_ROOT}/music/public/$1.php -f
     RewriteRule ^([A-Za-z0-9_]+)$ public/$1.php [L,QSA]
 
     # Artist pages are rows in the database, not files: /lady-gaga, /anitta…
@@ -55,11 +54,11 @@ DirectoryIndex index.php index.html
     # renders its own 404 for a slug that isn't in the database.
     #
     # The two conditions test inside public/, NOT %{REQUEST_FILENAME}: nothing
-    # exists at /vinyl-collection/<name> — every real file lives one level down
+    # exists at /music/<name> — every real file lives one level down
     # in public/ — so testing the request path would let this rule swallow
     # /prototypes/ and any other real directory.
-    RewriteCond %{DOCUMENT_ROOT}/vinyl-collection/public/$1 !-f
-    RewriteCond %{DOCUMENT_ROOT}/vinyl-collection/public/$1 !-d
+    RewriteCond %{DOCUMENT_ROOT}/music/public/$1 !-f
+    RewriteCond %{DOCUMENT_ROOT}/music/public/$1 !-d
     RewriteRule ^([a-z0-9][a-z0-9-]*)/?$ public/artist.php?slug=$1 [L,QSA]
 
     # Canonicalise the old .php URLs onto the extensionless ones. Restricted to
@@ -69,7 +68,7 @@ DirectoryIndex index.php index.html
     # cron_sync is excluded: its URL is baked into a scheduler's config and is
     # not ours to rename.
     RewriteCond %{REQUEST_METHOD} =GET
-    RewriteRule ^(?!cron_sync)([A-Za-z0-9_]+)\.php$ /vinyl-collection/$1 [L,R=301,NE]
+    RewriteRule ^(?!cron_sync)([A-Za-z0-9_]+)\.php$ /music/$1 [L,R=301,NE]
 
     # Everything else (css, js, fonts, images, prototypes) is served from public/.
     RewriteRule ^(.*)$ public/$1 [L]
@@ -79,8 +78,13 @@ DirectoryIndex index.php index.html
 # back through the rewrites above and land on public/404.php and public/500.php.
 # Apache only raises a 500 itself; a PHP fatal is caught by the shutdown handler
 # in includes/runtime.php, which renders the same page.
-ErrorDocument 404 /vinyl-collection/404
-ErrorDocument 500 /vinyl-collection/500
+#
+# Scoped to this subfolder only: the parent public_html/.htaccess declares its
+# own ErrorDocument 404/500 for the rest of the site, and since this file
+# declares its own RewriteEngine, Apache resolves ErrorDocument for requests
+# under /music/ from here instead of the parent.
+ErrorDocument 404 /music/404
+ErrorDocument 500 /music/500
 
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"

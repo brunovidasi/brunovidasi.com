@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Set up — The Collection</title>
+<title>Set up — Bruno's Music Collection</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="<?= e(url('../assets/favicon.ico')) ?>">
 <link rel="stylesheet" href="<?= e(url('css/admin.css')) ?>">

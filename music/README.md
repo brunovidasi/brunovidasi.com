@@ -3,14 +3,14 @@
 Bruno's records, CDs, DVDs and Blu-rays — a public site built on his own copy of
 the Discogs data, with an admin behind it for everything Discogs doesn't know.
 
-- **The shelf** — `/vinyl-collection/` — the whole collection as a pile on the
+- **The shelf** — `/music/` — the whole collection as a pile on the
   floor, a grid or a list. On the floor, **Organise vinyls on a crate** throws
   the pile into a wooden crate to flip through, by artist, release year, title,
   format, region or when it was added; **Back to the mess** tips it out again.
-- **Artist pages** — `/vinyl-collection/lady-gaga`, `/beyonce`, `/anitta`,
+- **Artist pages** — `/music/lady-gaga`, `/beyonce`, `/anitta`,
   `/rbd` — one page per artist, split into eras, each era split by format.
-- **Wantlist** — `/vinyl-collection/wantlist` — what isn't on the shelf yet.
-- **Admin** — `/vinyl-collection/admin` — one account, Bruno's.
+- **Wantlist** — `/music/wantlist` — what isn't on the shelf yet.
+- **Admin** — `/music/admin` — one account, Bruno's.
 
 ## How it works
 
@@ -121,7 +121,7 @@ short.
 The dashboard shows the URL with the token already in it:
 
 ```
-https://app.brunovidasi.com/vinyl-collection/cron_sync.php?token=…
+https://brunovida.si/music/cron_sync.php?token=…
 ```
 
 Set `cron_token` in the config to enable it (`php -r "echo bin2hex(random_bytes(24));"`).
@@ -180,7 +180,7 @@ wrong address takes exactly as long to answer as a wrong password.
 ## Deployment
 
 The repo deploys by FTP to `public_html/`, and this folder lands at
-`public_html/app/vinyl-collection`, i.e. `app.brunovidasi.com/vinyl-collection`.
+`public_html/music`, i.e. `brunovida.si/music`.
 Only `public/` is web-reachable: `.htaccess` maps every request into it, and
 `config/`, `includes/`, `cron/`, `sql/` and `data/` each carry a deny-all
 `.htaccess` as well.
@@ -191,11 +191,11 @@ Only `public/` is web-reachable: `.htaccess` maps every request into it, and
 deployed folder sits under `public_html`. Instead create, *above* `public_html`:
 
 ```
-/home/<user>/domains/<domain>/vinyl-instance/config.php   <- the real config
-/home/<user>/domains/<domain>/vinyl-instance/data/        <- the SQLite database
+/home/<user>/domains/<domain>/music-instance/config.php   <- the real config
+/home/<user>/domains/<domain>/music-instance/data/        <- the SQLite database
 ```
 
-The app walks up the tree looking for a directory named `vinyl-instance`, so no
+The app walks up the tree looking for a directory named `music-instance`, so no
 absolute server path is ever hardcoded. The dashboard's "Where things are" panel
 reports which config and database it actually found — check it after the first
 deploy.
@@ -203,11 +203,16 @@ deploy.
 ### First deploy
 
 1. Push to `main`; the GitHub Action FTPs the tree up.
-2. Create `vinyl-instance/config.php` with `'env' => 'production'`, the Discogs
+2. Create `music-instance/config.php` with `'env' => 'production'`, the Discogs
    token, `owner_email` and a `cron_token`.
-3. Open `/vinyl-collection/setup` and create the account.
-4. Sync from the dashboard (the first one takes a while — see above).
-5. Add the cron URL to a scheduler.
+3. Either upload the dev SQLite database as `music-instance/data/collection.production.sqlite`
+   to carry over everything already synced locally, or leave `data/` empty and let
+   `/music/setup` + a first sync build it fresh on the server.
+4. Open `/music/setup` and create the account (skip this if you uploaded the dev
+   database — the account already exists in it).
+5. Sync from the dashboard (the first one takes a while — see above), or skip it
+   if you uploaded a database that's already synced.
+6. Add the cron URL to a scheduler.
 
 ## Project structure
 

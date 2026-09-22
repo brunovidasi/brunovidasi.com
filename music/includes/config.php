@@ -14,7 +14,7 @@
  *     database is not something to bet on that behaviour.
  *
  * Found by walking up from this file looking for a directory named
- * 'vinyl-instance', so no absolute server path is ever hardcoded in the repo.
+ * 'music-instance', so no absolute server path is ever hardcoded in the repo.
  * Returns null during local development, where config/config.php is used instead.
  */
 function instance_dir(): ?string
@@ -25,7 +25,7 @@ function instance_dir(): ?string
         return $dir;
     }
 
-    $fromEnv = getenv('VINYL_INSTANCE');
+    $fromEnv = getenv('MUSIC_INSTANCE');
     if ($fromEnv !== false && $fromEnv !== '' && is_dir($fromEnv)) {
         return $dir = rtrim($fromEnv, '/');
     }
@@ -37,8 +37,8 @@ function instance_dir(): ?string
             break;
         }
         $cursor = $parent;
-        if (is_dir($cursor . '/vinyl-instance')) {
-            return $dir = $cursor . '/vinyl-instance';
+        if (is_dir($cursor . '/music-instance')) {
+            return $dir = $cursor . '/music-instance';
         }
     }
 
@@ -67,7 +67,7 @@ function app_config(): array
             // the window between a first deploy and the config being created,
             // and the absolute path is not something to hand to a visitor. The
             // detail goes to the error log.
-            error_log('Vinyl collection: no config file at ' . $path);
+            error_log('The Collection: no config file at ' . $path);
             http_response_code(500);
             die(PHP_SAPI === 'cli'
                 ? "Missing config file at $path\n"
@@ -116,7 +116,7 @@ function base_url(): string
 }
 
 /**
- * The URL path this app is mounted at, e.g. '/vinyl-collection/' when deployed
+ * The URL path this app is mounted at, e.g. '/music/' when deployed
  * to a subfolder, or '/' locally. Used to scope the session cookie so it isn't
  * shared with anything else on the same hostname, and to build links.
  */
@@ -126,7 +126,7 @@ function app_path(): string
     return $path ? rtrim($path, '/') . '/' : '/';
 }
 
-/** An app URL from a path: url('admin') -> '/vinyl-collection/admin'. */
+/** An app URL from a path: url('admin') -> '/music/admin'. */
 function url(string $path = ''): string
 {
     return app_path() . ltrim($path, '/');

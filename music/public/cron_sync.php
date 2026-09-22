@@ -2,7 +2,7 @@
 /**
  * The daily sync, triggered over HTTPS:
  *
- *   https://app.brunovidasi.com/vinyl-collection/cron_sync.php?token=…
+ *   https://brunovida.si/music/cron_sync.php?token=…
  *
  * Give that URL to any scheduler that can fetch a page once a day (the host's
  * cron with curl/wget, or an external pinger if the host's cron can't run PHP —

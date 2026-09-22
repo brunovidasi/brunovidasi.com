@@ -57,14 +57,19 @@ a { color: inherit; text-underline-offset: 3px; }
 .admin-bar {
   background: var(--ink);
   color: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.admin-bar-inner {
+  max-width: 1180px;
+  margin: 0 auto;
   padding: 0.9rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1.4rem;
   flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  z-index: 40;
 }
 
 .admin-bar .mark {
@@ -520,7 +525,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 
 @media (max-width: 720px) {
   .table-wrap { overflow-x: auto; }
-  .admin-bar { padding: 0.8rem 1rem; }
+  .admin-bar-inner { padding: 0.8rem 1rem; }
   .wrap { padding: 1.2rem 1rem 3rem; }
   .table .hide-sm { display: none; }
 }

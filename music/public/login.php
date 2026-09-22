@@ -44,7 +44,7 @@ $pageTitle = 'Sign in';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign in — The Collection</title>
+<title>Sign in — Bruno's Music Collection</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="<?= e(url('../assets/favicon.ico')) ?>">
 <link rel="stylesheet" href="<?= e(url('css/admin.css')) ?>">
@@ -61,7 +61,7 @@ $pageTitle = 'Sign in';
       <circle cx="50" cy="50" r="3.5" fill="#0B0A08"/>
     </svg>
 
-    <h1>The Collection</h1>
+    <h1>Bruno's Music Collection</h1>
     <p class="sub">Sign in to manage the shelf.</p>
 
     <?php if ($error !== null): ?>
