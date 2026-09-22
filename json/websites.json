@@ -1,5 +1,22 @@
 [
   {
+    "id": "vinylcollection",
+    "title": "Vinyl Collection",
+    "url": "brunovida.si/music",
+    "year": 2026,
+    "live": "https://brunovida.si/music",
+    "status": "live",
+    "icon": "💿",
+    "role": "Freelance — Full-Stack Design & Development",
+    "description": "A personal project built in my spare time to showcase my vinyl and CD collection while doubling as a playground for the front-end animation and interaction work I enjoy building.",
+    "extendedDescription": "Beyond the front end, I built a custom PHP admin panel and its own database to manage the collection, with Discogs API integration pulling in accurate release details, artwork and metadata for every record and CD.",
+    "logo": "img/clients/music.png",
+    "screenshot": "img/screenshots/music.jpg",
+    "screenshotGif": "",
+    "github": "https://github.com/brunovidasi/music-collection",
+    "company": "Freelance"
+  },
+  {
     "id": "darualab",
     "title": "Darua Lab",
     "url": "darualab.com",
