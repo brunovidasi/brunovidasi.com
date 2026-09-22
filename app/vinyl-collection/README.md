@@ -222,7 +222,7 @@ includes/
   auth.php           the one account
   fields.php         what a record has; Bruno's values over Discogs'
   items.php          rows -> cards and drawer payloads
-  hero.php           the header every public page shares: title, record, numbers, artist pills
+  hero.php           the header every public page shares: title, record, numbers, artist pills (a menu on a phone), the search box
   DiscogsClient.php  the API, throttled (writes are stubbed, see below)
   sync.php           the restartable sync
   seed_data.php      first-run artists and Lady Gaga's eras
@@ -237,7 +237,8 @@ public/
   css/artist.css     the era spine, layered on floor.css
   js/common.js       API + drawer, shared by every public page
   js/tiles.js        sleeves, cases and the discs that slide out of them
-  js/hero.js         the header's numbers counting up
+  js/hero.js         the header's numbers counting up, and the collections menu on a phone
+  js/controls.js     the search box that folds to a glass on a phone, and the format chips' scroll
   js/dropdown.js     the site-styled dropdown that stands in for a <select>
 cron/sync.php        the CLI equivalent of cron_sync.php
 ```

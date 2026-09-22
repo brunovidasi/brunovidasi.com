@@ -281,9 +281,29 @@ function hero_artist_cover(array $artist): string
 }
 
 /**
+ * The search box that opens the controls band on every public page. On a
+ * desktop it is the bare input; on a phone it folds down to a magnifying glass
+ * that opens the input across the bar (css/floor.css, js/controls.js).
+ */
+function hero_search(string $placeholder, string $label): string
+{
+    return '<div class="search" id="searchBox">
+      <button type="button" class="search-open" aria-label="Search" aria-expanded="false" aria-controls="search">
+        <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
+      </button>
+      <input type="search" id="search" placeholder="' . e($placeholder) . '" aria-label="' . e($label) . '">
+      <button type="button" class="search-close" aria-label="Clear search and close">✕</button>
+    </div>';
+}
+
+/**
  * The pills to the artist pages: a round cover, the name, how many records.
  * `$exceptId` leaves out the artist whose page this is; `$wantlist` adds the
  * link to the wantlist, when it is public.
+ *
+ * A phone has no room for a row of pills, so the same links are drawn a second
+ * time as a dropdown with the wantlist beside it (see .hero-pick in css/floor.css
+ * and js/hero.js). The stylesheet shows one or the other.
  */
 function hero_links(?int $exceptId = null, bool $wantlist = false, string $label = 'Artist pages'): string
 {
@@ -307,21 +327,32 @@ function hero_links(?int $exceptId = null, bool $wantlist = false, string $label
         }
     }
 
-    $html = '<nav class="hero-links' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">';
+    $pills = '';
     foreach ($artists as $artist) {
         $thumb = $options['covers'] ? hero_artist_cover($artist) : '';
 
-        $html .= '<a href="' . e(url($artist['slug'])) . '">'
+        $pills .= '<a href="' . e(url($artist['slug'])) . '">'
             . ($options['covers']
                 ? '<span class="hero-cover">' . ($thumb !== '' ? '<img src="' . e($thumb) . '" alt="" width="28" height="28" loading="lazy">' : '') . '</span>'
                 : '')
             . e($artist['name'])
             . (isset($counts[(int) $artist['id']]) ? '<i>' . $counts[(int) $artist['id']] . '</i>' : '') . '</a>';
     }
-    if ($wantlist) {
-        $html .= '<a class="wanted" href="' . e(url('wantlist')) . '">'
-            . e(trim((string) $options['wantlist_label']) ?: '♡ Wantlist') . '</a>';
-    }
 
-    return $html . '</nav>';
+    $wanted = $wantlist
+        ? '<a class="wanted" href="' . e(url('wantlist')) . '">' . e(trim((string) $options['wantlist_label']) ?: '♡ Wantlist') . '</a>'
+        : '';
+
+    $html = '<nav class="hero-links' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">'
+        . $pills . $wanted . '</nav>';
+
+    // The phone's version: the artists folded into a menu, the wantlist beside it.
+    $menu = $artists
+        ? '<div class="hero-menu dd"><button type="button" class="dd-button" aria-haspopup="true" aria-expanded="false">'
+            . ($exceptId === null ? 'Collections' : 'More collections')
+            . '</button><div class="dd-menu" hidden>' . $pills . '</div></div>'
+        : '';
+
+    return $html . '<nav class="hero-pick' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">'
+        . $menu . $wanted . '</nav>';
 }

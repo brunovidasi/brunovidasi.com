@@ -42,19 +42,21 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 
 <div class="controls">
   <div class="controls-inner">
-    <input type="search" id="search" placeholder="Search title, artist, barcode…" aria-label="Search collection">
+    <?= hero_search('Search title, artist, barcode…', 'Search collection') ?>
     <select id="sort" aria-label="Sort collection">
-      <option value="date-desc">Release date, newest first</option>
-      <option value="date-asc">Release date, oldest first</option>
-      <option value="artist">Artist, A–Z</option>
-      <option value="added">Recently added</option>
+      <option value="date-desc" data-short="Newest first">Release date, newest first</option>
+      <option value="date-asc" data-short="Oldest first">Release date, oldest first</option>
+      <option value="artist" data-short="Artist A–Z">Artist, A–Z</option>
+      <option value="added" data-short="Recently added">Recently added</option>
       <option value="custom" disabled hidden></option>
     </select>
-    <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.7" aria-label="Messiness of the pile"></label>
-    <button type="button" class="crate-btn" id="crateBtn">Put albums in a crate</button>
     <div class="organise" id="organiseWrap" hidden><span>Organise by</span> <select id="organiseBy" aria-label="Organise the crate by"></select></div>
-    <button type="button" class="crate-btn" id="digBtn" hidden>🎲 Dig a random one</button>
-    <button type="button" class="ghost" id="messBtn" hidden>Back to the mess</button>
+    <div class="floor-tools">
+      <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.7" aria-label="Messiness of the pile"></label>
+      <button type="button" class="crate-btn" id="crateBtn">Put albums in a crate</button>
+      <button type="button" class="crate-btn" id="digBtn" hidden>🎲 Dig a random one</button>
+      <button type="button" class="ghost" id="messBtn" hidden>Back to the mess</button>
+    </div>
     <div class="seg" id="viewToggle" role="group" aria-label="View">
       <button type="button" data-view="floor">Floor</button>
       <button type="button" data-view="grid">Grid</button>
@@ -89,6 +91,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
 <script src="<?= e(asset_url('js/hero.js')) ?>"></script>
+<script src="<?= e(asset_url('js/controls.js')) ?>"></script>
 <script src="<?= e(asset_url('js/dropdown.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
 <script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>

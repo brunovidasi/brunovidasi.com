@@ -29,7 +29,7 @@ http_response_code(500);
       <div class="display"><?= hero_title('A scratch in the record') ?></div>
       <?= hero_rule() ?>
       <p>Something went wrong on this page. It has been logged; try again in a moment.</p>
-      <p style="margin-top:1.2rem;"><a class="back" href="<?= htmlspecialchars(url('')) ?>">← The Collection</a></p>
+      <p style="margin-top:1.2rem;"><a class="back" href="<?= htmlspecialchars(url('')) ?>">← Full Collection</a></p>
     </div>
   </div>
   <?= hero_platter() ?>

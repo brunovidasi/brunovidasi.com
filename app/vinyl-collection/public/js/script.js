@@ -59,7 +59,9 @@ function syncSortMenu() {
   const [choice] = Object.entries(SORT_CHOICES).find(([, c]) => c.key === prefs.sort.key && c.dir === prefs.sort.dir) || [];
   const custom = $('sort').querySelector('option[value="custom"]');
   custom.hidden = Boolean(choice);
-  custom.textContent = `Sorted by ${SORT_BY[prefs.sort.key].label} ${prefs.sort.dir === 'asc' ? '↑' : '↓'}`;
+  const arrow = prefs.sort.dir === 'asc' ? '↑' : '↓';
+  custom.textContent = `Sorted by ${SORT_BY[prefs.sort.key].label} ${arrow}`;
+  custom.dataset.short = `${SORT_BY[prefs.sort.key].label} ${arrow}`;
   $('sort').value = choice || 'custom';
   dropdownSync($('sort'));
 }

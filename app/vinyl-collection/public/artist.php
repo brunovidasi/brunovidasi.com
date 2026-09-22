@@ -43,7 +43,7 @@ $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artis
 <header class="hero<?= hero_classes() ?>">
   <div class="hero-inner">
     <div class="hero-text">
-      <a class="back" href="<?= e(url('')) ?>">← The Collection</a>
+      <a class="back" href="<?= e(url('')) ?>">← Full Collection</a>
       <div class="display"><?= hero_title($artist['name']) ?></div>
       <?= hero_rule() ?>
       <p><?= e($artist['tagline'] ?: 'Every record in the collection, era by era.') ?></p>
@@ -56,7 +56,7 @@ $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artis
 
 <div class="controls">
   <div class="controls-inner">
-    <input type="search" id="search" placeholder="Search title, barcode…" aria-label="Search <?= e($artist['name']) ?> records">
+    <?= hero_search('Search title, barcode…', 'Search ' . $artist['name'] . ' records') ?>
     <div class="seg" id="orderToggle" role="group" aria-label="Order of eras">
       <button type="button" data-order="oldest">Oldest first</button>
       <button type="button" data-order="newest">Newest first</button>
@@ -96,6 +96,7 @@ $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artis
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
 <script src="<?= e(asset_url('js/hero.js')) ?>"></script>
+<script src="<?= e(asset_url('js/controls.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
 <script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
 <script src="<?= e(asset_url('js/artist.js')) ?>"></script>

@@ -24,3 +24,29 @@
     requestAnimationFrame(tick);
   });
 })();
+
+/* On a phone the artist pills fold into a "Collections" menu (includes/hero.php
+ * draws both; css/floor.css shows the one that fits). Opens on tap, closes on a
+ * tap anywhere else or Escape. The entries are ordinary links. */
+
+(() => {
+  const menu = document.querySelector('.hero-menu');
+  if (!menu) return;
+
+  const button = menu.querySelector('.dd-button');
+  const list = menu.querySelector('.dd-menu');
+
+  const setOpen = open => {
+    list.hidden = !open;
+    menu.classList.toggle('open', open);
+    button.setAttribute('aria-expanded', String(open));
+  };
+
+  button.addEventListener('click', () => setOpen(list.hidden));
+  document.addEventListener('pointerdown', e => { if (!menu.contains(e.target)) setOpen(false); });
+  menu.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    setOpen(false);
+    button.focus();
+  });
+})();

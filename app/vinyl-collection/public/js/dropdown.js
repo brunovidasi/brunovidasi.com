@@ -45,7 +45,19 @@ function dropdown(select) {
   /** Draw the menu and the button from whatever the select holds right now. */
   function sync() {
     const selected = select.selectedOptions[0];
-    button.textContent = selected ? selected.textContent : '';
+    if (selected?.dataset.short) {
+      // A choice with a data-short shows it on the button when the stylesheet
+      // is short of room (a phone); the menu always lists the full wording.
+      const full = document.createElement('span');
+      const short = document.createElement('span');
+      full.className = 'dd-full';
+      short.className = 'dd-short';
+      full.textContent = selected.textContent;
+      short.textContent = selected.dataset.short;
+      button.replaceChildren(full, short);
+    } else {
+      button.textContent = selected ? selected.textContent : '';
+    }
 
     menu.replaceChildren(...[...select.options]
       .filter(option => !option.hidden)

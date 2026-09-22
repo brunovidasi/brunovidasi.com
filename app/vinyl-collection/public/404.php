@@ -28,7 +28,7 @@ http_response_code(404);
       <div class="display"><?= hero_title('Not in the crate') ?></div>
       <?= hero_rule() ?>
       <p>That page isn't here. It may have been filed somewhere else.</p>
-      <p style="margin-top:1.2rem;"><a class="back" href="<?= htmlspecialchars(url('')) ?>">← The Collection</a></p>
+      <p style="margin-top:1.2rem;"><a class="back" href="<?= htmlspecialchars(url('')) ?>">← Full Collection</a></p>
     </div>
   </div>
   <?= hero_platter() ?>

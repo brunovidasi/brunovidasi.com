@@ -52,7 +52,7 @@ $count = (int) db()->query("
 
 <div class="controls">
   <div class="controls-inner">
-    <input type="search" id="search" placeholder="Search title, artist, barcode…" aria-label="Search the wantlist">
+    <?= hero_search('Search title, artist, barcode…', 'Search the wantlist') ?>
     <div class="seg" id="viewToggle" role="group" aria-label="View">
       <button type="button" data-view="floor">Floor</button>
       <button type="button" data-view="grid">Grid</button>
@@ -86,6 +86,8 @@ $count = (int) db()->query("
 </aside>
 
 <script src="<?= e(asset_url('js/common.js')) ?>"></script>
+<script src="<?= e(asset_url('js/hero.js')) ?>"></script>
+<script src="<?= e(asset_url('js/controls.js')) ?>"></script>
 <script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
 <script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
 <script src="<?= e(asset_url('js/wantlist.js')) ?>"></script>
