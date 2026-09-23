@@ -46,7 +46,7 @@ $count = (int) db()->query("
       <div class="display"><?= hero_title('Selling') ?></div>
       <?= hero_rule() ?>
       <p><?= $count ?> record<?= $count === 1 ? '' : 's' ?> up for sale, sold through eBay.</p>
-      <?= hero_links() ?>
+      <?= hero_links(null, true) ?>
     </div>
   </div>
   <?= hero_platter('sleeve') ?>
