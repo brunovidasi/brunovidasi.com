@@ -337,7 +337,7 @@ function gridEl(list) {
     cap.innerHTML = `
       <b title="${esc(it.title)}">${esc(it.title)}</b>
       <small title="${esc(it.artist)}">${esc(it.artist)}</small>
-      <span class="m"><i class="kc ${it.kind}">${KIND_LABEL[it.kind]}</i>${esc(it.year || '')}</span>`;
+      <span class="m"><i class="kc ${it.kind}">${KIND_LABEL[it.kind]}</i>${it.region ? `<span class="gregion" title="${esc(it.regionName)}">${esc(it.region)}</span>` : ''}${esc(it.year || '')}</span>`;
 
     cell.append(stage, cap);
     grid.appendChild(cell);

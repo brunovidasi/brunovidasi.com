@@ -9,8 +9,10 @@ require_once __DIR__ . '/../../includes/bootstrap_api.php';
 $item = item_by_id((int) query('id'));
 
 // A hidden or removed record must 404 rather than open, or an old link would
-// keep showing something the admin took off the site.
-if ($item === null || !$item['is_visible'] || $item['missing_since'] !== null) {
+// keep showing something the admin took off the site. A sold listing is the
+// selling equivalent of "removed".
+if ($item === null || !$item['is_visible'] || $item['missing_since'] !== null
+    || ($item['source'] === 'for_sale' && $item['sold_at'] !== null)) {
     json_response(['error' => 'No such record.'], 404);
 }
 

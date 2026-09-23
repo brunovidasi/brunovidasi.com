@@ -77,6 +77,26 @@ function run_migrations(PDO $db): void
             'genres'         => 'TEXT',
             'styles'         => 'TEXT',
             'tracklist'      => 'TEXT',
+            // Selling (source = 'for_sale'): the asking price and what it's in.
+            // Blank price means "not priced yet" — never shown as for sale.
+            'sale_price'         => 'REAL',
+            'sale_currency'      => 'TEXT',
+            // The eBay listing this copy points buyers to. No eBay API — pasted
+            // by hand, just a link.
+            'ebay_url'           => 'TEXT',
+            // Photos pasted by hand beyond Discogs' own gallery (condition
+            // shots, the actual sleeve): JSON array of URLs.
+            'extra_photos_json'  => 'TEXT',
+            // 'new' | 'used'. NULL until it's set in the admin.
+            'sale_condition'     => 'TEXT',
+            // Which of Discogs' images and the photos above actually show in
+            // the drawer's gallery, in order: JSON array of URLs. NULL means
+            // everything available is shown — the default until curated by
+            // hand; see drawer_section() in includes/items.php.
+            'gallery_json'       => 'TEXT',
+            // Set the moment this copy sells. Kept, not deleted — same
+            // reasoning as missing_since. NULL means still for sale.
+            'sold_at'            => 'TEXT',
         ],
         'artists' => [
             // The picture on this artist's pill in the header, a URL. Blank means

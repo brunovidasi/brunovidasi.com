@@ -140,7 +140,7 @@ CREATE INDEX IF NOT EXISTS idx_era_rules_era ON era_rules (era_id);
 -- rather than a duplicate.
 CREATE TABLE IF NOT EXISTS items (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    source              TEXT NOT NULL DEFAULT 'collection',   -- collection | wantlist | searching
+    source              TEXT NOT NULL DEFAULT 'collection',   -- collection | wantlist | searching | for_sale
     instance_id         INTEGER,
     release_id          INTEGER REFERENCES releases(discogs_id) ON DELETE SET NULL,
     folder_id           INTEGER,

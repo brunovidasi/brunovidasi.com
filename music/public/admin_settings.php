@@ -36,12 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('site_intro', post('site_intro'));
     set_setting('detail_max_age_days', max(1, (int) post('detail_max_age_days')));
     set_setting('show_wantlist', post('show_wantlist') !== '');
+    set_setting('show_selling', post('show_selling') !== '');
 
     // The header (see hero_options() in includes/hero.php). Text is cut to a
     // length the pills and the strip can hold; a blank number label falls back
     // to its own name.
     set_setting('hero_eyebrow', mb_substr(post('hero_eyebrow'), 0, 60));
     set_setting('hero_wantlist_label', mb_substr(post('hero_wantlist_label'), 0, 24));
+    set_setting('hero_selling_label', mb_substr(post('hero_selling_label'), 0, 24));
     foreach (['split_title', 'rule', 'platter', 'tonearm', 'covers', 'counts', 'animate', 'stats'] as $switch) {
         set_setting("hero_$switch", post("hero_$switch") !== '');
     }
@@ -87,6 +89,10 @@ require __DIR__ . '/../includes/admin_layout_top.php';
       <label class="check">
         <input type="checkbox" name="show_wantlist" value="1"<?= setting('show_wantlist', true) ? ' checked' : '' ?>>
         Show the wantlist page on the site
+      </label>
+      <label class="check">
+        <input type="checkbox" name="show_selling" value="1"<?= setting('show_selling', true) ? ' checked' : '' ?>>
+        Show the selling page on the site
       </label>
 
       <div class="form-actions">
@@ -136,6 +142,11 @@ require __DIR__ . '/../includes/admin_layout_top.php';
         <label for="hero_wantlist_label">Wantlist link</label>
         <input type="text" id="hero_wantlist_label" name="hero_wantlist_label" maxlength="24" value="<?= e($hero['wantlist_label']) ?>">
         <div class="hint">The gold pill that goes to the wantlist. A ♡ in front is just a character.</div>
+      </div>
+      <div class="field">
+        <label for="hero_selling_label">Selling link</label>
+        <input type="text" id="hero_selling_label" name="hero_selling_label" maxlength="24" value="<?= e($hero['selling_label']) ?>">
+        <div class="hint">The gold pill that goes to what's for sale.</div>
       </div>
     </div>
 

@@ -60,6 +60,22 @@ function nullable(string $value): ?string
     return $value === '' ? null : $value;
 }
 
+/**
+ * The release id in a pasted Discogs link ("https://www.discogs.com/release/
+ * 249504-Some-Title", a locale-prefixed one like "/en/release/249504", or just
+ * "/release/249504"), or a bare id typed on its own. Null if neither.
+ */
+function discogs_release_id_from_input(string $input): ?int
+{
+    $input = trim($input);
+
+    if (preg_match('#discogs\.com/(?:[a-z-]+/)?release/(\d+)#i', $input, $m)) {
+        return (int) $m[1];
+    }
+
+    return ctype_digit($input) ? (int) $input : null;
+}
+
 function slugify(string $text): string
 {
     $slug = strtolower(trim($text));

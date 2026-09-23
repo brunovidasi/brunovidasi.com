@@ -517,6 +517,37 @@ function item_card(array $row): array
     ];
 }
 
+/** The shop card: everything a sleeve needs (item_card()), plus what a listing needs to sell. */
+function sale_card(array $row): array
+{
+    $price = $row['sale_price'] !== null && $row['sale_price'] !== '' ? (float) $row['sale_price'] : null;
+
+    return item_card($row) + [
+        'price'      => $price,
+        'currency'   => (string) ($row['sale_currency'] ?: 'AUD'),
+        'priceLabel' => sale_price_label($price, $row['sale_currency'] ?? null),
+        'ebay'       => safe_http_url((string) ($row['ebay_url'] ?? '')) ? $row['ebay_url'] : '',
+        'condition'      => in_array($row['sale_condition'] ?? null, ['new', 'used'], true) ? $row['sale_condition'] : null,
+        'conditionLabel' => ['new' => 'New', 'used' => 'Used'][$row['sale_condition'] ?? ''] ?? '',
+        // When it was listed — item_card()'s 'added' is Discogs' collection date,
+        // which a for-sale row never has, so the shop sorts by this instead.
+        'listed'     => (string) ($row['created_at'] ?? ''),
+    ];
+}
+
+/** "A$45.00", "€30.00", "120.00 BRL" — formatted server-side so every caller agrees. */
+function sale_price_label(?float $amount, ?string $currency): string
+{
+    if ($amount === null) {
+        return '';
+    }
+
+    $code = strtoupper(trim((string) $currency)) ?: 'AUD';
+    $symbol = ['AUD' => 'A$', 'USD' => '$', 'EUR' => '€', 'GBP' => '£', 'BRL' => 'R$'][$code] ?? "$code ";
+
+    return $symbol . number_format($amount, 2);
+}
+
 /* ---------- The drawer ---------- */
 
 function drawer_fact(string $key, string $label, mixed $value, string $type): ?array
@@ -583,6 +614,25 @@ function item_drawer(array $row): array
         }
     }
 
+    // A listing's price and condition lead the drawer — it's what a buyer
+    // opened this for. 'price' gets its own fact type so the front end can
+    // pick it out and draw it the way the shop card does (bold, gold),
+    // instead of blending into the rest of Bruno's own notes.
+    if ($row['source'] === 'for_sale') {
+        $priceValue = $row['sale_price'] !== null ? sale_price_label((float) $row['sale_price'], $row['sale_currency']) : null;
+        $priceFact = drawer_fact('price', 'Price', $priceValue, 'price');
+        if ($priceFact !== null) {
+            $priceFact['mine'] = true;
+            array_unshift($mine, $priceFact);
+        }
+        $conditionLabel = ['new' => 'New', 'used' => 'Used'][$row['sale_condition'] ?? ''] ?? null;
+        $conditionFact = drawer_fact('condition', 'Condition', $conditionLabel, 'text');
+        if ($conditionFact !== null) {
+            $conditionFact['mine'] = true;
+            $mine[] = $conditionFact;
+        }
+    }
+
     array_push($mine, ...drawer_box_facts($row));
 
     // 'community' and 'marketplace' read several columns at once, so they are
@@ -646,17 +696,51 @@ function drawer_box_facts(array $row): array
     return array_map(fn ($fact) => $fact + ['mine' => false], array_filter($facts));
 }
 
-function drawer_section(array $row, string $key, array $def): mixed
+/**
+ * Every picture a record's drawer could show: Discogs' own gallery, then
+ * whatever's been pasted in by hand (a selling row's own condition photos).
+ */
+function drawer_gallery_all(array $row): array
 {
-    return match ($key) {
-        'gallery' => array_values(array_map(
+    return array_merge(
+        array_map(
             fn ($image) => [
                 'full'  => (string) ($image['uri'] ?? ''),
                 'thumb' => (string) ($image['uri150'] ?? $image['uri'] ?? ''),
                 'type'  => (string) ($image['type'] ?? 'secondary'),
             ],
             array_filter(json_column($row['images_json'] ?? null), fn ($i) => !empty($i['uri']))
-        )) ?: null,
+        ),
+        array_map(
+            fn ($url) => ['full' => $url, 'thumb' => $url, 'type' => 'yours'],
+            array_filter(json_column($row['extra_photos_json'] ?? null), 'safe_http_url')
+        )
+    );
+}
+
+/**
+ * What the drawer actually shows: everything available, unless a selling
+ * listing has curated it down to a chosen few (gallery_json — a saved list of
+ * URLs, in the order to show them). Curating to nothing is honoured as
+ * nothing, not "not curated yet".
+ */
+function drawer_gallery(array $row): array
+{
+    $all = drawer_gallery_all($row);
+    $chosen = json_column($row['gallery_json'] ?? null, ['__uncurated__']);
+    if ($chosen === ['__uncurated__']) {
+        return $all;
+    }
+
+    $byUrl = array_column($all, null, 'full');
+
+    return array_values(array_filter(array_map(fn ($url) => $byUrl[$url] ?? null, $chosen)));
+}
+
+function drawer_section(array $row, string $key, array $def): mixed
+{
+    return match ($key) {
+        'gallery' => drawer_gallery($row) ?: null,
 
         'tracklist' => (item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null)) ?: null,
 

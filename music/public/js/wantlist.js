@@ -49,7 +49,7 @@ function renderChips() {
     .join('');
 }
 
-function sectionEl(section, index) {
+function sectionEl(section) {
   const wrap = document.createElement('section');
   wrap.className = 'era';
   wrap.id = `era-${section.slug}`;
@@ -57,7 +57,6 @@ function sectionEl(section, index) {
   const head = document.createElement('div');
   head.className = 'era-head';
   head.innerHTML = `
-    <span class="era-num">${String(index + 1).padStart(2, '0')}</span>
     <div class="era-title">
       <h2>${esc(section.name)}</h2>
       <div class="era-sub">${esc(section.tagline)}</div>

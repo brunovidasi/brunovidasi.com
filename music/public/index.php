@@ -38,7 +38,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
       <?= hero_rule() ?>
       <p><?= e($intro) ?></p>
       <?= hero_stats(hero_figures()) ?>
-      <?= hero_links(null, true) ?>
+      <?= hero_links(null, true, 'Artist pages', true) ?>
     </div>
   </div>
   <?= hero_platter() ?>

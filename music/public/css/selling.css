@@ -1,0 +1,214 @@
+/* The shop: a plain grid of product cards. floor.css (loaded first) carries
+ * the fonts, colours, header, controls bar, footer and drawer — this file is
+ * only the card face itself, which is deliberately not the collection's tile
+ * pile: a buyer wants a cover, a price and a link to buy, all at once. */
+
+.sale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.6rem;
+  margin: 0.4rem auto 3rem;
+}
+
+.sale-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .25s cubic-bezier(.2,.8,.25,1), border-color .25s;
+}
+
+.sale-card:hover,
+.sale-card:focus-within {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+}
+
+.sale-cover {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--surface-2);
+}
+
+.sale-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sale-body {
+  padding: 0.9rem 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sale-body h3 {
+  margin: 0;
+  font: 600 1rem/1.3 'Fraunces', serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sale-card:hover h3 { color: var(--gold); }
+
+.sale-artist {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Format, region and year, the same idea as the collection grid's caption. */
+.sale-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.65;
+  font-variant-numeric: tabular-nums;
+}
+.sale-meta .kc { margin-right: 0.5rem; }
+.sale-region { margin-right: 0.5rem; }
+
+.sale-condition {
+  margin-right: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.68rem;
+}
+.sale-condition.new { color: var(--gold); border-color: rgba(201,154,46,.55); }
+
+.sale-row {
+  margin-top: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.sale-price {
+  font: 600 1.05rem/1 'Space Grotesk', sans-serif;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.sale-row .buy {
+  flex: none;
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid var(--gold);
+  border-radius: 999px;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background .2s, color .2s;
+}
+
+.sale-row .buy:hover,
+.sale-row .buy:focus-visible {
+  background: var(--gold);
+  color: var(--ink);
+  outline: none;
+}
+
+@media (max-width: 720px) {
+  .sale-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+  .sale-body { padding: 0.7rem 0.8rem 0.9rem; }
+}
+
+/* ---------- List view ---------- */
+/* Reuses .list/.lrow from floor.css (the collection's own list view) with a
+   column template swapped for what a shop row needs: no barcode, price and a
+   buy link instead of "details". */
+
+.list.selling { --cols: 52px minmax(0, 2fr) 64px 72px 84px 76px minmax(0, 1.1fr); }
+.lcondition { font-size: 0.78rem; opacity: 0.75; }
+
+.lprice {
+  font: 600 0.95rem/1 'Space Grotesk', sans-serif;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+}
+
+.lprice .buy {
+  font: 600 0.78rem/1 'Space Grotesk', sans-serif;
+  color: var(--text);
+  opacity: 0.75;
+  text-decoration: none;
+}
+.lprice .buy:hover, .lprice .buy:focus-visible { opacity: 1; color: var(--gold); outline: none; }
+
+/* ---------- The spotlight's cover ---------- */
+/* Plays the part js/spotlight.js's .spot-tile plays for the collection: the
+   thing that flies from the card to the middle of the stage. A listing has
+   one picture, not a sleeve with discs, so it is just an image. */
+
+.sale-spot-cover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-2);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 26px 50px rgba(0,0,0,.7);
+}
+
+.sale-spot-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Artist/year and price stack tight on the left, close under the photo; the
+   buy button sits beside them, centred against the two lines together rather
+   than pinned to either one. */
+.spot-below-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.spot-who { margin: 0; font-size: 0.92rem; }
+
+.spot-price {
+  margin: 0.15rem 0 0;
+  font: 700 1.5rem/1 'Space Grotesk', sans-serif;
+  color: var(--gold);
+}
+
+.spot-buy {
+  flex: none;
+  padding: 0.55rem 1.1rem;
+  background: var(--gold);
+  color: var(--ink);
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: filter .15s;
+  /* .spot * turns off clicks for the whole spotlight layer (so a click on the
+     cover or its text reaches the overlay behind and closes the drawer) —
+     this is the one thing in it that must actually be clickable. */
+  pointer-events: auto !important;
+}
+.spot-buy:hover, .spot-buy:focus-visible { filter: brightness(1.1); outline: none; }
+
+.facts dd.price {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.15em;
+}

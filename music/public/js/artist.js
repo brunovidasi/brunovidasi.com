@@ -34,6 +34,9 @@ const GROUPS = [
 let sections = [];
 let total = 0;
 let wantedTotal = 0;
+// Collapsed by default: the wantlist is a spoiler for what Bruno doesn't have
+// yet, so it stays tucked away until it's asked for.
+let wantedExpanded = false;
 const prefs = loadPrefs();
 
 function loadPrefs() {
@@ -105,14 +108,27 @@ function eraHead(section, index) {
   const count = section.items.length;
 
   // The wanted section isn't part of the chronology, so it takes a mark in
-  // place of an era number.
+  // place of an era number. It's also the one section that can be collapsed,
+  // so it gets a chevron instead of a plain count.
   head.innerHTML = `
     <span class="era-num">${section.wanted ? '+' : String(index + 1).padStart(2, '0')}</span>
     <div class="era-title">
       <h2>${esc(section.name)}</h2>
       ${sub ? `<div class="era-sub">${esc(sub)}</div>` : ''}
     </div>
-    <div class="era-counts">${count} ${section.wanted ? 'wanted' : count === 1 ? 'record' : 'records'}</div>`;
+    <div class="era-counts">${count} ${section.wanted ? 'wanted' : count === 1 ? 'record' : 'records'}</div>
+    ${section.wanted ? '<span class="era-toggle" aria-hidden="true">&#9656;</span>' : ''}`;
+
+  if (section.wanted) {
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('aria-expanded', String(wantedExpanded));
+    const toggle = () => { wantedExpanded = !wantedExpanded; render(); };
+    head.addEventListener('click', toggle);
+    head.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  }
 
   return head;
 }
@@ -120,8 +136,13 @@ function eraHead(section, index) {
 function eraEl(section, index) {
   const era = document.createElement('section');
   era.className = section.wanted ? 'era wanted' : 'era';
+  if (section.wanted && wantedExpanded) era.classList.add('expanded');
   era.id = `era-${section.slug}`;
   era.appendChild(eraHead(section, index));
+
+  // Collapsed by default: only the heading (with its count) shows until it's
+  // clicked open.
+  if (section.wanted && !wantedExpanded) return era;
 
   // The list already says what each record is in its Format column, so an era
   // is one table, in whatever order its headers were last clicked to.
@@ -280,6 +301,20 @@ $('orderToggle').addEventListener('click', e => {
   savePrefs();
   syncOrderToggle();
   render();
+});
+
+// Jumping to the wantlist from the nav should show it, not scroll to a
+// collapsed heading. Expanding rebuilds #content (and the nav itself, which
+// orphans the very link that was clicked), so the browser's own fragment
+// navigation can't be trusted here — scroll to it by hand once the expanded
+// section exists.
+$('eraNav').addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a || a.hash !== '#era-wanted' || wantedExpanded) return;
+  e.preventDefault();
+  wantedExpanded = true;
+  render();
+  $('era-wanted').scrollIntoView({ block: 'start' });
 });
 
 function setSections(data) {

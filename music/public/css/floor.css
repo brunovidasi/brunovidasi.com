@@ -941,6 +941,7 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   font-variant-numeric: tabular-nums;
 }
 .grid .cap .kc { margin-right: 0.4rem; }
+.grid .cap .gregion { margin-right: 0.4rem; }
 
 @media (max-width: 720px) {
   .grid {
@@ -1328,6 +1329,19 @@ footer {
 
 .hero-links a.wanted:hover,
 .hero-pick > a.wanted:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+/* The Selling link, styled the same way — solid, not an artist, always stands out. */
+.hero-links a.selling,
+.hero-pick > a.selling {
+  padding-left: 0.8rem;
+  border-style: dashed;
+  border-color: var(--gold);
+  background: rgba(201, 154, 46, 0.14);
+  color: var(--gold);
+}
+
+.hero-links a.selling:hover,
+.hero-pick > a.selling:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
 
 /* The same links for a phone: the artists in a menu, the wantlist beside it.
    The pills above and this are alternatives; one is always hidden. */

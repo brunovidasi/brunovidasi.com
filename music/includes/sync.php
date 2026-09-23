@@ -663,6 +663,44 @@ function sync_one_item(array $item): string
     return 'Synced with Discogs. What you typed here was left alone.' . $note;
 }
 
+/**
+ * Starts a for-sale listing from nothing but a Discogs release id: fetches the
+ * full release, drops it in the release cache, and creates the items row that
+ * points at it. Mirrors what a sync does for one record, minus a collection
+ * entry — there is no instance_id here, this copy was never in the collection.
+ *
+ * @throws DiscogsException if Discogs has no such release
+ */
+function create_sale_item_from_discogs(int $releaseId): array
+{
+    $client = sync_client();
+    $full = $client->release($releaseId);
+
+    // upsert_release_detail() is UPDATE-only; this stub row gives it something
+    // to hit, exactly as if a basic sync had already seen this release.
+    db()->prepare('INSERT OR IGNORE INTO releases (discogs_id) VALUES (?)')->execute([$releaseId]);
+    upsert_release_detail($full);
+
+    // upsert_release_detail() never touches cover_image/thumb — only a
+    // collection/wantlist sync's "basic_information" does — so without this a
+    // fresh listing would have no cover at all until the picker is used by
+    // hand. The full detail's own gallery has the same picture; use its first
+    // one (Discogs marks the sleeve "primary" when it knows which one that is).
+    $images = $full['images'] ?? [];
+    $primary = current(array_filter($images, fn ($i) => ($i['type'] ?? '') === 'primary')) ?: ($images[0] ?? null);
+    if ($primary) {
+        db()->prepare('UPDATE releases SET cover_image = ?, thumb = ? WHERE discogs_id = ?')
+            ->execute([(string) ($primary['uri'] ?? ''), (string) ($primary['uri150'] ?? $primary['uri'] ?? ''), $releaseId]);
+    }
+
+    db()->prepare("
+        INSERT INTO items (source, release_id, media_kind, sale_currency, is_visible)
+        VALUES ('for_sale', ?, ?, 'AUD', 0)
+    ")->execute([$releaseId, detect_media_kind($full['formats'] ?? $full['format'] ?? [])]);
+
+    return item_by_id((int) db()->lastInsertId());
+}
+
 /* ---------- Filing everything into artists and eras ---------- */
 
 /**

@@ -9,6 +9,7 @@ $navItems = [
     'admin'           => 'Dashboard',
     'admin_items'     => 'Collection',
     'admin_wantlist'  => 'Wantlist',
+    'admin_selling'   => 'Selling',
     'admin_artists'   => 'Artists & eras',
     'admin_fields'    => 'Drawer fields',
     'admin_sync_runs' => 'Sync history',
@@ -18,9 +19,10 @@ $navItems = [
 $page = current_page();
 // The sub-pages light up their parent's tab.
 $navActive = match ($page) {
-    'admin_item'  => 'admin_items',
-    'admin_eras'  => 'admin_artists',
-    default       => $page,
+    'admin_item'         => 'admin_items',
+    'admin_selling_item' => 'admin_selling',
+    'admin_eras'          => 'admin_artists',
+    default               => $page,
 };
 ?>
 <!DOCTYPE html>

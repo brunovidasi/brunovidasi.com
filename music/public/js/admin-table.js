@@ -6,6 +6,20 @@
  * `data-sort-value` where what it shows isn't what it should sort by (a year that
  * should sort by the full date). Blank cells go last either way. */
 
+/* A text box that filters a table's rows live, no reload — opt in with
+ * data-table-search="tableId" on the input. Used where the list is short
+ * enough not to need the collection's server-side search (the selling list). */
+document.querySelectorAll('[data-table-search]').forEach(input => {
+  const table = document.getElementById(input.dataset.tableSearch);
+  if (!table || !table.tBodies[0]) return;
+  const rows = [...table.tBodies[0].rows];
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    rows.forEach(row => { row.hidden = q !== '' && !row.textContent.toLowerCase().includes(q); });
+  });
+});
+
 document.querySelectorAll('table[data-sortable]').forEach(table => {
   const body = table.tBodies[0];
   const headings = [...table.tHead.rows[0].cells];

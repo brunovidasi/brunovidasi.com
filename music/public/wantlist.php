@@ -44,11 +44,11 @@ $count = (int) db()->query("
 <header class="hero<?= hero_classes() ?>">
   <div class="hero-inner">
     <div class="hero-text">
-      <a class="back" href="<?= e(url('')) ?>">← The Collection</a>
+      <a class="back" href="<?= e(url('')) ?>">← Full Collection</a>
       <div class="display"><?= hero_title('Still Wanted') ?></div>
       <?= hero_rule() ?>
       <p><?= $count ?> records that aren't on the shelf yet.</p>
-      <?= hero_links() ?>
+      <?= hero_links(null, false, 'Artist pages', true) ?>
     </div>
   </div>
   <?= hero_platter('sleeve') ?>

@@ -39,6 +39,7 @@ function hero_options(): array
     $defaults = [
         'eyebrow'        => 'Private collection · Synced from Discogs',
         'wantlist_label' => '♡ Wantlist',
+        'selling_label'  => '🛍 Selling',
         'split_title'    => true,
         'rule'           => true,
         'platter'        => true,
@@ -305,14 +306,15 @@ function hero_search(string $placeholder, string $label): string
  * time as a dropdown with the wantlist beside it (see .hero-pick in css/floor.css
  * and js/hero.js). The stylesheet shows one or the other.
  */
-function hero_links(?int $exceptId = null, bool $wantlist = false, string $label = 'Artist pages'): string
+function hero_links(?int $exceptId = null, bool $wantlist = false, string $label = 'Artist pages', bool $selling = false): string
 {
     $options = hero_options();
     $artists = db()->query('SELECT id, slug, name, hero_cover FROM artists WHERE is_published = 1 ORDER BY position, name')->fetchAll();
     $artists = array_values(array_filter($artists, fn ($a) => (int) $a['id'] !== $exceptId));
     $wantlist = $wantlist && setting('show_wantlist', true);
+    $selling = $selling && setting('show_selling', true);
 
-    if (!$artists && !$wantlist) {
+    if (!$artists && !$wantlist && !$selling) {
         return '';
     }
 
@@ -342,9 +344,12 @@ function hero_links(?int $exceptId = null, bool $wantlist = false, string $label
     $wanted = $wantlist
         ? '<a class="wanted" href="' . e(url('wantlist')) . '">' . e(trim((string) $options['wantlist_label']) ?: '♡ Wantlist') . '</a>'
         : '';
+    $sellingLink = $selling
+        ? '<a class="selling" href="' . e(url('selling')) . '">' . e(trim((string) $options['selling_label']) ?: '🛍 Selling') . '</a>'
+        : '';
 
     $html = '<nav class="hero-links' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">'
-        . $pills . $wanted . '</nav>';
+        . $pills . $sellingLink . $wanted . '</nav>';
 
     // The phone's version: the artists folded into a menu, the wantlist beside it.
     $menu = $artists
@@ -354,5 +359,5 @@ function hero_links(?int $exceptId = null, bool $wantlist = false, string $label
         : '';
 
     return $html . '<nav class="hero-pick' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">'
-        . $menu . $wanted . '</nav>';
+        . $menu . $sellingLink . $wanted . '</nav>';
 }

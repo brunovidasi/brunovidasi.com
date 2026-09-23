@@ -85,7 +85,11 @@ function factHtml(fact) {
       html = esc(value);
   }
 
-  return `<dt>${esc(fact.label)}</dt><dd${fact.mine ? ' class="mine"' : ''}>${html}</dd>`;
+  // A listing's price gets its own class so the shop can draw it the way the
+  // card does (bold, gold) rather than like any other fact.
+  const classes = [fact.mine && 'mine', fact.type === 'price' && 'price'].filter(Boolean).join(' ');
+
+  return `<dt>${esc(fact.label)}</dt><dd${classes ? ` class="${classes}"` : ''}>${html}</dd>`;
 }
 
 function trackHtml(track) {

@@ -24,6 +24,7 @@ foreach ($counts as $row) {
 }
 
 $searching = (int) db()->query("SELECT COUNT(*) FROM items WHERE source = 'searching'")->fetchColumn();
+$selling = (int) db()->query("SELECT COUNT(*) FROM items WHERE source = 'for_sale' AND is_visible = 1 AND sold_at IS NULL")->fetchColumn();
 $missing = (int) db()->query('SELECT COUNT(*) FROM items WHERE missing_since IS NOT NULL')->fetchColumn();
 $hidden = (int) db()->query('SELECT COUNT(*) FROM items WHERE is_visible = 0')->fetchColumn();
 $pendingDetails = count_pending_details();
@@ -47,6 +48,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
     <?php endif; ?>
   <?php endforeach; ?>
   <div class="stat"><b><?= $wantlist + $searching ?></b><span>Wanted &amp; hunting</span></div>
+  <?php if ($selling): ?><div class="stat"><b><a href="<?= e(url('admin_selling')) ?>"><?= $selling ?></a></b><span>For sale</span></div><?php endif; ?>
 </div>
 
 <?php if ($missing || $hidden || $pendingDetails): ?>
