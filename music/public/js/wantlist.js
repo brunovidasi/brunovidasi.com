@@ -9,17 +9,18 @@
 const CACHE_KEY = 'vinyl_wantlist_v2';
 const PREFS_KEY = 'vinyl_wantlist_prefs_v1';
 const CACHE_TTL = 1000 * 60 * 60 * 6;
-const VIEWS = ['floor', 'grid'];
+const VIEWS = ['floor', 'grid', 'list'];
 
 let sections = [];
 let total = 0;
 const prefs = loadPrefs();
 
 function loadPrefs() {
-  const defaults = { view: 'floor', mess: 0.6, fmt: 'all' };
+  const defaults = { view: 'floor', mess: 0.6, fmt: 'all', sort: DEFAULT_SORT };
   try {
     const p = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
     if (!VIEWS.includes(p.view)) p.view = defaults.view;
+    p.sort = validSort(p.sort);
     return p;
   } catch (e) { return defaults; }
 }
@@ -63,8 +64,18 @@ function sectionEl(section) {
     </div>
     <div class="era-counts">${section.items.length} ${section.items.length === 1 ? 'record' : 'records'}</div>`;
 
-  wrap.append(head, prefs.view === 'grid' ? gridEl(section.items) : floorEl(section.items, prefs.mess));
+  if (prefs.view === 'list') {
+    wrap.appendChild(listEl(sortList(section.items, prefs.sort), { sort: prefs.sort, onSort: sortBy }));
+  } else {
+    wrap.appendChild(prefs.view === 'grid' ? gridEl(section.items) : floorEl(section.items, prefs.mess));
+  }
   return wrap;
+}
+
+function sortBy(key) {
+  prefs.sort = nextSort(prefs.sort, key);
+  savePrefs();
+  render();
 }
 
 function render() {

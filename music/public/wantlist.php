@@ -57,11 +57,12 @@ $count = (int) db()->query("
 <div class="controls">
   <div class="controls-inner">
     <?= hero_search('Search title, artist, barcode…', 'Search the wantlist') ?>
+    <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.6" aria-label="Messiness of the pile"></label>
     <div class="seg" id="viewToggle" role="group" aria-label="View">
       <button type="button" data-view="floor">Floor</button>
       <button type="button" data-view="grid">Grid</button>
+      <button type="button" data-view="list">List</button>
     </div>
-    <label class="mess" id="messWrap">Messiness <input type="range" id="mess" min="0" max="1.4" step="0.05" value="0.6" aria-label="Messiness of the pile"></label>
   </div>
 </div>
 
