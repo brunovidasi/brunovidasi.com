@@ -766,12 +766,16 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
     #101114;
 }
 .tile.kind-bd .sleeve {
-  padding-top: 1.9em;
   background:
     linear-gradient(90deg, rgba(0,0,0,.28) 0 .95em, rgba(255,255,255,.18) .95em 1em, transparent 1em),
     #0a5fd0;
 }
-.tile.kind-bd .sleeve::before {
+/* the synthetic "Blu-ray" bar is only needed on sleeves with no cover photo
+   of their own — real Blu-ray box art already carries that blue branding bar */
+.tile.kind-bd .sleeve:not(:has(img)) {
+  padding-top: 1.9em;
+}
+.tile.kind-bd .sleeve:not(:has(img))::before {
   content: "Blu-ray";
   position: absolute;
   left: 1.15em;
