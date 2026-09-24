@@ -46,7 +46,15 @@
   --line: rgba(242,234,216,0.14);
   --line-strong: rgba(242,234,216,0.32);
   --shadow: 0 10px 24px rgba(0,0,0,0.5);
+  /* The width of the page's content column (header, controls, records, footer).
+     1300px up to a 1600px screen, and from there it grows with the screen so a
+     big monitor isn't mostly empty floor at the sides. */
+  --page-max: 1300px;
 }
+
+@media (min-width: 1600px) { :root { --page-max: 1500px; } }
+@media (min-width: 1920px) { :root { --page-max: 1760px; } }
+@media (min-width: 2400px) { :root { --page-max: 2200px; } }
 
 * { box-sizing: border-box; }
 
@@ -126,7 +134,7 @@ header.hero::before {
 .hero-inner {
   /* the header carries the 1.5rem side padding itself, so take it off here to
      land on the same content width as .controls and main */
-  max-width: calc(1300px - 3rem);
+  max-width: calc(var(--page-max) - 3rem);
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -236,7 +244,7 @@ header.hero::before {
   z-index: 1;
   /* a little below the middle, so the tonearm's pivot clears the top of the page */
   top: calc(50% + 1.2rem);
-  right: max(-40px, calc((100vw - 1300px) / 2 - 110px));
+  right: max(-40px, calc((100vw - var(--page-max)) / 2 - 110px));
   width: 340px;
   height: 340px;
   margin-top: -170px;
@@ -339,7 +347,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
 
 .controls-inner {
   --control-h: 2.65rem;
-  max-width: 1300px;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: 0.8rem 1.5rem;
   display: flex;
@@ -389,7 +397,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
 .filters {
   position: relative;
   z-index: 5;
-  max-width: 1300px;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: 1rem 1.5rem 0;
   display: grid;
@@ -707,7 +715,7 @@ button.ghost:hover { background: rgba(242,234,216,0.1); }
 
 /* ---------- Floor view ---------- */
 
-main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
+main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 
 .floor {
   --s: 1;
@@ -721,6 +729,10 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   padding: 3.5rem 1rem 3rem;
 }
 @media (max-width: 720px) { .floor { --s: 0.62; } }
+/* On a big screen the records grow a little with the wider floor, so it still
+   reads as records on the floor rather than a scatter of stamps. */
+@media (min-width: 1920px) { .floor { --s: 1.12; } }
+@media (min-width: 2400px) { .floor { --s: 1.28; } }
 
 .floor .tile {
   width: calc(var(--w) * 1px * var(--s));
@@ -895,7 +907,8 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 
 .grid {
   --s: 1;
-  max-width: 1100px;
+  /* 1100px at the default 1300px page, widening with it on a big screen */
+  max-width: calc(var(--page-max) - 200px);
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
@@ -1242,7 +1255,7 @@ main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 }
 
 footer {
-  max-width: 1300px;
+  max-width: var(--page-max);
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;

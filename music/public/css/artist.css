@@ -44,7 +44,7 @@ html { scroll-behavior: smooth; }
 .era-nav[hidden] { display: none; }
 
 .era-nav-inner {
-  max-width: 1300px;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: 0.55rem 1.5rem;
   display: flex;
