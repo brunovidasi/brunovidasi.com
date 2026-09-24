@@ -175,6 +175,56 @@ function renderDrawerBody(item, error) {
     ${sections}`;
 }
 
+/* ---------- The drawer's picture ----------
+ *
+ * The cover and then every other picture in the gallery, side by side in a strip
+ * that snaps one at a time, so on a phone a finger swipes through them. The
+ * gallery's thumbnails jump the strip to theirs, and a count in the corner says
+ * where it is.
+ */
+
+function coverSlides(item) {
+  const gallery = ((item && item.sections && item.sections.gallery) || []).map(image => image.full);
+  return [...new Set([item && item.cover, ...gallery].filter(Boolean))];
+}
+
+let coverUrls = [];
+let coverAt = 0;
+
+function paintCover(urls) {
+  coverUrls = urls;
+  $('drawerCover').innerHTML = urls.length
+    ? `<div class="cover-track">${urls.map((url, n) => `<img src="${esc(url)}" alt="" draggable="false"${n ? ' loading="lazy"' : ''}>`).join('')}</div>`
+      + (urls.length > 1 ? `<span class="cover-count" aria-hidden="true"></span>` : '')
+    : coverFallbackSVG();
+  markSlide(0);
+}
+
+/** Which picture is showing: the count, and the thumbnail that matches it. */
+function markSlide(n) {
+  coverAt = n;
+  const count = $('drawerCover').querySelector('.cover-count');
+  if (count) count.textContent = `${n + 1} / ${coverUrls.length}`;
+  $('drawerBody').querySelectorAll('.thumb').forEach(thumb => {
+    thumb.classList.toggle('on', thumb.dataset.cover === coverUrls[n]);
+  });
+}
+
+/** A thumbnail was picked: the strip slides to its picture, and the spotlight's sleeve shows it too. */
+function showSlide(url) {
+  if (typeof Spotlight !== 'undefined') Spotlight.cover(url);
+  let n = coverUrls.indexOf(url);
+  if (n < 0) {
+    paintCover([...coverUrls, url]);
+    n = coverUrls.length - 1;
+  }
+  markSlide(n);
+  const track = $('drawerCover').querySelector('.cover-track');
+  if (!track) return;
+  const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  track.scrollTo({ left: n * track.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+}
+
 async function openDrawer(id, fromHash, source) {
   currentItemId = id;
 
@@ -189,9 +239,7 @@ async function openDrawer(id, fromHash, source) {
   $('drawerBody').innerHTML = cached
     ? renderDrawerBody(cached)
     : '<div class="detail-state">Opening…</div>';
-  $('drawerCover').innerHTML = cached && cached.cover
-    ? `<img src="${esc(cached.cover)}" alt="">`
-    : coverFallbackSVG();
+  paintCover(cached ? coverSlides(cached) : []);
 
   $('drawer').scrollTop = 0;
   // the record stands up on the left of the page while the drawer opens on the right
@@ -209,7 +257,8 @@ async function openDrawer(id, fromHash, source) {
     if (currentItemId !== id) return;
 
     $('drawerBody').innerHTML = renderDrawerBody(item);
-    if (item.cover) $('drawerCover').innerHTML = `<img src="${esc(item.cover)}" alt="">`;
+    const slides = coverSlides(item);
+    if (slides.length) paintCover(slides);
   } catch (error) {
     if (currentItemId === id) $('drawerBody').innerHTML = renderDrawerBody(null, error.message);
   }
@@ -217,6 +266,7 @@ async function openDrawer(id, fromHash, source) {
 
 function closeDrawer(fromHash) {
   currentItemId = null;
+  if (typeof releaseTile === 'function') releaseTile(); // a record tapped on a phone puts its discs back
   $('overlay').classList.remove('open');
   $('drawer').classList.remove('open');
   if (typeof Spotlight !== 'undefined') Spotlight.close();
@@ -236,8 +286,7 @@ function wireDrawer() {
   $('drawerBody').addEventListener('click', event => {
     const thumb = event.target.closest('[data-cover]');
     if (thumb) {
-      $('drawerCover').innerHTML = `<img src="${esc(thumb.dataset.cover)}" alt="">`;
-      if (typeof Spotlight !== 'undefined') Spotlight.cover(thumb.dataset.cover);
+      showSlide(thumb.dataset.cover);
       return;
     }
     if (event.target.closest('[data-retry]') && currentItemId !== null) {
@@ -246,6 +295,16 @@ function wireDrawer() {
       openDrawer(id);
     }
   });
+
+  // scroll doesn't bubble, and the strip is drawn afresh for every record
+  $('drawerCover').addEventListener('scroll', event => {
+    const track = event.target;
+    if (!track.classList || !track.classList.contains('cover-track')) return;
+    const n = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+    if (n === coverAt || coverUrls[n] === undefined) return;
+    markSlide(n);
+    if (typeof Spotlight !== 'undefined') Spotlight.cover(coverUrls[n]);
+  }, true);
 
   $('overlay').addEventListener('click', () => closeDrawer());
   $('drawerClose').addEventListener('click', () => closeDrawer());

@@ -273,6 +273,51 @@ function hoverOff(t) {
   hideTip();
 }
 
+/* ---------- A tap, on a touch screen ----------
+ *
+ * A finger has no hover to bring the discs out ahead of the click, and lifting
+ * it counts as the pointer leaving, so a tap used to flash them out and straight
+ * back in just as the drawer covered the page. A tap now plays the hover on
+ * purpose: the record comes out of its sleeve, the drawer opens once the discs
+ * are most of the way out, and they stay out until it closes, then slide home.
+ * Where the spotlight has room it carries the discs on itself, so there is no
+ * wait. Reduced motion, a list row, or a record with no discs: no wait either.
+ */
+
+const PULL_MS = 380;  // the discs' slide is .6s; most of the way out by this
+let heldTile = null;
+let pullTimer = 0;
+
+function pressTile(el) {
+  const t = el.classList.contains('tile') ? el : el.querySelector('.tile');
+  if (!t || matchMedia('(prefers-reduced-motion: reduce)').matches) { openDrawer(el._it.id, false, el); return; }
+  if (pullTimer && heldTile === t) return; // a second tap while it is coming out
+
+  releaseTile(true);
+  heldTile = t;
+  t._on = true;
+  reveal(t);
+
+  const room = typeof Spotlight !== 'undefined' && Spotlight.fits && Spotlight.fits(t._it.id);
+  if (!t._it.discs.length || room) { openDrawer(el._it.id, false, el); return; }
+  pullTimer = setTimeout(() => {
+    pullTimer = 0;
+    openDrawer(el._it.id, false, el);
+  }, PULL_MS);
+}
+
+/** The drawer closed: the held record's discs go back in once it is out of the way. */
+function releaseTile(now) {
+  clearTimeout(pullTimer);
+  pullTimer = 0;
+  const t = heldTile;
+  heldTile = null;
+  if (!t) return;
+  const back = () => { if (heldTile !== t) hoverOff(t); };
+  if (now) back();
+  else setTimeout(back, 220); // the drawer's slide away
+}
+
 /**
  * Wires a container full of tiles: hover reveals the discs, click (or Enter, or
  * Space) opens the drawer.
@@ -284,14 +329,20 @@ function hoverOff(t) {
 function wireTiles(content, wantsLabel = () => true) {
   tipEl ??= document.getElementById('tip');
 
-  content.addEventListener('pointerover', e => { const t = e.target.closest('.tile'); if (t && !t._on) hoverOn(t, e, wantsLabel()); });
-  content.addEventListener('pointerout', e => { const t = e.target.closest('.tile'); if (t && !t.contains(e.relatedTarget)) hoverOff(t); });
-  content.addEventListener('focusin', e => { const t = e.target.closest('.tile'); if (t && !t._on) hoverOn(t, null, wantsLabel()); });
-  content.addEventListener('focusout', e => { const t = e.target.closest('.tile'); if (t) hoverOff(t); });
+  // A finger's over and out are the tap itself (pressTile), and the focus a tap
+  // leaves behind isn't a keyboard's, so none of them count as hovering.
+  let pointer = 'mouse';
+  content.addEventListener('pointerdown', e => { pointer = e.pointerType; });
+  content.addEventListener('pointerover', e => { const t = e.target.closest('.tile'); if (t && !t._on && e.pointerType !== 'touch') hoverOn(t, e, wantsLabel()); });
+  content.addEventListener('pointerout', e => { const t = e.target.closest('.tile'); if (t && t !== heldTile && e.pointerType !== 'touch' && !t.contains(e.relatedTarget)) hoverOff(t); });
+  content.addEventListener('focusin', e => { const t = e.target.closest('.tile'); if (t && !t._on && t.matches(':focus-visible')) hoverOn(t, null, wantsLabel()); });
+  content.addEventListener('focusout', e => { const t = e.target.closest('.tile'); if (t && t !== heldTile) hoverOff(t); });
 
   content.addEventListener('click', e => {
     const el = e.target.closest('.tile, .lrow, .cell');
-    if (el && el._it) openDrawer(el._it.id, false, el);
+    if (!el || !el._it) return;
+    if (pointer === 'touch') pressTile(el);
+    else openDrawer(el._it.id, false, el);
   });
   content.addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;

@@ -270,6 +270,12 @@ const Spotlight = (() => {
     return true;
   }
 
+  /** Whether a record would get a spotlight now, rather than the drawer alone. */
+  function fits(id) {
+    const it = cardIndex.get(id);
+    return Boolean(it && !document.body.classList.contains('crate-on') && layout(it));
+  }
+
   /* ---------- Closing ---------- */
 
   /** The element the record should land on: the one it came from, or whichever now shows it. */
@@ -402,5 +408,5 @@ const Spotlight = (() => {
     }, 120);
   });
 
-  return { open, close, cover, adopt };
+  return { open, close, cover, adopt, fits };
 })();
