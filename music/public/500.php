@@ -28,6 +28,7 @@ http_response_code(500);
 <body>
 
 <header class="hero<?= hero_classes() ?>">
+  <?= hero_intro() ?>
   <div class="hero-inner">
     <div class="hero-text">
       <div class="display"><?= hero_title('A scratch in the record') ?></div>

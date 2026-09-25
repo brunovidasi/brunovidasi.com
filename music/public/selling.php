@@ -40,6 +40,7 @@ $count = (int) db()->query("
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
 
 <header class="hero<?= hero_classes() ?>">
+  <?= hero_intro() ?>
   <div class="hero-inner">
     <div class="hero-text">
       <a class="back" href="<?= e(url('')) ?>">← Full Collection</a>

@@ -31,6 +31,7 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
 
 <header class="hero<?= hero_classes() ?>">
+  <?= hero_intro() ?>
   <div class="hero-inner">
     <div class="hero-text">
       <?= hero_eyebrow() ?>

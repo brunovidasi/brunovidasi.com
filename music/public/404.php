@@ -27,6 +27,7 @@ http_response_code(404);
 <body>
 
 <header class="hero<?= hero_classes() ?>">
+  <?= hero_intro() ?>
   <div class="hero-inner">
     <div class="hero-text">
       <div class="display"><?= hero_title('Not in the crate') ?></div>

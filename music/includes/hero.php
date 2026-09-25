@@ -194,6 +194,26 @@ function hero_classes(): string
 }
 
 /**
+ * The header settles in once, on the first view of a page in a tab. After that
+ * (a reload, the back button, or Safari reopening a tab it put away to save
+ * memory) it is simply there, and so is a page opened while hidden. The
+ * animation starts from invisible, so a snapshot taken in its first frames (the
+ * tab switcher's) would otherwise show an empty header.
+ *
+ * Goes first inside <header>, so it runs before any of the header is drawn.
+ */
+function hero_intro(): string
+{
+    if (!hero_options()['animate']) {
+        return '';
+    }
+
+    return "<script>(function (h) { try { var k = 'hero-seen:' + location.pathname + location.search;"
+        . " if (document.visibilityState === 'hidden' || sessionStorage.getItem(k)) h.classList.add('hero-still');"
+        . " sessionStorage.setItem(k, '1'); } catch (e) {} })(document.currentScript.parentNode);</script>";
+}
+
+/**
  * What is on the shelf, in numbers. `$artistId` narrows it to one artist's
  * records. The light query, not public_items(): the header needs a count and a
  * year per record, not every column of every release.

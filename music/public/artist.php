@@ -45,6 +45,7 @@ $accent = preg_match('/^#[0-9a-f]{3,8}$/i', (string) $artist['accent']) ? $artis
 <body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>" data-slug="<?= e($artist['slug']) ?>" style="--accent: <?= e($accent) ?>">
 
 <header class="hero<?= hero_classes() ?>">
+  <?= hero_intro() ?>
   <div class="hero-inner">
     <div class="hero-text">
       <a class="back" href="<?= e(url('')) ?>">← Full Collection</a>
