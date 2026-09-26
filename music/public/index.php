@@ -1,49 +1,25 @@
 <?php
-/**
- * The shelf. Static markup, dynamic data: the records arrive from
- * api/collection (see js/script.js), and the only PHP here is the page's own
- * wording and the header's numbers and links to the artist pages (includes/hero.php).
- */
 
-require_once __DIR__ . '/../includes/bootstrap_api.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
-$title = setting('site_title', 'The Collection');
-$intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight from the Discogs shelf.");
+$title = setting('site_title', DEFAULT_SITE_TITLE);
+$intro = setting('site_intro', DEFAULT_SITE_INTRO);
+
+$page = [
+    'title'   => "$title — Bruno's Vinyl",
+    'styles'  => ['floor', 'crate', 'morph', 'spotlight'],
+    'lead'    => hero_eyebrow(),
+    'heading' => $title,
+    'intro'   => e($intro),
+    'stats'   => hero_stats(hero_figures()),
+    'links'   => hero_links(null, true, 'Artist pages', true),
+    'platter' => hero_platter(),
+    'loading' => 'Loading the collection…',
+    'scripts' => ['common', 'hero', 'controls', 'dropdown', 'tiles', 'shelf', 'spotlight-core', 'spotlight', 'crate', 'morph', 'script'],
+];
+
+require __DIR__ . '/../includes/templates/public_top.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= e($title) ?> — Bruno's Vinyl</title>
-<link rel="icon" type="image/svg+xml" href="<?= e(url('favicon/favicon.svg')) ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?= e(url('favicon/favicon-32x32.png')) ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?= e(url('favicon/favicon-16x16.png')) ?>">
-<link rel="apple-touch-icon" sizes="180x180" href="<?= e(url('favicon/apple-touch-icon.png')) ?>">
-<link rel="manifest" href="<?= e(url('favicon/site.webmanifest')) ?>">
-<link rel="preload" href="<?= e(url('fonts/fraunces-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="<?= e(url('fonts/space-grotesk-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="<?= e(asset_url('css/floor.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset_url('css/crate.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset_url('css/morph.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset_url('css/spotlight.css')) ?>">
-</head>
-<body data-api="<?= e(url('api/')) ?>" data-version="<?= e(data_version()) ?>">
-
-<header class="hero<?= hero_classes() ?>">
-  <?= hero_intro() ?>
-  <div class="hero-inner">
-    <div class="hero-text">
-      <?= hero_eyebrow() ?>
-      <div class="display"><?= hero_title($title) ?></div>
-      <?= hero_rule() ?>
-      <p><?= e($intro) ?></p>
-      <?= hero_stats(hero_figures()) ?>
-      <?= hero_links(null, true, 'Artist pages', true) ?>
-    </div>
-  </div>
-  <?= hero_platter() ?>
-</header>
 
 <div class="controls">
   <div class="controls-inner">
@@ -70,39 +46,4 @@ $intro = setting('site_intro', "Every record, CD and disc Bruno owns, straight f
   </div>
 </div>
 
-<div class="filters">
-  <div class="chips" id="formats" role="group" aria-label="Filter by format"></div>
-  <span class="meta" id="countMeta"></span>
-</div>
-
-<main>
-  <div id="content">
-    <div class="state"><p>Loading the collection…</p></div>
-  </div>
-</main>
-
-<footer>
-  <span>&copy; 2026 | Data from Discogs API | <a href="https://brunovida.si/contact" target="_blank" rel="noopener">Contact Bruno</a></span>
-  <span>Made with &#10084;&#65039; by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></span>
-</footer>
-
-<div id="tip"></div>
-<div class="overlay" id="overlay"></div>
-<aside class="drawer" id="drawer">
-  <button class="drawer-close" id="drawerClose" aria-label="Close">✕</button>
-  <div class="drawer-cover" id="drawerCover"></div>
-  <div class="drawer-body" id="drawerBody"></div>
-</aside>
-
-<script src="<?= e(asset_url('js/common.js')) ?>"></script>
-<script src="<?= e(asset_url('js/hero.js')) ?>"></script>
-<script src="<?= e(asset_url('js/controls.js')) ?>"></script>
-<script src="<?= e(asset_url('js/dropdown.js')) ?>"></script>
-<script src="<?= e(asset_url('js/tiles.js')) ?>"></script>
-<script src="<?= e(asset_url('js/spotlight.js')) ?>"></script>
-<script src="<?= e(asset_url('js/crate.js')) ?>"></script>
-<script src="<?= e(asset_url('js/morph.js')) ?>"></script>
-<script src="<?= e(asset_url('js/script.js')) ?>"></script>
-
-</body>
-</html>
+<?php require __DIR__ . '/../includes/templates/public_bottom.php'; ?>

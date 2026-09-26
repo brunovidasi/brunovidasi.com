@@ -1,13 +1,6 @@
-/* ---------- The spotlight ----------
- *
- * What js/spotlight.js needs: the layer the record stands in, on top of the
- * dimmed page and under the drawer; the discs' further slide-out; the title
- * block; and the drawer with its own cover and title left out, since the record
- * on the left already says both.
- *
- * The layer, and everything in it, ignores the pointer: a click anywhere but on
- * the drawer reaches the overlay underneath and closes it.
- */
+/* The spotlight (js/spotlight.js, js/sale-spotlight.js): the layer the record
+   stands in, over the dimmed page and under the drawer. It ignores the
+   pointer, so a click anywhere but the drawer reaches the overlay and closes it. */
 
 .spot {
   position: fixed;
@@ -20,15 +13,13 @@
 
 /* ---------- The page behind ---------- */
 
-/* Not a flat dim: a pool of light left on the record, the page falling away
-   around it. js/spotlight.js says where the pool is (--spot-x, --spot-y). It
-   stays in the page while the spotlight is up so that it can fade out as well as in. */
+/* A pool of light on the record (--spot-x, --spot-y), the page falling away around it. */
 body.spot-on .overlay {
   display: block;
   opacity: 0;
   pointer-events: none;
   background: radial-gradient(ellipse 65% 75% at var(--spot-x, 30%) var(--spot-y, 65%), rgba(8,5,2,.3), rgba(8,5,2,.9));
-  /* a little out of focus, so the page's own type doesn't fight the title */
+  /* out of focus, so the page's type doesn't fight the title */
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   transition: opacity .6s ease;
@@ -45,11 +36,10 @@ body.spot-on .overlay.open { opacity: 1; pointer-events: auto; }
   cursor: default;
 }
 .spot-tile .sleeve { box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 26px 50px rgba(0,0,0,.7); }
-/* the hover's small step aside for the discs: the sleeve stands square to the text here */
+/* The sleeve stands square to the text, without the hover's step aside. */
 .spot-tile.hot .sleeve { transform: none; }
 
-/* Its own reach, further than the hover's third, and slower: the discs arrive
-   after the sleeve has lifted off. Both are on the disc so they can differ (--reach2). */
+/* The discs slide further than the hover's third (--reach2), and slower. */
 .spot-tile .d {
   --out2: calc((var(--reach2, 1.6) - (1 + var(--dd)) / 2) / var(--dd));
   transition-duration: .95s;
@@ -57,10 +47,10 @@ body.spot-on .overlay.open { opacity: 1; pointer-events: auto; }
 }
 .spot-tile.spot-out .d { transform: translateX(calc(var(--out2) * 100%)); }
 
-/* a disc in the hand is a disc being played */
+/* A disc in the hand is being played. */
 .spot-tile .sp { animation: dspin 5s linear infinite; }
 
-/* and the floor under it, so it stands on something */
+/* The floor it stands on. */
 .spot-floor {
   position: absolute;
   height: 34px;
@@ -98,9 +88,7 @@ body.spot-on .overlay.open { opacity: 1; pointer-events: auto; }
 }
 .spot-info h2 {
   font-size: clamp(1.9rem, 3.4vw, 3.2rem);
-  /* The clamp below clips at the line boxes, and Fraunces' descenders (g, y, p) and
-     accents reach past a tight one: this is as tight as it goes without cutting them.
-     Padding would do it too, but lets the top of a fourth, clamped line show through. */
+  /* As tight as the line-clamp allows without cutting Fraunces' descenders and accents. */
   line-height: 1.25;
   margin: calc(0.55rem - 0.1em) 0 -0.1em;
   overflow-wrap: anywhere;
@@ -116,9 +104,9 @@ body.spot-on .overlay.open { opacity: 1; pointer-events: auto; }
 
 .drawer.spot-on { transition: transform .65s cubic-bezier(.2,.8,.25,1); }
 .drawer.spot-on .drawer-cover { display: none; }
-/* room for the close button where the cover was */
+/* room for the close button, where the cover was */
 .drawer.spot-on .drawer-body { padding-top: 4.2rem; }
-/* The title and artist are on the left now; they stay for a screen reader. */
+/* The title and artist are on the left; they stay for a screen reader. */
 .drawer.spot-on .drawer-body > h2,
 .drawer.spot-on .drawer-body > .artist {
   position: absolute;

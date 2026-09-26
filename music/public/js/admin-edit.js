@@ -1,5 +1,6 @@
-/* Starts the tracklist box from Discogs' list, for correcting one title rather
- * than retyping the lot. Asks first if the box already has something in it. */
+/* What the record and listing edit pages share: the tracklist starting from
+ * Discogs' list, and a guard on the Sync and Delete buttons, which are forms of
+ * their own and reload the page. */
 
 const copyTracks = document.getElementById('copyDiscogsTracks');
 const tracklistBox = document.getElementById('o_tracklist');
@@ -12,19 +13,16 @@ if (copyTracks && tracklistBox) {
   });
 }
 
-/* The header buttons. Sync and Delete are forms of their own, so both reload
- * the page: a sync that ate half-typed edits would be a nasty surprise, hence
- * the check on the main form first. Same shape as admin-item.js. */
-
-const sellingForm = document.getElementById('sellingForm');
+const saveButton = document.querySelector('.page-head button[form]');
+const editForm = saveButton && document.getElementById(saveButton.getAttribute('form'));
 const syncForm = document.getElementById('syncForm');
 const deleteForm = document.getElementById('deleteForm');
 
 let dirty = false;
-if (sellingForm) {
-  sellingForm.addEventListener('input', () => { dirty = true; });
-  sellingForm.addEventListener('change', () => { dirty = true; });
-  sellingForm.addEventListener('submit', () => { dirty = false; });
+if (editForm) {
+  editForm.addEventListener('input', () => { dirty = true; });
+  editForm.addEventListener('change', () => { dirty = true; });
+  editForm.addEventListener('submit', () => { dirty = false; });
 }
 
 if (syncForm) {
@@ -42,6 +40,6 @@ if (syncForm) {
 
 if (deleteForm) {
   deleteForm.addEventListener('submit', event => {
-    if (!confirm('Delete this listing and everything typed about it?')) event.preventDefault();
+    if (!confirm(deleteForm.dataset.confirm)) event.preventDefault();
   });
 }

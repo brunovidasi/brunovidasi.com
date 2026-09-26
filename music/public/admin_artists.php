@@ -1,23 +1,16 @@
 <?php
 
-/**
- * The artists that get their own page. Four to begin with; nothing stops there
- * being more.
- */
-
-require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin.php';
 
 require_login();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (is_post()) {
     csrf_verify();
 
     $id = (int) post('id');
-    $action = post('action');
 
-    if ($action === 'delete' && $id) {
-        // Eras and their rules go with it (ON DELETE CASCADE); the items stay,
-        // and the next sync simply finds no page to file them on.
+    if (post('action') === 'delete' && $id) {
+        // Its eras and rules go with it; the records stay and are simply not filed on a page.
         db()->prepare('DELETE FROM artists WHERE id = ?')->execute([$id]);
         assign_items_to_artists_and_eras();
         flash('Artist page deleted.');
@@ -30,60 +23,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('admin_artists');
     }
 
-    // One name per line in the box; stored as JSON so the matcher can use them.
-    $matchNames = array_values(array_filter(array_map('trim', preg_split('/[\r\n]+/', post('match_names')))));
-    if (!$matchNames) {
-        $matchNames = [$name];
-    }
+    $matchNames = array_values(array_filter(array_map('trim', preg_split('/[\r\n]+/', post('match_names'))))) ?: [$name];
 
-    $slug = slugify(post('slug') ?: $name);
-
-    // The picture on their header pill: an address typed in wins over one ticked
-    // in the picker, and only a web address is kept. Blank is "automatic".
+    // A typed address wins over one ticked in the picker. Blank is "automatic".
     $heroCover = trim(post('hero_cover_url')) ?: trim(post('hero_cover'));
     $heroCover = preg_match('#^https?://\S+$#i', $heroCover) ? $heroCover : null;
 
+    $values = [
+        'slug'         => slugify(post('slug') ?: $name),
+        'name'         => $name,
+        'match_names'  => json_encode($matchNames, JSON_UNESCAPED_UNICODE),
+        'tagline'      => nullable(post('tagline')),
+        'intro'        => nullable(post('intro')),
+        'accent'       => nullable(post('accent')),
+        'position'     => (int) post('position'),
+        'is_published' => posted_flag('is_published'),
+    ];
+
+    $slugTaken = db()->prepare('SELECT 1 FROM artists WHERE slug = ? AND id <> ?');
+    $slugTaken->execute([$values['slug'], $id]);
+    if ($slugTaken->fetchColumn() || is_site_path($values['slug'])) {
+        flash("The URL \"{$values['slug']}\" is already taken. Pick another one.", 'error');
+        redirect('admin_artists?edit=' . ($id ?: 'new'));
+    }
+
     if ($id) {
-        db()->prepare('UPDATE artists SET slug = ?, name = ?, match_names = ?, tagline = ?, intro = ?, accent = ?, hero_cover = ?, position = ?, is_published = ? WHERE id = ?')
-            ->execute([$slug, $name, json_encode($matchNames, JSON_UNESCAPED_UNICODE), nullable(post('tagline')), nullable(post('intro')), nullable(post('accent')), $heroCover, (int) post('position'), post('is_published') !== '' ? 1 : 0, $id]);
+        $values['hero_cover'] = $heroCover;
+        $sets = implode(', ', array_map(fn ($column) => "$column = ?", array_keys($values)));
+        db()->prepare("UPDATE artists SET $sets WHERE id = ?")->execute([...array_values($values), $id]);
         flash('Saved ' . $name . '.');
     } else {
-        db()->prepare('INSERT INTO artists (slug, name, match_names, tagline, intro, accent, position, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-            ->execute([$slug, $name, json_encode($matchNames, JSON_UNESCAPED_UNICODE), nullable(post('tagline')), nullable(post('intro')), nullable(post('accent')), (int) post('position'), post('is_published') !== '' ? 1 : 0]);
+        $columns = implode(', ', array_keys($values));
+        $marks = implode(', ', array_fill(0, count($values), '?'));
+        db()->prepare("INSERT INTO artists ($columns) VALUES ($marks)")->execute(array_values($values));
         flash('Added ' . $name . '. Give it some eras next.');
     }
 
-    // Names changed means the filing changed.
+    // New names mean new filing.
     assign_items_to_artists_and_eras();
     redirect('admin_artists');
 }
 
 $artists = all_artists();
 $editing = (int) query('edit') ? artist_by_id((int) query('edit')) : null;
+$counts = artist_record_counts();
 
-$counts = array_column(db()->query("
-    SELECT artist_id, COUNT(*) AS n FROM items
-     WHERE source = 'collection' AND missing_since IS NULL AND artist_id IS NOT NULL
-     GROUP BY artist_id
-")->fetchAll(), 'n', 'artist_id');
-
-// The covers to pick the header picture from: this artist's records, one of each
-// picture, in the order their page starts with.
+// The covers of this artist's records, one of each, to pick the header picture from.
 $covers = [];
 if ($editing) {
     foreach (public_items('collection', ['i.artist_id = ?'], [$editing['id']]) as $row) {
-        $thumb = item_thumb($row);
-        if ($thumb !== '' && !isset($covers[$thumb])) {
-            $covers[$thumb] = item_title($row);
-        }
+        $covers[item_thumb($row)] ??= item_title($row);
     }
+    unset($covers['']);
 }
 
-$pageTitle = 'Artists & eras';
-$pageIntro = 'Each of these gets its own page, split into eras.';
-$pageActions = $editing ? '' : '<a class="btn gold" href="' . e(url('admin_artists?edit=new')) . '">Add an artist</a>';
-
-require __DIR__ . '/../includes/admin_layout_top.php';
+admin_header(
+    'Artists & eras',
+    'Each of these gets its own page, split into eras.',
+    $editing ? '' : '<a class="btn gold" href="' . e(url('admin_artists?edit=new')) . '">Add an artist</a>'
+);
 ?>
 
 <?php if ($editing || query('edit') === 'new'): ?>
@@ -102,7 +100,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
         <div class="field">
           <label for="slug">URL</label>
           <input type="text" id="slug" name="slug" value="<?= e($editing['slug'] ?? '') ?>" placeholder="lady-gaga">
-          <div class="hint">The page lives at <?= e(rtrim(base_url(), '/')) ?>/<em>this</em>.</div>
+          <div class="hint">The page lives at <?= e(base_url()) ?>/<em>this</em>.</div>
         </div>
         <div class="field">
           <label for="accent">Accent colour</label>
@@ -120,27 +118,19 @@ require __DIR__ . '/../includes/admin_layout_top.php';
       </div>
 
       <?php if ($editing): ?>
+        <?php $picked = (string) ($editing['hero_cover'] ?? ''); ?>
         <h3 class="sub">Picture on the header</h3>
         <p class="hint">The small round cover on <?= e($editing['name']) ?>'s link at the top of the site. Left on automatic it is the first record on their page with a cover.</p>
-        <?php $mine = (string) ($editing['hero_cover'] ?? ''); ?>
         <div class="picker artist-covers">
-          <label>
-            <input type="radio" name="hero_cover" value=""<?= $mine === '' ? ' checked' : '' ?>>
-            <span class="none">Automatic</span>
-            <small>default</small>
-          </label>
+          <?= picker_none('hero_cover', $picked === '', 'Automatic', 'default') ?>
           <?php foreach ($covers as $thumb => $title): ?>
-            <label title="<?= e($title) ?>">
-              <input type="radio" name="hero_cover" value="<?= e($thumb) ?>"<?= $mine === $thumb ? ' checked' : '' ?>>
-              <img src="<?= e($thumb) ?>" alt="" loading="lazy">
-              <small><?= e($title) ?></small>
-            </label>
+            <?= picker_choice('radio', 'hero_cover', $thumb, $picked === $thumb, $thumb, $title, '', $title) ?>
           <?php endforeach; ?>
         </div>
         <div class="field">
           <label for="hero_cover_url">Or any picture, by address</label>
           <input type="text" id="hero_cover_url" name="hero_cover_url" placeholder="https://…"
-                 value="<?= e($mine !== '' && !isset($covers[$mine]) ? $mine : '') ?>">
+                 value="<?= e($picked !== '' && !isset($covers[$picked]) ? $picked : '') ?>">
           <div class="hint">Filled in, this wins over the picker. Square works best; it is cropped round.</div>
         </div>
       <?php else: ?>
@@ -153,16 +143,13 @@ require __DIR__ . '/../includes/admin_layout_top.php';
         <div class="hint">Every spelling that belongs on this page — a record credited to any of them is filed here. Discogs' "(2)" suffixes are stripped automatically.</div>
       </div>
 
-      <label class="check">
-        <input type="checkbox" name="is_published" value="1"<?= ($editing['is_published'] ?? 1) ? ' checked' : '' ?>>
-        Live on the site
-      </label>
+      <?= check_box('is_published', (bool) ($editing['is_published'] ?? 1), 'Live on the site') ?>
 
       <div class="form-actions">
         <button type="submit" class="gold">Save</button>
         <a class="btn ghost" href="<?= e(url('admin_artists')) ?>">Cancel</a>
         <?php if ($editing): ?>
-          <button type="submit" name="action" value="delete" class="danger small" style="margin-left:auto;"
+          <button type="submit" name="action" value="delete" class="danger small push-right"
                   onclick="return confirm('Delete this artist page and all its eras? The records stay in the collection.')">Delete page</button>
         <?php endif; ?>
       </div>
@@ -177,23 +164,22 @@ require __DIR__ . '/../includes/admin_layout_top.php';
     </thead>
     <tbody>
       <?php foreach ($artists as $artist): ?>
-        <?php $eras = eras_for_artist((int) $artist['id']); ?>
+        <?php $picture = hero_artist_cover($artist); ?>
         <tr>
           <td class="title">
-            <?php $pic = hero_artist_cover($artist); ?>
-            <?php if ($pic !== ''): ?>
-              <img class="pill-pic" src="<?= e($pic) ?>" alt="" width="34" height="34" loading="lazy">
+            <?php if ($picture !== ''): ?>
+              <img class="pill-pic" src="<?= e($picture) ?>" alt="" width="34" height="34" loading="lazy">
             <?php endif; ?>
             <b><?= e($artist['name']) ?></b>
             <small><?= e($artist['tagline']) ?></small>
           </td>
           <td><a href="<?= e(url($artist['slug'])) ?>" target="_blank" rel="noopener">/<?= e($artist['slug']) ?> ↗</a></td>
           <td class="hide-sm"><?= (int) ($counts[$artist['id']] ?? 0) ?></td>
-          <td class="hide-sm"><?= count($eras) ?></td>
+          <td class="hide-sm"><?= count(eras_for_artist((int) $artist['id'])) ?></td>
           <td class="right">
             <?php if (!$artist['is_published']): ?><span class="pill">hidden</span><?php endif; ?>
             <a class="btn ghost small" href="<?= e(url('admin_eras?artist=' . (int) $artist['id'])) ?>">Eras</a>
-            <a class="btn ghost small" href="<?= e(url('admin_artists?edit=' . (int) $artist['id'])) ?>">Edit</a>
+            <?= edit_button(url('admin_artists?edit=' . (int) $artist['id'])) ?>
           </td>
         </tr>
       <?php endforeach; ?>
@@ -201,4 +187,4 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   </table>
 </div>
 
-<?php require __DIR__ . '/../includes/admin_layout_bottom.php'; ?>
+<?php admin_footer(); ?>

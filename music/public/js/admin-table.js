@@ -1,14 +1,5 @@
-/* Click-to-sort headings for the short tables (the wantlist page).
- *
- * The collection list is paginated, so it sorts on the server; these tables are
- * a few dozen rows and are sorted where they are. A heading marked `data-sort`
- * sorts its column: ascending, then descending. A cell can carry
- * `data-sort-value` where what it shows isn't what it should sort by (a year that
- * should sort by the full date). Blank cells go last either way. */
-
-/* A text box that filters a table's rows live, no reload — opt in with
- * data-table-search="tableId" on the input. Used where the list is short
- * enough not to need the collection's server-side search (the selling list). */
+/* The short admin tables, sorted and searched in the page rather than on the
+ * server. A box with data-table-search="tableId" filters that table's rows. */
 document.querySelectorAll('[data-table-search]').forEach(input => {
   const table = document.getElementById(input.dataset.tableSearch);
   if (!table || !table.tBodies[0]) return;
@@ -20,6 +11,9 @@ document.querySelectorAll('[data-table-search]').forEach(input => {
   });
 });
 
+/* A heading marked data-sort sorts its column, ascending then descending; a
+ * cell's data-sort-value is used where what it shows isn't what it sorts by.
+ * Blank cells go last either way. */
 document.querySelectorAll('table[data-sortable]').forEach(table => {
   const body = table.tBodies[0];
   const headings = [...table.tHead.rows[0].cells];
@@ -52,8 +46,7 @@ document.querySelectorAll('table[data-sortable]').forEach(table => {
   headings.forEach((th, index) => {
     if (!('sort' in th.dataset)) return;
 
-    // The label moves into a span so the heading can be a keyboard target with
-    // the same look as the server-sorted links.
+    // The label goes into a span, so the heading can take the keyboard like the server-sorted links.
     const label = document.createElement('span');
     label.className = 'sort-label';
     label.tabIndex = 0;

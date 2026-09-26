@@ -1,53 +1,35 @@
-/* What isn't on the shelf yet, drawn like what is.
- *
- * Two sections — the Discogs wantlist, and the records being hunted that
- * Discogs has no page for. Same tiles, same drawer, same floor as everywhere
- * else; the only difference is that these are records Bruno doesn't have, so
- * they sit a little more spaced out and the hunting ones say why they're here.
- */
+/* What isn't on the shelf yet, drawn like what is: the Discogs wantlist, and
+ * the records being hunted that Discogs has no page for. */
 
 const CACHE_KEY = 'vinyl_wantlist_v2';
-const PREFS_KEY = 'vinyl_wantlist_prefs_v1';
-const CACHE_TTL = 1000 * 60 * 60 * 6;
 const VIEWS = ['floor', 'grid', 'list'];
 
 let sections = [];
 let total = 0;
-const prefs = loadPrefs();
 
-function loadPrefs() {
-  const defaults = { view: 'floor', mess: 0.6, fmt: 'all', sort: DEFAULT_SORT };
-  try {
-    const p = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
-    if (!VIEWS.includes(p.view)) p.view = defaults.view;
+const prefs = storedPrefs(
+  'vinyl_wantlist_prefs_v1',
+  { view: 'floor', mess: 0.6, fmt: 'all', sort: DEFAULT_SORT },
+  p => {
+    if (!VIEWS.includes(p.view)) p.view = 'floor';
     p.sort = validSort(p.sort);
     return p;
-  } catch (e) { return defaults; }
-}
+  }
+);
 
-function savePrefs() {
-  try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) { /* storage unavailable — ignore */ }
-}
+const sortBy = sortByColumn(prefs, render);
 
 function visibleSections() {
   const query = $('search').value.trim();
 
   return sections.map(section => ({
     ...section,
-    items: section.items.filter(it =>
-      (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
+    items: section.items.filter(it => (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
   }));
 }
 
 function renderChips() {
-  const counts = {};
-  sections.forEach(s => s.items.forEach(it => { counts[it.kind] = (counts[it.kind] || 0) + 1; }));
-  if (prefs.fmt !== 'all' && !counts[prefs.fmt]) prefs.fmt = 'all';
-
-  $('formats').innerHTML = [['all', 'All'], ...Object.entries(KIND_LABEL)]
-    .filter(([k]) => k === 'all' || counts[k])
-    .map(([k, label]) => `<button type="button" data-k="${k}" class="${prefs.fmt === k ? 'on' : ''}">${label} <i>${k === 'all' ? total : counts[k]}</i></button>`)
-    .join('');
+  renderFormatChips(sections.flatMap(section => section.items), prefs);
 }
 
 function sectionEl(section) {
@@ -55,6 +37,7 @@ function sectionEl(section) {
   wrap.className = 'era';
   wrap.id = `era-${section.slug}`;
 
+  const count = section.items.length;
   const head = document.createElement('div');
   head.className = 'era-head';
   head.innerHTML = `
@@ -62,7 +45,8 @@ function sectionEl(section) {
       <h2>${esc(section.name)}</h2>
       <div class="era-sub">${esc(section.tagline)}</div>
     </div>
-    <div class="era-counts">${section.items.length} ${section.items.length === 1 ? 'record' : 'records'}</div>`;
+    <div class="era-counts">${count} ${count === 1 ? 'record' : 'records'}</div>`;
+  wrap.appendChild(head);
 
   if (prefs.view === 'list') {
     wrap.appendChild(listEl(sortList(section.items, prefs.sort), { sort: prefs.sort, onSort: sortBy }));
@@ -72,14 +56,8 @@ function sectionEl(section) {
   return wrap;
 }
 
-function sortBy(key) {
-  prefs.sort = nextSort(prefs.sort, key);
-  savePrefs();
-  render();
-}
-
 function render() {
-  VIEWS.forEach(v => document.body.classList.toggle('view-' + v, prefs.view === v));
+  markView(VIEWS, prefs.view);
   $('messWrap').hidden = prefs.view !== 'floor';
 
   const visible = visibleSections().filter(section => section.items.length);
@@ -104,39 +82,14 @@ wireTiles($('content'), () => prefs.view !== 'grid');
 wireDrawer();
 
 $('search').addEventListener('input', render);
-
-$('formats').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  prefs.fmt = b.dataset.k;
-  savePrefs();
-  renderChips();
-  render();
-});
-
-function syncViewToggle() {
-  document.querySelectorAll('#viewToggle button').forEach(b => b.classList.toggle('on', b.dataset.view === prefs.view));
-}
-
-$('viewToggle').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  prefs.view = b.dataset.view;
-  savePrefs();
-  syncViewToggle();
-  render();
-});
-
-$('mess').addEventListener('input', e => {
-  prefs.mess = Number(e.target.value);
-  document.querySelectorAll('.floor').forEach(floor => floor.style.setProperty('--mess', prefs.mess));
-  savePrefs();
-});
+bindFormatChips(prefs, renderChips, render);
+bindToggle('viewToggle', 'view', prefs, render);
+bindMessSlider(prefs);
 
 function setData(data) {
   sections = [
     { slug: 'wanted', name: 'On the wantlist', tagline: 'Tracked on Discogs', items: prepareItems(data.wanted) },
-    { slug: 'hunting', name: 'Still hunting', tagline: "Not listed on Discogs — if you have one, get in touch", items: prepareItems(data.hunting) },
+    { slug: 'hunting', name: 'Still hunting', tagline: 'Not listed on Discogs — if you have one, get in touch', items: prepareItems(data.hunting) },
   ].filter(section => section.items.length);
 
   total = sections.reduce((n, section) => n + section.items.length, 0);
@@ -144,23 +97,14 @@ function setData(data) {
 }
 
 async function init() {
-  const cached = loadCache(CACHE_KEY, CACHE_TTL);
-  if (cached) {
-    setData(cached);
-    render();
-    return;
-  }
-
   try {
-    const data = await fetchJSON('wantlist');
-    saveCache(CACHE_KEY, data);
-    setData(data);
-    render();
+    setData(await loadData(CACHE_KEY, 'wantlist'));
   } catch (error) {
     $('content').innerHTML = `<div class="state"><h2>This didn't load</h2><p>${esc(error.message)}</p></div>`;
+    return;
   }
+  render();
 }
 
-$('mess').value = prefs.mess;
-syncViewToggle();
+markToggle('viewToggle', 'view', prefs.view);
 init();

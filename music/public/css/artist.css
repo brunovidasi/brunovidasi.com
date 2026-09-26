@@ -1,12 +1,6 @@
-/* The artist pages — layered on top of floor.css.
- *
- * Everything an artist page draws (sleeves, cases, discs, the grid, the drawer,
- * the controls) is the shelf's; what this file adds is the spine that runs down
- * the page: the sticky era nav, an era's heading, and the format headings
- * inside one. One stylesheet for all the artists — the only thing that differs
- * between them is the accent colour, which the page sets as a custom property
- * from the artist's row in the database.
- */
+/* The artist pages, over floor.css: the sticky era nav, an era's heading, and
+   the format headings inside one. Each artist's accent comes in as --accent.
+   The wantlist and the shop use it too, for the back link and their sections. */
 
 html { scroll-behavior: smooth; }
 
@@ -24,13 +18,11 @@ html { scroll-behavior: smooth; }
 
 .back:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
 
-/* The label at the centre of the hero's spinning disc takes the artist's colour. */
+/* The label of the header's record takes the artist's colour. */
 .hero-platter .accent { fill: var(--accent, var(--gold)); }
 
 /* ---------- Era nav ----------
-   Sticks under the top of the window as you scroll, over the floor, so it needs
-   its own backdrop rather than the page's. It hangs straight off the controls
-   above it, which supply its top line. */
+   Sticks to the top of the window, over the floor; the controls above give it its top line. */
 
 .era-nav {
   position: sticky;
@@ -95,12 +87,9 @@ html { scroll-behavior: smooth; }
   color: var(--accent, var(--gold));
 }
 
-/* Grow to fill the row and allow its own text to wrap, rather than the whole
-   title getting pushed onto its own flex line below the number. */
+/* Grows to fill the row and wraps its own text. A basis of auto would let the
+   long sub-line push the whole title below the number. */
 .era-title {
-  /* flex-basis: 0, not auto — with auto, the long era-sub line (dates and
-     highlight tracks) sets the item's content width, which is enough on its
-     own to push the whole title below the number instead of just growing. */
   flex: 1 1 0;
   min-width: 0;
 }
@@ -120,10 +109,7 @@ html { scroll-behavior: smooth; }
   white-space: nowrap;
 }
 
-/* The wantlist at the end of the page: not an era, so it gets an empty-sleeve
-   heading (dashed, like the wantlist page's disc) instead of a number. It's
-   also collapsed until asked for, so its heading doubles as a disclosure
-   button. */
+/* The wantlist at the end is not an era: a dashed heading, and it folds. */
 .era.wanted .era-head { border-bottom-style: dashed; cursor: pointer; }
 .era.wanted .era-num { font-weight: 400; opacity: 0.7; }
 .era.wanted .era-head:hover .era-title h2 { text-decoration: underline; text-underline-offset: 3px; }
@@ -140,8 +126,7 @@ html { scroll-behavior: smooth; }
 /* ---------- Vinyl / CD / DVD inside an era ---------- */
 
 .group-label {
-  /* Above the pile, not under it: a 12" sleeve is tall, the tiles carry
-     negative margins, and the first row would otherwise sit on the heading. */
+  /* above the pile, whose first row would otherwise sit on it */
   position: relative;
   z-index: 2;
   display: flex;
@@ -164,24 +149,19 @@ html { scroll-behavior: smooth; }
   background: var(--line);
 }
 
-/* A pile inside an era is a handful of pressings, not a whole collection, so it
-   sits left rather than centred and keeps less air around it than the shelf. */
+/* A pile in an era is a handful of pressings: it sits left, with less air. */
 .era .floor {
   justify-content: flex-start;
   padding: 2.2rem 0.6rem 1.4rem;
 }
 
+/* The full width, so the eras line up down the page. */
 .era .grid {
+  max-width: none;
   margin: 0;
   padding: 1rem 0 0.4rem;
 }
 
-/* The grid is capped narrower than the floor on the shelf; inside an era both
-   should use the same width, so the eras line up down the page. */
-.era .grid { max-width: none; }
-
-/* The table has no pile above it to give the heading some air, so it gets its
-   own. */
 .era .list { margin-top: 1.6rem; }
 
 @media (max-width: 520px) {

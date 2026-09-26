@@ -217,35 +217,51 @@ deploy.
 ## Project structure
 
 ```
-.htaccess            every request -> public/ ; pretty URLs ; artist slugs
-dev-server.php       the same routing for `php -S`
-config/              config.example.php (the real one is gitignored)
-sql/schema.sql       the whole schema, applied on every request
+.htaccess              every request -> public/ ; pretty URLs ; artist slugs
+dev-server.php         the same routing for `php -S`
+config/                config.example.php (the real one is gitignored)
+sql/schema.sql         the whole schema, applied on every request
 includes/
-  config.php         instance directory, paths, credentials
-  db.php             PDO, schema, migrations, settings
-  auth.php           the one account
-  fields.php         what a record has; Bruno's values over Discogs'
-  items.php          rows -> cards and drawer payloads
-  hero.php           the header every public page shares: title, record, numbers, artist pills (a menu on a phone), the search box
-  DiscogsClient.php  the API, throttled (writes are stubbed, see below)
-  sync.php           the restartable sync
-  seed_data.php      first-run artists and Lady Gaga's eras
+  bootstrap.php        loads the app (the public pages, the API and cron use it)
+  admin.php            bootstrap.php + the admin helpers + a session
+  config.php           instance directory, paths, credentials
+  runtime.php          error reporting, the session cookie
+  db.php               PDO, migrations, settings
+  helpers.php          escaping, requests, redirects, dates, Discogs links
+  auth.php, csrf.php   the one account
+  artists.php          artist and era lookups
+  fields.php           what a record has; Bruno's values over Discogs'
+  regions.php          two-letter region codes for the lists
+  discs.php            the discs in a sleeve: count, colours, pictures
+  items.php            rows -> the cards the shelves draw
+  drawer.php           rows -> the drawer's facts and sections
+  hero.php             the header every public page shares
+  DiscogsClient.php    the API, throttled (writes are stubbed, see below)
+  sync.php             the restartable sync
+  admin_ui.php         the admin's page frame and shared markup
+  admin_records.php    saving records from the edit pages
+  seed_data.php        first-run artists and Lady Gaga's eras
+  templates/           page heads and footers, the error page, the admin layout
 public/
-  index.php          the shelf
-  artist.php         one page for every artist
-  wantlist.php       what's missing
-  admin*.php         the admin
-  cron_sync.php      the token-protected daily trigger
-  api/               collection, artist, item, wantlist (JSON)
-  css/floor.css      the wooden floor and the objects on it — every public page
-  css/artist.css     the era spine, layered on floor.css
-  js/common.js       API + drawer, shared by every public page
-  js/tiles.js        sleeves, cases and the discs that slide out of them
-  js/hero.js         the header's numbers counting up, and the collections menu on a phone
-  js/controls.js     the search box that folds to a glass on a phone, and the format chips' scroll
-  js/dropdown.js     the site-styled dropdown that stands in for a <select>
-cron/sync.php        the CLI equivalent of cron_sync.php
+  index.php            the shelf
+  artist.php           one page for every artist
+  wantlist.php         what's missing
+  selling.php          what's for sale
+  admin*.php           the admin
+  cron_sync.php        the token-protected daily trigger
+  api/                 collection, artist, item, wantlist, selling (JSON)
+  css/floor.css        the wooden floor and the objects on it — every public page
+  css/artist.css       the era spine, layered on floor.css
+  js/common.js         API + drawer, shared by every public page
+  js/tiles.js          sleeves, cases and the discs that slide out of them
+  js/shelf.js          what the page scripts share: prefs, format chips, toggles, loading
+  js/spotlight-core.js the spotlight's flight, for the collection's and the shop's
+  js/hero.js           the header's numbers counting up, and the collections menu on a phone
+  js/controls.js       the search box that folds to a glass on a phone, and the format chips' scroll
+  js/dropdown.js       the site-styled dropdown that stands in for a <select>
+  js/admin-edit.js     the record and listing edit pages' shared behaviour
+cron/sync.php          the CLI equivalent of cron_sync.php
+cron/apply_lists.php   applies an artist's hand-kept lists
 ```
 
 ## Writing back to Discogs

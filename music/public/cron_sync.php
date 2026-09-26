@@ -1,36 +1,18 @@
 <?php
+
 /**
- * The daily sync, triggered over HTTPS:
+ * The daily sync over HTTPS, for any scheduler that can fetch a URL:
  *
  *   https://brunovida.si/music/cron_sync.php?token=…
  *
- * Give that URL to any scheduler that can fetch a page once a day (the host's
- * cron with curl/wget, or an external pinger if the host's cron can't run PHP —
- * cron/sync.php is the CLI equivalent for hosts that can).
- *
- * Protected by a shared secret in the config's 'cron_token'. Without one set,
- * the endpoint stays closed: a sync burns API calls against a rate limit, so it
- * must never be startable anonymously.
- *
- * The response is sent and closed immediately, before the work runs, because a
- * full sync takes minutes and no scheduler waits that long. ignore_user_abort
- * keeps it going after the caller has hung up.
+ * Closed unless the config has a cron_token, since a sync spends real API
+ * calls. It answers at once and keeps working after the caller hangs up.
+ * cron/sync.php does the same from the command line.
  */
 
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/runtime.php';
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/helpers.php';
-require_once __DIR__ . '/../includes/fields.php';
-require_once __DIR__ . '/../includes/items.php';
-require_once __DIR__ . '/../includes/DiscogsClient.php';
-require_once __DIR__ . '/../includes/sync.php';
-
-date_default_timezone_set(app_timezone());
-configure_error_reporting();
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 header('Content-Type: text/plain; charset=utf-8');
-// Nothing here should ever be cached or indexed by anything.
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 
@@ -42,9 +24,6 @@ if ($expected === '') {
     exit("No cron_token is configured; this endpoint is disabled.\n");
 }
 
-// hash_equals is constant-time, so a wrong token can't be discovered byte by
-// byte from response timing. The lengths are compared first because it is not
-// safe on differing lengths.
 if (strlen($given) !== strlen($expected) || !hash_equals($expected, $given)) {
     http_response_code(403);
     exit("Forbidden.\n");
@@ -58,7 +37,6 @@ header('Content-Length: ' . strlen($body));
 header('Connection: close');
 echo $body;
 
-// Close the HTTP connection so the scheduler sees a fast 200, then keep working.
 if (function_exists('fastcgi_finish_request')) {
     fastcgi_finish_request();
 } else {
@@ -66,17 +44,11 @@ if (function_exists('fastcgi_finish_request')) {
     @flush();
 }
 
-$logFile = data_dir() . '/sync.log';
+$log = function (string $message): void {
+    @file_put_contents(data_dir() . '/sync.log', '[' . date('Y-m-d H:i:s') . "] [cron] $message\n", FILE_APPEND);
+};
 
-// Fifteen minutes is far more than a nightly top-up needs (only what changed
-// gets fetched), and still leaves a first-ever sync of a large collection to be
-// finished by the next night's run rather than hammering the API in one go.
-$state = run_full_sync('cron', function (string $message) use ($logFile): void {
-    @file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . "] [cron] $message\n", FILE_APPEND);
-}, 900.0);
+// Fifteen minutes; a first sync of a big collection finishes over the next nights.
+$state = run_full_sync('cron', $log, 900.0);
 
-@file_put_contents(
-    $logFile,
-    '[' . date('Y-m-d H:i:s') . '] [cron] finished: ' . $state['status'] . ' — ' . $state['message'] . "\n",
-    FILE_APPEND
-);
+$log('finished: ' . $state['status'] . ' — ' . $state['message']);

@@ -1,115 +1,74 @@
-/* An artist page: their eras down the page, each split by format.
- *
- * Same records, drawn the same way as the shelf (js/tiles.js) — the objects
- * stood up in a grid, or lined up in a list. The eras and
- * their order come from the server (api/artist), which is what makes one file
- * work for every artist, and an era added in the admin appear here with no code
- * touched.
- *
- * The last section isn't an era: it's what Bruno still wants by that artist (the
- * Discogs wantlist plus the records he's hunting), drawn the same way so a gap
- * on the shelf sits right under the records around it.
- */
+/* An artist's page: their eras down the page, each split by format, and at the
+ * end what is still wanted by them. The eras come from api/artist, so an era
+ * added in the admin shows up here without any code. */
 
 const SLUG = document.body.dataset.slug;
 const CACHE_KEY = `vinyl_artist_${SLUG}_v4`;
-const PREFS_KEY = 'vinyl_artist_prefs_v2';
-const CACHE_TTL = 1000 * 60 * 60 * 6;
-// Grid first: an era is an album's pressings side by side, and lining them up
-// is how you compare them. The list is a click away for the details.
 const VIEWS = ['grid', 'list'];
-// Which end of the discography the page starts from. Oldest first is the order
-// the eras are filed in; the wantlist stays at the bottom either way.
 const ORDERS = ['oldest', 'newest'];
 
-// The order formats appear in within an era. 'bd', not 'bluray', matching the CSS.
-const GROUPS = [
-  ['vinyl', 'Vinyl'],
-  ['cd', 'CD'],
-  ['dvd', 'DVD'],
-  ['bd', 'Blu-ray'],
-  ['other', 'Other'],
-];
+/* The order formats appear in within an era. */
+const GROUPS = Object.entries(KIND_LABEL);
 
 let sections = [];
 let total = 0;
 let wantedTotal = 0;
-// Collapsed by default: the wantlist is a spoiler for what Bruno doesn't have
-// yet, so it stays tucked away until it's asked for.
+// The wantlist starts folded away: it spoils what isn't on the shelf yet.
 let wantedExpanded = false;
-const prefs = loadPrefs();
 
-function loadPrefs() {
-  // An era reads oldest first: the records in the order they came out.
-  const defaults = { view: 'grid', fmt: 'all', order: 'oldest', sort: { key: 'date', dir: 'asc' } };
-  try {
-    const p = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
-    if (!VIEWS.includes(p.view)) p.view = defaults.view;
-    if (!ORDERS.includes(p.order)) p.order = defaults.order;
-    p.sort = validSort(p.sort, defaults.sort);
+const prefs = storedPrefs(
+  'vinyl_artist_prefs_v2',
+  { view: 'grid', fmt: 'all', order: 'oldest', sort: { key: 'date', dir: 'asc' } },
+  p => {
+    if (!VIEWS.includes(p.view)) p.view = 'grid';
+    if (!ORDERS.includes(p.order)) p.order = 'oldest';
+    p.sort = validSort(p.sort, { key: 'date', dir: 'asc' });
     return p;
-  } catch (e) { return defaults; }
-}
+  }
+);
 
-function savePrefs() {
-  try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) { /* storage unavailable — ignore */ }
-}
+const sortBy = sortByColumn(prefs, render);
 
-/* ---------- What's on screen ---------- */
-
-/** Every section, with its items narrowed by the search box and the chips. */
+/** Every section, with its records narrowed by the search box and the chips. */
 function visibleSections() {
   const query = $('search').value.trim();
 
   return sections.map(section => ({
     ...section,
-    items: section.items.filter(it =>
-      (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
+    items: section.items.filter(it => (prefs.fmt === 'all' || it.kind === prefs.fmt) && matchesQuery(it, query)),
   }));
 }
 
 function renderChips() {
-  const counts = {};
-  sections.forEach(s => s.items.forEach(it => { counts[it.kind] = (counts[it.kind] || 0) + 1; }));
-  const everything = total + wantedTotal;
-  if (prefs.fmt !== 'all' && !counts[prefs.fmt]) prefs.fmt = 'all';
+  renderFormatChips(sections.flatMap(section => section.items), prefs, total + wantedTotal);
+}
 
-  $('formats').innerHTML = [['all', 'All'], ...GROUPS]
-    .filter(([k]) => k === 'all' || counts[k])
-    .map(([k, label]) => `<button type="button" data-k="${k}" class="${prefs.fmt === k ? 'on' : ''}">${label} <i>${k === 'all' ? everything : counts[k]}</i></button>`)
-    .join('');
+function renderMessage(html) {
+  $('eraNav').hidden = true;
+  $('content').innerHTML = `<div class="state">${html}</div>`;
 }
 
 function renderError(message) {
-  $('eraNav').hidden = true;
-  $('content').innerHTML = `
-    <div class="state">
+  renderMessage(`
       <h2>This page didn't load</h2>
       <p>${esc(message)}</p>
-      <button class="ghost" id="retry">Try again</button>
-    </div>`;
+      <button class="ghost" id="retry">Try again</button>`);
   $('retry').addEventListener('click', () => init(true));
 }
 
 function renderEmpty(query) {
-  $('eraNav').hidden = true;
-  $('content').innerHTML = `
-    <div class="state">
+  renderMessage(`
       <h2>${query ? `Nothing matches "${esc(query)}"` : 'Nothing in this format'}</h2>
-      <p>${query ? 'Try a different title or edition.' : 'Try a different format.'}</p>
-    </div>`;
+      <p>${query ? 'Try a different title or edition.' : 'Try a different format.'}</p>`);
 }
 
-/** An era's heading: its number, name, years and what it is remembered for. */
+/** An era's heading. The wanted section is not an era: it gets a mark for a number, and folds. */
 function eraHead(section, index) {
   const head = document.createElement('div');
   head.className = 'era-head';
   const sub = [section.years, section.tagline].filter(Boolean).join(' · ');
   const count = section.items.length;
 
-  // The wanted section isn't part of the chronology, so it takes a mark in
-  // place of an era number. It's also the one section that can be collapsed,
-  // so it gets a chevron instead of a plain count.
   head.innerHTML = `
     <span class="era-num">${section.wanted ? '+' : String(index + 1).padStart(2, '0')}</span>
     <div class="era-title">
@@ -140,12 +99,9 @@ function eraEl(section, index) {
   era.id = `era-${section.slug}`;
   era.appendChild(eraHead(section, index));
 
-  // Collapsed by default: only the heading (with its count) shows until it's
-  // clicked open.
   if (section.wanted && !wantedExpanded) return era;
 
-  // The list already says what each record is in its Format column, so an era
-  // is one table, in whatever order its headers were last clicked to.
+  // The list names each record's format, so an era is one table.
   if (prefs.view === 'list') {
     era.appendChild(listEl(sortList(section.items, prefs.sort), { artist: false, sort: prefs.sort, onSort: sortBy }));
     return era;
@@ -165,15 +121,9 @@ function eraEl(section, index) {
   return era;
 }
 
-function sortBy(key) {
-  prefs.sort = nextSort(prefs.sort, key);
-  savePrefs();
-  render();
-}
-
 function render() {
   if (!sections.length) return;
-  VIEWS.forEach(v => document.body.classList.toggle('view-' + v, prefs.view === v));
+  markView(VIEWS, prefs.view);
 
   const visible = visibleSections();
   const count = wanted => visible
@@ -181,7 +131,6 @@ function render() {
     .reduce((n, section) => n + section.items.length, 0);
   const owned = count(false);
   const missing = count(true);
-  const shown = owned + missing;
   const query = $('search').value.trim();
 
   $('countMeta').textContent = [
@@ -189,37 +138,33 @@ function render() {
     wantedTotal && (missing === wantedTotal ? `${wantedTotal} wanted` : `${missing} of ${wantedTotal} wanted`),
   ].filter(Boolean).join(' - ');
 
-  if (!shown) { renderEmpty(query); return; }
+  if (!owned && !missing) { renderEmpty(query); return; }
 
-  // The numbering follows the full era list, so an era keeps its number while
-  // the page is filtered.
-  const withNumbers = visible
+  // Numbered by the full list of eras, so an era keeps its number while the page is filtered.
+  const shown = visible
     .map((section, index) => ({ section, index }))
     .filter(entry => entry.section.items.length);
 
-  // Newest first flips the eras, not what sits after them: the "More" catch-all
-  // and the wantlist keep their place at the bottom.
+  // Newest first flips the eras only: "More" and the wantlist stay at the bottom.
   if (prefs.order === 'newest') {
-    const eras = withNumbers.filter(({ section }) => !section.wanted && section.slug !== 'more');
-    const rest = withNumbers.filter(({ section }) => section.wanted || section.slug === 'more');
-    withNumbers.splice(0, withNumbers.length, ...eras.reverse(), ...rest);
+    const trailing = ({ section }) => section.wanted || section.slug === 'more';
+    shown.splice(0, shown.length, ...shown.filter(e => !trailing(e)).reverse(), ...shown.filter(trailing));
   }
 
   const nav = $('eraNav');
-  nav.innerHTML = `<div class="era-nav-inner">${withNumbers.map(({ section }) =>
+  nav.innerHTML = `<div class="era-nav-inner">${shown.map(({ section }) =>
     `<a href="#era-${esc(section.slug)}">${esc(section.name)}<span class="n">${section.items.length}</span></a>`
   ).join('')}</div>`;
   nav.hidden = false;
 
-  $('content').replaceChildren(...withNumbers.map(({ section, index }) => eraEl(section, index)));
+  $('content').replaceChildren(...shown.map(({ section, index }) => eraEl(section, index)));
   markCurrentEra();
 }
 
 /* ---------- The era you are in ----------
    The nav lights the era whose heading has scrolled up under it, and slides
-   itself along so that chip stays in view. Before the first era gets that far
-   nothing is lit; at the very bottom the last one is, since a short final era
-   (the wantlist) may never reach the line. */
+   along to keep that chip in view. At the very bottom the last one is lit,
+   since a short final era may never reach the line. */
 
 function markCurrentEra() {
   const nav = $('eraNav');
@@ -241,11 +186,12 @@ function markCurrentEra() {
   });
 }
 
-/** Scroll the nav sideways, not the page, until the chip is in view. */
+/** Scrolls the nav sideways, not the page, until the chip is in view. */
 function revealInNav(strip, link) {
   const room = 16;
-  if (link.offsetLeft < strip.scrollLeft + room) strip.scrollTo({ left: link.offsetLeft - room, behavior: 'smooth' });
-  else if (link.offsetLeft + link.offsetWidth > strip.scrollLeft + strip.clientWidth - room) {
+  if (link.offsetLeft < strip.scrollLeft + room) {
+    strip.scrollTo({ left: link.offsetLeft - room, behavior: 'smooth' });
+  } else if (link.offsetLeft + link.offsetWidth > strip.scrollLeft + strip.clientWidth - room) {
     strip.scrollTo({ left: link.offsetLeft + link.offsetWidth - strip.clientWidth + room, behavior: 'smooth' });
   }
 }
@@ -259,55 +205,19 @@ function scheduleCurrentEra() {
 window.addEventListener('scroll', scheduleCurrentEra, { passive: true });
 window.addEventListener('resize', scheduleCurrentEra);
 
-// The grid captions every sleeve and the list names every row, so the floating
-// label would only repeat them.
+/* ---------- Controls ---------- */
+
+// The grid captions every sleeve and the list names every row, so the floating label would only repeat them.
 wireTiles($('content'), () => false);
 wireDrawer();
 
-/* ---------- Controls ---------- */
-
 $('search').addEventListener('input', render);
+bindFormatChips(prefs, renderChips, render);
+bindToggle('viewToggle', 'view', prefs, render);
+bindToggle('orderToggle', 'order', prefs, render);
 
-$('formats').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  prefs.fmt = b.dataset.k;
-  savePrefs();
-  renderChips();
-  render();
-});
-
-function syncViewToggle() {
-  document.querySelectorAll('#viewToggle button').forEach(b => b.classList.toggle('on', b.dataset.view === prefs.view));
-}
-
-$('viewToggle').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  prefs.view = b.dataset.view;
-  savePrefs();
-  syncViewToggle();
-  render();
-});
-
-function syncOrderToggle() {
-  document.querySelectorAll('#orderToggle button').forEach(b => b.classList.toggle('on', b.dataset.order === prefs.order));
-}
-
-$('orderToggle').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  prefs.order = b.dataset.order;
-  savePrefs();
-  syncOrderToggle();
-  render();
-});
-
-// Jumping to the wantlist from the nav should show it, not scroll to a
-// collapsed heading. Expanding rebuilds #content (and the nav itself, which
-// orphans the very link that was clicked), so the browser's own fragment
-// navigation can't be trusted here — scroll to it by hand once the expanded
-// section exists.
+// Jumping to the folded wantlist opens it first. That redraws the nav under the
+// click, so the scroll is done by hand once the section exists.
 $('eraNav').addEventListener('click', e => {
   const a = e.target.closest('a');
   if (!a || a.hash !== '#era-wanted' || wantedExpanded) return;
@@ -317,19 +227,14 @@ $('eraNav').addEventListener('click', e => {
   $('era-wanted').scrollIntoView({ block: 'start' });
 });
 
+/* ---------- Loading ---------- */
+
 function setSections(data) {
   sections = data.sections.map(section => ({ ...section, items: prepareItems(section.items) }));
 
   const wanted = data.wanted || [];
   if (wanted.length) {
-    sections.push({
-      slug: 'wanted',
-      name: 'Still wanted',
-      years: '',
-      tagline: 'Not on the shelf yet',
-      wanted: true,
-      items: prepareItems(wanted),
-    });
+    sections.push({ slug: 'wanted', name: 'Still wanted', years: '', tagline: 'Not on the shelf yet', wanted: true, items: prepareItems(wanted) });
   }
 
   total = data.count;
@@ -340,32 +245,26 @@ function setSections(data) {
 async function init(force) {
   $('countMeta').textContent = '';
 
-  if (!force) {
-    const cached = loadCache(CACHE_KEY, CACHE_TTL);
-    if (cached && (cached.count || (cached.wanted || []).length)) {
-      setSections(cached);
-      render();
-      return;
-    }
-  }
-
+  let data;
   try {
-    const data = await fetchJSON(`artist?slug=${encodeURIComponent(SLUG)}`);
-    saveCache(CACHE_KEY, data);
-
-    if (!data.count && !(data.wanted || []).length) {
-      $('eraNav').hidden = true;
-      $('content').innerHTML = '<div class="state"><h2>Nothing here yet</h2><p>No records by this artist have been synced in.</p></div>';
-      return;
-    }
-
-    setSections(data);
-    render();
+    data = await loadData(CACHE_KEY, `artist?slug=${encodeURIComponent(SLUG)}`, {
+      force,
+      usable: cached => cached.count || (cached.wanted || []).length,
+    });
   } catch (error) {
     renderError(error.message);
+    return;
   }
+
+  if (!data.count && !(data.wanted || []).length) {
+    renderMessage('<h2>Nothing here yet</h2><p>No records by this artist have been synced in.</p>');
+    return;
+  }
+
+  setSections(data);
+  render();
 }
 
-syncViewToggle();
-syncOrderToggle();
+markToggle('viewToggle', 'view', prefs.view);
+markToggle('orderToggle', 'order', prefs.order);
 init(false);

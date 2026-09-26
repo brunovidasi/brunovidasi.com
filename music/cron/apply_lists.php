@@ -1,42 +1,27 @@
 <?php
+
 /**
- * Applies an artist's hand-kept lists to the database: the eras in the order the
- * lists have them, and for each copy the list matched — its own fields, its
- * notes, and its place inside its era.
+ * Applies an artist's hand-kept lists: the eras in the lists' order, and for
+ * each copy its own fields, notes and place in its era.
  *
- *   php cron/apply_lists.php cron/lady-gaga-lists.json [--dry-run]
+ *   php cron/apply_lists.php data/lists/lady-gaga-lists.json [--dry-run]
  *
- * The file is made by comparing the lists with the collection, and copies are
- * found by Discogs instance_id, which is the same in every database synced from
- * the same account (the row id is not). Safe to run again: it writes what is
- * missing and reports the rest.
+ * Copies are found by Discogs instance_id, the same in every database synced
+ * from one account. A list's "discs" are the CDs and DVDs of a box set Discogs
+ * only knows as the box: each becomes a record of its own, tied to its box by
+ * parent_item_id and found again by its box and barcode.
  *
- * A list can also name "discs": CDs and DVDs from a box set that Discogs holds
- * only as the box. Each is made here as a record of its own (title, cover,
- * tracklist and the rest copied from the box's release into the fields the
- * admin overrides), filed in its era and tied to its box by parent_item_id. It
- * has no instance_id, which is also what keeps a sync from flagging it as gone,
- * and is found again on later runs by its box and barcode.
- *
- * Nothing already typed on a record is overwritten (a different value is listed
- * under "kept" so it can be looked at), and notes are added to, never replaced.
- * Every copy the file names is pinned to its era (era_locked), because a sync
- * would otherwise put the order back to album-then-singles.
+ * Safe to run again. Nothing typed on a record is overwritten (a different
+ * value is reported under "kept"), notes are only added to, and every copy is
+ * pinned to its era so a sync doesn't reorder it.
  */
 
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/runtime.php';
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/helpers.php';
-require_once __DIR__ . '/../includes/fields.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);
     exit("This script is for the command line.\n");
 }
-
-date_default_timezone_set(app_timezone());
-configure_error_reporting();
 
 $args = array_slice($argv, 1);
 $dryRun = in_array('--dry-run', $args, true);
@@ -54,9 +39,7 @@ if (!is_array($plan) || empty($plan['artist']) || !isset($plan['eras'], $plan['i
 }
 
 $db = db();
-$artist = $db->prepare('SELECT id, name FROM artists WHERE slug = ?');
-$artist->execute([$plan['artist']]);
-$artist = $artist->fetch();
+$artist = artist_by_slug($plan['artist']);
 if (!$artist) {
     fwrite(STDERR, "No artist page with the slug \"{$plan['artist']}\".\n");
     exit(1);
@@ -75,8 +58,7 @@ foreach ($plan['eras'] as $position => $era) {
     $findEra->execute([$artistId, $era['slug']]);
     $id = $findEra->fetchColumn();
 
-    // An era that is really an older one under a new name keeps its row, so
-    // everything already filed in it comes along.
+    // An old era under a new name keeps its row, and everything filed in it.
     if (!$id && !empty($era['replaces'])) {
         $findEra->execute([$artistId, $era['replaces']]);
         $id = $findEra->fetchColumn();
@@ -168,16 +150,16 @@ foreach ([...$plan['items'], ...($plan['discs'] ?? [])] as $entry) {
     }
 
     foreach ($entry['fields'] as $key => $listed) {
-        $typed = trim((string) ($item[$key] ?? ''));
+        // Text saved from the admin's boxes has \r\n line endings; the lists have \n.
+        $typed = trim(preg_replace('/\r\n?/', "\n", (string) ($item[$key] ?? '')));
         $write = $listed;
         $current = $typed;
 
         if ($key === 'catalog_number') {
-            // The number on the disc leads; Discogs' own stay behind it, since
-            // typing this box replaces them.
+            // The number on the disc leads; Discogs' own follow, since typing the box replaces them.
             $labels = json_column($item['labels_json'] ?? null);
             $write = implode("\n", array_unique([$listed, ...catalog_numbers($labels)]));
-            $current = (string) strtok($typed, "\n");
+            $current = strtok($typed, "\n");
             // A box disc's own catalogue number can follow the listed one.
             $listed = (string) strtok($listed, "\n");
         }

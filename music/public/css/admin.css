@@ -1,7 +1,4 @@
-/* ---------- Admin ----------
-   The same paper, ink and gold as the public shelf, but denser: this is a
-   working screen, not a display case. Fonts are the self-hosted pair the rest
-   of the site already loads, so nothing new is fetched. */
+/* The admin: the site's paper, ink and gold, denser, on the same self-hosted fonts. */
 
 @font-face {
   font-family: 'Fraunces';
@@ -87,8 +84,7 @@ a { color: inherit; text-underline-offset: 3px; }
   display: flex;
   gap: 0.15rem;
   flex-wrap: wrap;
-  /* Always its own row under the title, however many tabs there are, rather
-     than wrapping into the title/sign-out row and breaking its height. */
+  /* always a row of its own under the title */
   flex-basis: 100%;
   order: 3;
 }
@@ -127,7 +123,7 @@ a { color: inherit; text-underline-offset: 3px; }
 .page-head h1 { font-size: 1.8rem; }
 .page-head p { margin: 0.35rem 0 0; opacity: 0.65; font-size: 0.9rem; max-width: 60ch; }
 .page-head .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
-/* Sync and Delete on the edit page are forms of their own, sitting in the row. */
+/* Sync and Delete on the edit pages are forms of their own. */
 .page-head .actions form { margin: 0; display: inline-flex; }
 
 /* ---------- Cards ---------- */
@@ -234,8 +230,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 
 .field { margin-bottom: 0.9rem; }
 
-/* Explanatory line under a control. Not scoped to .field: several of them sit
-   under a checkbox, which is not wrapped in one. */
+/* The line explaining a control (some sit under a checkbox, outside any .field). */
 .hint { font-size: 0.76rem; opacity: 0.55; margin-top: 0.25rem; text-transform: none; letter-spacing: 0; }
 
 .grid-fields { display: grid; gap: 0.9rem 1rem; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
@@ -263,10 +258,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .table .title .pill { margin-left: 0.3rem; }
 .table .none { opacity: 0.35; }
 .table .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
-/* A value the record doesn't have of its own: Discogs' is showing through. */
+/* A value from Discogs, showing through an empty box. */
 .table .derived { opacity: 0.6; }
-/* The year is the short form; the full release date is in its tooltip, which
-   is drawn here rather than left to title="" so it appears at once. */
+/* The year, with the full date in a tooltip that appears at once. */
 .table .hover-date { position: relative; cursor: help; text-decoration: underline dotted rgba(23, 20, 15, 0.4); text-underline-offset: 3px; }
 .table .hover-date::after {
   content: attr(data-tip);
@@ -288,13 +282,11 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 }
 .table .hover-date:hover::after, .table .hover-date:focus-visible::after { opacity: 1; }
 
-/* Sortable headings: links on the server-sorted list, clicked by table.js on
-   the short ones. */
+/* Sortable headings: links on the collection list, buttons (admin-table.js) on the short ones. */
 .table th.sortable { padding: 0; }
 .table th.sortable > a, .table th.sortable > .sort-label { display: flex; align-items: center; gap: 0.35em; padding: 0.5rem 0.6rem; color: inherit; text-decoration: none; white-space: nowrap; cursor: pointer; }
 .table th.sortable:hover, .table th.sorted { opacity: 1; }
-/* The arrow is a small triangle, as on the shelf: not there until the heading is
-   pointed at (a faint preview of the first click), solid on the sorted column. */
+/* The arrow: faint on a pointed-at heading, solid on the sorted column. */
 .table .sort-arrow {
   width: 0;
   height: 0;
@@ -345,10 +337,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .filters .field { margin: 0; min-width: 150px; }
 .filters .field.grow { flex: 1 1 260px; }
 
-/* ---------- Filter bar (the item lists) ----------
-   A grid rather than a wrapping row: every control has its own cell whether or
-   not it has anything to filter, so nothing appears, disappears or falls onto
-   a second line when a choice is made. */
+/* ---------- Filter bar ----------
+   A grid, so nothing moves or wraps when a choice is made. */
 
 .filterbar {
   display: grid;
@@ -489,15 +479,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .disc-art h4 span { font: 400 0.78rem 'Space Grotesk', system-ui, sans-serif; opacity: 0.55; }
 .picker small { display: block; text-align: center; font-size: 0.68rem; opacity: 0.55; margin-top: 0.25rem; }
 
-/* ---------- Field toggles ---------- */
-
-.field-grid { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
-.field-grid h3 { font-size: 0.95rem; margin-bottom: 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--line); }
-.field-grid .check { margin-bottom: 0.35rem; }
-.field-grid .group-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; margin: 0.8rem 0 0.4rem; }
-
-/* The drawer-fields grid: one row per fact, one column per format, and an All
-   column in front that ticks a row across every format at once. */
+/* ---------- Drawer fields ----------
+   One row per fact, one column per format, and an All column in front. */
 
 .matrix-wrap { overflow-x: auto; }
 .matrix { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 560px; }
@@ -549,21 +532,53 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .swatch { width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; border: 1px solid var(--line-strong); cursor: pointer; }
 .swatch:hover, .swatch:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 
-/* The colour of a vinyl in the items list; dashed when no colour was recognised. */
+/* A vinyl's colour in the collection list; dashed when none was recognised. */
 .disc-dot { display: inline-block; width: 0.85rem; height: 0.85rem; margin-left: 0.35rem; border-radius: 50%; border: 1px solid var(--line-strong); vertical-align: -0.1rem; }
 .disc-dot.unknown { background: #131313; border: 1px dashed var(--gold); }
 
-/* The read-only Discogs facts: the value wraps inside the card (a long format
-   or label line would otherwise run off it), the label keeps to one line. */
+/* The read-only Discogs facts: the value wraps, the label doesn't. */
 .table.facts .label { opacity: 0.6; white-space: nowrap; vertical-align: top; }
 .table.facts .right { white-space: normal; overflow-wrap: anywhere; vertical-align: top; }
 
-/* The header picture picker on an artist: a long list of covers, scrolling rather than pushing the form down. */
+/* An artist's header picture: a long list of covers, scrolling. */
 .picker.artist-covers { max-height: 22rem; overflow-y: auto; padding: 0.2rem; margin-bottom: 1rem; }
 .picker.artist-covers small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* The artist's current picture, beside their name in the list. */
 .pill-pic { float: left; width: 34px; height: 34px; margin: 0 0.7rem 0 0; border-radius: 50%; object-fit: cover; background: var(--paper-dim); }
 
-/* A sub-heading straight after a run of checkboxes needs air above it. */
+/* Air above a sub-heading that follows a run of checkboxes. */
 .check + h3.sub { margin-top: 1.4rem; }
+
+/* ---------- Details on particular pages ---------- */
+
+.check.spaced { margin-top: 0.5rem; }
+.check.indented { margin-left: 1.6rem; }
+textarea.short { min-height: 0; }
+summary.more { cursor: pointer; font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.8rem; }
+summary.more.corrections { margin: 0.4rem 0 0.8rem; }
+.hint.lead { margin-bottom: 0.8rem; }
+.hint.under-check { margin: 0.3rem 0 1rem; }
+.hint.quiet { font-size: 0.76rem; opacity: 0.6; }
+.field.spaced { margin-top: 0.9rem; }
+.notes-row { margin: 1rem 0 0; font-size: 0.85rem; }
+.sync-card { margin-top: 1.4rem; }
+.table td.path { font-size: 0.78rem; word-break: break-all; }
+.filterbar.single { grid-template-columns: minmax(0, 320px); margin-bottom: 1rem; }
+.table.spaced { margin-top: 1.2rem; }
+.table td.dim { opacity: 0.7; }
+.table td.faint { opacity: 0.55; }
+.table td.rule-kind { width: 5.5rem; }
+.table th.narrow { width: 5rem; }
+.push-right { margin-left: auto; }
+form.inline, .page-head .actions form.inline { display: inline; }
+.page-head.era-heading { margin-bottom: 0.8rem; }
+.era-heading h2 { font-size: 1.1rem; }
+.era-heading .years { opacity: 0.5; font-size: 0.85rem; }
+.era-heading p { margin-top: 0.2rem; }
+.filters.add-rule { margin-top: 0.9rem; margin-bottom: 0; }
+.filters .field.rank { min-width: 90px; }
+.form-actions .aside, .page-count { font-size: 0.85rem; opacity: 0.6; }
+.form-actions .aside { font-size: 0.82rem; }
+.card > h2.with-action { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+small.run-message { display: block; opacity: 0.6; }

@@ -1,17 +1,11 @@
 <?php
 
 /**
- * One listing: start it from nothing but a Discogs link, then set what Discogs
- * can't tell you — the price, the eBay listing, any photos of your own.
- *
- * Deliberately smaller than admin_item.php: a listing isn't filed into an era
- * or an artist page, and it has no discs to draw, so none of that machinery is
- * here. What it does share — the cover picker, the read-only Discogs facts,
- * the Sync/Delete header actions — is lifted from admin_item.php as directly
- * as the two forms' different shapes allow.
+ * One listing: started from a Discogs link, then given what Discogs can't know
+ * — the price, the eBay listing, photos of the actual copy.
  */
 
-require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin.php';
 
 require_login();
 
@@ -19,15 +13,10 @@ $id = (int) query('id');
 $item = $id > 0 ? item_by_id($id) : null;
 
 if ($id > 0 && ($item === null || $item['source'] !== 'for_sale')) {
-    http_response_code(404);
-    $pageTitle = 'Not found';
-    require __DIR__ . '/../includes/admin_layout_top.php';
-    echo '<div class="card"><p class="empty">There is no listing with that id. It may have been deleted.</p></div>';
-    require __DIR__ . '/../includes/admin_layout_bottom.php';
-    exit;
+    admin_not_found('There is no listing with that id. It may have been deleted.');
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (is_post()) {
     csrf_verify();
 
     if (post('action') === 'create') {
@@ -46,98 +35,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('admin_selling_item?id=' . $item['id']);
     }
 
-    if (post('action') === 'delete' && $item) {
-        db()->prepare('DELETE FROM items WHERE id = ?')->execute([$item['id']]);
-        flash('Deleted "' . item_title($item) . '".');
-        redirect('admin_selling');
-    }
-
-    if (post('action') === 'sync' && $item) {
-        set_time_limit(150);
-        try {
-            flash(sync_one_item($item));
-        } catch (DiscogsException $e) {
-            flash('Sync failed: ' . $e->getMessage(), 'error');
-        } catch (Throwable $e) {
-            error_log('Selling item sync failed: ' . $e);
-            flash('Sync failed' . (is_debug() ? ': ' . $e->getMessage() : '. Check the log.'), 'error');
-        }
-        redirect('admin_selling_item?id=' . $item['id']);
-    }
-
     if ($item) {
-        $kind = isset(MEDIA_KINDS[post('media_kind')]) ? post('media_kind') : $item['media_kind'];
+        handle_record_action($item, 'admin_selling', 'admin_selling_item');
 
+        $kind = posted_media_kind($item['media_kind']);
         $price = post('sale_price');
-        $price = $price !== '' && is_numeric($price) ? (float) $price : null;
-
         $ebay = nullable(post('ebay_url'));
-        $ebay = $ebay !== null && safe_http_url($ebay) ? $ebay : null;
+        $photos = array_values(array_filter(array_map('trim', preg_split(LINE_BREAK, post('extra_photos'))), 'safe_http_url'));
+        $condition = post('sale_condition');
 
-        $photos = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', post('extra_photos'))), 'safe_http_url'));
-        $condition = in_array(post('sale_condition'), ['new', 'used'], true) ? post('sale_condition') : null;
-
-        // What the drawer's gallery actually shows: whichever of Discogs'
-        // images and the photos above were ticked, in the order they were
-        // presented. Every checkbox rendered has an entry in the posted
-        // array or not; a request with no gallery box at all (JS disabled,
-        // or the create step) is not the same as "unticked everything".
-        $galleryPosted = array_key_exists('gallery_photos', $_POST) && is_array($_POST['gallery_photos']);
-        $gallery = $galleryPosted
-            ? array_values(array_filter(array_map('trim', $_POST['gallery_photos']), 'safe_http_url'))
-            : null;
-
-        $sets = [
-            'media_kind = ?', 'media_kind_locked = ?', 'cover_url = ?',
-            'sale_price = ?', 'sale_currency = ?', 'sale_condition = ?', 'ebay_url = ?', 'extra_photos_json = ?', 'notes = ?',
-            'is_visible = ?', "sold_at = CASE WHEN ? THEN COALESCE(sold_at, datetime('now')) ELSE NULL END",
-            'manual_title = ?', 'manual_artist = ?',
-        ];
-        $params = [
-            $kind,
-            (post('media_kind_locked') !== '' || $kind !== $item['media_kind']) ? 1 : 0,
-            nullable(post('cover_url')),
-            $price,
-            strtoupper(post('sale_currency')) ?: 'AUD',
-            $condition,
-            $ebay,
-            $photos ? json_encode($photos, JSON_UNESCAPED_SLASHES) : null,
-            nullable(post('notes')),
-            post('is_visible') !== '' ? 1 : 0,
-            post('sold') !== '' ? 1 : 0,
-            nullable(post('manual_title')),
-            nullable(post('manual_artist')),
+        $values = [
+            'media_kind'        => $kind,
+            'media_kind_locked' => posted_media_kind_locked($kind, $item['media_kind']),
+            'cover_url'         => nullable(post('cover_url')),
+            'sale_price'        => $price !== '' && is_numeric($price) ? (float) $price : null,
+            'sale_currency'     => strtoupper(post('sale_currency')) ?: 'AUD',
+            'sale_condition'    => isset(SALE_CONDITIONS[$condition]) ? $condition : null,
+            'ebay_url'          => $ebay !== null && safe_http_url($ebay) ? $ebay : null,
+            'extra_photos_json' => $photos ? json_encode($photos, JSON_UNESCAPED_SLASHES) : null,
+            'notes'             => nullable(post('notes')),
+            'is_visible'        => posted_flag('is_visible'),
+            'manual_title'      => nullable(post('manual_title')),
+            'manual_artist'     => nullable(post('manual_artist')),
         ];
 
-        if ($galleryPosted) {
-            $sets[] = 'gallery_json = ?';
-            $params[] = json_encode($gallery, JSON_UNESCAPED_SLASHES);
+        // The ticked pictures, in the order shown. A form without the gallery
+        // at all is not the same as one with every box unticked.
+        if (is_array($_POST['gallery_photos'] ?? null)) {
+            $values['gallery_json'] = json_encode(
+                array_values(array_filter(array_map('trim', $_POST['gallery_photos']), 'safe_http_url')),
+                JSON_UNESCAPED_SLASHES
+            );
         }
 
-        // Discogs' facts corrected by hand — same override columns admin_item.php
-        // writes. Blank means "use Discogs'"; a sync never touches these.
-        foreach (array_keys(OVERRIDE_FIELDS) as $key) {
-            $sets[] = "$key = ?";
-            $params[] = nullable(post($key));
-        }
-
-        $params[] = $item['id'];
-
-        db()->prepare('UPDATE items SET ' . implode(', ', $sets) . ', updated_at = datetime(\'now\') WHERE id = ?')->execute($params);
+        update_item((int) $item['id'], $values + posted_overrides(), [
+            "sold_at = CASE WHEN ? THEN COALESCE(sold_at, datetime('now')) ELSE NULL END" => [posted_flag('sold')],
+        ]);
 
         flash('Saved "' . item_title(item_by_id((int) $item['id'])) . '".');
         redirect('admin_selling');
     }
 }
 
-$pageScript = 'js/admin-selling-item.js';
-
 if ($item === null) {
-    $pageTitle = 'Add an item to sell';
-    $pageIntro = 'Paste a Discogs release link (or just its id) — the title, artist, cover and tracklist come with it.';
-    $pageActions = '<a class="btn ghost" href="' . e(url('admin_selling')) . '">Cancel</a>';
-
-    require __DIR__ . '/../includes/admin_layout_top.php';
+    admin_header(
+        'Add an item to sell',
+        'Paste a Discogs release link (or just its id) — the title, artist, cover and tracklist come with it.',
+        '<a class="btn ghost" href="' . e(url('admin_selling')) . '">Cancel</a>'
+    );
     ?>
     <div class="card">
       <h2>From Discogs</h2>
@@ -155,64 +100,37 @@ if ($item === null) {
       </form>
     </div>
     <?php
-    require __DIR__ . '/../includes/admin_layout_bottom.php';
+    admin_footer('admin-edit');
     exit;
 }
 
 $kind = (string) $item['media_kind'];
-$release = $item['discogs_id'] !== null ? $item : null;
+$release = item_release($item);
 $images = json_column($item['images_json'] ?? null);
 $extraPhotos = json_column($item['extra_photos_json'] ?? null);
-$catalog = field_catalog();
+$gallery = drawer_gallery_all($item);
+$galleryChosen = gallery_choice($item) ?? array_column($gallery, 'full');
+$discogsTracks = tracklist_to_text(json_column($item['tracklist_json'] ?? null));
+$selfUrl = url('admin_selling_item?id=' . (int) $item['id']);
 
-/**
- * The Discogs value showing through an empty box, for the hint under it.
- * Same helper as admin_item.php's — item_field_value() with the field
- * blanked is exactly "what would the site show if I left this empty?".
- */
-function fallback_hint(array $item, ?array $release, string $key, bool $always = false): string
-{
-    if ($release === null || (!$always && trim((string) ($item[$key] ?? '')) !== '')) {
-        return '';
-    }
+// Each correction box starts from what Discogs says, so there is something to edit.
+$ownOr = fn (string $key, string $discogs) => trim((string) $item[$key]) !== '' ? (string) $item[$key] : $discogs;
 
-    $probe = $item;
-    $probe[$key] = null;
-    $value = item_field_value($probe, $release, $key);
-
-    if ($value === null || $value === '' || $value === []) {
-        return '';
-    }
-
-    return is_array($value) ? implode(', ', $value) : (string) $value;
-}
-
-$pageTitle = item_title($item);
-$pageIntro = item_artist($item) . ($item['year'] ? ' · ' . $item['year'] : '');
-
-$selfUrl = e(url('admin_selling_item?id=' . (int) $item['id']));
-$actions = [];
-if ($item['discogs_id']) {
-    $actions[] = '<a class="btn ghost" target="_blank" rel="noopener" href="https://www.discogs.com/release/' . (int) $item['discogs_id'] . '">On Discogs ↗</a>';
-    $actions[] = '<form method="post" action="' . $selfUrl . '" id="syncForm">' . csrf_field()
-        . '<input type="hidden" name="action" value="sync">'
-        . '<button type="submit" class="ghost" title="Refresh this record from Discogs. Price, eBay link and photos are never touched.">Sync with Discogs</button></form>';
-}
-$actions[] = '<form method="post" action="' . $selfUrl . '" id="deleteForm">' . csrf_field()
-    . '<input type="hidden" name="action" value="delete">'
-    . '<button type="submit" class="danger">Delete</button></form>';
-$actions[] = '<a class="btn ghost" href="' . e(url('admin_selling')) . '">Cancel</a>';
-$actions[] = '<button type="submit" form="sellingForm" class="gold">Save</button>';
-$pageActions = implode("\n", $actions);
-
-require __DIR__ . '/../includes/admin_layout_top.php';
+admin_header(item_title($item), item_byline($item), record_actions(
+    $item,
+    $selfUrl,
+    'sellingForm',
+    url('admin_selling'),
+    'Refresh this record from Discogs. Price, eBay link and photos are never touched.',
+    'Delete this listing and everything typed about it?'
+));
 ?>
 
 <?php if ($item['discogs_id'] && $item['detail_fetched_at'] === null): ?>
-  <div class="flash error">Discogs' full detail hasn't come back yet — try Sync in a moment.</div>
+  <?= flash_box("Discogs' full detail hasn't come back yet — try Sync in a moment.", 'error') ?>
 <?php endif; ?>
 
-<form method="post" id="sellingForm" action="<?= $selfUrl ?>">
+<form method="post" id="sellingForm" action="<?= e($selfUrl) ?>">
   <?= csrf_field() ?>
 
   <div class="cards">
@@ -222,42 +140,19 @@ require __DIR__ . '/../includes/admin_layout_top.php';
         <?php if (!$images): ?>
           <p class="empty">Discogs hasn't given any images for this release yet — try Sync in a moment.</p>
         <?php else: ?>
-          <div class="picker">
-            <label>
-              <input type="radio" name="cover_url" value=""<?= $item['cover_url'] ? '' : ' checked' ?>>
-              <span class="none">Discogs' own</span>
-              <small>default</small>
-            </label>
-            <?php foreach ($images as $image): ?>
-              <?php if (empty($image['uri'])) { continue; } ?>
-              <label>
-                <input type="radio" name="cover_url" value="<?= e($image['uri']) ?>"<?= $item['cover_url'] === $image['uri'] ? ' checked' : '' ?>>
-                <img src="<?= e($image['uri150'] ?? $image['uri']) ?>" alt="" loading="lazy">
-                <small><?= e($image['type'] ?? '') ?></small>
-              </label>
-            <?php endforeach; ?>
-          </div>
+          <?= cover_picker($item, $images) ?>
         <?php endif; ?>
       </div>
 
-      <?php
-      $galleryAll = drawer_gallery_all($item);
-      $galleryChosenRaw = json_column($item['gallery_json'] ?? null, ['__uncurated__']);
-      $galleryChosen = $galleryChosenRaw === ['__uncurated__'] ? array_column($galleryAll, 'full') : $galleryChosenRaw;
-      ?>
       <div class="card">
         <h2>Gallery</h2>
         <p>Which of these show in the drawer when a buyer opens this listing. Everything's shown until you pick.</p>
-        <?php if (!$galleryAll): ?>
+        <?php if (!$gallery): ?>
           <p class="empty">Nothing yet — Discogs' gallery or the photos you paste in below will appear here.</p>
         <?php else: ?>
           <div class="picker">
-            <?php foreach ($galleryAll as $photo): ?>
-              <label>
-                <input type="checkbox" name="gallery_photos[]" value="<?= e($photo['full']) ?>"<?= in_array($photo['full'], $galleryChosen, true) ? ' checked' : '' ?>>
-                <img src="<?= e($photo['thumb']) ?>" alt="" loading="lazy">
-                <small><?= e($photo['type'] === 'yours' ? 'yours' : ($photo['type'] ?: '')) ?></small>
-              </label>
+            <?php foreach ($gallery as $photo): ?>
+              <?= picker_choice('checkbox', 'gallery_photos[]', $photo['full'], in_array($photo['full'], $galleryChosen, true), $photo['thumb'], $photo['type']) ?>
             <?php endforeach; ?>
           </div>
         <?php endif; ?>
@@ -279,8 +174,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
             <label for="sale_condition">Condition</label>
             <select id="sale_condition" name="sale_condition">
               <option value="">— not set —</option>
-              <option value="new"<?= $item['sale_condition'] === 'new' ? ' selected' : '' ?>>New</option>
-              <option value="used"<?= $item['sale_condition'] === 'used' ? ' selected' : '' ?>>Used</option>
+              <?= options_html(SALE_CONDITIONS, $item['sale_condition']) ?>
             </select>
           </div>
         </div>
@@ -301,58 +195,25 @@ require __DIR__ . '/../includes/admin_layout_top.php';
           <textarea id="notes" name="notes" placeholder="Condition, what's in the box, anything a buyer should know…"><?= e($item['notes']) ?></textarea>
         </div>
       </div>
-
     </div>
 
     <div>
       <div class="card">
         <h2>Where it lives</h2>
 
-        <div class="field">
-          <label for="media_kind">Format</label>
-          <select id="media_kind" name="media_kind">
-            <?php foreach (MEDIA_KINDS as $value => $label): ?>
-              <option value="<?= e($value) ?>"<?= $kind === $value ? ' selected' : '' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
-          </select>
-          <label class="check" style="margin-top:0.5rem;">
-            <input type="checkbox" name="media_kind_locked" value="1"<?= $item['media_kind_locked'] ? ' checked' : '' ?>>
-            Keep this even if a sync disagrees
-          </label>
-        </div>
+        <?= media_kind_field($kind, (bool) $item['media_kind_locked'], 'Keep this even if a sync disagrees') ?>
 
-        <label class="check">
-          <input type="checkbox" name="is_visible" value="1"<?= $item['is_visible'] ? ' checked' : '' ?>>
-          Show on the site
-        </label>
-        <label class="check">
-          <input type="checkbox" name="sold" value="1"<?= $item['sold_at'] ? ' checked' : '' ?>>
-          Sold
-        </label>
+        <?= check_box('is_visible', (bool) $item['is_visible'], 'Show on the site') ?>
+        <?= check_box('sold', (bool) $item['sold_at'], 'Sold') ?>
         <?php if ($item['sold_at']): ?>
           <div class="hint">Sold <?= e(format_date($item['sold_at'])) ?>. Untick to put it back up.</div>
         <?php endif; ?>
       </div>
 
       <?php if ($release): ?>
-        <?php
-        $overrideLabels = ['labels' => 'Label', 'catalog_number' => 'Catalogue no.', 'formats' => 'Format details', 'genres' => 'Genres', 'styles' => 'Styles'];
-        $overrideHelp = [
-            'labels' => 'One per line.',
-            'catalog_number' => 'One per line.',
-            'formats' => 'What the list shows under Details, one per line: "LP", "Album", "Pink".',
-            'genres' => 'Separated by commas.',
-            'styles' => 'Separated by commas.',
-        ];
-        $discogsTracks = tracklist_to_text(json_column($item['tracklist_json'] ?? null));
-        // What each box actually shows: what was typed here, or — pre-filled,
-        // not just hinted at — whatever Discogs currently says, so there's
-        // something real to edit rather than an empty box to retype from scratch.
-        $ownOr = fn (string $key, string $discogsValue) => trim((string) $item[$key]) !== '' ? $item[$key] : $discogsValue;
-        ?>
         <div class="card">
           <h2>Correct what Discogs says</h2>
-          <p class="hint" style="margin-bottom:0.8rem;">Filled in with what Discogs currently says — edit anything here to correct it. It's kept through every sync; put it back the way Discogs has it to stop correcting it.</p>
+          <p class="hint lead">Filled in with what Discogs currently says — edit anything here to correct it. It's kept through every sync; put it back the way Discogs has it to stop correcting it.</p>
 
           <div class="grid-fields">
             <div class="field">
@@ -364,24 +225,18 @@ require __DIR__ . '/../includes/admin_layout_top.php';
               <input type="text" id="manual_artist" name="manual_artist" value="<?= e($ownOr('manual_artist', (string) $item['artists_text'])) ?>">
             </div>
 
-            <?php foreach ($overrideLabels as $key => $label): ?>
-              <?php $value = $ownOr($key, fallback_hint($item, $release, $key, true)); ?>
+            <?php foreach (OVERRIDE_BOXES as $key => $box): ?>
               <div class="field">
-                <label for="o_<?= e($key) ?>"><?= e($label) ?></label>
-                <?php if (OVERRIDE_FIELDS[$key] === 'list'): ?>
-                  <input type="text" id="o_<?= e($key) ?>" name="<?= e($key) ?>" value="<?= e($value) ?>">
-                <?php else: ?>
-                  <textarea id="o_<?= e($key) ?>" name="<?= e($key) ?>" rows="2" style="min-height:0;"><?= e($value) ?></textarea>
-                <?php endif; ?>
-                <div class="hint"><?= e($overrideHelp[$key]) ?></div>
+                <label for="o_<?= e($key) ?>"><?= e($box['label']) ?></label>
+                <?= override_input($key, $ownOr($key, discogs_fallback_text($item, $release, $key, true))) ?>
+                <div class="hint"><?= e($box['help']) ?></div>
               </div>
             <?php endforeach; ?>
           </div>
 
-          <div class="field" style="margin-top:0.9rem;">
+          <div class="field spaced">
             <label for="o_tracklist">Tracklist</label>
-            <textarea id="o_tracklist" name="tracklist" rows="10" data-discogs="<?= e($discogsTracks) ?>"
-                      ><?= e($ownOr('tracklist', $discogsTracks)) ?></textarea>
+            <textarea id="o_tracklist" name="tracklist" rows="10" data-discogs="<?= e($discogsTracks) ?>"><?= e($ownOr('tracklist', $discogsTracks)) ?></textarea>
             <div class="hint">
               One track per line, like <b>1. Poker Face 3:58</b>. The number and the length are optional.
               <?php if ($discogsTracks !== '' && trim((string) $item['tracklist']) !== ''): ?>
@@ -390,40 +245,28 @@ require __DIR__ . '/../includes/admin_layout_top.php';
             </div>
           </div>
         </div>
-      <?php endif; ?>
 
-      <?php if ($release): ?>
         <div class="card">
           <h2>From Discogs</h2>
           <p>Read only — Sync refreshes it. Price, eBay link, photos and notes are never touched by a sync.</p>
-          <table class="table facts">
-            <tbody>
-              <?php
-              $readonly = [
-                'Release'  => $item['discogs_id'] ? '#' . $item['discogs_id'] : '—',
-                'Title'    => $item['title'],
-                'Artists'  => $item['artists_text'],
-                'Year'     => $item['year'],
-                'Country'  => $item['country'],
-                'Formats'  => $item['formats_text'],
-                'Labels'   => implode(', ', labels_lines(json_column($item['labels_json']))),
-                'Barcode'  => $item['release_barcode'],
-                'Genres'   => implode(', ', json_column($item['genres_json'])),
-                'Tracks'   => count(json_column($item['tracklist_json'])) ?: '—',
-                'Images'   => count($images) ?: '—',
-                'Detail'   => $item['detail_fetched_at'] ? time_ago($item['detail_fetched_at']) : 'not fetched yet',
-              ];
-              foreach ($readonly as $label => $value):
-                  if ($value === null || $value === '') { continue; }
-              ?>
-                <tr><td class="label"><?= e($label) ?></td><td class="right"><?= e($value) ?></td></tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
+          <?= facts_table([
+              'Release' => $item['discogs_id'] ? '#' . $item['discogs_id'] : '—',
+              'Title'   => $item['title'],
+              'Artists' => $item['artists_text'],
+              'Year'    => $item['year'],
+              'Country' => $item['country'],
+              'Formats' => $item['formats_text'],
+              'Labels'  => implode(', ', labels_lines(json_column($item['labels_json']))),
+              'Barcode' => $item['release_barcode'],
+              'Genres'  => implode(', ', json_column($item['genres_json'])),
+              'Tracks'  => count(json_column($item['tracklist_json'])) ?: '—',
+              'Images'  => count($images) ?: '—',
+              'Detail'  => $item['detail_fetched_at'] ? time_ago($item['detail_fetched_at']) : 'not fetched yet',
+          ]) ?>
         </div>
       <?php endif; ?>
     </div>
   </div>
 </form>
 
-<?php require __DIR__ . '/../includes/admin_layout_bottom.php'; ?>
+<?php admin_footer('admin-edit'); ?>

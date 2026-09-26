@@ -1,9 +1,6 @@
-/* The All column on the drawer-fields grid.
- *
- * Each row's All box mirrors the row: ticked when every format that has the fact
- * shows it, half-ticked when only some do. Clicking it sets the whole row. The
- * All boxes have no name, so they're never submitted — the per-format boxes are
- * the setting; this is only a shortcut for ticking them. */
+/* The All column on the drawer-fields grid: ticked when every format shows the
+ * fact, half-ticked when only some do, and a click sets the whole row. It has
+ * no name, so it is never submitted. */
 
 document.querySelectorAll('.matrix tbody tr').forEach(row => {
   const all = row.querySelector('.all-toggle');

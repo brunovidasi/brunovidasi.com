@@ -1,3 +1,6 @@
+/* The public site: the wooden floor, the header, the controls, the records
+   drawn on it in each view, and the drawer. Every public page loads this. */
+
 /* ---------- Fonts (self-hosted, variable) ---------- */
 
 @font-face {
@@ -36,7 +39,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-:root{
+:root {
   --bg: #100d09;
   --surface: #1c1813;
   --surface-2: #26211a;
@@ -46,9 +49,7 @@
   --line: rgba(242,234,216,0.14);
   --line-strong: rgba(242,234,216,0.32);
   --shadow: 0 10px 24px rgba(0,0,0,0.5);
-  /* The width of the page's content column (header, controls, records, footer).
-     1300px up to a 1600px screen, and from there it grows with the screen so a
-     big monitor isn't mostly empty floor at the sides. */
+  /* The content column; it grows on big screens so they aren't mostly empty floor. */
   --page-max: 1300px;
 }
 
@@ -64,25 +65,18 @@ html, body {
   color: var(--text);
   font-family: 'Space Grotesk', sans-serif;
   -webkit-font-smoothing: antialiased;
-  /* the hero record hangs off the right edge of the page on purpose (see
-     .hero-platter); clip it on both html and body, since some mobile
-     browsers only honour overflow-x set on the body as a scroll container,
-     not as the thing that stops the viewport itself from scrolling */
+  /* The header's record hangs off the right edge on purpose. Clipped on both,
+     since some mobile browsers only honour it on one or the other. */
   overflow-x: hidden;
 }
 
 html {
-  /* Mobile Safari paints the rubber-band overscroll area (and the strip
-     under the notch/status bar) from html's own background-color, not
-     body's — body's gradient/pattern below doesn't reach it, so without
-     this it flashes white (or the system's default canvas colour) above
-     and below the page. */
+  /* What Mobile Safari paints in the overscroll and under the notch. */
   background-color: var(--bg);
   color-scheme: dark;
 }
 
-/* The dark wooden floor, under every view and every page: the grid and the list
-   are the same records on the same floor, just stood up and lined up. */
+/* The dark wooden floor, under every view and every page. */
 body {
   min-height: 100vh;
   background:
@@ -108,11 +102,7 @@ header.hero {
   position: relative;
 }
 
-/* The floor is lit from above: a wash of shadow sits behind the header and
-   thins out as it falls, so that it has gone by the time the records start and
-   none of them are sitting in a darker patch than their neighbours. It reaches
-   past the header to cover the controls, and z-index keeps it behind the type
-   without covering the floor's own boards. */
+/* Shadow behind the header and the controls, gone by the time the records start. */
 header.hero::before {
   content: "";
   position: absolute;
@@ -132,18 +122,17 @@ header.hero::before {
 }
 
 .hero-inner {
-  /* the header carries the 1.5rem side padding itself, so take it off here to
-     land on the same content width as .controls and main */
+  /* less the header's own side padding, to line up with .controls and main */
   max-width: calc(var(--page-max) - 3rem);
   margin: 0 auto;
   display: flex;
   align-items: center;
 }
 
-/* Room for the record, when the admin has one switched on. */
+/* Room for the record, when it is switched on. */
 .hero:has(.hero-platter) .hero-inner { min-height: 260px; }
 
-/* Above the record, which is drawn behind the type. */
+/* The type sits above the record. */
 .hero-text {
   position: relative;
   z-index: 2;
@@ -157,8 +146,7 @@ header.hero::before {
   text-shadow: 0 2px 24px rgba(0,0,0,0.45);
 }
 
-/* The title's weight is split: the words before the last are light, the last is
-   bold and lit gold from above (see hero_title() in includes/hero.php). */
+/* The title's weight is split: the last word bold and gold, the rest light (hero_title()). */
 .hero-text .display b {
   font-weight: 700;
   background: linear-gradient(180deg, #fff3d2, #e0b850 60%, #b98a26);
@@ -236,13 +224,12 @@ header.hero::before {
   color: rgba(242,234,216,0.55);
 }
 
-/* The record: big, off the edge of the page, with a tonearm on it. It hangs
-   110px past the content column, so on a wide screen it sits in the margin
-   whole and on a narrow one the edge of the page crops it. */
+/* The record, hanging 110px past the content column: whole on a wide screen,
+   cropped by the page's edge on a narrow one. */
 .hero-platter {
   position: absolute;
   z-index: 1;
-  /* a little below the middle, so the tonearm's pivot clears the top of the page */
+  /* a little below the middle, so the tonearm's pivot clears the top */
   top: calc(50% + 1.2rem);
   right: max(-40px, calc((100vw - var(--page-max)) / 2 - 110px));
   width: 340px;
@@ -296,14 +283,13 @@ header.hero::before {
   .hero:has(.hero-platter) .hero-inner { min-height: 0; }
   .hero-platter { width: 240px; height: 240px; margin-top: -120px; right: -90px; opacity: 0.3; }
   .hero-arm { display: none; }
-  /* The numbers are for a wide header; here they would only push the records down. */
+  /* The numbers would only push the records down. */
   .hero-stats { display: none; }
-  /* Above the controls band, so the collections menu opens over it. */
+  /* Above the controls, so the collections menu opens over them. */
   .hero-text { z-index: 8; }
 }
 
-/* The header settles in when the page opens: the type rises in turn and the
-   record swings in from the edge. */
+/* The header settles in: the type rises in turn and the record swings in. */
 .hero-eyebrow, .hero-text .display, .hero-rule, .hero-text p, .hero-stats, .hero-links, .hero-pick {
   animation: heroRise 0.7s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
@@ -317,7 +303,10 @@ header.hero::before {
 @keyframes heroRise { from { opacity: 0; transform: translateY(14px); } }
 @keyframes heroPlatterIn { from { opacity: 0; transform: translateX(70px) rotate(-25deg); } }
 
-/* "Animate the header" switched off in the admin: everything just sits there. */
+/* Seen before in this tab: already settled in, the record still turning. */
+header.hero-settled :is(.hero-eyebrow, .hero-text .display, .hero-rule, .hero-text p, .hero-stats, .hero-links, .hero-pick, .hero-platter) { animation: none; }
+
+/* The header's movement switched off in the admin. */
 header.hero-still, header.hero-still * { animation: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -331,10 +320,8 @@ header.hero-still, header.hero-still * { animation: none !important; }
 }
 
 /* ---------- Controls ----------
-   A band across the page between the header and the records, the same glass as
-   the artist pages' era nav, holding the search, sort, view and the rest of the
-   controls in one row. It sits above the floor (z-index) so a dropdown opening
-   out of it lands over the records. */
+   The band between the header and the records. It sits above the floor, so a
+   dropdown opening out of it lands over the records. */
 
 .controls {
   position: relative;
@@ -356,8 +343,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
   align-items: center;
 }
 
-/* Every control in the bar is the same height, whatever is inside it (an emoji
-   would otherwise make its button taller than the rest). */
+/* Every control in the bar the same height, emoji or not. */
 .controls input[type="search"],
 .controls .dd-button,
 .controls .seg,
@@ -392,8 +378,8 @@ header.hero-still, header.hero-still * { animation: none !important; }
 .controls input[type="search"]::placeholder { color: rgba(242,234,216,0.4); }
 .controls input[type="search"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 
-/* The format filter, outside the bar, on the floor: the chips centred, the count
-   at the right end. Above the floor's records, which can be nudged up into it. */
+/* The format chips, centred, and the count at the right. Above the records,
+   which the pile can nudge up into it. */
 .filters {
   position: relative;
   z-index: 5;
@@ -415,20 +401,16 @@ header.hero-still, header.hero-still * { animation: none !important; }
   white-space: nowrap;
 }
 
-/* The search box (includes/hero.php, js/controls.js). Here it is the bare input,
-   so its wrapper and the buttons for a phone take no part in the layout. */
+/* On a desktop the search box is the bare input; its phone buttons take no part. */
 .search { display: contents; }
 .search-open, .search-close { display: none; }
 .floor-tools { display: contents; }
 .dd-short { display: none; }
 
-/* On a phone the bar is two short rows instead of five tall ones: the search
-   folded down to a glass, the sort (or the crate's Organise by) and the view
-   toggle beside it, and under them the floor's own tools (messiness, crate).
-   Opening the search stretches the glass across the row while what was beside it
-   slides shut; the row under stays put, so nothing below moves. The formats slide
-   sideways in one row, like the era nav's chips, running to the edges of the
-   screen so it is plain there is more to the right. */
+/* On a phone the bar is two short rows: the search folded to a glass beside the
+   sort and the view toggle, and under them the floor's tools. Opening the
+   search stretches it across its row while the rest slides shut. The format
+   chips scroll sideways, to the edges of the screen. */
 @media (max-width: 720px) {
   .controls-inner {
     --control-h: 2.5rem;
@@ -439,7 +421,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
     transition: column-gap var(--dur) var(--ease);
   }
 
-  /* The box is the glass and, opened, the field: the same border and fill, only wider. */
+  /* The box is the glass and, opened, the field. */
   .search {
     display: flex;
     align-items: center;
@@ -484,12 +466,12 @@ header.hero-still, header.hero-still * { animation: none !important; }
 
   .search input[type="search"]:focus-visible { outline: none; }
 
-  /* Shut, the input and the cross are still there, squeezed out of the box. The
-     cross goes at once, or its edge shows at the glass's side as the box closes. */
+  /* Shut, the input and the cross are squeezed out of the box. The cross goes
+     at once, or its edge shows as the box closes. */
   .search input[type="search"] { visibility: hidden; transition: visibility 0s var(--dur); }
   .search-close { visibility: hidden; }
 
-  /* A search is typed and the input has closed over it: the glass says so. */
+  /* A search is typed and the box has closed over it. */
   .search.has-query { border-color: var(--gold); }
   .search.has-query .search-open { color: var(--gold); }
   .search.has-query .search-open::after {
@@ -503,7 +485,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
     background: var(--gold);
   }
 
-  /* Open: the box takes the row, with the glass at its start and a cross at its end. */
+  /* Open: the box takes the row, glass at the start and cross at the end. */
   .controls.searching .controls-inner { column-gap: 0; }
   .controls.searching .search { flex-grow: 1; }
   .controls.searching .search:focus-within { border-color: var(--gold); }
@@ -512,8 +494,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
   .controls.searching .search input[type="search"],
   .controls.searching .search-close { visibility: visible; transition-delay: 0s; }
 
-  /* Whatever shares the row with the box gives way to it: fading as it shrinks
-     shut, and fading back in once the row has room again. */
+  /* What shares the row gives way, and fades back once there is room. */
   .controls-inner > :not(.search):not(.floor-tools) {
     transition: flex-grow var(--dur) var(--ease), max-width var(--dur) var(--ease), opacity 0.2s 0.08s, visibility 0s;
   }
@@ -539,15 +520,13 @@ header.hero-still, header.hero-still * { animation: none !important; }
   .dd-full { display: none; }
   .dd-short { display: inline; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
-  /* max-width is only there to be slid to nothing: about as wide as the widest toggle.
-     Only the first toggle takes the free space, so a second one (the artist pages'
-     oldest/newest, before Grid/List) sits right beside it rather than adrift in the
-     middle of the row. */
+  /* max-width is only there to be slid to nothing. Only the first toggle takes
+     the free space, so a second sits right beside it. */
   .controls .seg { order: 1; margin-left: auto; max-width: 14rem; }
   .controls .seg + .seg { margin-left: 0; }
   .controls .seg button { padding: 0 0.7rem; font-size: 0.8rem; }
 
-  /* Row two: the floor's tools, side by side. Not there at all in the grid and list. */
+  /* Row two: the floor's tools. Not there in the grid and list. */
   .floor-tools {
     order: 2;
     flex: 1 0 100%;
@@ -583,21 +562,19 @@ header.hero-still, header.hero-still * { animation: none !important; }
   .controls-inner, .search, .search-open, .controls-inner > :not(.search):not(.floor-tools) { transition: none !important; }
 }
 
-/* The smallest phones: a little less padding so the sort keeps its words. */
+/* The smallest phones: less padding, so the sort keeps its words. */
 @media (max-width: 360px) {
   .controls-inner { --control-h: 2.3rem; padding-inline: 0.75rem; }
   .controls .seg button { padding: 0 0.5rem; font-size: 0.75rem; }
   .controls .dd-button { padding: 0 0.55rem; gap: 0.3rem; font-size: 0.8rem; }
 }
 
-/* The dropdown (js/dropdown.js): a button and a menu standing in for a <select>,
-   which stays in the page, hidden, as the thing the code reads and writes. */
+/* The dropdown (js/dropdown.js), over its hidden <select>. */
 .dd { position: relative; }
 .dd:has(> select[hidden]) { display: none; }
 .dd > select { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
-/* The same select before js/dropdown.js has dressed it (the first paint, which
-   is also what a browser's tab switcher may keep), made up to look like the button. */
+/* The select before js/dropdown.js has dressed it, made to look like the button. */
 .controls-inner > select:not([hidden]),
 .organise > select {
   height: var(--control-h);
@@ -673,7 +650,7 @@ header.hero-still, header.hero-still * { animation: none !important; }
 .dd-menu li.active { background: rgba(242,234,216,0.1); }
 .dd-menu li[aria-disabled="true"] { cursor: default; opacity: 0.55; }
 
-/* the choice in force: gold, with a tick at the end */
+/* The choice in force: gold, with a tick. */
 .dd-menu li[aria-selected="true"] { color: var(--gold); }
 .dd-menu li[aria-selected="true"]::after {
   content: '';
@@ -696,7 +673,7 @@ button.ghost {
 }
 button.ghost:hover { background: rgba(242,234,216,0.1); }
 
-/* format filter chips */
+/* The format chips */
 .chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .chips button {
   font: 500 0.8rem 'Space Grotesk', sans-serif;
@@ -741,14 +718,11 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  /* The top has to hold the first row at full messiness: a record can be nudged
-     up by 22px x 1.4, swung by 12.6 degrees, and sits under its neighbours by
-     the negative margin. Less than that and it rides up over the view toggle. */
+  /* Room at the top for the first row at full messiness. */
   padding: 3.5rem 1rem 3rem;
 }
 @media (max-width: 720px) { .floor { --s: 0.62; } }
-/* On a big screen the records grow a little with the wider floor, so it still
-   reads as records on the floor rather than a scatter of stamps. */
+/* On a big screen the records grow a little with the floor. */
 @media (min-width: 1920px) { .floor { --s: 1.12; } }
 @media (min-width: 2400px) { .floor { --s: 1.28; } }
 
@@ -800,8 +774,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
     linear-gradient(90deg, rgba(0,0,0,.28) 0 .95em, rgba(255,255,255,.18) .95em 1em, transparent 1em),
     #0a5fd0;
 }
-/* the synthetic "Blu-ray" bar is only needed on sleeves with no cover photo
-   of their own — real Blu-ray box art already carries that blue branding bar */
+/* The "Blu-ray" bar, only on sleeves without a cover: real box art has its own. */
 .tile.kind-bd .sleeve:not(:has(img)) {
   padding-top: 1.9em;
 }
@@ -834,10 +807,10 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   transition-delay: calc(var(--k) * 45ms);
   box-shadow: 0 5px 16px rgba(0,0,0,.5);
 }
-/* every disc slides straight out along the same axis; later discs sit a little further out, behind the first */
+/* Every disc slides out along the same line; later ones further, behind the first. */
 .tile.hot .d { pointer-events: auto; transform: translateX(calc(var(--sg) * var(--out) * 100%)); }
 
-/* the disc surface spins; the sheen on top stays put */
+/* The disc turns; the sheen on top stays put. */
 .sp {
   position: absolute;
   inset: 0;
@@ -855,33 +828,30 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 .d.pic .lbl { display: none; }
 .d::before { content: ""; position: absolute; inset: 0; border-radius: 50%; z-index: 2; pointer-events: none; background: conic-gradient(from 20deg, transparent 0 16%, rgba(255,255,255,.13) 24%, transparent 32% 66%, rgba(255,255,255,.13) 74%, transparent 82%); }
 
-/* CD / DVD / Blu-ray: the reading side, built like the real object rather than a
-   silver record — a see-through hole, a band of clear polycarbonate around it, the
-   bright mirror band where the data starts, then the rainbow data area out to a
-   clear rim. Percentages are `closest-side`, so 100% is the edge of the disc.
-   DVD gets a faint gold cast, Blu-ray a blue one. */
+/* CD, DVD and Blu-ray: the reading side. A clear hub, the mirror band where
+   the data starts, the rainbow data area and a clear rim (100% is the disc's
+   edge). DVD has a faint gold cast, Blu-ray a blue one. */
 .d.cd .sp, .d.dvd .sp, .d.bd .sp {
   background:
-    /* mirror band at the inner edge of the data area, and the clear outer rim */
+    /* the mirror band and the clear rim */
     radial-gradient(circle closest-side, transparent 0 38%, rgba(255,255,255,.6) 39.5% 41.5%, rgba(255,255,255,.16) 42.5% 43.5%, transparent 44.5% 95%, rgba(255,255,255,.22) 96.5% 100%),
-    /* the data track: far wider and fainter than a vinyl groove */
+    /* the data track, far fainter than a groove */
     repeating-radial-gradient(circle closest-side, rgba(0,0,0,0) 0 2.6px, rgba(0,0,0,.035) 2.6px 5.2px),
     var(--tint, linear-gradient(transparent, transparent)),
-    /* the diffraction rainbow only a pressed disc has: two lobes, silver between */
+    /* the diffraction rainbow: two lobes, silver between */
     conic-gradient(from 25deg,
       rgba(255,90,150,0) 0deg, rgba(255,90,150,.3) 22deg, rgba(255,224,90,.26) 48deg,
       rgba(90,255,190,.3) 74deg, rgba(96,170,255,.26) 100deg, rgba(96,170,255,0) 130deg,
       rgba(96,170,255,0) 192deg, rgba(255,90,150,.26) 214deg, rgba(255,224,90,.22) 240deg,
       rgba(90,255,190,.28) 266deg, rgba(96,170,255,.24) 292deg, rgba(96,170,255,0) 322deg),
     conic-gradient(from 10deg, #fdfdfe, #9aa4af, #fdfdfe, #c2cad2, #f4f6f9, #8d98a4, #fdfdfe, #b2bbc4, #fdfdfe);
-  /* everything inside the mirror band is clear plastic, so it is cut away here
-     and drawn (without spinning) by the ::after hub below */
+  /* the clear plastic inside the mirror band is cut away and drawn, still, by ::after */
   -webkit-mask: radial-gradient(circle closest-side, transparent 0 37.5%, #000 38.5%);
   mask: radial-gradient(circle closest-side, transparent 0 37.5%, #000 38.5%);
 }
 .d.dvd { --tint: linear-gradient(rgba(255,196,90,.2), rgba(255,196,90,.2)); }
 .d.bd { --tint: linear-gradient(rgba(40,110,255,.4), rgba(40,110,255,.4)); }
-/* clear clamping area: the stacking ring and a faint sheen over whatever is behind */
+/* The clamping area: the stacking ring, and a faint sheen. */
 .d.cd::after, .d.dvd::after, .d.bd::after {
   content: "";
   position: absolute;
@@ -925,7 +895,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 
 .grid {
   --s: 1;
-  /* 1100px at the default 1300px page, widening with it on a big screen */
+  /* 1100px on the default page, wider on a big screen */
   max-width: calc(var(--page-max) - 200px);
   margin: 0 auto;
   display: grid;
@@ -936,8 +906,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 
 .grid .cell { cursor: pointer; min-width: 0; }
 
-/* every object stands on the same baseline, at a height that keeps the
-   12" / CD / case difference readable without shrinking a CD to a stamp */
+/* Every object stands on one baseline, keeping the 12" / CD / case sizes readable. */
 .grid .stage {
   height: 178px;
   display: flex;
@@ -952,14 +921,13 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   aspect-ratio: var(--w) / var(--h);
   transition: transform .35s cubic-bezier(.2,.8,.25,1);
 }
-/* Vinyl steps down from the 12" by the sleeve size dims() picked (7" 150, 10" 200,
-   12" 250): 7" 0.90, 10" 0.95, 12" 1. A 7" stands shorter than a 12" but still
-   taller than a CD (0.84). Boxes and multi-disc sets (270) stay full. */
+/* Vinyl steps down from the 12" by the sleeve width dims() gives: 7" 0.90,
+   10" 0.95, 12" 1; a CD is 0.84, and boxes stay full. */
 .grid .tile.kind-vinyl { --gh: calc(1 - (250 - min(var(--w), 250)) / 1000); }
 .grid .tile.kind-cd { --gh: 0.84; }
 .grid .tile.kind-dvd, .grid .tile.kind-bd { --gh: 0.94; }
 .grid .tile.hot { transform: translateY(-6px); }
-/* only where there is a real hover: a phone keeps :hover on whatever was last tapped */
+/* Only with a real hover: a phone keeps :hover on whatever was last tapped. */
 @media (hover: hover) { .grid .cell:hover .tile { transform: translateY(-6px); } }
 .grid .tile .sleeve { box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 8px 18px rgba(0,0,0,.55); }
 
@@ -989,17 +957,14 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   }
   .grid .stage { height: 130px; }
 
-  /* Each tile stands centred on the stage above it, so its caption (title,
-     artist, format, year) is centred underneath it too rather than hugging
-     the left edge of the cell. */
+  /* The caption centred under its centred tile. */
   .grid .cap { text-align: center; }
   .grid .cap .m { justify-content: center; }
 }
 
 /* ---------- List view ---------- */
 
-/* The floor stays behind the page; the table carries its own background so the
-   text doesn't sit on the boards. */
+/* The table has its own background, so its text isn't on the boards. */
 .list {
   max-width: none;
   margin: 0.4rem auto 3rem;
@@ -1036,7 +1001,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   padding-bottom: 8px;
 }
 .lrow.lhead:hover { background: none; }
-/* A header is a button that sorts: dim until it's the one in use, or pointed at. */
+/* A header sorts: dim until it's the one in use, or pointed at. */
 .lsort {
   display: inline-flex;
   align-items: center;
@@ -1052,8 +1017,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
   cursor: pointer;
   opacity: 0.55;
 }
-/* The arrow is a small triangle. It isn't there until the header is pointed at
-   (a faint preview of the first click), and stays, solid, on the sorted column. */
+/* The arrow: faint on a pointed-at header, solid on the sorted column. */
 .lsort i {
   width: 0;
   height: 0;
@@ -1141,7 +1105,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 
 .drawer-close {
   position: absolute;
-  z-index: 2; /* over the cover, which is positioned for its count */
+  z-index: 2; /* over the cover */
   top: 1rem;
   right: 1rem;
   width: 36px;
@@ -1163,7 +1127,7 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 }
 .drawer-cover img { width:100%; height:100%; object-fit:cover; display:block; }
 
-/* The cover and the gallery's other pictures in a row, one per swipe (js/common.js paintCover). */
+/* The cover and the rest of the gallery, one per swipe. */
 .cover-track {
   display: flex;
   width: 100%;
@@ -1293,7 +1257,6 @@ main { max-width: var(--page-max); margin: 0 auto; padding: 1rem 1.5rem 4rem; }
 .credit { font-size: 0.88rem; padding: 0.15rem 0; }
 .credit .role { opacity: 0.55; margin-right: 0.3rem; }
 .credit a { text-underline-offset: 2px; }
-.muted { opacity: 0.55; }
 
 .notes {
   margin: 0;
@@ -1344,7 +1307,7 @@ footer {
 /* No picture to make room for on the left. */
 .hero-links.no-covers a { padding-left: 0.8rem; }
 
-/* A cover cut round, with the spindle hole in it: a little record. */
+/* A cover cut round, with a spindle hole: a little record. */
 .hero-cover {
   position: relative;
   flex-shrink: 0;
@@ -1382,21 +1345,10 @@ footer {
 
 .hero-links a:hover i { background: rgba(23, 20, 15, 0.15); color: var(--ink); }
 
-/* The wantlist isn't an artist: gold and dashed, like the empty sleeve on its page. */
+/* The wantlist and the shop aren't artists: gold and dashed. */
 .hero-links a.wanted,
-.hero-pick > a.wanted {
-  padding-left: 0.8rem;
-  border-style: dashed;
-  border-color: var(--gold);
-  background: rgba(201, 154, 46, 0.14);
-  color: var(--gold);
-}
-
-.hero-links a.wanted:hover,
-.hero-pick > a.wanted:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
-
-/* The Selling link, styled the same way — solid, not an artist, always stands out. */
 .hero-links a.selling,
+.hero-pick > a.wanted,
 .hero-pick > a.selling {
   padding-left: 0.8rem;
   border-style: dashed;
@@ -1405,11 +1357,12 @@ footer {
   color: var(--gold);
 }
 
+.hero-links a.wanted:hover,
 .hero-links a.selling:hover,
+.hero-pick > a.wanted:hover,
 .hero-pick > a.selling:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
 
-/* The same links for a phone: the artists in a menu, the wantlist beside it.
-   The pills above and this are alternatives; one is always hidden. */
+/* The same links on a phone: the artists in a menu. One of the two is always hidden. */
 .hero-pick { display: none; }
 
 @media (max-width: 720px) {
@@ -1459,8 +1412,7 @@ footer {
   font-style: normal;
 }
 
-/* Bruno's own fields lead the drawer, set off from the Discogs facts below. */
-
+/* Bruno's own fields lead the drawer, set off from Discogs' below. */
 .facts.mine-facts {
   border-top: none;
   padding-top: 0;
@@ -1473,11 +1425,8 @@ footer {
 .facts dd.mine { font-weight: 600; }
 .facts dd .notes { display: block; line-height: 1.55; }
 
-/* A disc image picked in the admin (the printed side of a CD, DVD or Blu-ray)
-   is shown instead of the reading side. The gradients above build the mirror
-   and the diffraction rainbow as background LAYERS, so naming the art here
-   replaces all of them at once while the mask — the clear plastic hub — and the
-   clamping sheen from ::after stay exactly as they are. */
+/* A printed CD, DVD or Blu-ray: its picture replaces the reading side's
+   layers, while the clear hub and the clamping sheen stay. */
 .d.art .sp {
   background:
     radial-gradient(circle closest-side, rgba(255,255,255,.18) 0 40%, rgba(255,255,255,0) 72%),

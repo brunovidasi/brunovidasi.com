@@ -1,22 +1,12 @@
-/* The crate: the floor's mess, put in order.
+/* The crate: the floor's records stood up in a wooden crate, in the order the
+ * "Organise by" menu says, to flip through. Picking one pulls it out, its disc
+ * rising out of the sleeve in the colour of the pressing, and opens the drawer.
  *
- * The floor view is a pile; this is the same records stood up in a wooden crate
- * on the left of the page, in whatever order the "Organise by" menu says, to
- * flip through like a crate digger. Selecting one pulls it out — its disc slides
- * up out of the sleeve in the colour of the pressing — and opens the drawer.
- *
- * Getting in and out is the animation: the records lying on the floor are
- * lifted off it, thrown into the crate one after another, and on the way back
- * they are tipped out and land where the floor lays them. Both directions are
- * one small flight engine (fly) that only knows two points per record, the spot
- * on the floor and the mouth of the crate, and moves the record between them.
- *
- * Main page only: it is wired up from js/script.js, and the artist pages and
- * the wantlist never load it. Needs js/common.js and js/tiles.js first.
- */
+ * Getting in and out is one small flight engine (fly): the records on the
+ * floor are thrown into the crate one after another, and tipped back out to
+ * where the floor lays them. Shelf page only, driven by js/script.js. */
 
-/* What "Organise by" offers. `sort` is the same {key, dir} the shelf's own sort
-   uses (js/tiles.js); `group` is what the plate on the crate reads out. */
+/* What "Organise by" offers: the sort (as js/tiles.js has it) and what the plate on the crate reads out. */
 const initialOf = text => {
   const c = fold(text).replace(/^[^a-z0-9]+/, '')[0];
   return !c ? '#' : /\d/.test(c) ? '0–9' : c.toUpperCase();
@@ -42,11 +32,6 @@ const DEFAULT_CRATE_ORDER = 'artist';
 const Crate = (() => {
   const content = $('content');
 
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   const MAX_FLYERS = 64;
   const LOOK_AHEAD = 14; // how many records behind the front one are drawn
 
@@ -58,7 +43,7 @@ const Crate = (() => {
   let busy = false, gen = 0, pending = null, snapT = 0, digT = 0;
   const idle = [];
 
-  /** Whether there is a crate on the page right now (something else may have replaced it). */
+  /** Whether a crate is on the page right now (something else may have replaced it). */
   const alive = () => Boolean(stage && stage.isConnected);
 
   function settle() {
@@ -74,10 +59,12 @@ const Crate = (() => {
 
   /* ---------- One record in the crate ---------- */
 
+  /** A record's width in the crate against a 12": real proportions, but nothing too small to read. */
+  const crateWidth = it => clamp(dims(it)[0] / 250, 0.6, 1);
+
   function makeRec(it) {
     const [w, h] = dims(it);
-    // real proportions, but nothing so small that its cover can't be read
-    const f = clamp(w / 250, 0.6, 1);
+    const f = crateWidth(it);
     const el = document.createElement('div');
     el.className = `rec kind-${it.shape}`;
     el.style.setProperty('--fw', f.toFixed(3));
@@ -93,14 +80,13 @@ const Crate = (() => {
     return el;
   }
 
-  /** The cover goes on only when a record comes near the front, so 500 of them cost nothing up front. */
+  /** The cover goes on only as a record nears the front, so 500 of them cost nothing up front. */
   function paint(el) {
     if (el._painted) return;
     el._painted = true;
     const it = el._it;
-    const hue = hash(String(it.id)) % 360;
     const face = el.querySelector('.face');
-    face.style.setProperty('--fb', `linear-gradient(135deg,hsl(${hue} 40% 34%),hsl(${(hue + 40) % 360} 45% 16%))`);
+    face.style.setProperty('--fb', sleeveFallback(it));
 
     const caption = () => face.insertAdjacentHTML('beforeend', `<span class="ctext"><b>${esc(it.title)}</b>${esc(it.artist)}</span>`);
     const src = it.cover || it.thumb;
@@ -145,7 +131,7 @@ const Crate = (() => {
         scene.appendChild(el);
         if (entering) {
           el.classList.add('enter');
-          // back to front, so the crate fills up and the front record lands last
+          // Back to front, so the front record lands last.
           el.style.setProperty('--i', Math.max(0, 12 - i));
           el.addEventListener('animationend', () => el.classList.remove('enter'), { once: true });
         }
@@ -166,7 +152,7 @@ const Crate = (() => {
         op = 1 - t * t;
       }
 
-      // the record being held comes up out of the crate, and its disc with it
+      // The record being held comes up out of the crate, and its disc with it.
       const w = pull * Math.max(0, 1 - Math.abs(d) * 2);
       if (w > 0.002) addDiscs(el);
 
@@ -260,7 +246,7 @@ const Crate = (() => {
     let i = Math.floor(Math.random() * els.length);
     if (els.length > 1 && i === from) i = (i + 1) % els.length;
 
-    // a long way off would only be a blur of covers loading; start close instead
+    // A long way off would only be a blur of covers loading: start close instead.
     if (Math.abs(i - pos) > 8) pos = i + (i > pos ? -8 : 8);
 
     flipTo(i);
@@ -313,7 +299,7 @@ const Crate = (() => {
     box.addEventListener('click', e => {
       const rec = e.target.closest('.rec');
       if (!rec || moved > 6 || busy) return;
-      // a record further back comes forward first; the front one is pulled out
+      // A record further back comes forward first; the front one is pulled out.
       if (rec._i === clamp(Math.round(target), 0, els.length - 1)) select();
       else flipTo(rec._i);
     });
@@ -369,16 +355,12 @@ const Crate = (() => {
 
   /**
    * A record about to fly: a copy of its sleeve in the crate's flyer layer, and
-   * everything the engine needs to place it. `doc` is where it lies on the floor,
-   * in page coordinates so that it stays put while the page scrolls under it.
+   * what the engine needs to place it. `doc` is where it lies on the floor, in
+   * page coordinates, so it stays put while the page scrolls.
    */
   function flyer({ tile, rect, w, h, rot }, dir, cw) {
     const it = tile._it;
-    const el = buildTile(it);
-    // a copy is not a control: nothing to tab to, and no hover or click of its own
-    el.removeAttribute('tabindex');
-    el.removeAttribute('role');
-    el.removeAttribute('aria-label');
+    const el = buildTileCopy(it);
     el.classList.add('flyer');
     el.style.width = w + 'px';
     el.style.height = h + 'px';
@@ -387,8 +369,8 @@ const Crate = (() => {
     return {
       el, tile, dir, w, h, rot,
       doc: { x: rect.left + rect.width / 2 + scrollX, y: rect.top + rect.height / 2 + scrollY },
-      // it goes into the crate at the size the crate's records are
-      sm: clamp((cw * clamp(dims(it)[0] / 250, 0.6, 1)) / w * 0.85, 0.3, 1.4),
+      // It goes into the crate at the size the crate's records are.
+      sm: clamp((cw * crateWidth(it)) / w * 0.85, 0.3, 1.4),
       jx: (((hash(String(it.id)) >>> 5) % 1000) / 500 - 1) * cw * 0.28,
       vinyl: it.k === 'vinyl',
       hot: false,
@@ -398,9 +380,9 @@ const Crate = (() => {
   /** The position and pose of one flyer at one moment, written straight to its transform. */
   function place(f, t, ctx) {
     const { rect, sx, sy, mid, lip } = ctx;
-    const u = ease(clamp(t, 0, 1));
+    const u = easeInOutCubic(clamp(t, 0, 1));
     const floorPt = { x: f.doc.x - sx, y: f.doc.y - sy };
-    // the far side of the crate's lip: it ends up mostly hidden behind the front board
+    // Just past the crate's lip, so it ends up mostly hidden behind the front board.
     const mouthPt = { x: rect.left + mid + f.jx, y: rect.top + lip + f.h * f.sm * 0.15 };
     const inward = f.dir === 'in';
     const [a, b] = inward ? [floorPt, mouthPt] : [mouthPt, floorPt];
@@ -416,11 +398,7 @@ const Crate = (() => {
     f.el.style.opacity = alpha.toFixed(3);
   }
 
-  /**
-   * Runs the flyers to the end. Each is in one of three states — waiting its
-   * turn, in the air, or landed — and the discs of the vinyl ones slide out for
-   * the flight, in the colour of the pressing, and go back in before landing.
-   */
+  /** Runs the flyers to the end. A vinyl's discs slide out for the flight and go back in before it lands. */
   function fly(flyers, onDone) {
     const mine = gen;
     const t0 = performance.now();
@@ -459,17 +437,14 @@ const Crate = (() => {
     requestAnimationFrame(frame);
   }
 
-  /**
-   * The tiles on screen, as flyers: the ones nearest the crate first, and no more
-   * than MAX_FLYERS of them. What isn't thrown just fades with the rest of the floor.
-   */
+  /** The tiles on screen as flyers, nearest the crate first, up to MAX_FLYERS. The rest fade with the floor. */
   function takeOff(floor, dir, mess) {
     const ctx = frameContext();
     const vw = innerWidth, vh = innerHeight;
     const mx = ctx.rect.left + ctx.mid, my = ctx.rect.top + ctx.lip;
     const cw = box.offsetWidth / 1.6;
 
-    // every read comes first, so the page is laid out once and not once per record
+    // Every read first, so the page is laid out once rather than once per record.
     const seen = [];
     for (const tile of floor.children) {
       const rect = tile.getBoundingClientRect();
@@ -492,7 +467,7 @@ const Crate = (() => {
       f.dur = 720 + Math.min(500, s.dist * 0.4);
       f.lift = 70 + Math.min(150, s.dist * 0.14);
       f.hotEnd = dir === 'in' ? 1 : 0.65;
-      // the flyer takes the tile's place: drawn exactly on it, with the tile itself out of sight
+      // The flyer takes the tile's place, drawn exactly on it.
       s.tile.style.visibility = 'hidden';
       return f;
     });
@@ -508,7 +483,7 @@ const Crate = (() => {
     const bar = document.querySelector('.controls').getBoundingClientRect().top + scrollY - 12;
     const bottom = box.getBoundingClientRect().bottom + scrollY - innerHeight + 16;
     const top = Math.max(0, bar, bottom);
-    if (Math.abs(top - scrollY) > 4) scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' });
+    if (Math.abs(top - scrollY) > 4) scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   }
 
   /** Floor to crate: the mess on screen is thrown into the crate, and the crate fills. */
@@ -518,7 +493,7 @@ const Crate = (() => {
     hideTip();
 
     const floor = content.querySelector('.floor');
-    const animate = Boolean(floor) && !reduced();
+    const animate = Boolean(floor) && !prefersReducedMotion();
     const mine = gen;
 
     mount(animate);
@@ -530,7 +505,7 @@ const Crate = (() => {
     stage.classList.add('arriving');
     const flyers = takeOff(floor, 'in', mess);
 
-    // whatever was not thrown fades out under the flight
+    // Whatever was not thrown fades out under the flight.
     floor.style.transition = 'opacity .5s ease .15s';
     floor.style.opacity = 0;
 
@@ -553,14 +528,14 @@ const Crate = (() => {
     const old = stage;
     const mine = gen;
 
-    if (reduced()) {
+    if (prefersReducedMotion()) {
       teardown();
       content.replaceChildren(floorEl(list, mess));
       settle();
       return;
     }
 
-    // the floor goes in underneath the crate, hidden, so its tiles can be measured
+    // The floor goes in under the crate, hidden, so its tiles can be measured.
     const floor = floorEl(list, mess);
     floor.style.opacity = 0;
     old.classList.add('over');
@@ -569,12 +544,12 @@ const Crate = (() => {
 
     const flyers = takeOff(floor, 'out', mess);
 
-    // the records in the crate lift out of it, front ones first
+    // The records in the crate lift out of it, front ones first.
     const here = Math.round(pos);
     els.forEach((el, i) => el.style.setProperty('--i', Math.min(12, Math.abs(i - here))));
     old.classList.add('emptying');
 
-    // the floor's own fade-in starts once it has been measured
+    // The floor's own fade-in starts once it has been measured.
     void floor.offsetWidth;
     floor.style.transition = 'opacity .7s ease .3s';
     floor.style.opacity = 1;
@@ -628,7 +603,7 @@ const Crate = (() => {
   addEventListener('keydown', e => {
     if (!alive() || busy || e.ctrlKey || e.metaKey || e.altKey) return;
     if ($('drawer').classList.contains('open')) return;
-    // keys belong to the search box, the menus and the buttons when they have the focus
+    // Keys belong to the search box, the menus and the buttons when they have the focus.
     if (e.target !== document.body && !box.contains(e.target)) return;
 
     const cur = clamp(Math.round(target), 0, els.length - 1);

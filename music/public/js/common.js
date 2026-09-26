@@ -1,11 +1,6 @@
-/* Shared by the shelf and the artist pages: talking to the API, and the drawer.
- *
- * Both pages used to call Discogs directly from the browser, which meant a
- * 25-requests-a-minute anonymous limit, no images, and nothing of Bruno's own
- * in the drawer. They now read this site's own database instead — so the
- * drawer shows what the admin says it should, including the notes and
- * corrections typed in there, and there is no rate limit to hit.
- */
+/* What every public page needs first: reading this site's API, the drawer that
+ * opens on a record, and a few small helpers. The drawer shows only what the
+ * server sends, which is what /admin_fields says it should. */
 
 const API_BASE = document.body.dataset.api || 'api/';
 const DATA_VERSION = document.body.dataset.version || '';
@@ -17,26 +12,25 @@ function esc(value) {
   ));
 }
 
-/* A stable "random" number per record, for the scatter on the floor. */
+/** A stable "random" number per record, for the scatter on the floor. */
 function hash(s) {
   let h = 0;
   for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return h;
 }
 
-function formatSeconds(total) {
-  const s = Number(total) || 0;
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
-
-/* Only ever follow http(s) links, whatever the data says. */
+/** Only ever follow http(s) links, whatever the data says. */
 function safeUrl(url) {
   return /^https?:\/\//i.test(url || '') ? url : '';
 }
 
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeInOutCubic = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const prefersReducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 async function fetchJSON(path) {
-  // The version makes each edit a new URL, so the browser's own copy of the
-  // response (the API allows five minutes) can't hide it.
+  // The data version makes each change a new URL, so a cached response can't hide it.
   const url = API_BASE + path + (path.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(DATA_VERSION);
   const response = await fetch(url, { headers: { Accept: 'application/json' } });
 
@@ -48,23 +42,20 @@ async function fetchJSON(path) {
   return response.json();
 }
 
-function coverFallbackSVG() {
-  return `<div class="cover-fallback"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="48" fill="#F2EAD8"/>
-    <circle cx="50" cy="50" r="16" fill="#C99A2E"/>
-    <circle cx="50" cy="50" r="3" fill="#17140F"/>
-  </svg></div>`;
-}
-
-/* ---------- The drawer ----------
- *
- * The server decides what goes in it (see /admin_fields), so this only has to
- * know how to draw each shape of value: a line of text, a list of lines, tags,
- * a tracklist, credits, links, a gallery.
- */
+/* ---------- The drawer ---------- */
 
 const drawerCache = new Map();
 let currentItemId = null;
+
+const SECTION_LABELS = {
+  gallery: 'Images',
+  tracklist: 'Tracklist',
+  credits: 'Credits',
+  companies: 'Companies',
+  identifiers: 'Identifiers',
+  videos: 'Videos',
+  links: 'Links',
+};
 
 function factHtml(fact) {
   const value = fact.value;
@@ -78,15 +69,13 @@ function factHtml(fact) {
       html = `<span class="tags">${(value || []).map(v => `<span class="tag">${esc(v)}</span>`).join('')}</span>`;
       break;
     case 'html':
-      // Still escaped — 'html' means "may run to several lines", not "trusted".
+      // Still escaped: 'html' means "may run to several lines", not "trusted".
       html = `<span class="notes">${esc(value).replace(/\n/g, '<br>')}</span>`;
       break;
     default:
       html = esc(value);
   }
 
-  // A listing's price gets its own class so the shop can draw it the way the
-  // card does (bold, gold) rather than like any other fact.
   const classes = [fact.mine && 'mine', fact.type === 'price' && 'price'].filter(Boolean).join(' ');
 
   return `<dt>${esc(fact.label)}</dt><dd${classes ? ` class="${classes}"` : ''}>${html}</dd>`;
@@ -139,16 +128,6 @@ function sectionHtml(key, label, value) {
   return body ? `<section class="detail"><h4>${esc(label)}</h4>${body}</section>` : '';
 }
 
-const SECTION_LABELS = {
-  gallery: 'Images',
-  tracklist: 'Tracklist',
-  credits: 'Credits',
-  companies: 'Companies',
-  identifiers: 'Identifiers',
-  videos: 'Videos',
-  links: 'Links',
-};
-
 function renderDrawerBody(item, error) {
   if (error) {
     return `<div class="detail-state">Couldn't load this record. ${esc(error)}
@@ -175,32 +154,33 @@ function renderDrawerBody(item, error) {
     ${sections}`;
 }
 
-/* ---------- The drawer's picture ----------
- *
- * The cover and then every other picture in the gallery, side by side in a strip
- * that snaps one at a time, so on a phone a finger swipes through them. The
- * gallery's thumbnails jump the strip to theirs, and a count in the corner says
- * where it is.
- */
+/* ---------- The drawer's pictures ----------
+   The cover and the rest of the gallery side by side in a strip that snaps
+   one at a time, so a finger swipes through them. The gallery's thumbnails
+   jump the strip to theirs; a count in the corner says where it is. */
+
+let coverUrls = [];
+let coverAt = 0;
 
 function coverSlides(item) {
   const gallery = ((item && item.sections && item.sections.gallery) || []).map(image => image.full);
   return [...new Set([item && item.cover, ...gallery].filter(Boolean))];
 }
 
-let coverUrls = [];
-let coverAt = 0;
-
 function paintCover(urls) {
   coverUrls = urls;
   $('drawerCover').innerHTML = urls.length
     ? `<div class="cover-track">${urls.map((url, n) => `<img src="${esc(url)}" alt="" draggable="false"${n ? ' loading="lazy"' : ''}>`).join('')}</div>`
       + (urls.length > 1 ? `<span class="cover-count" aria-hidden="true"></span>` : '')
-    : coverFallbackSVG();
+    : `<div class="cover-fallback"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="48" fill="#F2EAD8"/>
+    <circle cx="50" cy="50" r="16" fill="#C99A2E"/>
+    <circle cx="50" cy="50" r="3" fill="#17140F"/>
+  </svg></div>`;
   markSlide(0);
 }
 
-/** Which picture is showing: the count, and the thumbnail that matches it. */
+/** Which picture is showing: the count, and its thumbnail lit. */
 function markSlide(n) {
   coverAt = n;
   const count = $('drawerCover').querySelector('.cover-count');
@@ -210,7 +190,7 @@ function markSlide(n) {
   });
 }
 
-/** A thumbnail was picked: the strip slides to its picture, and the spotlight's sleeve shows it too. */
+/** A thumbnail was picked: the strip slides to its picture, and the spotlight shows it too. */
 function showSlide(url) {
   if (typeof Spotlight !== 'undefined') Spotlight.cover(url);
   let n = coverUrls.indexOf(url);
@@ -221,16 +201,16 @@ function showSlide(url) {
   markSlide(n);
   const track = $('drawerCover').querySelector('.cover-track');
   if (!track) return;
-  const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  track.scrollTo({ left: n * track.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+  track.scrollTo({ left: n * track.clientWidth, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
+
+/* ---------- Opening and closing ---------- */
 
 async function openDrawer(id, fromHash, source) {
   currentItemId = id;
 
-  // The drawer is addressable: /lady-gaga#item-412 opens straight into that
-  // record, which is what makes a link to one sendable. replaceState would
-  // swallow the back button, so pushState is used and popstate closes it.
+  // #item-412 opens straight into a record, so a link to one can be sent.
+  // pushState rather than replaceState, so the back button closes it.
   if (!fromHash && location.hash !== `#item-${id}`) {
     history.pushState({ item: id }, '', `#item-${id}`);
   }
@@ -242,7 +222,6 @@ async function openDrawer(id, fromHash, source) {
   paintCover(cached ? coverSlides(cached) : []);
 
   $('drawer').scrollTop = 0;
-  // the record stands up on the left of the page while the drawer opens on the right
   if (typeof Spotlight !== 'undefined') Spotlight.open(id, source);
   $('overlay').classList.add('open');
   $('drawer').classList.add('open');
@@ -252,8 +231,7 @@ async function openDrawer(id, fromHash, source) {
   try {
     const item = await fetchJSON(`item?id=${encodeURIComponent(id)}`);
     drawerCache.set(id, item);
-    // Someone can click another sleeve while this is in flight; only paint if
-    // this is still the record on screen.
+    // Another record may have been opened while this one loaded.
     if (currentItemId !== id) return;
 
     $('drawerBody').innerHTML = renderDrawerBody(item);
@@ -266,7 +244,7 @@ async function openDrawer(id, fromHash, source) {
 
 function closeDrawer(fromHash) {
   currentItemId = null;
-  if (typeof releaseTile === 'function') releaseTile(); // a record tapped on a phone puts its discs back
+  if (typeof releaseTile === 'function') releaseTile();
   $('overlay').classList.remove('open');
   $('drawer').classList.remove('open');
   if (typeof Spotlight !== 'undefined') Spotlight.close();
@@ -276,7 +254,7 @@ function closeDrawer(fromHash) {
   }
 }
 
-/** The id in the URL right now, or null. */
+/** The record id in the URL's #item-…, or null. */
 function hashItemId() {
   const match = location.hash.match(/^#item-(\d+)$/);
   return match ? Number(match[1]) : null;
@@ -296,7 +274,7 @@ function wireDrawer() {
     }
   });
 
-  // scroll doesn't bubble, and the strip is drawn afresh for every record
+  // Scroll doesn't bubble, and the strip is drawn afresh for every record, so this listens in the capture phase.
   $('drawerCover').addEventListener('scroll', event => {
     const track = event.target;
     if (!track.classList || !track.classList.contains('cover-track')) return;
@@ -312,8 +290,7 @@ function wireDrawer() {
     if (event.key === 'Escape') closeDrawer();
   });
 
-  // Back and forward move through the drawers that were opened, and a link
-  // pasted with #item-… opens one on arrival.
+  // Back and forward move between the drawers opened, and a pasted #item-… link opens one.
   addEventListener('popstate', () => {
     const id = hashItemId();
     if (id === null) closeDrawer(true);
@@ -324,14 +301,9 @@ function wireDrawer() {
   if (initial !== null) openDrawer(initial, true);
 }
 
-/* ---------- A small client-side cache ----------
- *
- * The data only changes when a sync runs or an item is edited, so a page revisit
- * shouldn't wait on the network to draw the shelf. A cached copy is used only
- * while the page's data version still matches the one it was saved under, so a
- * sync or an admin edit is picked up on the next visit without anyone having to
- * clear anything by hand.
- */
+/* ---------- The browser's copy of the data ----------
+   Used only while the page's data version matches the one it was saved
+   under, so a sync or an edit in the admin shows on the next visit. */
 
 function loadCache(key, ttlMs) {
   try {
@@ -348,7 +320,7 @@ function saveCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify({ at: Date.now(), v: DATA_VERSION, data }));
   } catch (error) {
-    /* storage full or unavailable — the page works without it */
+    /* storage full or unavailable: the page works without it */
   }
 }
 

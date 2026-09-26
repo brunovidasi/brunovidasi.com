@@ -1,15 +1,12 @@
-/* Keeps the Era dropdown in step with the Artist one.
- *
- * Every artist's eras are already on the page (a script tag of JSON), because
- * there are four artists with a few dozen eras between them — far cheaper to
- * ship once than to fetch on each change. */
+/* The record edit page: the Era menu following the Artist one, and the discs'
+ * pictures and colours. */
 
 const artistSelect = document.getElementById('artist_id');
 const eraSelect = document.getElementById('era_id');
-const optionsTag = document.getElementById('eraOptions');
+const eraOptions = document.getElementById('eraOptions');
 
-if (artistSelect && eraSelect && optionsTag) {
-  const erasByArtist = JSON.parse(optionsTag.textContent || '{}');
+if (artistSelect && eraSelect && eraOptions) {
+  const erasByArtist = JSON.parse(eraOptions.textContent || '{}');
   const selectedEra = eraSelect.value;
 
   artistSelect.addEventListener('change', () => {
@@ -18,69 +15,16 @@ if (artistSelect && eraSelect && optionsTag) {
     eraSelect.replaceChildren(new Option('— filed automatically —', ''));
     eras.forEach(era => {
       const option = new Option(era.name, era.id);
-      // Changing artist and back should not silently drop the era already set.
+      // Changing the artist and back keeps the era that was set.
       option.selected = String(era.id) === selectedEra;
       eraSelect.add(option);
     });
   });
 }
 
-/* Starts the tracklist box from Discogs' list, for correcting one title rather
- * than retyping the lot. Asks first if the box already has something in it. */
-
-const copyTracks = document.getElementById('copyDiscogsTracks');
-const tracklistBox = document.getElementById('o_tracklist');
-
-if (copyTracks && tracklistBox) {
-  copyTracks.addEventListener('click', () => {
-    if (tracklistBox.value.trim() && !confirm("Replace what's in the tracklist box with Discogs' list?")) return;
-    tracklistBox.value = tracklistBox.dataset.discogs;
-    tracklistBox.focus();
-  });
-}
-
-/* The header buttons. Sync and Delete are forms of their own, so both reload
- * the page: a sync that ate half-typed edits would be a nasty surprise, hence
- * the check on the main form first. */
-
-const itemForm = document.getElementById('itemForm');
-const syncForm = document.getElementById('syncForm');
-const deleteForm = document.getElementById('deleteForm');
-
-let dirty = false;
-if (itemForm) {
-  itemForm.addEventListener('input', () => { dirty = true; });
-  itemForm.addEventListener('change', () => { dirty = true; });
-  itemForm.addEventListener('submit', () => { dirty = false; });
-}
-
-if (syncForm) {
-  syncForm.addEventListener('submit', event => {
-    if (dirty && !confirm('You have unsaved changes on this page, and syncing reloads it. Sync anyway and lose them?')) {
-      event.preventDefault();
-      return;
-    }
-
-    // A sync is one or two calls to Discogs and can take a few seconds.
-    const button = syncForm.querySelector('button');
-    button.disabled = true;
-    button.textContent = 'Syncing…';
-  });
-}
-
-if (deleteForm) {
-  deleteForm.addEventListener('submit', event => {
-    if (!confirm('Delete this record and everything you typed about it?')) event.preventDefault();
-  });
-}
-
-/* The Discs section: a picker for each disc in the sleeve, and only that many.
- *
- * "As Discogs says" shows as many as Discogs' formats give. A disc that isn't
- * shown is disabled, so it isn't sent and its picture and colour go when the
- * form is saved — but it keeps what was picked until then, so going 2 → 1 → 2
- * loses nothing. The colour pickers (below, under Colour / variant) follow the
- * same count. */
+/* One picker per disc in the sleeve, and only that many. A disc that isn't
+ * shown is disabled, so it isn't sent, but keeps its choices until the form is
+ * saved: going 2 → 1 → 2 loses nothing. */
 
 const discCount = document.getElementById('disc_count');
 const discBox = document.getElementById('discs');
@@ -96,7 +40,7 @@ if (discCount && discBox) {
       section.hidden = off;
       section.querySelectorAll('input, select').forEach(input => { input.disabled = off; });
     });
-    // "Disc 1" only labels a picker when there is another one to tell it from.
+    // "Disc 1" only labels a colour picker when there is another to tell it from.
     if (colourPick) colourPick.classList.toggle('multi', colourPick.querySelectorAll('.colour-disc:not([hidden])').length > 1);
   };
 
@@ -104,10 +48,9 @@ if (discCount && discBox) {
   showDiscs();
 }
 
-/* The disc colours. Left on automatic, a disc's swatch follows the Colour /
- * variant text through the same keyword list the site matches it with (sent in
- * the page, so the two can't drift); picking a colour, or one of the chips,
- * stores it on that disc instead, and "Use automatic" takes it back. */
+/* On automatic, a disc's swatch follows the Colour / variant text through the
+ * site's own keyword list (sent in the page); a picked colour is stored on
+ * that disc instead, and "Use automatic" takes it back. */
 
 if (colourPick) {
   const palette = JSON.parse(colourPick.dataset.palette || '[]');
@@ -140,7 +83,7 @@ if (colourPick) {
           ? `Automatic, from "${found[0]}"`
           : 'Automatic: no colour recognised, so it shows as black';
       }
-      // The same words the site reads transparency from (see vinyl_color() in items.php).
+      // The same words the site reads transparency from (vinyl_color() in includes/discs.php).
       const translucent = clarity.value !== ''
         ? clarity.value === '1'
         : /transl|transp|clear|smoky/i.test(source);
@@ -150,7 +93,7 @@ if (colourPick) {
 
     const choose = hex => {
       hidden.value = hex;
-      // Setting the value from script fires no event, so the unsaved-changes guard is told.
+      // A value set from script fires no event; tell the unsaved-changes guard.
       hidden.dispatchEvent(new Event('change', { bubbles: true }));
       render();
     };

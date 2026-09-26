@@ -1,16 +1,15 @@
 <?php
 
 /**
- * The two "don't have it yet" lists, side by side: the Discogs wantlist (synced,
- * read-only here) and the hunting list (typed in by hand, for records that
- * aren't on Discogs or aren't worth a wantlist entry).
+ * The two "not on the shelf yet" lists: the Discogs wantlist, synced, and the
+ * hunting list, typed in by hand for records Discogs doesn't have.
  */
 
-require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin.php';
 
 require_login();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (is_post()) {
     csrf_verify();
 
     $title = post('manual_title');
@@ -20,26 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->prepare("
             INSERT INTO items (source, manual_title, manual_artist, media_kind, media_kind_locked, notes, is_visible)
             VALUES ('searching', ?, ?, ?, 1, ?, 1)
-        ")->execute([
-            $title,
-            nullable(post('manual_artist')),
-            isset(MEDIA_KINDS[post('media_kind')]) ? post('media_kind') : 'other',
-            nullable(post('notes')),
-        ]);
+        ")->execute([$title, nullable(post('manual_artist')), posted_media_kind('other'), nullable(post('notes'))]);
         flash('Added to the hunting list.');
     }
 
     redirect('admin_wantlist');
 }
 
-$wanted = db()->query(ITEM_SELECT . " WHERE i.source = 'wantlist' AND i.missing_since IS NULL ORDER BY r.primary_artist COLLATE NOCASE, " . RELEASE_DATE_SQL)->fetchAll();
-$hunting = db()->query(ITEM_SELECT . " WHERE i.source = 'searching' ORDER BY i.created_at DESC")->fetchAll();
+$wanted = items_query("WHERE i.source = 'wantlist' AND i.missing_since IS NULL ORDER BY r.primary_artist COLLATE NOCASE, " . RELEASE_DATE_SQL);
+$hunting = items_query("WHERE i.source = 'searching' ORDER BY i.created_at DESC");
 
-$pageTitle = 'Wantlist';
-$pageScript = 'js/admin-table.js';
-$pageIntro = count($wanted) . ' on the Discogs wantlist, ' . count($hunting) . ' being hunted by hand.';
-
-require __DIR__ . '/../includes/admin_layout_top.php';
+admin_header('Wantlist', count($wanted) . ' on the Discogs wantlist, ' . count($hunting) . ' being hunted by hand.');
 ?>
 
 <div class="card">
@@ -59,11 +49,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
       </div>
       <div class="field">
         <label for="media_kind">Format</label>
-        <select id="media_kind" name="media_kind">
-          <?php foreach (MEDIA_KINDS as $value => $label): ?>
-            <option value="<?= e($value) ?>"><?= e($label) ?></option>
-          <?php endforeach; ?>
-        </select>
+        <select id="media_kind" name="media_kind"><?= options_html(MEDIA_KINDS) ?></select>
       </div>
       <div class="field">
         <label for="notes">Note</label>
@@ -74,7 +60,7 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   </form>
 
   <?php if ($hunting): ?>
-    <table class="table" data-sortable style="margin-top:1.2rem;">
+    <table class="table spaced" data-sortable>
       <thead>
         <tr>
           <th data-sort>Album</th>
@@ -86,12 +72,13 @@ require __DIR__ . '/../includes/admin_layout_top.php';
       </thead>
       <tbody>
         <?php foreach ($hunting as $row): ?>
+          <?php $editUrl = url('admin_item?id=' . (int) $row['id']); ?>
           <tr>
-            <td class="title"><b><a href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>"><?= e(item_title($row)) ?></a></b></td>
+            <td class="title"><b><a href="<?= e($editUrl) ?>"><?= e(item_title($row)) ?></a></b></td>
             <td><?= e(item_artist($row)) ?></td>
-            <td><span class="kind <?= e($row['media_kind']) ?>"><?= e(media_kind_label($row['media_kind'])) ?></span></td>
-            <td class="hide-sm" style="opacity:0.7;"><?= e($row['notes']) ?></td>
-            <td class="right"><a class="btn ghost small" href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>">Edit</a></td>
+            <td><?= kind_badge($row['media_kind']) ?></td>
+            <td class="hide-sm dim"><?= e($row['notes']) ?></td>
+            <td class="right"><?= edit_button($editUrl) ?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
@@ -119,15 +106,14 @@ require __DIR__ . '/../includes/admin_layout_top.php';
       </thead>
       <tbody>
         <?php foreach ($wanted as $row): ?>
+          <?php $editUrl = url('admin_item?id=' . (int) $row['id']); ?>
           <tr>
-            <td class="thumb"><?php if (item_thumb($row)): ?><img src="<?= e(item_thumb($row)) ?>" alt="" loading="lazy"><?php endif; ?></td>
-            <td class="title"><b><a href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>"><?= e(item_title($row)) ?></a></b></td>
+            <?= thumb_cell($row, placeholder: false) ?>
+            <td class="title"><b><a href="<?= e($editUrl) ?>"><?= e(item_title($row)) ?></a></b></td>
             <td><?= e(item_artist($row)) ?></td>
-            <td><span class="kind <?= e($row['media_kind']) ?>"><?= e(media_kind_label($row['media_kind'])) ?></span></td>
-            <td class="hide-sm" data-sort-value="<?= e(item_sort_date($row)) ?>">
-              <?= year_cell($row) ?>
-            </td>
-            <td class="right"><a class="btn ghost small" href="<?= e(url('admin_item?id=' . (int) $row['id'])) ?>">Edit</a></td>
+            <td><?= kind_badge($row['media_kind']) ?></td>
+            <td class="hide-sm" data-sort-value="<?= e(item_sort_date($row)) ?>"><?= year_cell($row) ?></td>
+            <td class="right"><?= edit_button($editUrl) ?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
@@ -135,4 +121,4 @@ require __DIR__ . '/../includes/admin_layout_top.php';
   <?php endif; ?>
 </div>
 
-<?php require __DIR__ . '/../includes/admin_layout_bottom.php'; ?>
+<?php admin_footer('admin-table'); ?>

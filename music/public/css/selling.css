@@ -1,7 +1,4 @@
-/* The shop: a plain grid of product cards. floor.css (loaded first) carries
- * the fonts, colours, header, controls bar, footer and drawer — this file is
- * only the card face itself, which is deliberately not the collection's tile
- * pile: a buyer wants a cover, a price and a link to buy, all at once. */
+/* The shop, over floor.css: the cards, the list's columns, and the spotlight's cover. */
 
 .sale-grid {
   display: grid;
@@ -66,7 +63,7 @@
   text-overflow: ellipsis;
 }
 
-/* Format, region and year, the same idea as the collection grid's caption. */
+/* Format, region and year, like the collection grid's caption. */
 .sale-meta {
   display: flex;
   align-items: center;
@@ -128,10 +125,7 @@
   .sale-body { padding: 0.7rem 0.8rem 0.9rem; }
 }
 
-/* ---------- List view ---------- */
-/* Reuses .list/.lrow from floor.css (the collection's own list view) with a
-   column template swapped for what a shop row needs: no barcode, price and a
-   buy link instead of "details". */
+/* ---------- List view: the collection's, with a shop's columns ---------- */
 
 .list.selling { --cols: 52px minmax(0, 2fr) 64px 72px 84px 76px minmax(0, 1.1fr); }
 .lcondition { font-size: 0.78rem; opacity: 0.75; }
@@ -155,9 +149,6 @@
 .lprice .buy:hover, .lprice .buy:focus-visible { opacity: 1; color: var(--gold); outline: none; }
 
 /* ---------- The spotlight's cover ---------- */
-/* Plays the part js/spotlight.js's .spot-tile plays for the collection: the
-   thing that flies from the card to the middle of the stage. A listing has
-   one picture, not a sleeve with discs, so it is just an image. */
 
 .sale-spot-cover {
   position: absolute;
@@ -172,9 +163,7 @@
 
 .sale-spot-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Artist/year and price stack tight on the left, close under the photo; the
-   buy button sits beside them, centred against the two lines together rather
-   than pinned to either one. */
+/* Artist, year and price on the left; the buy button beside them, centred on both lines. */
 .spot-below-row {
   display: flex;
   align-items: center;
@@ -200,9 +189,7 @@
   font-weight: 600;
   font-size: 0.88rem;
   transition: filter .15s;
-  /* .spot * turns off clicks for the whole spotlight layer (so a click on the
-     cover or its text reaches the overlay behind and closes the drawer) —
-     this is the one thing in it that must actually be clickable. */
+  /* the one thing in the spotlight that takes a click */
   pointer-events: auto !important;
 }
 .spot-buy:hover, .spot-buy:focus-visible { filter: brightness(1.1); outline: none; }

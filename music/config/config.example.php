@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copy this to config/config.php for local development (it's gitignored).
  *
@@ -24,8 +25,7 @@ return [
 
     // The one account that can sign in to the admin. Everything behind /admin is
     // for this address only; there is no registration page and no second user.
-    // Create the password once at /setup, or reset it with:
-    //   php cron/sync.php --help   (see the README's "Signing in" section)
+    // Create the password once at /setup; the README's "Signing in" says how to reset it.
     'owner_email' => 'you@example.com',
 
     'discogs' => [

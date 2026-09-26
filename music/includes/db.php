@@ -4,110 +4,76 @@ function db(): PDO
 {
     static $db = null;
 
-    if ($db === null) {
-        $dbPath = db_path();
-        $isNew = !file_exists($dbPath);
+    if ($db !== null) {
+        return $db;
+    }
 
-        // The data directory lives outside the deployed tree in production, so
-        // it won't exist until the first request after a fresh deploy.
-        $dir = dirname($dbPath);
-        if (!is_dir($dir) && !@mkdir($dir, 0750, true) && !is_dir($dir)) {
-            http_response_code(500);
-            die('Data directory is not writable: ' . $dir);
-        }
+    $path = db_path();
+    $isNew = !file_exists($path);
 
-        $db = new PDO('sqlite:' . $dbPath);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $db->exec('PRAGMA foreign_keys = ON');
-        // A sync writes for a long time while the site keeps reading. WAL lets
-        // those happen at once instead of handing visitors a "database is
-        // locked"; the busy timeout covers the brief moments it can't.
-        $db->exec('PRAGMA journal_mode = WAL');
-        $db->exec('PRAGMA busy_timeout = 5000');
+    $dir = dirname($path);
+    if (!is_dir($dir) && !@mkdir($dir, 0750, true) && !is_dir($dir)) {
+        http_response_code(500);
+        die('Data directory is not writable: ' . $dir);
+    }
 
-        $schema = file_get_contents(__DIR__ . '/../sql/schema.sql');
-        $db->exec($schema);
-        run_migrations($db);
+    $db = new PDO('sqlite:' . $path);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $db->exec('PRAGMA foreign_keys = ON');
+    // WAL lets the site keep reading while a long sync writes.
+    $db->exec('PRAGMA journal_mode = WAL');
+    $db->exec('PRAGMA busy_timeout = 5000');
 
-        if ($isNew) {
-            chmod($dbPath, 0640);
-            seed_database($db);
-        }
+    $db->exec(file_get_contents(__DIR__ . '/../sql/schema.sql'));
+    run_migrations($db);
+
+    if ($isNew) {
+        chmod($path, 0640);
+        require_once __DIR__ . '/seed_data.php';
+        seed_artists_and_eras($db);
     }
 
     return $db;
 }
 
 /**
- * Adds columns introduced after a table's initial CREATE TABLE, for databases
- * that already existed before that column was added. schema.sql alone can't do
- * this since CREATE TABLE IF NOT EXISTS is a no-op once the table exists.
+ * Columns added after a table was first created. CREATE TABLE IF NOT EXISTS
+ * can't add them to a database that already exists, so they go here rather
+ * than into schema.sql.
  */
+const MIGRATED_COLUMNS = [
+    'items' => [
+        'artist_locked'     => 'INTEGER NOT NULL DEFAULT 0',
+        'parent_item_id'    => 'INTEGER',  // the box a disc from a box set belongs to
+        'disc_config'       => 'TEXT',     // JSON, see disc_config()
+        'vinyl_hex'         => 'TEXT',     // "#rrggbb", see disc_colours()
+        'case_kind'         => 'TEXT',     // 'cd' draws a DVD in a CD jewel case
+        'vinyl_translucent' => 'INTEGER',  // 1, 0, or NULL for "as the colour text says"
+        'labels'            => 'TEXT',     // this column and the five below: see OVERRIDE_FIELDS
+        'catalog_number'    => 'TEXT',
+        'formats'           => 'TEXT',
+        'genres'            => 'TEXT',
+        'styles'            => 'TEXT',
+        'tracklist'         => 'TEXT',
+        'sale_price'        => 'REAL',     // blank means not priced yet
+        'sale_currency'     => 'TEXT',
+        'ebay_url'          => 'TEXT',
+        'extra_photos_json' => 'TEXT',     // JSON array of URLs
+        'sale_condition'    => 'TEXT',     // 'new' | 'used'
+        'gallery_json'      => 'TEXT',     // JSON array of URLs, NULL = show everything
+        'sold_at'           => 'TEXT',
+    ],
+    'artists' => [
+        'hero_cover' => 'TEXT',
+    ],
+];
+
 function run_migrations(PDO $db): void
 {
-    $columns = [
-        // Add entries here, never edit a CREATE TABLE in schema.sql, once a
-        // database exists in production.
-        'items' => [
-            // Set when the artist page was chosen by hand, so a sync keeps it.
-            'artist_locked' => 'INTEGER NOT NULL DEFAULT 0',
-            // The box a disc sits in: a CD from a box set that Discogs holds only
-            // as the box, kept as its own record so it can be filed in its era.
-            'parent_item_id' => 'INTEGER',
-            // How many discs are in the sleeve, and the picture on each: JSON,
-            // {"count": 2|null, "art": ["url", "", ""]}. Null count means what
-            // Discogs' formats say; see disc_config() in includes/items.php.
-            'disc_config'    => 'TEXT',
-            // A vinyl's colour picked by hand, "#rrggbb". Blank means the
-            // keyword match on the colour text; see vinyl_color() in includes/items.php.
-            'vinyl_hex'      => 'TEXT',
-            // For a DVD that actually came in a CD-sized jewel case: 'cd' draws
-            // that case instead of the tall DVD one. Blank/NULL means the DVD
-            // case, and it's ignored on every other format; see item_card().
-            'case_kind'      => 'TEXT',
-            // 1 = translucent, 0 = opaque, NULL = as the colour text says
-            // ("Clear", "Transparent"…); see item_discs() in includes/items.php.
-            'vinyl_translucent' => 'INTEGER',
-            // Discogs' facts corrected by hand (see OVERRIDE_FIELDS). A sync
-            // rewrites the release cache and never these.
-            'labels'         => 'TEXT',
-            'catalog_number' => 'TEXT',
-            'formats'        => 'TEXT',
-            'genres'         => 'TEXT',
-            'styles'         => 'TEXT',
-            'tracklist'      => 'TEXT',
-            // Selling (source = 'for_sale'): the asking price and what it's in.
-            // Blank price means "not priced yet" — never shown as for sale.
-            'sale_price'         => 'REAL',
-            'sale_currency'      => 'TEXT',
-            // The eBay listing this copy points buyers to. No eBay API — pasted
-            // by hand, just a link.
-            'ebay_url'           => 'TEXT',
-            // Photos pasted by hand beyond Discogs' own gallery (condition
-            // shots, the actual sleeve): JSON array of URLs.
-            'extra_photos_json'  => 'TEXT',
-            // 'new' | 'used'. NULL until it's set in the admin.
-            'sale_condition'     => 'TEXT',
-            // Which of Discogs' images and the photos above actually show in
-            // the drawer's gallery, in order: JSON array of URLs. NULL means
-            // everything available is shown — the default until curated by
-            // hand; see drawer_section() in includes/items.php.
-            'gallery_json'       => 'TEXT',
-            // Set the moment this copy sells. Kept, not deleted — same
-            // reasoning as missing_since. NULL means still for sale.
-            'sold_at'            => 'TEXT',
-        ],
-        'artists' => [
-            // The picture on this artist's pill in the header, a URL. Blank means
-            // their first record with a cover; see hero_artist_cover().
-            'hero_cover' => 'TEXT',
-        ],
-    ];
-
-    foreach ($columns as $table => $cols) {
+    foreach (MIGRATED_COLUMNS as $table => $columns) {
         $existing = array_column($db->query("PRAGMA table_info($table)")->fetchAll(), 'name');
-        foreach ($cols as $name => $type) {
+        foreach ($columns as $name => $type) {
             if (!in_array($name, $existing, true)) {
                 $db->exec("ALTER TABLE $table ADD COLUMN $name $type");
             }
@@ -115,10 +81,7 @@ function run_migrations(PDO $db): void
     }
 }
 
-/**
- * Reads a settings row, JSON-decoded. Cached per request — the drawer field
- * config is read on every public page load.
- */
+/** A settings row, JSON-decoded and cached for the rest of the request. */
 function setting(string $key, mixed $default = null): mixed
 {
     $cache = &settings_cache();
@@ -144,31 +107,21 @@ function set_setting(string $key, mixed $value): void
     $cache[$key] = $value;
 }
 
-/** The shared store behind setting()/set_setting(), by reference so a write is seen by the next read. */
 function &settings_cache(): array
 {
     static $cache = [];
+
     return $cache;
 }
 
+/** A JSON column as an array, or $default when it is empty or not an array. */
 function json_column(?string $raw, array $default = []): array
 {
     if ($raw === null || $raw === '') {
         return $default;
     }
-    $decoded = json_decode($raw, true);
-    return is_array($decoded) ? $decoded : $default;
-}
 
-/**
- * First-run content for a brand-new database: the four artist pages and Lady
- * Gaga's eras, carried over from the hand-written page this app replaces
- * (public/lady-gaga/script.js in git history) so nothing that already worked is
- * lost. Everything here is editable in the admin afterwards, and this never runs
- * again — it is called only when the .sqlite file has just been created.
- */
-function seed_database(PDO $db): void
-{
-    require_once __DIR__ . '/seed_data.php';
-    seed_artists_and_eras($db);
+    $decoded = json_decode($raw, true);
+
+    return is_array($decoded) ? $decoded : $default;
 }

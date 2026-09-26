@@ -1,20 +1,14 @@
 <?php
-/**
- * One record's drawer: Bruno's fields, then Discogs', filtered by what
- * /admin_fields says this format should show.
- */
 
-require_once __DIR__ . '/../../includes/bootstrap_api.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
 
 $item = item_by_id((int) query('id'));
 
-// A hidden or removed record must 404 rather than open, or an old link would
-// keep showing something the admin took off the site. A sold listing is the
-// selling equivalent of "removed".
+// A hidden, removed or sold record 404s, so an old link can't keep showing it.
 if ($item === null || !$item['is_visible'] || $item['missing_since'] !== null
     || ($item['source'] === 'for_sale' && $item['sold_at'] !== null)) {
     json_response(['error' => 'No such record.'], 404);
 }
 
-json_cache_headers(300);
+json_cache_headers();
 json_response(item_drawer($item));

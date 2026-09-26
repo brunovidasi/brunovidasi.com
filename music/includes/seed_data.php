@@ -1,15 +1,9 @@
 <?php
 
 /**
- * First-run content, written once when the SQLite file is created.
- *
- * Lady Gaga's eras (and the Discogs master ids that place a release in one) are
- * carried over verbatim from the hand-written page this app replaces, so the
- * work already done mapping her collection isn't thrown away. The other three
- * artists get their eras but no master ids: those get filled in from the admin,
- * where saving an item's era offers to apply it to every pressing of that album.
- *
- * All of it is editable at /admin_artists afterwards. This never runs again.
+ * First-run content for a brand-new database: the four artist pages and their
+ * eras, with Lady Gaga's master ids carried over from the hand-written page
+ * this app replaced. Everything is editable in the admin afterwards.
  */
 function seed_artists_and_eras(PDO $db): void
 {
@@ -99,8 +93,7 @@ function seed_artists_and_eras(PDO $db): void
             foreach ($masters as $rank => $masterId) {
                 $insertRule->execute([$eraId, 'master', $masterId, $rank]);
             }
-            // Master-less releases (mostly promos) sort after the masters, which
-            // is what the page they came from did.
+            // Releases without a master (mostly promos) sort after the masters.
             foreach ($releases as $rank => $releaseId) {
                 $insertRule->execute([$eraId, 'release', $releaseId, 1000 + $rank]);
             }

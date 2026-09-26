@@ -1,9 +1,8 @@
 -- The Collection — SQLite schema.
 --
--- Applied in full on every request (db.php), so every statement is
--- CREATE ... IF NOT EXISTS. Columns added to an existing table later go in
--- run_migrations() in includes/db.php, because CREATE TABLE IF NOT EXISTS is a
--- no-op once the table exists.
+-- Applied in full on every request (includes/db.php), so every statement is
+-- CREATE ... IF NOT EXISTS. Columns added to a table later go in
+-- MIGRATED_COLUMNS in includes/db.php instead, since this can't add them.
 --
 -- The shape follows Discogs' own: a `releases` row is the record as Discogs
 -- knows it (shared by everyone who owns a copy), and an `items` row is one

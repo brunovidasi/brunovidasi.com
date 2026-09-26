@@ -1,11 +1,9 @@
-/* The header's numbers count up to themselves when the page opens. The markup
- * already carries the real figures (includes/hero.php), so without JavaScript,
- * with reduced motion asked for, or with the header's animation switched off in
- * the admin, they are simply there. */
+/* The header's numbers count up when the page opens. The markup already has
+ * the real figures, so without the animation they are simply there. */
 
 (() => {
   const numbers = document.querySelectorAll('.hero-stat b[data-n]');
-  const still = document.querySelector('.hero-still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const still = document.querySelector('.hero-still, .hero-settled') || prefersReducedMotion();
   if (!numbers.length || still) return;
 
   const started = performance.now();
@@ -25,9 +23,8 @@
   });
 })();
 
-/* On a phone the artist pills fold into a "Collections" menu (includes/hero.php
- * draws both; css/floor.css shows the one that fits). Opens on tap, closes on a
- * tap anywhere else or Escape. The entries are ordinary links. */
+/* On a phone the artist pills fold into a "Collections" menu, of ordinary
+ * links. It closes on a tap anywhere else, or Escape. */
 
 (() => {
   const menu = document.querySelector('.hero-menu');

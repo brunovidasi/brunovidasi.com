@@ -1,9 +1,8 @@
 <?php
 
 /**
- * In development, errors go to the screen. In production they must not: a stack
- * trace would expose absolute server paths and SQL. They go to a log inside the
- * data directory instead, which sits outside the web root in production.
+ * Errors are shown in development and logged in production, where a stack
+ * trace would give away server paths and SQL.
  */
 function configure_error_reporting(): void
 {
@@ -25,11 +24,7 @@ function configure_error_reporting(): void
     register_shutdown_function('render_fatal_error_page');
 }
 
-/**
- * Apache's ErrorDocument only fires for statuses Apache itself produces; a PHP
- * fatal sends a bare 500 with whatever half-page was already flushed. This turns
- * one into the app's own 500 page.
- */
+/** Apache's ErrorDocument never sees a PHP fatal, so this draws the app's own 500 page for one. */
 function render_fatal_error_page(): void
 {
     $error = error_get_last();
@@ -53,11 +48,8 @@ function render_fatal_error_page(): void
 }
 
 /**
- * Whether THIS request arrived over HTTPS. Used for the session cookie's
- * 'secure' flag: deriving that from base_url instead would mark the cookie
- * secure whenever base_url is https, and the browser would then refuse to send
- * it back over a plain http://localhost dev server — silently breaking login
- * locally.
+ * Whether this request came over HTTPS. The session cookie's secure flag uses
+ * this rather than base_url, or login would break on a plain-http dev server.
  */
 function request_is_https(): bool
 {
@@ -70,17 +62,14 @@ function request_is_https(): bool
     }
 
     $forwarded = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+
     return strtolower(trim(explode(',', $forwarded)[0])) === 'https';
 }
 
 /**
- * Session cookie scoped to this app's own URL path and hostname, so it isn't
- * shared with anything else running on the same domain, and given a distinct
- * name so it can't collide with a sibling app's session.
- *
- * SameSite is 'Strict' here (unlike the eBay app next door): nothing ever
- * redirects into this admin from another site, so there is no cross-site return
- * that needs to carry the cookie.
+ * The session cookie is scoped to this app's path and named so it can't clash
+ * with a sibling app on the same domain. Nothing ever links into the admin
+ * from another site, so SameSite can be Strict.
  */
 function start_app_session(): void
 {

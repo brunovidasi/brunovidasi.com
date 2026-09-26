@@ -1,17 +1,13 @@
 <?php
 
 /**
- * What a record "has", in one place.
+ * What a record "has". The admin's edit form, the public drawer and the
+ * /admin_fields screen all read this, so they agree with each other.
  *
- * Three things read this file and must agree with each other:
- *   - the admin's edit form (which boxes to show, in which order),
- *   - the drawer on the public site (which facts to print),
- *   - /admin_fields, where Bruno ticks which of those facts the drawer shows.
- *
- * A field is either MINE (typed in the admin, stored on the items row) or
- * DISCOGS' (derived from the release cache, never stored twice). Mine win: a
- * blank one falls back to the Discogs value, so filling one in is an override
- * and clearing it goes back to whatever Discogs says.
+ * A field is either Bruno's own (typed in the admin, stored on the item) or
+ * Discogs' (read from the release cache). His win: a blank one falls back to
+ * the Discogs value, so filling one in is an override and clearing it goes
+ * back to what Discogs says.
  */
 
 const MEDIA_KINDS = [
@@ -22,66 +18,17 @@ const MEDIA_KINDS = [
     'other'  => 'Other',
 ];
 
-function media_kind_label(string $kind): string
-{
-    return MEDIA_KINDS[$kind] ?? 'Other';
-}
-
-/**
- * Which shelf a release belongs on, from its Discogs formats.
- *
- * A release with more than one format (the "+ DVD" deluxe editions, the box
- * sets) is filed under the one you'd actually reach for, so the order of these
- * checks matters: vinyl over CD, CD over the bonus disc that came with it.
- */
-function detect_media_kind(array $formats): string
-{
-    $names = array_map(fn ($f) => (string) ($f['name'] ?? ''), $formats);
-
-    if (in_array('Vinyl', $names, true)) {
-        return 'vinyl';
-    }
-    // CDr is nearly always a promo; it lives with the CDs.
-    if (array_intersect(['CD', 'CDr'], $names)) {
-        return 'cd';
-    }
-    if (in_array('Blu-ray', $names, true) || in_array('Blu-ray-R', $names, true)) {
-        return 'bluray';
-    }
-    if (in_array('DVD', $names, true) || in_array('DVDr', $names, true)) {
-        return 'dvd';
-    }
-
-    return 'other';
-}
-
-/** The item types offered in the admin's Type box. */
 const ITEM_TYPES = ['album', 'single', 'ep', 'promo', 'compilation', 'live', 'other'];
 
-/**
- * The choices for the Type box: the usual ones, plus whatever the record has
- * already ("remixes", "usb album" from a list), so saving the form doesn't drop it.
- */
-function item_type_options(?string $current): array
-{
-    $current = trim((string) $current);
-
-    return $current !== '' && !in_array($current, ITEM_TYPES, true) ? [...ITEM_TYPES, $current] : ITEM_TYPES;
-}
-
-/** Sizes offered for vinyl. Free text is still accepted — these are shortcuts. */
+/** Offered for vinyl; free text is still accepted. */
 const VINYL_SIZES = ['7"', '10"', '12"', '5"'];
 
 /**
- * Discogs' facts that a record can override, and the shape each is typed in.
- * The value is stored on the item under the same name, so item_field_value()
- * finds it with Bruno's other fields and a sync, which only writes the release
- * cache, never touches it. (Title and artist have their own boxes:
- * manual_title and manual_artist.)
- *
- *   lines  — one per line, the way the drawer prints them
- *   list   — separated by commas or new lines ("Pop, Rock")
- *   tracks — the tracklist, one track per line (see tracklist_from_text())
+ * Discogs' facts a record can correct, stored on the item under the same name,
+ * and how each is typed:
+ *   lines  — one per line
+ *   list   — separated by commas or new lines
+ *   tracks — one track per line (see tracklist_from_text())
  */
 const OVERRIDE_FIELDS = [
     'labels'         => 'lines',
@@ -92,83 +39,117 @@ const OVERRIDE_FIELDS = [
     'tracklist'      => 'tracks',
 ];
 
+/** The correction boxes on the edit forms, apart from the tracklist which has its own. */
+const OVERRIDE_BOXES = [
+    'labels'         => ['label' => 'Label',          'help' => 'One per line.'],
+    'catalog_number' => ['label' => 'Catalogue no.',  'help' => 'One per line.'],
+    'formats'        => ['label' => 'Format details', 'help' => 'What the list shows under Details, one per line: "LP", "Album", "Pink".'],
+    'genres'         => ['label' => 'Genres',         'help' => 'Separated by commas.'],
+    'styles'         => ['label' => 'Styles',         'help' => 'Separated by commas.'],
+];
+
+/** Without \R, which lacks /u and would also match the byte 0x85 inside characters like "★". */
+const LINE_BREAK = '/\r\n|\r|\n/';
+
+/** A track position simple enough to type as "1." or "A2)". */
+const TRACK_POSITION = '[A-Za-z]?\\d{1,3}[A-Za-z]?';
+
+function media_kind_label(string $kind): string
+{
+    return MEDIA_KINDS[$kind] ?? 'Other';
+}
+
 /**
- * Every field the drawer can show, in the order it would show them.
+ * Which shelf a release belongs on. A release in several formats is filed
+ * under the one you'd reach for: vinyl over CD, CD over its bonus DVD.
+ */
+function detect_media_kind(array $formats): string
+{
+    $names = array_map(fn ($f) => (string) ($f['name'] ?? ''), $formats);
+
+    return match (true) {
+        in_array('Vinyl', $names, true)                  => 'vinyl',
+        (bool) array_intersect(['CD', 'CDr'], $names)    => 'cd',
+        (bool) array_intersect(['Blu-ray', 'Blu-ray-R'], $names) => 'bluray',
+        (bool) array_intersect(['DVD', 'DVDr'], $names)  => 'dvd',
+        default                                          => 'other',
+    };
+}
+
+/** The Type box's choices, plus whatever the record already has so saving doesn't drop it. */
+function item_type_options(?string $current): array
+{
+    $current = trim((string) $current);
+
+    return $current !== '' && !in_array($current, ITEM_TYPES, true) ? [...ITEM_TYPES, $current] : ITEM_TYPES;
+}
+
+/**
+ * Every field the drawer can show, in the order it shows them.
  *
- * group:  'mine'    — stored on items, edited in the admin
- *         'discogs' — derived from the release cache
- * kinds:  null for all, or the media kinds it makes sense for
- * default:whether a fresh install shows it in the drawer
- * type:   how the value is rendered ('text', 'lines', 'tags', 'html', 'list',
- *         'tracklist', 'credits', 'links', 'gallery')
+ * group:   'mine' (stored on the item) or 'discogs' (from the release cache)
+ * kinds:   the media kinds it applies to, or null for all
+ * default: whether the drawer shows it until /admin_fields says otherwise
+ * type:    how the drawer draws it
  */
 function field_catalog(): array
 {
     static $catalog = null;
-    if ($catalog !== null) {
-        return $catalog;
-    }
 
-    return $catalog = [
-        // ---- Mine. These are the ones on top of the edit form. ----
-        'barcode'      => ['label' => 'Barcode',        'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'text'],
-        'release_date' => ['label' => 'Release date',   'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'text'],
-        'region'       => ['label' => 'Region',         'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'text'],
-        'media'        => ['label' => 'Media',          'group' => 'mine', 'kinds' => ['cd', 'dvd', 'bluray', 'other'], 'default' => true, 'type' => 'text'],
-        'vinyl_size'   => ['label' => 'Size',           'group' => 'mine', 'kinds' => ['vinyl'],            'default' => true,  'type' => 'text'],
-        'vinyl_color'  => ['label' => 'Colour / variant', 'group' => 'mine', 'kinds' => ['vinyl'],          'default' => true,  'type' => 'text'],
-        'item_type'    => ['label' => 'Type',           'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'text'],
-        'notes'        => ['label' => 'Notes',          'group' => 'mine', 'kinds' => null,                 'default' => true,  'type' => 'html'],
+    return $catalog ??= [
+        'barcode'      => ['label' => 'Barcode',          'group' => 'mine', 'kinds' => null,                             'default' => true, 'type' => 'text'],
+        'release_date' => ['label' => 'Release date',     'group' => 'mine', 'kinds' => null,                             'default' => true, 'type' => 'text'],
+        'region'       => ['label' => 'Region',           'group' => 'mine', 'kinds' => null,                             'default' => true, 'type' => 'text'],
+        'media'        => ['label' => 'Media',            'group' => 'mine', 'kinds' => ['cd', 'dvd', 'bluray', 'other'], 'default' => true, 'type' => 'text'],
+        'vinyl_size'   => ['label' => 'Size',             'group' => 'mine', 'kinds' => ['vinyl'],                        'default' => true, 'type' => 'text'],
+        'vinyl_color'  => ['label' => 'Colour / variant', 'group' => 'mine', 'kinds' => ['vinyl'],                        'default' => true, 'type' => 'text'],
+        'item_type'    => ['label' => 'Type',             'group' => 'mine', 'kinds' => null,                             'default' => true, 'type' => 'text'],
+        'notes'        => ['label' => 'Notes',            'group' => 'mine', 'kinds' => null,                             'default' => true, 'type' => 'html'],
 
-        // ---- Discogs'. Everything below here is refreshed by every sync. The
-        //      ones in OVERRIDE_FIELDS can be corrected on a record, and what was
-        //      typed is shown in place of Discogs' and kept through every sync. ----
-        'artist'          => ['label' => 'Artist',          'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
-        'year'            => ['label' => 'Year',            'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
-        'country'         => ['label' => 'Country',         'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
-        'labels'          => ['label' => 'Label',           'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'lines'],
-        'catalog_number'  => ['label' => 'Catalogue no.',   'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'lines'],
-        'formats'         => ['label' => 'Format',          'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'lines'],
-        'genres'          => ['label' => 'Genres',          'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'tags'],
-        'styles'          => ['label' => 'Styles',          'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'tags'],
-        'date_added'      => ['label' => 'Added',           'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
-        'my_rating'       => ['label' => 'My rating',       'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
-        'estimated_weight'=> ['label' => 'Weight',          'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
-        'data_quality'    => ['label' => 'Data quality',    'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
-        'release_id'      => ['label' => 'Release ID',      'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
-        'community'       => ['label' => 'Community',       'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'lines'],
-        'marketplace'     => ['label' => 'Marketplace',     'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'lines'],
+        'artist'           => ['label' => 'Artist',         'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
+        'year'             => ['label' => 'Year',           'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
+        'country'          => ['label' => 'Country',        'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
+        'labels'           => ['label' => 'Label',          'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'lines'],
+        'catalog_number'   => ['label' => 'Catalogue no.',  'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'lines'],
+        'formats'          => ['label' => 'Format',         'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'lines'],
+        'genres'           => ['label' => 'Genres',         'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'tags'],
+        'styles'           => ['label' => 'Styles',         'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'tags'],
+        'date_added'       => ['label' => 'Added',          'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
+        'my_rating'        => ['label' => 'My rating',      'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'text'],
+        'estimated_weight' => ['label' => 'Weight',         'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
+        'data_quality'     => ['label' => 'Data quality',   'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
+        'release_id'       => ['label' => 'Release ID',     'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'text'],
+        'community'        => ['label' => 'Community',      'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'lines'],
+        'marketplace'      => ['label' => 'Marketplace',    'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'lines'],
 
-        // Sections rather than one-line facts.
-        'gallery'       => ['label' => 'Image gallery',   'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'gallery'],
-        'tracklist'     => ['label' => 'Tracklist',       'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'tracklist'],
-        'credits'       => ['label' => 'Credits',         'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'credits'],
-        'companies'     => ['label' => 'Companies',       'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'credits'],
-        'identifiers'   => ['label' => 'Identifiers',     'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'credits'],
-        'series'        => ['label' => 'Series',          'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'lines'],
-        'release_notes' => ['label' => 'Discogs notes',   'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'html'],
-        'videos'        => ['label' => 'Videos',          'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'links'],
-        'links'         => ['label' => 'Discogs links',   'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'links'],
+        'gallery'       => ['label' => 'Image gallery', 'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'gallery'],
+        'tracklist'     => ['label' => 'Tracklist',     'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'tracklist'],
+        'credits'       => ['label' => 'Credits',       'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'credits'],
+        'companies'     => ['label' => 'Companies',     'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'credits'],
+        'identifiers'   => ['label' => 'Identifiers',   'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'credits'],
+        'series'        => ['label' => 'Series',        'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'lines'],
+        'release_notes' => ['label' => 'Discogs notes', 'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'html'],
+        'videos'        => ['label' => 'Videos',        'group' => 'discogs', 'kinds' => null, 'default' => false, 'type' => 'links'],
+        'links'         => ['label' => 'Discogs links', 'group' => 'discogs', 'kinds' => null, 'default' => true,  'type' => 'links'],
     ];
 }
 
-/** The fields that apply to one media kind, keys only, in catalog order. */
+/** The fields that apply to one media kind, in catalog order. */
 function fields_for_kind(string $kind): array
 {
-    $keys = [];
-    foreach (field_catalog() as $key => $def) {
-        if ($def['kinds'] === null || in_array($kind, $def['kinds'], true)) {
-            $keys[] = $key;
-        }
-    }
-    return $keys;
+    return array_keys(array_filter(
+        field_catalog(),
+        fn ($def) => $def['kinds'] === null || in_array($kind, $def['kinds'], true)
+    ));
 }
 
-/**
- * The boxes at the top of the edit form — the ones Bruno actually fills in —
- * per media kind, in the order he listed them. Everything else on the form sits
- * below, under "More".
- */
+/** Bruno's own fields for one media kind, the ones the edit form saves. */
+function own_fields_for_kind(string $kind): array
+{
+    return array_values(array_filter(fields_for_kind($kind), fn ($key) => field_catalog()[$key]['group'] === 'mine'));
+}
+
+/** The boxes at the top of the edit form, in the order they are filled in. */
 function primary_fields_for_kind(string $kind): array
 {
     return $kind === 'vinyl'
@@ -176,20 +157,15 @@ function primary_fields_for_kind(string $kind): array
         : ['barcode', 'release_date', 'region', 'media', 'item_type', 'notes'];
 }
 
-/** The rest of the editable fields for a kind: shown below the primary ones. */
+/** The rest of the editable fields, under "More fields". */
 function secondary_fields_for_kind(string $kind): array
 {
-    $primary = primary_fields_for_kind($kind);
-    return array_values(array_filter(
-        fields_for_kind($kind),
-        fn ($key) => field_catalog()[$key]['group'] === 'mine' && !in_array($key, $primary, true)
-    ));
+    return array_values(array_diff(own_fields_for_kind($kind), primary_fields_for_kind($kind)));
 }
 
 /**
- * Which fields the drawer shows, per media kind — the /admin_fields screen.
- * Stored as { kind: { field: bool } }; anything unsaved falls back to the
- * catalog's default, so a newly added field appears without a migration.
+ * Which fields the drawer shows, as { kind: { field: bool } }. Anything not
+ * saved yet uses the catalog's default, so a new field needs no migration.
  */
 function drawer_field_config(): array
 {
@@ -215,16 +191,9 @@ function drawer_shows(string $kind, string $key): bool
     return $config[$kind][$key] ?? false;
 }
 
-/* ---------- Overriding Discogs' values ---------- */
+/* ---------- Corrections to Discogs' values ---------- */
 
-/**
- * A line break in typed text. Not \R: without the /u flag that also matches the
- * single byte 0x85, which ends characters like "★" and many Japanese ones, and
- * would cut a title in half.
- */
-const LINE_BREAK = '/\r\n|\r|\n/';
-
-/** What was typed into an override box, as the list of values the drawer draws. */
+/** What was typed into a correction box, as the list of values the drawer draws. */
 function override_value(string $key, string $text): array
 {
     return match (OVERRIDE_FIELDS[$key]) {
@@ -234,10 +203,7 @@ function override_value(string $key, string $text): array
     };
 }
 
-/** A position simple enough to type as "1." or "A2)": 7, 12, A1, 3b. */
-const TRACK_POSITION = '[A-Za-z]?\\d{1,3}[A-Za-z]?';
-
-/** A record's own value for an overridable fact, or null where it hasn't set one. */
+/** The record's own value for a correctable fact, or null where it has none. */
 function item_override(array $row, string $key): ?array
 {
     $text = trim((string) ($row[$key] ?? ''));
@@ -246,11 +212,8 @@ function item_override(array $row, string $key): ?array
 }
 
 /**
- * The tracklist as typed: one track a line, "1. Poker Face 3:58". The leading
- * position and the trailing length are optional; a line with neither is just a
- * title, numbered by where it falls. A plain position is written "1." or "A2)";
- * anything Discogs might have ("Video", "10.1", "CD1-3") goes in brackets:
- * "[Video] Beautiful".
+ * A typed tracklist, one track a line: "1. Poker Face 3:58". The position and
+ * length are optional; an unusual position goes in brackets: "[Video] Beautiful".
  */
 function tracklist_from_text(string $text): array
 {
@@ -283,7 +246,7 @@ function tracklist_from_text(string $text): array
     return $tracks;
 }
 
-/** Discogs' tracklist in the same shape, as a starting point to correct. */
+/** Discogs' tracklist written the way tracklist_from_text() reads it, as a starting point. */
 function tracklist_to_text(array $tracks): string
 {
     $lines = [];
@@ -292,7 +255,7 @@ function tracklist_to_text(array $tracks): string
         if (($track['type_'] ?? 'track') === 'heading') {
             continue;
         }
-        // An index track carries its parts as sub-tracks; those are the songs.
+        // An index track's songs are its sub-tracks.
         foreach (($track['sub_tracks'] ?? null) ?: [$track] as $part) {
             $title = trim((string) ($part['title'] ?? ''));
             if ($title === '') {
@@ -312,11 +275,11 @@ function tracklist_to_text(array $tracks): string
     return implode("\n", $lines);
 }
 
-/* ---------- Deriving Discogs values ---------- */
+/* ---------- Reading Discogs' values ---------- */
 
+/** Without Discogs' disambiguation suffix: "Anitta (2)" -> "Anitta". */
 function clean_artist_name(string $name): string
 {
-    // Discogs disambiguates same-named artists with a numeric suffix: "Anitta (2)".
     return trim(preg_replace('/\s\(\d+\)$/', '', $name));
 }
 
@@ -328,7 +291,7 @@ function artists_text(array $artists): string
     return $names ? implode(', ', $names) : 'Unknown artist';
 }
 
-/** "LP, Album, Limited Edition, Pink" — one flat line of every format detail. */
+/** "LP, Album, Limited Edition, Pink": every format detail on one line. */
 function formats_text(array $formats): string
 {
     $parts = [];
@@ -359,15 +322,13 @@ function formats_lines(array $formats): array
         ));
         $lines[] = $qty . ($format['name'] ?? '') . ($extras ? ' (' . implode(', ', $extras) . ')' : '');
     }
+
     return $lines;
 }
 
 function labels_lines(array $labels): array
 {
-    return array_map(
-        fn ($l) => clean_artist_name((string) ($l['name'] ?? '')),
-        $labels
-    );
+    return array_map(fn ($l) => clean_artist_name((string) ($l['name'] ?? '')), $labels);
 }
 
 function catalog_numbers(array $labels): array
@@ -379,10 +340,11 @@ function catalog_numbers(array $labels): array
             $numbers[] = $catno;
         }
     }
+
     return array_values(array_unique($numbers));
 }
 
-/** The barcode off a release's identifiers, digits only where there are any. */
+/** The barcode among a release's identifiers, as bare digits where it has at least eight. */
 function identifiers_barcode(array $identifiers): ?string
 {
     foreach ($identifiers as $identifier) {
@@ -393,43 +355,37 @@ function identifiers_barcode(array $identifiers): ?string
         if ($value === '') {
             continue;
         }
-        // Discogs stores both "6 02537 51737 4" and "602537517374"; the spaced
-        // form is how it's printed on the sleeve, the bare digits are what you
-        // would search for. Prefer the digits when they're there.
         $digits = preg_replace('/\D+/', '', $value);
+
         return strlen($digits) >= 8 ? $digits : $value;
     }
 
     return null;
 }
 
-/** Vinyl size ("12\"") out of the format descriptions. */
+function vinyl_formats(array $formats): array
+{
+    return array_filter($formats, fn ($format) => ($format['name'] ?? '') === 'Vinyl');
+}
+
+/** Vinyl size ('12"') from the format descriptions. */
 function formats_vinyl_size(array $formats): ?string
 {
-    foreach ($formats as $format) {
-        if (($format['name'] ?? '') !== 'Vinyl') {
-            continue;
-        }
+    foreach (vinyl_formats($formats) as $format) {
         foreach (($format['descriptions'] ?? []) as $description) {
             if (preg_match('/^(\d+)"$/', trim($description), $m)) {
                 return $m[1] . '"';
             }
         }
     }
+
     return null;
 }
 
-/**
- * The colour of a pressing, as Discogs records it: free text on the format
- * ("Pink", "Clear w/ Powder Fill"), sometimes only in the descriptions
- * ("Picture Disc").
- */
+/** A pressing's colour as Discogs writes it: the format's free text, or a telling description. */
 function formats_vinyl_color(array $formats): ?string
 {
-    foreach ($formats as $format) {
-        if (($format['name'] ?? '') !== 'Vinyl') {
-            continue;
-        }
+    foreach (vinyl_formats($formats) as $format) {
         $text = trim((string) ($format['text'] ?? ''));
         if ($text !== '') {
             return $text;
@@ -440,10 +396,11 @@ function formats_vinyl_color(array $formats): ?string
             }
         }
     }
+
     return null;
 }
 
-/** The format name to put in the Media box for a disc: "CD", "DVD-Video"… */
+/** What goes in the Media box: "CD", "DVD-Video"… */
 function formats_media(array $formats): ?string
 {
     foreach ($formats as $format) {
@@ -455,49 +412,46 @@ function formats_media(array $formats): ?string
             $format['descriptions'] ?? [],
             fn ($d) => in_array($d, ['DVD-Video', 'DVD-Audio', 'CD-ROM', 'Enhanced', 'Mini', 'Maxi-Single', 'Single', 'Album', 'EP'], true)
         ));
+
         return $descriptions && in_array($descriptions[0], ['DVD-Video', 'DVD-Audio', 'CD-ROM'], true)
             ? $descriptions[0]
             : $name;
     }
+
     return null;
 }
 
-/**
- * Album / single / promo, guessed from the Discogs format descriptions. Only
- * ever a default: the moment Bruno picks one in the admin, his choice is stored
- * on the item and this is not consulted again.
- */
+/** Album, single, promo… guessed from the format descriptions until one is picked in the admin. */
 function formats_item_type(array $formats): ?string
 {
-    $descriptions = [];
-    foreach ($formats as $format) {
-        $descriptions = array_merge($descriptions, $format['descriptions'] ?? []);
-    }
+    $descriptions = array_merge(...array_map(fn ($format) => $format['descriptions'] ?? [], array_values($formats)));
 
-    if (array_intersect($descriptions, ['Promo', 'Promotional'])) {
-        return 'promo';
-    }
-    if (array_intersect($descriptions, ['Single', 'Maxi-Single'])) {
-        return 'single';
-    }
-    if (in_array('EP', $descriptions, true)) {
-        return 'ep';
-    }
-    if (in_array('Compilation', $descriptions, true)) {
-        return 'compilation';
-    }
-    if (in_array('Album', $descriptions, true)) {
-        return 'album';
-    }
-
-    return null;
+    return match (true) {
+        (bool) array_intersect($descriptions, ['Promo', 'Promotional']) => 'promo',
+        (bool) array_intersect($descriptions, ['Single', 'Maxi-Single']) => 'single',
+        in_array('EP', $descriptions, true)                             => 'ep',
+        in_array('Compilation', $descriptions, true)                    => 'compilation',
+        in_array('Album', $descriptions, true)                          => 'album',
+        default                                                         => null,
+    };
 }
 
-/**
- * Release notes on Discogs are written in its own markup ([a=Artist],
- * [url=…]text[/url], [b]…[/b]). Flatten it to plain text — the drawer escapes
- * whatever comes out, so none of it can smuggle in HTML.
- */
+/** "Name (number)", one line per series a release belongs to. */
+function series_lines(array $series): array
+{
+    $lines = [];
+    foreach ($series as $entry) {
+        $name = trim((string) ($entry['name'] ?? ''));
+        $number = trim((string) ($entry['catno'] ?? ''));
+        if ($name !== '') {
+            $lines[] = $name . ($number !== '' ? " ($number)" : '');
+        }
+    }
+
+    return $lines;
+}
+
+/** Discogs markup ([a=Artist], [url=…]…[/url], [b]…) flattened to plain text. */
 function clean_discogs_markup(?string $text): string
 {
     return trim(preg_replace(
@@ -508,12 +462,9 @@ function clean_discogs_markup(?string $text): string
 }
 
 /**
- * The value of one field for one item: Bruno's if he typed one, otherwise
- * whatever Discogs says. Returns null when neither has anything, so the caller
- * can leave the row out entirely rather than print an empty one.
- *
- * $item is an items row, $release a releases row (or null for a 'searching'
- * entry that isn't on Discogs at all).
+ * One field of one record: Bruno's value if he typed one, otherwise Discogs'.
+ * Null when neither has anything. $release is null for a record that isn't
+ * on Discogs.
  */
 function item_field_value(array $item, ?array $release, string $key): mixed
 {
@@ -535,19 +486,14 @@ function item_field_value(array $item, ?array $release, string $key): mixed
     $labels = json_column($release['labels_json'] ?? null);
 
     return match ($key) {
-        // Mine, falling back to Discogs.
-        'barcode'      => $release['barcode'] ?: identifiers_barcode(json_column($release['identifiers_json'] ?? null)),
-        'release_date' => $release['released_formatted'] ?: ($release['released'] ?: ($release['year'] ?: null)),
-        'region'       => $release['country'] ?: null,
-        'media'        => formats_media($formats),
-        'vinyl_size'   => formats_vinyl_size($formats),
-        'vinyl_color'  => formats_vinyl_color($formats),
-        'item_type'    => formats_item_type($formats),
-        'notes'        => null,   // notes are Bruno's alone; Discogs' live under release_notes
-
-        // Discogs only.
+        'barcode'          => $release['barcode'] ?: identifiers_barcode(json_column($release['identifiers_json'] ?? null)),
+        'release_date'     => $release['released_formatted'] ?: ($release['released'] ?: ($release['year'] ?: null)),
+        'region'           => $release['country'] ?: null,
+        'media'            => formats_media($formats),
+        'vinyl_size'       => formats_vinyl_size($formats),
+        'vinyl_color'      => formats_vinyl_color($formats),
+        'item_type'        => formats_item_type($formats),
         'artist'           => $release['artists_text'] ?: null,
-        'year'             => $release['year'] ?: null,
         'country'          => $release['country'] ?: null,
         'labels'           => labels_lines($labels) ?: null,
         'catalog_number'   => catalog_numbers($labels) ?: null,
@@ -560,6 +506,27 @@ function item_field_value(array $item, ?array $release, string $key): mixed
         'data_quality'     => $release['data_quality'] ?: null,
         'release_id'       => $release['discogs_id'] ?? null,
         'release_notes'    => clean_discogs_markup($release['release_notes'] ?? '') ?: null,
+        'series'           => series_lines(json_column($release['series_json'] ?? null)) ?: null,
         default            => null,
     };
+}
+
+/**
+ * The Discogs value that shows through when a box is left empty, as text for
+ * the hint under it. With $always it is given even when the box is filled in,
+ * to compare a correction with what it corrects.
+ */
+function discogs_fallback_text(array $item, ?array $release, string $key, bool $always = false): string
+{
+    if ($release === null || (!$always && trim((string) ($item[$key] ?? '')) !== '')) {
+        return '';
+    }
+
+    $value = item_field_value([...$item, $key => null], $release, $key);
+
+    if ($value === null || $value === '' || $value === []) {
+        return '';
+    }
+
+    return is_array($value) ? implode(', ', $value) : (string) $value;
 }

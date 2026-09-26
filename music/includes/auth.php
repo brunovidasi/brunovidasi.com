@@ -1,12 +1,11 @@
 <?php
 
 /**
- * One account, one owner. There is no registration page and no second user:
- * this admin manages one person's shelf, and the only address that may ever
- * hold an account is owner_email in the config (which lives outside the repo).
- *
- * /setup creates that account the first time, and refuses once it exists.
+ * One account, one owner: the only address that can ever hold an account is
+ * owner_email in the config. /setup creates it once and refuses afterwards.
  */
+
+const DUMMY_PASSWORD_HASH = '$2y$12$usesomesillystringfoeioaXjJQFHqfuz7cFwsw.0qNBHyzGXi3Lm';
 
 function current_user(): ?array
 {
@@ -20,9 +19,8 @@ function current_user(): ?array
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch() ?: null;
 
-        // The owner address changed in the config, or the account was deleted:
-        // either way this session no longer belongs to anyone who may be here.
-        if ($user && owner_email() !== null && strtolower($user['email']) !== owner_email()) {
+        // The account was deleted, or the owner address changed in the config.
+        if ($user && !is_owner_email($user['email'])) {
             logout_user();
             return null;
         }
@@ -38,12 +36,17 @@ function require_login(): array
 {
     $user = current_user();
     if (!$user) {
-        // Come back to where they were headed once they've signed in.
         $_SESSION['login_redirect'] = $_SERVER['REQUEST_URI'] ?? url('admin');
         header('Location: ' . url('login'));
         exit;
     }
+
     return $user;
+}
+
+function is_owner_email(string $email): bool
+{
+    return owner_email() === null || strtolower($email) === owner_email();
 }
 
 function owner_account_exists(): bool
@@ -51,7 +54,7 @@ function owner_account_exists(): bool
     return (bool) db()->query('SELECT 1 FROM users LIMIT 1')->fetchColumn();
 }
 
-/** Creates the owner account. Returns null on success, or an error to show. */
+/** Returns null on success, or the error to show. */
 function create_owner_account(string $email, string $password, string $confirm): ?string
 {
     $email = strtolower(trim($email));
@@ -63,8 +66,7 @@ function create_owner_account(string $email, string $password, string $confirm):
         return "No owner_email is set in the config, so there is no address to create an account for.";
     }
     if ($email !== owner_email()) {
-        // Deliberately does not echo the configured address back: this page is
-        // reachable by anyone in the window before the account exists.
+        // Never echo the configured address: anyone can reach this page before the account exists.
         return 'That is not the address this collection belongs to.';
     }
     if (strlen($password) < 10) {
@@ -83,7 +85,7 @@ function create_owner_account(string $email, string $password, string $confirm):
     return null;
 }
 
-/** Returns null on success, or an error message to show the user. */
+/** Returns null on success, or the error to show. */
 function attempt_login(string $email, string $password): ?string
 {
     $email = strtolower(trim($email));
@@ -92,15 +94,14 @@ function attempt_login(string $email, string $password): ?string
     $stmt->execute([$email]);
     $row = $stmt->fetch();
 
-    // password_verify against a dummy hash when there is no such account, so a
-    // wrong address and a wrong password take the same time to answer and the
-    // page can't be used to discover which address owns the collection.
-    $hash = $row['password_hash'] ?? '$2y$12$usesomesillystringfoeioaXjJQFHqfuz7cFwsw.0qNBHyzGXi3Lm';
+    // Verified against a dummy hash when there's no such account, so a wrong
+    // address takes as long to answer as a wrong password.
+    $hash = $row['password_hash'] ?? DUMMY_PASSWORD_HASH;
 
     if (!password_verify($password, $hash) || !$row) {
         return 'Wrong email or password.';
     }
-    if (owner_email() !== null && strtolower($row['email']) !== owner_email()) {
+    if (!is_owner_email($row['email'])) {
         return 'That account is no longer the owner of this collection.';
     }
 
@@ -119,10 +120,7 @@ function logout_user(): void
     }
 }
 
-/**
- * Rate-limits sign-in attempts per session, so the login form can't be hammered
- * from one browser. Returns the seconds left to wait, or 0 when it may proceed.
- */
+/** Seconds left before another sign-in may be tried: five free tries, then a doubling wait. */
 function login_cooldown(): int
 {
     $fails = (int) ($_SESSION['login_fails'] ?? 0);
@@ -133,9 +131,8 @@ function login_cooldown(): int
     }
 
     $wait = min(300, 5 * (2 ** ($fails - 5)));
-    $left = $last + $wait - time();
 
-    return $left > 0 ? $left : 0;
+    return max(0, $last + $wait - time());
 }
 
 function record_login_failure(): void

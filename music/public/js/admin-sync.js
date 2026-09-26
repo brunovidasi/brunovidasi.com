@@ -1,11 +1,6 @@
-/* The Sync button.
- *
- * A full sync is minutes of work against a 60-calls-a-minute API, so the server
- * does it in slices: each POST here runs for a few seconds, commits what it
- * managed and answers with where it got to. This keeps asking until the run
- * says it's done, which is also why closing the tab is harmless — the next
- * click (or the nightly cron) resumes the same run.
- */
+/* The Sync button. The server syncs in slices of a few seconds each, so this
+ * keeps asking for the next one until the run says it is done. Closing the tab
+ * is harmless: the next click, or the nightly cron, resumes the same run. */
 
 const card = document.getElementById('syncCard');
 if (card) {
@@ -20,8 +15,7 @@ if (card) {
 
   function setBar(progress) {
     const total = progress.details + progress.pending;
-    // Before the detail phase there is no meaningful total, so the bar shows a
-    // small amount of movement rather than pretending to know.
+    // Before the detail phase there is no total yet: a little movement, rather than a guess.
     const pct = total > 0 ? Math.round((progress.details / total) * 100) : 6;
     bar.hidden = false;
     bar.firstElementChild.style.width = pct + '%';
@@ -76,8 +70,7 @@ if (card) {
       status.textContent = failed
         ? `Stopped: ${state.message}`
         : `${state.status === 'partial' ? 'Paused' : 'Done'} — ${describe(state)}`;
-      bar.firstElementChild.style.width = failed ? '100%' : '100%';
-      // A partial run still has work left; the button invites finishing it.
+      bar.firstElementChild.style.width = '100%';
       startButton.textContent = state.status === 'partial' ? 'Continue sync' : 'Sync again';
     } catch (error) {
       status.textContent = `Sync failed: ${error.message}`;
@@ -92,7 +85,7 @@ if (card) {
     if (!running) run(card.dataset.running || null);
   });
 
-  // A run left going by a closed tab carries on being reported here.
+  // A run left going by a closed tab carries on here.
   if (card.dataset.running) {
     run(card.dataset.running);
   }

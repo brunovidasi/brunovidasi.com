@@ -3,25 +3,24 @@
 /**
  * Pulling Discogs into the database.
  *
- * A sync is deliberately restartable and deliberately slow to finish. The
- * collection listing arrives 100 releases at a time and is cheap, but the
- * interesting half — tracklist, credits, images, identifiers, the barcode —
- * only exists on the per-release endpoint, one HTTP call each, against a limit
- * of 60 calls a minute. A 400-record shelf is therefore a seven-minute job, and
- * no web request should sit there for seven minutes.
+ * A run is a row in sync_runs that moves through three phases: the collection,
+ * the wantlist, and each release's full detail (one API call per release,
+ * against 60 a minute). sync_step() does one slice of work within a time
+ * budget and returns, so the admin can poll it and cron can loop it; a run
+ * that dies halfway carries on from where it stopped.
  *
- * So a run is a row in sync_runs that moves through phases, and sync_step()
- * does one slice of work within a time budget and returns. The admin's Sync
- * button polls it (so the page shows progress and nothing times out); the cron
- * URL loops it until done. Either way the work already done is committed, and a
- * run that dies halfway resumes on the next pass instead of starting over.
- *
- * What a sync never touches: any column on `items` that Bruno edits. Discogs
- * data lives on `releases` and is overwritten freely; his notes, barcodes,
- * chosen covers and era assignments are on `items` and are only ever read here.
+ * A sync writes Discogs' side only: the `releases` cache and the Discogs
+ * columns of an item. Nothing typed in the admin is ever touched.
  */
 
 const SYNC_PER_PAGE = 100;
+
+const SYNC_PHASE_LABELS = [
+    'collection' => 'Reading the collection…',
+    'wantlist'   => 'Reading the wantlist…',
+    'details'    => 'Fetching release details…',
+    'done'       => 'Done.',
+];
 
 /** How long a release's full detail is trusted before it is fetched again. */
 function detail_max_age_days(): int
@@ -32,16 +31,26 @@ function detail_max_age_days(): int
 function sync_client(): DiscogsClient
 {
     static $client = null;
+
     return $client ??= new DiscogsClient();
+}
+
+/** Discogs data as it is stored in the release cache. */
+function json_store(mixed $value): string
+{
+    return json_encode($value, JSON_UNESCAPED_UNICODE);
+}
+
+function release_formats(array $release): array
+{
+    return $release['formats'] ?? $release['format'] ?? [];
 }
 
 /* ---------- Runs ---------- */
 
 function sync_start(string $trigger = 'admin'): int
 {
-    // Only one run at a time. A run left 'running' by a crashed request would
-    // otherwise block every later sync forever, so anything older than an hour
-    // is called abandoned and closed.
+    // Only one run at a time; one left 'running' for an hour has crashed.
     db()->exec("
         UPDATE sync_runs
            SET status = 'error', finished_at = datetime('now'),
@@ -64,12 +73,25 @@ function sync_run(int $id): ?array
 {
     $stmt = db()->prepare('SELECT * FROM sync_runs WHERE id = ?');
     $stmt->execute([$id]);
+
     return $stmt->fetch() ?: null;
 }
 
 function latest_sync_run(): ?array
 {
     return db()->query('SELECT * FROM sync_runs ORDER BY id DESC LIMIT 1')->fetch() ?: null;
+}
+
+function recent_sync_runs(int $limit): array
+{
+    return db()->query('SELECT * FROM sync_runs ORDER BY id DESC LIMIT ' . $limit)->fetchAll();
+}
+
+/** Sets columns on a run: sync_update($id, ['phase' => 'done']) */
+function sync_update(int $runId, array $columns): void
+{
+    $sets = implode(', ', array_map(fn ($column) => "$column = ?", array_keys($columns)));
+    db()->prepare("UPDATE sync_runs SET $sets WHERE id = ?")->execute([...array_values($columns), $runId]);
 }
 
 function sync_log(int $runId, string $message): void
@@ -89,10 +111,9 @@ function sync_finish(int $runId, string $status, ?string $message = null): void
 }
 
 /**
- * Does the next slice of a run and returns where it got to.
+ * Does the next slice of a run.
  *
- * @param float $budget seconds of work to do before handing control back.
- * @return array{done:bool,phase:string,status:string,message:string,progress:array}
+ * @param float $budget seconds of work before handing control back
  */
 function sync_step(int $runId, float $budget = 15.0): array
 {
@@ -111,48 +132,41 @@ function sync_step(int $runId, float $budget = 15.0): array
         if ($run['phase'] === 'collection') {
             $counts = sync_collection($runId, $client);
             sync_log($runId, "Collection: {$counts['seen']} copies ({$counts['added']} new, {$counts['gone']} no longer there).");
-            db()->prepare("UPDATE sync_runs SET phase = 'wantlist' WHERE id = ?")->execute([$runId]);
+            sync_update($runId, ['phase' => 'wantlist']);
         } elseif ($run['phase'] === 'wantlist') {
             $counts = sync_wantlist($runId, $client);
             sync_log($runId, "Wantlist: {$counts['seen']} records ({$counts['added']} new, {$counts['gone']} removed).");
             assign_items_to_artists_and_eras();
             sync_log($runId, 'Filed everything into artists and eras.');
-            db()->prepare("UPDATE sync_runs SET phase = 'details' WHERE id = ?")->execute([$runId]);
+            sync_update($runId, ['phase' => 'details']);
         } elseif ($run['phase'] === 'details') {
             $fetched = sync_details($runId, $client, $deadline);
             $pending = count_pending_details();
-            db()->prepare('UPDATE sync_runs SET details_pending = ? WHERE id = ?')->execute([$pending, $runId]);
+            sync_update($runId, ['details_pending' => $pending]);
 
             if ($pending === 0) {
                 assign_items_to_artists_and_eras();
                 sync_log($runId, 'Release details complete.');
-                db()->prepare("UPDATE sync_runs SET phase = 'done' WHERE id = ?")->execute([$runId]);
+                sync_update($runId, ['phase' => 'done']);
                 sync_finish($runId, 'ok', 'Sync complete.');
             } elseif ($fetched === 0) {
-                // Budget spent without a single call finishing: let the caller
-                // come back rather than spin.
                 sync_log($runId, "Paused with $pending release(s) still to fetch.");
             }
         }
     } catch (DiscogsException $e) {
         sync_log($runId, 'Stopped: ' . $e->getMessage());
-        // A rate limit or a dropped connection is not a reason to throw away
-        // everything already written — the next pass picks up where this left off.
-        $status = $run['phase'] === 'details' ? 'partial' : 'error';
-        sync_finish($runId, $status, $e->getMessage());
+        // Details already fetched are kept; the next pass picks up where this left off.
+        sync_finish($runId, $run['phase'] === 'details' ? 'partial' : 'error', $e->getMessage());
     }
 
     record_api_calls($runId, $client);
 
     $run = sync_run($runId);
+
     return sync_progress($run, $run['status'] !== 'running');
 }
 
-/**
- * Adds the calls made since the last time this was asked to the run's total.
- * The client counts for the whole request, and sync_step() can be called many
- * times in one (the cron loop), so only the difference is new.
- */
+/** Adds the API calls made since the last step to the run (cron makes many steps in one request). */
 function record_api_calls(int $runId, DiscogsClient $client): void
 {
     static $counted = 0;
@@ -167,36 +181,26 @@ function record_api_calls(int $runId, DiscogsClient $client): void
 
 function sync_progress(array $run, bool $done): array
 {
-    $phaseLabels = [
-        'collection' => 'Reading the collection…',
-        'wantlist'   => 'Reading the wantlist…',
-        'details'    => 'Fetching release details…',
-        'done'       => 'Done.',
-    ];
-
     return [
         'run_id'   => (int) $run['id'],
         'done'     => $done,
         'phase'    => (string) $run['phase'],
         'status'   => (string) $run['status'],
-        'message'  => (string) ($run['message'] ?? $phaseLabels[$run['phase']] ?? ''),
+        'message'  => (string) ($run['message'] ?? SYNC_PHASE_LABELS[$run['phase']] ?? ''),
         'progress' => [
-            'collection'  => (int) $run['collection_seen'],
-            'wantlist'    => (int) $run['wantlist_seen'],
-            'added'       => (int) $run['items_added'],
-            'removed'     => (int) $run['items_removed'],
-            'details'     => (int) $run['details_fetched'],
-            'pending'     => (int) $run['details_pending'],
-            'api_calls'   => (int) $run['api_calls'],
+            'collection' => (int) $run['collection_seen'],
+            'wantlist'   => (int) $run['wantlist_seen'],
+            'added'      => (int) $run['items_added'],
+            'removed'    => (int) $run['items_removed'],
+            'details'    => (int) $run['details_fetched'],
+            'pending'    => (int) $run['details_pending'],
+            'api_calls'  => (int) $run['api_calls'],
         ],
         'log' => (string) ($run['log'] ?? ''),
     ];
 }
 
-/**
- * Runs a whole sync to completion (or until the budget runs out). Used by the
- * cron endpoints, where there is nobody watching a progress bar.
- */
+/** A whole sync, run to the end or until the budget is spent. For cron, where nobody watches. */
 function run_full_sync(string $trigger, callable $log, float $budget = 600.0): array
 {
     $runId = sync_start($trigger);
@@ -215,17 +219,48 @@ function run_full_sync(string $trigger, callable $log, float $budget = 600.0): a
     } while (!$state['done'] && microtime(true) < $deadline);
 
     if (!$state['done']) {
-        // Out of time, not out of work. The run stays 'running' so the next
-        // cron pass continues it instead of starting from the first page again.
+        // The run stays 'running', so the next pass continues it.
         $log('Budget spent; the next pass will continue this run.');
     }
 
     return $state;
 }
 
-/* ---------- Phase 1: the collection ---------- */
+/* ---------- Phases 1 and 2: the collection and the wantlist ---------- */
 
 function sync_collection(int $runId, DiscogsClient $client): array
+{
+    return sync_listing($runId, [
+        'source'      => 'collection',
+        'fetch'       => fn (string $user, int $page) => $client->collectionPage($user, $page, SYNC_PER_PAGE),
+        'entries'     => 'releases',
+        'seen_column' => 'collection_seen',
+        'match'       => 'instance_id',
+        'id'          => fn (array $entry, array $basic) => (int) ($entry['instance_id'] ?? 0),
+        'save'        => 'upsert_collection_item',
+    ]);
+}
+
+function sync_wantlist(int $runId, DiscogsClient $client): array
+{
+    return sync_listing($runId, [
+        'source'      => 'wantlist',
+        'fetch'       => fn (string $user, int $page) => $client->wantlistPage($user, $page, SYNC_PER_PAGE),
+        'entries'     => 'wants',
+        'seen_column' => 'wantlist_seen',
+        'match'       => 'release_id',
+        'id'          => fn (array $entry, array $basic) => (int) ($basic['id'] ?? 0),
+        'save'        => 'upsert_wantlist_item',
+    ]);
+}
+
+/**
+ * Reads every page of a Discogs listing into the database, then flags the rows
+ * that listing no longer has.
+ *
+ * @return array{seen: int, added: int, gone: int}
+ */
+function sync_listing(int $runId, array $listing): array
 {
     $username = discogs_username();
     if ($username === '') {
@@ -235,30 +270,30 @@ function sync_collection(int $runId, DiscogsClient $client): array
     $seen = [];
     $added = 0;
     $page = 1;
-    $pages = 1;
 
     do {
-        $data = $client->collectionPage($username, $page, SYNC_PER_PAGE);
+        $data = $listing['fetch']($username, $page);
         $pages = (int) ($data['pagination']['pages'] ?? 1);
 
         db()->beginTransaction();
-        foreach (($data['releases'] ?? []) as $entry) {
+        foreach (($data[$listing['entries']] ?? []) as $entry) {
             $basic = $entry['basic_information'] ?? null;
-            if (!$basic || empty($entry['instance_id'])) {
+            $id = $basic ? $listing['id']($entry, $basic) : 0;
+            if ($id === 0) {
                 continue;
             }
 
             upsert_release_basic($basic);
-            $added += upsert_collection_item($entry, $basic);
-            $seen[] = (int) $entry['instance_id'];
+            $added += $listing['save']($entry, $basic) ? 1 : 0;
+            $seen[] = $id;
         }
         db()->commit();
 
-        db()->prepare('UPDATE sync_runs SET collection_seen = ? WHERE id = ?')->execute([count($seen), $runId]);
+        sync_update($runId, [$listing['seen_column'] => count($seen)]);
         $page++;
     } while ($page <= $pages);
 
-    $gone = mark_missing('collection', $seen, 'instance_id');
+    $gone = mark_missing($listing['source'], $seen, $listing['match']);
 
     db()->prepare('UPDATE sync_runs SET items_added = items_added + ?, items_removed = items_removed + ? WHERE id = ?')
         ->execute([$added, $gone, $runId]);
@@ -267,12 +302,9 @@ function sync_collection(int $runId, DiscogsClient $client): array
 }
 
 /**
- * Writes the release as the collection listing describes it. This is the cheap
- * half of a release: enough for the shelf, the grid and the artist pages, but
- * not the tracklist or the barcode.
- *
- * Deliberately does NOT clear the detail columns — a re-sync of the basics must
- * not throw away detail already paid for in API calls.
+ * Writes a release as a collection or wantlist listing describes it: enough
+ * for the shelves, but not the tracklist or barcode. Detail already fetched
+ * is left alone.
  */
 function upsert_release_basic(array $basic): void
 {
@@ -307,26 +339,31 @@ function upsert_release_basic(array $basic): void
         (string) ($basic['title'] ?? ''),
         artists_text($artists),
         clean_artist_name((string) ($artists[0]['name'] ?? '')),
-        json_encode($artists, JSON_UNESCAPED_UNICODE),
+        json_store($artists),
         !empty($basic['year']) ? (int) $basic['year'] : null,
-        json_encode($basic['labels'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($formats, JSON_UNESCAPED_UNICODE),
+        json_store($basic['labels'] ?? []),
+        json_store($formats),
         formats_text($formats),
-        json_encode($basic['genres'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($basic['styles'] ?? [], JSON_UNESCAPED_UNICODE),
+        json_store($basic['genres'] ?? []),
+        json_store($basic['styles'] ?? []),
         (string) ($basic['thumb'] ?? ''),
         (string) ($basic['cover_image'] ?? ''),
     ]);
 }
 
-/** @return int 1 if this copy is new to the database, 0 if it was already here. */
-function upsert_collection_item(array $entry, array $basic): int
+function item_exists(string $where, array $params): bool
+{
+    $stmt = db()->prepare("SELECT 1 FROM items WHERE $where");
+    $stmt->execute($params);
+
+    return (bool) $stmt->fetchColumn();
+}
+
+/** @return bool whether this copy is new to the database */
+function upsert_collection_item(array $entry, array $basic): bool
 {
     $instanceId = (int) $entry['instance_id'];
-
-    $exists = db()->prepare('SELECT 1 FROM items WHERE instance_id = ?');
-    $exists->execute([$instanceId]);
-    $isNew = !$exists->fetchColumn();
+    $isNew = !item_exists('instance_id = ?', [$instanceId]);
 
     db()->prepare("
         INSERT INTO items (source, instance_id, release_id, folder_id, date_added, rating, discogs_fields_json, media_kind)
@@ -338,7 +375,6 @@ function upsert_collection_item(array $entry, array $basic): int
             date_added          = excluded.date_added,
             rating              = excluded.rating,
             discogs_fields_json = excluded.discogs_fields_json,
-            -- A kind set by hand in the admin is never overwritten by a sync.
             media_kind          = CASE WHEN items.media_kind_locked = 1 THEN items.media_kind ELSE excluded.media_kind END,
             missing_since       = NULL,
             updated_at          = datetime('now')
@@ -348,59 +384,18 @@ function upsert_collection_item(array $entry, array $basic): int
         isset($entry['folder_id']) ? (int) $entry['folder_id'] : null,
         (string) ($entry['date_added'] ?? ''),
         !empty($entry['rating']) ? (int) $entry['rating'] : null,
-        json_encode($entry['notes'] ?? [], JSON_UNESCAPED_UNICODE),
+        json_store($entry['notes'] ?? []),
         detect_media_kind($basic['formats'] ?? []),
     ]);
 
-    return $isNew ? 1 : 0;
+    return $isNew;
 }
 
-/* ---------- Phase 2: the wantlist ---------- */
-
-function sync_wantlist(int $runId, DiscogsClient $client): array
-{
-    $username = discogs_username();
-    $seen = [];
-    $added = 0;
-    $page = 1;
-    $pages = 1;
-
-    do {
-        $data = $client->wantlistPage($username, $page, SYNC_PER_PAGE);
-        $pages = (int) ($data['pagination']['pages'] ?? 1);
-
-        db()->beginTransaction();
-        foreach (($data['wants'] ?? []) as $want) {
-            $basic = $want['basic_information'] ?? null;
-            if (!$basic || empty($basic['id'])) {
-                continue;
-            }
-
-            upsert_release_basic($basic);
-            $added += upsert_wantlist_item($want, $basic);
-            $seen[] = (int) $basic['id'];
-        }
-        db()->commit();
-
-        db()->prepare('UPDATE sync_runs SET wantlist_seen = ? WHERE id = ?')->execute([count($seen), $runId]);
-        $page++;
-    } while ($page <= $pages);
-
-    $gone = mark_missing('wantlist', $seen, 'release_id');
-
-    db()->prepare('UPDATE sync_runs SET items_added = items_added + ?, items_removed = items_removed + ? WHERE id = ?')
-        ->execute([$added, $gone, $runId]);
-
-    return ['seen' => count($seen), 'added' => $added, 'gone' => $gone];
-}
-
-function upsert_wantlist_item(array $want, array $basic): int
+/** @return bool whether this want is new to the database */
+function upsert_wantlist_item(array $want, array $basic): bool
 {
     $releaseId = (int) $basic['id'];
-
-    $exists = db()->prepare("SELECT 1 FROM items WHERE source = 'wantlist' AND release_id = ?");
-    $exists->execute([$releaseId]);
-    $isNew = !$exists->fetchColumn();
+    $isNew = !item_exists("source = 'wantlist' AND release_id = ?", [$releaseId]);
 
     db()->prepare("
         INSERT INTO items (source, release_id, date_added, rating, notes, media_kind)
@@ -418,34 +413,22 @@ function upsert_wantlist_item(array $want, array $basic): int
         detect_media_kind($basic['formats'] ?? []),
     ]);
 
-    return $isNew ? 1 : 0;
+    return $isNew;
 }
 
 /**
- * Flags the rows Discogs no longer lists.
- *
- * They are flagged, not deleted: an item row carries hand-typed notes, a chosen
- * cover and an era, and a copy can vanish from a listing because it was moved
- * between folders mid-sync as easily as because it was sold. The admin lists
- * them under "No longer on Discogs" with a Delete button, and any sync that
- * finds one again clears the flag.
- *
- * Rows added by hand ('searching') are never touched — they were never on
- * Discogs to begin with.
+ * Flags the rows a listing no longer has. They are kept, not deleted: they
+ * carry hand-typed notes, and a copy can drop out of a listing by being moved
+ * between folders mid-sync. A later sync that finds one again clears the flag.
  */
 function mark_missing(string $source, array $seenIds, string $column): int
 {
+    // An empty listing is far likelier a half-answered API call than an emptied shelf.
     if (!$seenIds) {
-        // An empty listing is far more likely to be a half-answered API call
-        // than an emptied shelf, so nothing is flagged on that basis.
         return 0;
     }
 
-    // The ids go into a temporary table rather than a NOT IN (?, ?, ?…) list:
-    // SQLite caps the number of bound variables in one statement (999 on
-    // builds before 3.32), and a collection of a few hundred copies is already
-    // within sight of that. A temp table has no such limit and is dropped with
-    // the connection.
+    // A temp table rather than NOT IN (?, ?, …), which older SQLite caps at 999 variables.
     db()->exec('CREATE TEMP TABLE IF NOT EXISTS seen_ids (id INTEGER PRIMARY KEY)');
     db()->exec('DELETE FROM seen_ids');
 
@@ -456,8 +439,6 @@ function mark_missing(string $source, array $seenIds, string $column): int
     }
     db()->commit();
 
-    $now = date('c');
-
     $flag = db()->prepare("
         UPDATE items
            SET missing_since = COALESCE(missing_since, ?), updated_at = datetime('now')
@@ -465,7 +446,7 @@ function mark_missing(string $source, array $seenIds, string $column): int
            AND $column IS NOT NULL
            AND $column NOT IN (SELECT id FROM seen_ids)
     ");
-    $flag->execute([$now, $source]);
+    $flag->execute([date('c'), $source]);
     $flagged = $flag->rowCount();
 
     db()->prepare("
@@ -479,35 +460,37 @@ function mark_missing(string $source, array $seenIds, string $column): int
     return $flagged;
 }
 
-/* ---------- Phase 3: the expensive half ---------- */
+/* ---------- Phase 3: each release's full detail ---------- */
 
-/** Releases that are on a shelf or a wantlist but whose detail is missing or stale. */
+const STALE_DETAIL_WHERE = "
+    discogs_id IN (SELECT release_id FROM items WHERE release_id IS NOT NULL)
+    AND (detail_fetched_at IS NULL OR detail_fetched_at < datetime('now', ?))
+";
+
+function detail_age_modifier(): string
+{
+    return '-' . detail_max_age_days() . ' days';
+}
+
+/** Releases on a shelf or a wantlist whose detail is missing or stale. */
 function count_pending_details(): int
 {
-    $stmt = db()->prepare("
-        SELECT COUNT(*) FROM releases
-         WHERE discogs_id IN (SELECT release_id FROM items WHERE release_id IS NOT NULL)
-           AND (detail_fetched_at IS NULL OR detail_fetched_at < datetime('now', ?))
-    ");
-    $stmt->execute(['-' . detail_max_age_days() . ' days']);
+    $stmt = db()->prepare('SELECT COUNT(*) FROM releases WHERE ' . STALE_DETAIL_WHERE);
+    $stmt->execute([detail_age_modifier()]);
 
     return (int) $stmt->fetchColumn();
 }
 
-/** Fetches full release detail until the time budget runs out. */
+/** Fetches full release detail, never-fetched first, until the deadline. */
 function sync_details(int $runId, DiscogsClient $client, float $deadline): int
 {
-    // Never-fetched releases first (a new record is invisible in the drawer
-    // until its detail lands), then the stalest.
-    $stmt = db()->prepare("
-        SELECT r.discogs_id
-          FROM releases r
-         WHERE r.discogs_id IN (SELECT release_id FROM items WHERE release_id IS NOT NULL)
-           AND (r.detail_fetched_at IS NULL OR r.detail_fetched_at < datetime('now', ?))
-         ORDER BY r.detail_fetched_at IS NOT NULL, r.detail_fetched_at ASC
+    $stmt = db()->prepare('
+        SELECT discogs_id FROM releases
+         WHERE ' . STALE_DETAIL_WHERE . '
+         ORDER BY detail_fetched_at IS NOT NULL, detail_fetched_at ASC
          LIMIT 500
-    ");
-    $stmt->execute(['-' . detail_max_age_days() . ' days']);
+    ');
+    $stmt->execute([detail_age_modifier()]);
 
     $fetched = 0;
     foreach ($stmt->fetchAll() as $row) {
@@ -515,8 +498,7 @@ function sync_details(int $runId, DiscogsClient $client, float $deadline): int
             break;
         }
 
-        $full = $client->release((int) $row['discogs_id']);
-        upsert_release_detail($full);
+        upsert_release_detail($client->release((int) $row['discogs_id']));
         $fetched++;
 
         db()->prepare('UPDATE sync_runs SET details_fetched = details_fetched + 1 WHERE id = ?')->execute([$runId]);
@@ -528,7 +510,7 @@ function sync_details(int $runId, DiscogsClient $client, float $deadline): int
 function upsert_release_detail(array $full): void
 {
     $identifiers = $full['identifiers'] ?? [];
-    $formats = $full['formats'] ?? $full['format'] ?? [];
+    $formats = release_formats($full);
 
     db()->prepare("
         UPDATE releases SET
@@ -570,13 +552,13 @@ function upsert_release_detail(array $full): void
         (string) ($full['title'] ?? ''),
         artists_text($full['artists'] ?? []),
         clean_artist_name((string) ($full['artists'][0]['name'] ?? '')),
-        json_encode($full['artists'] ?? [], JSON_UNESCAPED_UNICODE),
+        json_store($full['artists'] ?? []),
         !empty($full['year']) ? (int) $full['year'] : null,
-        json_encode($full['labels'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($formats, JSON_UNESCAPED_UNICODE),
+        json_store($full['labels'] ?? []),
+        json_store($formats),
         formats_text($formats),
-        json_encode($full['genres'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($full['styles'] ?? [], JSON_UNESCAPED_UNICODE),
+        json_store($full['genres'] ?? []),
+        json_store($full['styles'] ?? []),
         (string) ($full['country'] ?? ''),
         (string) ($full['released'] ?? ''),
         (string) ($full['released_formatted'] ?? ''),
@@ -587,34 +569,26 @@ function upsert_release_detail(array $full): void
         isset($full['num_for_sale']) ? (int) $full['num_for_sale'] : null,
         isset($full['lowest_price']) ? (float) $full['lowest_price'] : null,
         identifiers_barcode($identifiers),
-        json_encode($full['community'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($full['images'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($full['tracklist'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($identifiers, JSON_UNESCAPED_UNICODE),
-        json_encode($full['companies'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($full['extraartists'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($full['videos'] ?? [], JSON_UNESCAPED_UNICODE),
-        json_encode($full['series'] ?? [], JSON_UNESCAPED_UNICODE),
+        json_store($full['community'] ?? []),
+        json_store($full['images'] ?? []),
+        json_store($full['tracklist'] ?? []),
+        json_store($identifiers),
+        json_store($full['companies'] ?? []),
+        json_store($full['extraartists'] ?? []),
+        json_store($full['videos'] ?? []),
+        json_store($full['series'] ?? []),
         (string) ($full['date_changed'] ?? ''),
         (int) $full['id'],
     ]);
 }
 
-/* ---------- One record, on demand ---------- */
+/* ---------- One record at a time ---------- */
 
 /**
- * Refreshes a single record from Discogs: the full release detail and, for a
- * copy on the shelf, the rating and date on its own collection entry. It is the
- * admin's per-record Sync button — the same writes the full sync makes, for one
- * release, at the cost of one or two API calls.
+ * The per-record Sync button: the release's full detail and, for a copy on the
+ * shelf, its own collection entry. One or two API calls.
  *
- * It only ever touches what Discogs owns: the release cache and the Discogs-side
- * columns of the item (rating, date added, folder). Everything typed in the
- * admin — corrections, notes, chosen pictures, locked format / artist / era —
- * lives in other columns and is not written here, which is what makes it safe
- * to press whenever.
- *
- * @return string a sentence saying what happened, for the flash message
+ * @return string what happened, for the flash message
  * @throws DiscogsException if Discogs can't be reached or has no such release
  */
 function sync_one_item(array $item): string
@@ -644,18 +618,16 @@ function sync_one_item(array $item): string
                 }
             }
         } catch (DiscogsException $e) {
-            // The release itself is the point; a copy that has since left the
-            // collection shouldn't stop it being refreshed.
+            // A copy that has left the collection shouldn't stop the release refreshing.
             $note = " Its collection entry couldn't be refreshed ({$e->getMessage()})";
         }
     }
 
-    // After the basics above, so the fuller detail is what stays.
+    // After the basics, so the fuller detail is what stays.
     upsert_release_detail($full);
 
-    // A format the admin locked stays put; otherwise follow what Discogs now says.
     db()->prepare("UPDATE items SET media_kind = ?, updated_at = datetime('now') WHERE id = ? AND media_kind_locked = 0")
-        ->execute([detect_media_kind($full['formats'] ?? $full['format'] ?? []), $item['id']]);
+        ->execute([detect_media_kind(release_formats($full)), $item['id']]);
 
     // A changed title or credit can move it to another artist page or era.
     assign_items_to_artists_and_eras();
@@ -664,28 +636,21 @@ function sync_one_item(array $item): string
 }
 
 /**
- * Starts a for-sale listing from nothing but a Discogs release id: fetches the
- * full release, drops it in the release cache, and creates the items row that
- * points at it. Mirrors what a sync does for one record, minus a collection
- * entry — there is no instance_id here, this copy was never in the collection.
+ * Starts a listing for sale from a Discogs release id: the release goes into
+ * the cache and a hidden for_sale item points at it.
  *
  * @throws DiscogsException if Discogs has no such release
  */
 function create_sale_item_from_discogs(int $releaseId): array
 {
-    $client = sync_client();
-    $full = $client->release($releaseId);
+    $full = sync_client()->release($releaseId);
 
-    // upsert_release_detail() is UPDATE-only; this stub row gives it something
-    // to hit, exactly as if a basic sync had already seen this release.
+    // upsert_release_detail() only updates, so the row has to exist first.
     db()->prepare('INSERT OR IGNORE INTO releases (discogs_id) VALUES (?)')->execute([$releaseId]);
     upsert_release_detail($full);
 
-    // upsert_release_detail() never touches cover_image/thumb — only a
-    // collection/wantlist sync's "basic_information" does — so without this a
-    // fresh listing would have no cover at all until the picker is used by
-    // hand. The full detail's own gallery has the same picture; use its first
-    // one (Discogs marks the sleeve "primary" when it knows which one that is).
+    // The cover and thumb normally come from a listing's basic information,
+    // which a listing started here never has: take them from the gallery.
     $images = $full['images'] ?? [];
     $primary = current(array_filter($images, fn ($i) => ($i['type'] ?? '') === 'primary')) ?: ($images[0] ?? null);
     if ($primary) {
@@ -696,39 +661,31 @@ function create_sale_item_from_discogs(int $releaseId): array
     db()->prepare("
         INSERT INTO items (source, release_id, media_kind, sale_currency, is_visible)
         VALUES ('for_sale', ?, ?, 'AUD', 0)
-    ")->execute([$releaseId, detect_media_kind($full['formats'] ?? $full['format'] ?? [])]);
+    ")->execute([$releaseId, detect_media_kind(release_formats($full))]);
 
     return item_by_id((int) db()->lastInsertId());
 }
 
-/* ---------- Filing everything into artists and eras ---------- */
+/* ---------- Filing into artists and eras ---------- */
 
 /**
- * Works out which artist page an item belongs on, and which era within it.
- *
- * Both are recomputed from scratch on every sync — except where the admin has
- * chosen one by hand (artist_locked, era_locked), which always wins. That way
- * adding a master id to an era in the admin re-files every pressing of that
- * album on the next sync without anyone touching an item.
+ * Works out which artist page and era every item belongs on, from the credits
+ * and the era rules. Recomputed on every sync, except where the admin chose by
+ * hand (artist_locked, era_locked).
  */
 function assign_items_to_artists_and_eras(): void
 {
-    $artists = db()->query('SELECT id, name, match_names FROM artists')->fetchAll();
-
-    // name (lowercased) -> artist id, including the alternative spellings.
-    $byName = [];
-    foreach ($artists as $artist) {
-        $names = json_column($artist['match_names'], []);
-        $names[] = $artist['name'];
-        foreach ($names as $name) {
+    $artistByName = [];
+    foreach (db()->query('SELECT id, name, match_names FROM artists')->fetchAll() as $artist) {
+        foreach ([...json_column($artist['match_names'], []), $artist['name']] as $name) {
             $name = mb_strtolower(clean_artist_name((string) $name));
             if ($name !== '') {
-                $byName[$name] = (int) $artist['id'];
+                $artistByName[$name] = (int) $artist['id'];
             }
         }
     }
 
-    // master/release id -> [era_id, rank]
+    // [kind][discogs id] => [era id, rank]
     $rules = ['master' => [], 'release' => []];
     foreach (db()->query('SELECT era_id, kind, discogs_id, rank FROM era_rules') as $rule) {
         $rules[$rule['kind']][(int) $rule['discogs_id']] = [(int) $rule['era_id'], (int) $rule['rank']];
@@ -745,20 +702,10 @@ function assign_items_to_artists_and_eras(): void
 
     db()->beginTransaction();
     foreach ($rows as $row) {
-        // Every credited artist is considered, not just the first: a Beyoncé
-        // single credited "Beyoncé & Jay-Z" still belongs on her page.
-        $artistId = null;
-        foreach (json_column($row['artists_json'], []) as $credit) {
-            $name = mb_strtolower(clean_artist_name((string) ($credit['name'] ?? '')));
-            if (isset($byName[$name])) {
-                $artistId = $byName[$name];
-                break;
-            }
-        }
-        $artistId ??= $byName[mb_strtolower((string) $row['primary_artist'])] ?? null;
-
         if ($row['artist_locked']) {
             $artistId = $row['artist_id'] !== null ? (int) $row['artist_id'] : null;
+        } else {
+            $artistId = credited_artist_id($row, $artistByName);
         }
 
         if ($row['era_locked']) {
@@ -770,8 +717,6 @@ function assign_items_to_artists_and_eras(): void
                 ?? [null, 1000];
         }
 
-        // Only write when something actually changed: a no-op UPDATE on a few
-        // hundred rows every sync is a lot of pointless disk for nothing.
         if ((int) $row['artist_id'] !== (int) $artistId
             || (int) $row['era_id'] !== (int) $eraId
             || (int) $row['era_rank'] !== $rank) {
@@ -779,4 +724,17 @@ function assign_items_to_artists_and_eras(): void
         }
     }
     db()->commit();
+}
+
+/** The first credited artist with a page ("Beyoncé & Jay-Z" still files under Beyoncé). */
+function credited_artist_id(array $row, array $artistByName): ?int
+{
+    foreach (json_column($row['artists_json'], []) as $credit) {
+        $name = mb_strtolower(clean_artist_name((string) ($credit['name'] ?? '')));
+        if (isset($artistByName[$name])) {
+            return $artistByName[$name];
+        }
+    }
+
+    return $artistByName[mb_strtolower((string) $row['primary_artist'])] ?? null;
 }

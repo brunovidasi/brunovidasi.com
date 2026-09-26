@@ -1,22 +1,12 @@
-/* Floor <-> grid: the same records, carried from where one view lays them to
- * where the other does, instead of the page cutting from one to the other.
- *
- * The two views are two draws of the same items, so nothing is kept alive
- * between them: capture() notes where each record on screen is before the view
- * is redrawn, and play() then sets each record of the new view going from that
- * spot to its own. It is the crate's throw (js/crate.js) without a crate: a
- * short arc, the pile's tilt straightening out or settling in, and the vinyl
- * ones sliding their discs out, in the pressing's colour, on the way.
- *
- * Main page only, like the crate. Needs js/common.js and js/tiles.js first.
- */
+/* Floor <-> grid: each record on screen is carried from where one view had it
+ * to where the other lays it, in a short arc, straightening out or settling
+ * into the pile, the vinyl ones sliding their discs out on the way.
+ * Shelf page only. */
 
 const Morph = (() => {
   const MAX = 64; // records that travel; any more just fade in with the rest
 
-  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const kindOf = el => (el.querySelector(':scope > .floor') ? 'floor' : el.querySelector(':scope > .grid') ? 'grid' : null);
-
   const onScreen = r => r.bottom > -40 && r.top < innerHeight + 40 && r.right > -40 && r.left < innerWidth + 40;
 
   /** How far a tile is turned: the pile scatters them, the grid stands them straight. */
@@ -26,7 +16,7 @@ const Morph = (() => {
     return (parseFloat(tile.style.getPropertyValue('--r')) || 0) * mess;
   };
 
-  /** Where every record on screen is now. Call it just before the view is redrawn. */
+  /** Where every record on screen is now. Call it just before the view is drawn again. */
   function capture(container) {
     const kind = kindOf(container);
     if (!kind) return null;
@@ -40,34 +30,21 @@ const Morph = (() => {
     return { kind, spots };
   }
 
-  /**
-   * The discs slide out of the sleeve as it travels. It is what a hover does
-   * (reveal() in js/tiles.js) but on a class of its own, because `.hot` also
-   * moves the tile and this tile's movement is already spoken for.
-   */
+  /* The hover's discs, on a class of their own: .hot also moves the tile, and this tile is already moving. */
   function slideOut(tile) {
-    const it = tile._it;
-    if (!it.discs.length) return;
-    if (!tile._discs) {
-      const wrap = document.createElement('div');
-      wrap.className = 'discs';
-      it.discs.forEach((_, k) => wrap.appendChild(discEl(it, k)));
-      tile.prepend(wrap);
-      tile._discs = wrap;
-    }
-    const rc = tile.getBoundingClientRect();
-    tile.classList.toggle('left', rc.right + rc.width * (0.33 + 0.16 * (it.discs.length - 1)) > document.documentElement.clientWidth - 6);
-    void tile.offsetWidth; // flush styles so the slide-out transition runs
+    if (!tile._it.discs.length) return;
+    tileDiscs(tile);
+    aimDiscs(tile);
     tile.classList.add('morph-hot');
   }
 
-  /** Sets the records of the freshly drawn view moving from where `snap` had them. */
+  /** Sets the records of the view just drawn moving from where `snap` had them. */
   function play(snap, container) {
     const kind = kindOf(container);
-    if (!snap || !kind || kind === snap.kind || reduced()) return;
+    if (!snap || !kind || kind === snap.kind || prefersReducedMotion()) return;
     hideTip();
 
-    // every read first, so the page is laid out once and not once per record
+    // Every read first, so the page is laid out once rather than once per record.
     const arrivals = [];
     for (const tile of container.querySelectorAll('.tile')) {
       const r = tile.getBoundingClientRect();
@@ -77,7 +54,7 @@ const Morph = (() => {
         from: snap.spots.get(tile._it.id),
         w: tile.offsetWidth,
         tilt: tiltOf(tile, kind),
-        rest: getComputedStyle(tile).transform, // the pose it settles into: 'none' in the grid, the pile's scatter on the floor
+        rest: getComputedStyle(tile).transform, // 'none' in the grid, the pile's scatter on the floor
       });
     }
     arrivals.sort((a, b) => (a.r.top - b.r.top) || (a.r.left - b.r.left));
@@ -93,19 +70,20 @@ const Morph = (() => {
       const dist = Math.hypot(dx, dy);
       const lift = 40 + Math.min(90, dist * 0.1);
       const rest = a.rest === 'none' ? '' : a.rest + ' ';
-      // the same list of functions in every keyframe, so each one is interpolated on its own
+      // The same functions in every keyframe, so each is interpolated on its own.
       const pose = (x, y, r, s) => `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) ${rest}rotate(${r.toFixed(2)}deg) scale(${s.toFixed(3)})`;
 
       const duration = 700 + Math.min(300, dist * 0.3);
       const delay = Math.min(i, 50) * 10;
 
-      a.tile.style.zIndex = 50; // over its neighbours while it is in the air
+      a.tile.style.zIndex = 50; // over its neighbours while in the air
       const anim = a.tile.animate([
         { transform: pose(dx, dy, turn, k) },
         { transform: pose(dx / 2, dy / 2 - lift, turn / 2, (k + 1) / 2), offset: 0.5 },
         { transform: pose(0, 0, 0, 1) },
       ], { duration, delay, easing: 'cubic-bezier(.35,0,.25,1)', fill: 'backwards' });
-      anim.finished.then(() => { a.tile.style.zIndex = ''; }, () => { a.tile.style.zIndex = ''; });
+      const land = () => { a.tile.style.zIndex = ''; };
+      anim.finished.then(land, land);
 
       if (a.tile._it.k === 'vinyl') {
         setTimeout(() => slideOut(a.tile), delay + 40);
@@ -113,12 +91,12 @@ const Morph = (() => {
       }
     });
 
-    // the rest of what is on screen has no old spot to leave from, or is past the cap
+    // The rest had no old spot to leave from, or is past the cap: it fades in.
     arrivals.filter(a => !flying.has(a.tile)).forEach(a => {
       a.tile.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 250, fill: 'backwards' });
     });
 
-    // the grid's captions come in once the sleeves are nearly home
+    // The grid's captions come in once the sleeves are nearly home.
     if (kind === 'grid') {
       const grid = container.querySelector(':scope > .grid');
       grid.classList.add('morphing');

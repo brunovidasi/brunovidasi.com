@@ -5,19 +5,18 @@ class DiscogsException extends RuntimeException
 }
 
 /**
- * The Discogs API, as much of it as this app needs.
+ * The Discogs API, as much of it as this app reads. It throttles itself below
+ * the rate limit (60 a minute with a token, 25 without) before sending, and
+ * slows down further when the response headers say the window is nearly spent.
  *
- * Reading (collection, wantlist, release detail) is all this does today.
- * Organising the collection from here — moving a copy between folders, editing
- * its notes or rating, changing a wantlist line — is the same API with a
- * different verb, so request() takes a method and a body and the write helpers
- * at the bottom are one line each when that day comes. The personal access
- * token already authorises them; nothing else has to change.
+ * Writing back is not built on purpose: a wrong POST against a real collection
+ * can't be undone from here. request() already takes any verb, and these are
+ * the endpoints it would need:
  *
- * Rate limits: 60 requests a minute with a token, 25 without, counted in a
- * rolling window. Going over earns a 429 and, repeated, a temporary block — so
- * this throttles itself to the configured ceiling BEFORE sending, and also
- * listens to what the response headers say is left.
+ *   POST   /users/{u}/collection/folders/{folder}/releases/{id}                 add a copy
+ *   DELETE /users/{u}/collection/folders/{f}/releases/{id}/instances/{i}        remove a copy
+ *   POST   /users/{u}/collection/folders/{f}/releases/{id}/instances/{i}        move or rate
+ *   PUT    /users/{u}/wants/{id}                                                add to wantlist
  */
 class DiscogsClient
 {
@@ -34,7 +33,6 @@ class DiscogsClient
         $config ??= discogs_config();
         $this->token = (string) ($config['token'] ?? '');
         $this->userAgent = (string) ($config['user_agent'] ?? 'BrunoVinylCollection/1.0');
-        // Never assume the authenticated ceiling without a token.
         $ceiling = $this->token !== '' ? 60 : 25;
         $this->rateLimit = max(1, min((int) ($config['rate_limit'] ?? $ceiling), $ceiling));
     }
@@ -49,16 +47,13 @@ class DiscogsClient
         return $this->calls;
     }
 
-    /** Who the token belongs to — used by the admin to prove it works. */
+    /** Who the token belongs to, to prove it works. */
     public function identity(): array
     {
         return $this->request('GET', '/oauth/identity');
     }
 
-    /**
-     * One page of the collection. Folder 0 is Discogs' "All" folder, which is
-     * what the site shows: every copy, in every folder, once.
-     */
+    /** One page of the collection. Folder 0 is Discogs' "All": every copy, once. */
     public function collectionPage(string $username, int $page, int $perPage = 100, int $folder = 0): array
     {
         return $this->request('GET', sprintf(
@@ -92,24 +87,8 @@ class DiscogsClient
         return $this->request('GET', '/database/search?' . http_build_query($params));
     }
 
-    /* ---------- Writing back to Discogs (see requirement 6; not wired up yet) ----------
-     *
-     * These are the calls the "organise my collection from here" work will use.
-     * They are deliberately left unimplemented rather than half-implemented: a
-     * wrong POST against a real collection is not an error you can undo from
-     * here, and none of the pages call them yet.
-     *
-     *   POST   /users/{u}/collection/folders/{folder}/releases/{id}   add a copy
-     *   DELETE /users/{u}/collection/folders/{f}/releases/{id}/instances/{i}
-     *   POST   /users/{u}/collection/folders/{f}/releases/{id}/instances/{i}   move / rate
-     *   PUT    /users/{u}/wants/{id}                                  add to wantlist
-     *
-     * request() already speaks every verb, so each is one method when needed.
-     */
-
     /**
-     * @throws DiscogsException on transport failure, a non-2xx status, or a body
-     *                          that isn't JSON.
+     * @throws DiscogsException on a failed connection, a non-2xx status, or a body that isn't JSON
      */
     public function request(string $method, string $path, ?array $body = null): array
     {
@@ -151,8 +130,6 @@ class DiscogsClient
 
             if ($response === false) {
                 $error = curl_error($curl);
-                // A dropped connection mid-sync is common enough on shared
-                // hosting to be worth one retry before giving up on the run.
                 if ($attempt < 3) {
                     sleep(2 * $attempt);
                     continue;
@@ -168,8 +145,7 @@ class DiscogsClient
             $this->readRateLimit($rawHeaders);
 
             if ($status === 429) {
-                // Over the window. Wait out a full one rather than creeping back
-                // in: repeated 429s are what turns into a temporary ban.
+                // Wait out a whole window: repeated 429s turn into a temporary ban.
                 if ($attempt < 3) {
                     sleep(60);
                     continue;
@@ -201,15 +177,10 @@ class DiscogsClient
         }
     }
 
-    /**
-     * Spaces requests out so the configured ceiling can't be crossed, and slows
-     * right down when the response headers say the window is nearly spent.
-     */
     private function throttle(): void
     {
         $gap = 60.0 / $this->rateLimit;
 
-        // Under five calls left in the window: crawl, don't sprint.
         if ($this->remaining !== null && $this->remaining < 5) {
             $gap = max($gap, 3.0);
         }

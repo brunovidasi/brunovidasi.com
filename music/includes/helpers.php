@@ -1,20 +1,39 @@
 <?php
 
-/** Escape for HTML. Short name because it appears on nearly every line of markup. */
+/** Escape for HTML. */
 function e(mixed $value): string
 {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
 }
 
-/**
- * $path is normally a bare page name ('admin', 'admin_items?x=1') and gets run
- * through url() to become a full app path. But login.php also passes this an
- * already-absolute path recovered from $_SERVER['REQUEST_URI'] (the page the
- * user was on before being sent to log in) — running that through url() again
- * would double the mount prefix, e.g. '/music/music/admin' in production. The
- * app_path() check tells the two cases apart without needing a second
- * parameter at every other call site.
- */
+/* ---------- Requests and responses ---------- */
+
+function post(string $key, string $default = ''): string
+{
+    $value = $_POST[$key] ?? $default;
+
+    return is_string($value) ? trim($value) : $default;
+}
+
+function query(string $key, string $default = ''): string
+{
+    $value = $_GET[$key] ?? $default;
+
+    return is_string($value) ? trim($value) : $default;
+}
+
+function is_post(): bool
+{
+    return $_SERVER['REQUEST_METHOD'] === 'POST';
+}
+
+/** Empty strings become NULL, so "cleared in the admin" and "never set" agree. */
+function nullable(string $value): ?string
+{
+    return $value === '' ? null : $value;
+}
+
+/** Takes a page name ('admin_items?x=1') or a path already under the app ('/music/admin'). */
 function redirect(string $path): never
 {
     $isAbsolute = str_starts_with($path, 'http') || str_starts_with($path, app_path());
@@ -22,7 +41,15 @@ function redirect(string $path): never
     exit;
 }
 
-/** A one-shot message shown after a redirect ("Saved.", "Couldn't do that."). */
+/** Ends the request with the site's own 404 page. */
+function not_found(): never
+{
+    http_response_code(404);
+    require __DIR__ . '/../public/404.php';
+    exit;
+}
+
+/** A one-shot message shown on the next page. */
 function flash(string $message, string $kind = 'ok'): void
 {
     $_SESSION['flash'][] = ['message' => $message, 'kind' => $kind];
@@ -36,35 +63,75 @@ function take_flashes(): array
     return $flashes;
 }
 
-/** The current page's name, used to light up the admin nav. */
+/** The current page's name, e.g. 'admin_items'. */
 function current_page(): string
 {
     return basename($_SERVER['SCRIPT_NAME'] ?? '', '.php');
 }
 
-function post(string $key, string $default = ''): string
+function json_response(mixed $data, int $status = 200): never
 {
-    $value = $_POST[$key] ?? $default;
-    return is_string($value) ? trim($value) : $default;
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
-function query(string $key, string $default = ''): string
+function json_cache_headers(int $seconds = 300): void
 {
-    $value = $_GET[$key] ?? $default;
-    return is_string($value) ? trim($value) : $default;
-}
-
-/** Empty strings become NULL, so "cleared in the admin" and "never set" agree. */
-function nullable(string $value): ?string
-{
-    return $value === '' ? null : $value;
+    header('Cache-Control: public, max-age=' . $seconds);
 }
 
 /**
- * The release id in a pasted Discogs link ("https://www.discogs.com/release/
- * 249504-Some-Title", a locale-prefixed one like "/en/release/249504", or just
- * "/release/249504"), or a bare id typed on its own. Null if neither.
+ * A short token that changes whenever what a visitor sees does: a sync, an
+ * edit in the admin, or a change to how the cards are built. The pages put it
+ * on every API request so the browser never serves a stale copy.
  */
+function data_version(): string
+{
+    $latest = db()->query('SELECT MAX(updated_at) FROM items')->fetchColumn();
+    $shape = max(array_map(fn ($file) => (int) @filemtime(__DIR__ . "/$file"), ['items.php', 'discs.php']));
+
+    return substr(md5(setting('last_successful_sync', '') . '|' . $latest . '|' . $shape), 0, 10);
+}
+
+/* ---------- Text ---------- */
+
+function slugify(string $text): string
+{
+    $slug = strtolower(trim($text));
+    $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
+    if ($transliterated !== false) {
+        $slug = $transliterated;
+    }
+    $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($slug));
+
+    return trim($slug, '-') ?: 'item';
+}
+
+/** Whether a name is already a page or a folder of the site (admin, wantlist, api…), which an artist's URL can't be. */
+function is_site_path(string $name): bool
+{
+    $public = __DIR__ . '/../public/';
+
+    return is_file($public . $name . '.php') || is_dir($public . $name);
+}
+
+function plural(int $count, string $singular, ?string $plural = null): string
+{
+    return $count === 1 ? $singular : ($plural ?? $singular . 's');
+}
+
+/** Only ever hand a browser an http(s) link built from outside data. */
+function safe_http_url(string $url): bool
+{
+    return (bool) preg_match('#^https?://#i', $url);
+}
+
+/* ---------- Discogs links ---------- */
+
+/** The release id in a pasted Discogs release link, or a bare id. */
 function discogs_release_id_from_input(string $input): ?int
 {
     $input = trim($input);
@@ -76,24 +143,38 @@ function discogs_release_id_from_input(string $input): ?int
     return ctype_digit($input) ? (int) $input : null;
 }
 
-function slugify(string $text): string
+/**
+ * ['master' | 'release', id] from a pasted master or release link, "m123", or
+ * a bare number (read as a master, which catches every pressing). ['', 0] if
+ * it is none of those.
+ */
+function discogs_reference_from_input(string $input): array
 {
-    $slug = strtolower(trim($text));
-    // Strip accents so "Beyoncé" becomes "beyonce" rather than "beyonc".
-    $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
-    if ($transliterated !== false) {
-        $slug = $transliterated;
-    }
-    $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($slug));
+    $input = trim($input);
 
-    return trim($slug, '-') ?: 'item';
+    if (preg_match('#discogs\.com/(?:[a-z]{2}/)?(master|release)/(\d+)#i', $input, $m)) {
+        return [strtolower($m[1]), (int) $m[2]];
+    }
+    if (preg_match('/^\[?m(\d+)\]?$/i', $input, $m)) {
+        return ['master', (int) $m[1]];
+    }
+    if (ctype_digit($input)) {
+        return ['master', (int) $input];
+    }
+
+    return ['', 0];
 }
 
+function discogs_release_url(int $id): string
+{
+    return 'https://www.discogs.com/release/' . $id;
+}
+
+/* ---------- Dates ---------- */
+
 /**
- * Timestamps written by SQLite's datetime('now') are UTC and carry no zone, so
- * strtotime() would read them as local and put every sync hours into the past
- * or future. Anything with its own offset (date('c'), Discogs' dates) is left
- * alone. Returns a Unix timestamp, or null if it can't be read.
+ * SQLite's datetime('now') is UTC with no zone, so those are read as UTC;
+ * anything carrying its own offset is left alone.
  */
 function to_timestamp(?string $value): ?int
 {
@@ -114,7 +195,7 @@ function format_date(?string $value, string $format = 'j M Y'): string
     return $time === null ? (string) $value : date($format, $time);
 }
 
-/** "3 minutes ago" — used for the last-sync line in the admin. */
+/** "3 minutes ago" */
 function time_ago(?string $value): string
 {
     $time = to_timestamp($value);
@@ -130,99 +211,9 @@ function time_ago(?string $value): string
     foreach ([[86400 * 30, 'month'], [86400 * 7, 'week'], [86400, 'day'], [3600, 'hour'], [60, 'minute']] as [$size, $unit]) {
         if ($seconds >= $size) {
             $count = (int) floor($seconds / $size);
-            return "$count $unit" . ($count === 1 ? '' : 's') . ' ago';
+            return "$count " . plural($count, $unit) . ' ago';
         }
     }
 
     return 'just now';
-}
-
-/** Ends the request with a JSON body. Used by the API and the sync poller. */
-function json_response(mixed $data, int $status = 200): never
-{
-    http_response_code($status);
-    header('Content-Type: application/json; charset=utf-8');
-    header('X-Content-Type-Options: nosniff');
-    echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-/**
- * Public API responses may be cached briefly by the browser: the data only
- * changes when a sync runs, and the shelf page asks for all of it at once.
- */
-function json_cache_headers(int $seconds = 300): void
-{
-    header('Cache-Control: public, max-age=' . $seconds);
-}
-
-/**
- * A short token that changes whenever what a visitor sees does: a sync, or an
- * edit to any item in the admin. The pages carry it and the browser keys its
- * cache and its API requests on it, so a new cover or disc image shows up on
- * the next page load instead of when the old copy expires.
- *
- * The card-building code counts too: a new field on the cards changes what the
- * API returns without any data changing, and the old copy would otherwise be
- * served for as long as the browser kept it.
- */
-function data_version(): string
-{
-    $latest = db()->query('SELECT MAX(updated_at) FROM items')->fetchColumn();
-    $shape = (int) @filemtime(__DIR__ . '/items.php');
-
-    return substr(md5(setting('last_successful_sync', '') . '|' . $latest . '|' . $shape), 0, 10);
-}
-
-/* ---------- Lookups the admin pages share ---------- */
-
-function all_artists(): array
-{
-    return db()->query('SELECT * FROM artists ORDER BY position, name')->fetchAll();
-}
-
-function artist_by_slug(string $slug): ?array
-{
-    $stmt = db()->prepare('SELECT * FROM artists WHERE slug = ?');
-    $stmt->execute([$slug]);
-
-    return $stmt->fetch() ?: null;
-}
-
-function artist_by_id(int $id): ?array
-{
-    $stmt = db()->prepare('SELECT * FROM artists WHERE id = ?');
-    $stmt->execute([$id]);
-
-    return $stmt->fetch() ?: null;
-}
-
-function eras_for_artist(int $artistId): array
-{
-    $stmt = db()->prepare('SELECT * FROM eras WHERE artist_id = ? ORDER BY position, name');
-    $stmt->execute([$artistId]);
-
-    return $stmt->fetchAll();
-}
-
-function era_by_id(int $id): ?array
-{
-    $stmt = db()->prepare('SELECT * FROM eras WHERE id = ?');
-    $stmt->execute([$id]);
-
-    return $stmt->fetch() ?: null;
-}
-
-/** How many items sit in each era, keyed by era id. */
-function era_counts(int $artistId): array
-{
-    $stmt = db()->prepare("
-        SELECT era_id, COUNT(*) AS n
-          FROM items
-         WHERE artist_id = ? AND source = 'collection' AND missing_since IS NULL
-         GROUP BY era_id
-    ");
-    $stmt->execute([$artistId]);
-
-    return array_column($stmt->fetchAll(), 'n', 'era_id');
 }

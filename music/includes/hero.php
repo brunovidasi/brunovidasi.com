@@ -1,20 +1,16 @@
 <?php
 
 /**
- * The pieces of the header every public page shares: the title, the record and
- * its tonearm, the numbers under the intro, and the pills that link on to the
- * artist pages.
+ * The header every public page shares: the title, the spinning record, the
+ * numbers under the intro, and the pills linking to the artist pages. Its
+ * options are edited on the admin's Settings page.
  *
- * Everything in it that is a choice rather than data is edited in the admin:
- * the wording and switches on the Settings page (see hero_options()), and each
- * artist's picture on their own edit form.
- *
- * hero_title() and hero_platter() need no database (they fall back to the
- * defaults without one), so the 404 and 500 pages can use them. The rest read
- * the shelf and are for the pages that do.
+ * hero_title() and hero_platter() work without a database, for the error pages.
  */
 
-/** The numbers under the intro, by key, with the label each starts with. */
+const DEFAULT_SITE_TITLE = 'The Collection';
+const DEFAULT_SITE_INTRO = 'Every record, CD and disc Bruno owns, straight from the Discogs shelf.';
+
 const HERO_STATS = [
     'records' => 'Records',
     'vinyl'   => 'On vinyl',
@@ -22,11 +18,14 @@ const HERO_STATS = [
     'oldest'  => 'Oldest release',
 ];
 
+const HERO_SWITCHES = ['split_title', 'rule', 'platter', 'tonearm', 'covers', 'counts', 'animate', 'stats'];
+
+const HERO_DEFAULT_WANTLIST_LABEL = '♡ Wantlist';
+const HERO_DEFAULT_SELLING_LABEL = '🛍 Selling';
+
 /**
- * The header's settings, over their defaults. Never throws: a page that is
- * already reporting a failure must still be able to draw its header.
- *
- * @return array<string, mixed>
+ * The header's settings over their defaults. Never throws, so a page already
+ * reporting a failure can still draw its header.
  */
 function hero_options(): array
 {
@@ -38,16 +37,9 @@ function hero_options(): array
 
     $defaults = [
         'eyebrow'        => 'Private collection · Synced from Discogs',
-        'wantlist_label' => '♡ Wantlist',
-        'selling_label'  => '🛍 Selling',
-        'split_title'    => true,
-        'rule'           => true,
-        'platter'        => true,
-        'tonearm'        => true,
-        'covers'         => true,
-        'counts'         => true,
-        'animate'        => true,
-        'stats'          => true,
+        'wantlist_label' => HERO_DEFAULT_WANTLIST_LABEL,
+        'selling_label'  => HERO_DEFAULT_SELLING_LABEL,
+        ...array_fill_keys(HERO_SWITCHES, true),
         'stat_show'      => array_fill_keys(array_keys(HERO_STATS), true),
         'stat_label'     => HERO_STATS,
     ];
@@ -60,9 +52,7 @@ function hero_options(): array
     try {
         foreach ($defaults as $key => $default) {
             $stored = setting('hero_' . $key, $default);
-
-            // The two per-number lists are stored whole; a key missing from one
-            // (a number added since it was saved) keeps its default.
+            // A number added since the list was saved keeps its default.
             $options[$key] = is_array($default) && is_array($stored) ? $stored + $default : $stored;
         }
     } catch (Throwable) {
@@ -72,34 +62,24 @@ function hero_options(): array
     return $options;
 }
 
-function hero_escape(string $text): string
-{
-    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
-}
-
 /**
- * The title with its weight split: the last word bold and gold, the words
- * before it light. "The Collection" reads as The **Collection**.
- *
- * The artist pages are named "Lady Gaga Collection", where the name is the
- * point and "Collection" is the label on it, so there the weight goes the
- * other way round.
+ * The title with its weight split: the last word bold and gold, the rest
+ * light. On an artist page ("Lady Gaga Collection") it goes the other way.
  */
 function hero_title(string $title): string
 {
     if (!hero_options()['split_title']) {
-        return hero_escape($title);
+        return e($title);
     }
 
     $words = preg_split('/\s+/', trim($title), -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
     if (count($words) < 2) {
-        return '<b>' . hero_escape($title) . '</b>';
+        return '<b>' . e($title) . '</b>';
     }
 
-    $last = array_pop($words);
-    $rest = hero_escape(implode(' ', $words));
-    $last = hero_escape($last);
+    $last = e(array_pop($words));
+    $rest = e(implode(' ', $words));
 
     if (strcasecmp($last, 'Collection') === 0 && strcasecmp($rest, 'The') !== 0) {
         return "<b>$rest</b> <span>$last</span>";
@@ -109,11 +89,8 @@ function hero_title(string $title): string
 }
 
 /**
- * The big record beside the title, cropped by the edge of the page, with a
- * tonearm resting on it. The grooves turn under a light that stays put, so it
- * reads as spinning. `$accent` colours the label (the artist pages pass theirs);
- * the wantlist's `sleeve` is an empty one, since nothing on it is owned yet, and
- * so has no needle to drop.
+ * The big record beside the title, with its tonearm. `$accent` colours the
+ * label; a 'sleeve' is an empty one, with no needle to drop.
  */
 function hero_platter(string $kind = 'record', string $accent = '#C99A2E'): string
 {
@@ -123,7 +100,7 @@ function hero_platter(string $kind = 'record', string $accent = '#C99A2E'): stri
         return '';
     }
 
-    $accent = hero_escape($accent);
+    $accent = e($accent);
     $sleeve = $kind === 'sleeve';
 
     if ($sleeve) {
@@ -147,8 +124,7 @@ function hero_platter(string $kind = 'record', string $accent = '#C99A2E'): stri
         <circle class="accent" cx="50" cy="50" r="16" fill="' . $accent . '"/>
         <path d="M50 37.5 A12.5 12.5 0 0 1 60.8 43.75" fill="none" stroke="#0B0A08" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/>
         <circle cx="50" cy="50" r="2.6" fill="#0B0A08"/>';
-        // Drawn on the record's own 0-100 grid: the pivot stands just off the
-        // rim and the needle lands on the grooves, about 25 out from the centre.
+        // On the record's own 0–100 grid: the pivot just off the rim, the needle on the grooves.
         $arm = '
     <svg class="hero-arm" viewBox="0 0 100 100" aria-hidden="true">
       <line x1="78" y1="0" x2="85" y2="-9" stroke="#7b7362" stroke-width="4.4" stroke-linecap="round"/>
@@ -173,34 +149,30 @@ function hero_platter(string $kind = 'record', string $accent = '#C99A2E'): stri
   </div>';
 }
 
-/** The line above the title, or nothing: an empty one in the admin hides it. */
+/** The line above the title; an empty one in the admin hides it. */
 function hero_eyebrow(): string
 {
     $text = trim((string) hero_options()['eyebrow']);
 
-    return $text === '' ? '' : '<div class="hero-eyebrow">' . hero_escape($text) . '</div>';
+    return $text === '' ? '' : '<div class="hero-eyebrow">' . e($text) . '</div>';
 }
 
-/** The small rule under the title. */
 function hero_rule(): string
 {
     return hero_options()['rule'] ? '<div class="hero-rule" aria-hidden="true"></div>' : '';
 }
 
-/** Added to the header's class list: `hero-still` switches its movement off. */
+/** Extra classes for the header: 'hero-still' switches its movement off. */
 function hero_classes(): string
 {
     return hero_options()['animate'] ? '' : ' hero-still';
 }
 
 /**
- * The header settles in once, on the first view of a page in a tab. After that
- * (a reload, the back button, or Safari reopening a tab it put away to save
- * memory) it is simply there, and so is a page opened while hidden. The
- * animation starts from invisible, so a snapshot taken in its first frames (the
- * tab switcher's) would otherwise show an empty header.
- *
- * Goes first inside <header>, so it runs before any of the header is drawn.
+ * The header settles in only on the first view of a page in a tab; a reload,
+ * the back button or a page opened in the background shows it already there
+ * ('hero-settled'), with the record still turning. Goes first inside
+ * <header>, so it runs before any of it is drawn.
  */
 function hero_intro(): string
 {
@@ -209,14 +181,12 @@ function hero_intro(): string
     }
 
     return "<script>(function (h) { try { var k = 'hero-seen:' + location.pathname + location.search;"
-        . " if (document.visibilityState === 'hidden' || sessionStorage.getItem(k)) h.classList.add('hero-still');"
+        . " if (document.visibilityState === 'hidden' || sessionStorage.getItem(k)) h.classList.add('hero-settled');"
         . " sessionStorage.setItem(k, '1'); } catch (e) {} })(document.currentScript.parentNode);</script>";
 }
 
 /**
- * What is on the shelf, in numbers. `$artistId` narrows it to one artist's
- * records. The light query, not public_items(): the header needs a count and a
- * year per record, not every column of every release.
+ * The shelf in numbers, optionally for one artist.
  *
  * @return array{records: int, vinyl: int, discs: int, oldest: int}
  */
@@ -226,7 +196,7 @@ function hero_figures(?int $artistId = null): array
         SELECT i.media_kind, i.release_date, r.year
           FROM items i
           LEFT JOIN releases r ON r.discogs_id = i.release_id
-         WHERE i.source = 'collection' AND i.is_visible = 1 AND i.missing_since IS NULL";
+         WHERE i.source = 'collection' AND " . PUBLIC_ITEM_WHERE;
     $params = [];
 
     if ($artistId !== null) {
@@ -257,7 +227,7 @@ function hero_figures(?int $artistId = null): array
     return $figures;
 }
 
-/** The numbers under the intro. The digits are the real ones; js/hero.js only counts up to them. */
+/** The numbers under the intro. js/hero.js counts up to them. */
 function hero_stats(array $figures): string
 {
     $options = hero_options();
@@ -272,18 +242,15 @@ function hero_stats(array $figures): string
             continue;
         }
         $label = trim((string) $options['stat_label'][$key]) ?: $default;
-        $counts = $key !== 'oldest';  // a year is not a count
-        $html .= '<div class="hero-stat"><b' . ($counts ? ' data-n="' . $figures[$key] . '"' : '') . '>'
-            . $figures[$key] . '</b><span>' . hero_escape($label) . '</span></div>';
+        $isCount = $key !== 'oldest';
+        $html .= '<div class="hero-stat"><b' . ($isCount ? ' data-n="' . $figures[$key] . '"' : '') . '>'
+            . $figures[$key] . '</b><span>' . e($label) . '</span></div>';
     }
 
     return $html === '' ? '' : '<div class="hero-stats" role="group" aria-label="The shelf in numbers">' . $html . '</div>';
 }
 
-/**
- * The picture on an artist's pill: the one chosen in the admin, else the first
- * of their records that has a cover, in the order their page starts with.
- */
+/** The picture on an artist's pill: the one picked in the admin, else their first record with a cover. */
 function hero_artist_cover(array $artist): string
 {
     if (!empty($artist['hero_cover'])) {
@@ -291,7 +258,7 @@ function hero_artist_cover(array $artist): string
     }
 
     $stmt = db()->prepare(ITEM_SELECT . "
-         WHERE i.source = 'collection' AND i.is_visible = 1 AND i.missing_since IS NULL AND i.artist_id = ?
+         WHERE i.source = 'collection' AND " . PUBLIC_ITEM_WHERE . " AND i.artist_id = ?
            AND COALESCE(NULLIF(i.cover_url, ''), NULLIF(r.thumb, ''), NULLIF(r.cover_image, '')) IS NOT NULL
          ORDER BY i.sort_rank DESC, " . RELEASE_DATE_SQL . ', r.title COLLATE NOCASE
          LIMIT 1');
@@ -301,11 +268,7 @@ function hero_artist_cover(array $artist): string
     return $row ? item_thumb($row) : '';
 }
 
-/**
- * The search box that opens the controls band on every public page. On a
- * desktop it is the bare input; on a phone it folds down to a magnifying glass
- * that opens the input across the bar (css/floor.css, js/controls.js).
- */
+/** The search box: the bare input on a desktop, a magnifying glass that opens it on a phone. */
 function hero_search(string $placeholder, string $label): string
 {
     return '<div class="search" id="searchBox">
@@ -318,19 +281,14 @@ function hero_search(string $placeholder, string $label): string
 }
 
 /**
- * The pills to the artist pages: a round cover, the name, how many records.
- * `$exceptId` leaves out the artist whose page this is; `$wantlist` adds the
- * link to the wantlist, when it is public.
- *
- * A phone has no room for a row of pills, so the same links are drawn a second
- * time as a dropdown with the wantlist beside it (see .hero-pick in css/floor.css
- * and js/hero.js). The stylesheet shows one or the other.
+ * The pills to the artist pages, leaving out `$exceptId`'s own, with the
+ * wantlist and selling links when those are public. A phone gets the same
+ * links again folded into a menu; the stylesheet shows one or the other.
  */
 function hero_links(?int $exceptId = null, bool $wantlist = false, string $label = 'Artist pages', bool $selling = false): string
 {
     $options = hero_options();
-    $artists = db()->query('SELECT id, slug, name, hero_cover FROM artists WHERE is_published = 1 ORDER BY position, name')->fetchAll();
-    $artists = array_values(array_filter($artists, fn ($a) => (int) $a['id'] !== $exceptId));
+    $artists = array_values(array_filter(published_artists(), fn ($a) => (int) $a['id'] !== $exceptId));
     $wantlist = $wantlist && setting('show_wantlist', true);
     $selling = $selling && setting('show_selling', true);
 
@@ -338,46 +296,35 @@ function hero_links(?int $exceptId = null, bool $wantlist = false, string $label
         return '';
     }
 
-    $counts = [];
-    if ($options['counts']) {
-        $rows = db()->query("
-            SELECT artist_id, COUNT(*) AS n FROM items
-             WHERE source = 'collection' AND is_visible = 1 AND missing_since IS NULL AND artist_id IS NOT NULL
-             GROUP BY artist_id")->fetchAll();
-        foreach ($rows as $row) {
-            $counts[(int) $row['artist_id']] = (int) $row['n'];
-        }
-    }
+    $counts = $options['counts'] ? artist_record_counts(visibleOnly: true) : [];
 
     $pills = '';
     foreach ($artists as $artist) {
-        $thumb = $options['covers'] ? hero_artist_cover($artist) : '';
+        $cover = '';
+        if ($options['covers']) {
+            $thumb = hero_artist_cover($artist);
+            $cover = '<span class="hero-cover">' . ($thumb !== '' ? '<img src="' . e($thumb) . '" alt="" width="28" height="28" loading="lazy">' : '') . '</span>';
+        }
+        $count = isset($counts[(int) $artist['id']]) ? '<i>' . $counts[(int) $artist['id']] . '</i>' : '';
 
-        $pills .= '<a href="' . e(url($artist['slug'])) . '">'
-            . ($options['covers']
-                ? '<span class="hero-cover">' . ($thumb !== '' ? '<img src="' . e($thumb) . '" alt="" width="28" height="28" loading="lazy">' : '') . '</span>'
-                : '')
-            . e($artist['name'])
-            . (isset($counts[(int) $artist['id']]) ? '<i>' . $counts[(int) $artist['id']] . '</i>' : '') . '</a>';
+        $pills .= '<a href="' . e(url($artist['slug'])) . '">' . $cover . e($artist['name']) . $count . '</a>';
     }
 
-    $wanted = $wantlist
-        ? '<a class="wanted" href="' . e(url('wantlist')) . '">' . e(trim((string) $options['wantlist_label']) ?: '♡ Wantlist') . '</a>'
-        : '';
-    $sellingLink = $selling
-        ? '<a class="selling" href="' . e(url('selling')) . '">' . e(trim((string) $options['selling_label']) ?: '🛍 Selling') . '</a>'
-        : '';
+    $wanted = $wantlist ? hero_special_link('wanted', 'wantlist', $options['wantlist_label'], HERO_DEFAULT_WANTLIST_LABEL) : '';
+    $sellingLink = $selling ? hero_special_link('selling', 'selling', $options['selling_label'], HERO_DEFAULT_SELLING_LABEL) : '';
+    $noCovers = $options['covers'] ? '' : ' no-covers';
 
-    $html = '<nav class="hero-links' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">'
-        . $pills . $sellingLink . $wanted . '</nav>';
-
-    // The phone's version: the artists folded into a menu, the wantlist beside it.
     $menu = $artists
         ? '<div class="hero-menu dd"><button type="button" class="dd-button" aria-haspopup="true" aria-expanded="false">'
             . ($exceptId === null ? 'Collections' : 'More collections')
             . '</button><div class="dd-menu" hidden>' . $pills . '</div></div>'
         : '';
 
-    return $html . '<nav class="hero-pick' . ($options['covers'] ? '' : ' no-covers') . '" aria-label="' . e($label) . '">'
-        . $menu . $sellingLink . $wanted . '</nav>';
+    return '<nav class="hero-links' . $noCovers . '" aria-label="' . e($label) . '">' . $pills . $sellingLink . $wanted . '</nav>'
+        . '<nav class="hero-pick' . $noCovers . '" aria-label="' . e($label) . '">' . $menu . $sellingLink . $wanted . '</nav>';
+}
+
+function hero_special_link(string $class, string $page, mixed $label, string $default): string
+{
+    return '<a class="' . $class . '" href="' . e(url($page)) . '">' . e(trim((string) $label) ?: $default) . '</a>';
 }

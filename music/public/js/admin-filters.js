@@ -1,8 +1,5 @@
-/* The filter bar on the item lists.
- *
- * A choice in any dropdown applies at once; the search applies on Enter, or when
- * its × empties it. An era belongs to an artist, so changing the artist drops
- * the era rather than sending a pair that can't match. */
+/* The filter bar: a choice in a dropdown applies at once, the search on Enter
+ * or when its × empties it. Changing the artist drops the era, which was theirs. */
 
 const filters = document.getElementById('filters');
 
@@ -15,7 +12,7 @@ if (filters) {
     filters.requestSubmit();
   });
 
-  // Fires when the × is pressed (and on Enter, which submits by itself already).
+  // Fired by the ×, and by Enter, which submits by itself anyway.
   q.addEventListener('search', () => {
     if (q.value === '') filters.requestSubmit();
   });

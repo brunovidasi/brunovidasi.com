@@ -1,15 +1,12 @@
 <?php
-/**
- * Everything for sale: priced, visible, not yet sold.
- */
 
-require_once __DIR__ . '/../../includes/bootstrap_api.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
 
 if (!setting('show_selling', true)) {
     json_response(['error' => 'The selling page is not public.'], 404);
 }
 
-json_cache_headers(300);
+json_cache_headers();
 
 json_response([
     'updated' => setting('last_successful_sync'),

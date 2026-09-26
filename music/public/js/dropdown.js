@@ -1,11 +1,6 @@
-/* A dropdown in the site's own clothes, in place of the browser's.
- *
- * It enhances a real <select> rather than replacing it: the select stays in the
- * page, hidden, as the one source of truth, so the code that sets `.value`,
- * listens for `change`, or hides an <option> keeps working untouched. The only
- * thing that code has to do is call dropdownSync(select) after it changes the
- * select from the outside, so the button shows what the select now says.
- */
+/* A dropdown in the site's own clothes over a real <select>, which stays in
+ * the page, hidden, as the thing code reads and writes. Code that changes the
+ * select calls dropdownSync(select) so the button follows. */
 
 const DROPDOWNS = new Map();
 
@@ -46,8 +41,7 @@ function dropdown(select) {
   function sync() {
     const selected = select.selectedOptions[0];
     if (selected?.dataset.short) {
-      // A choice with a data-short shows it on the button when the stylesheet
-      // is short of room (a phone); the menu always lists the full wording.
+      // A data-short is what the button says on a phone; the menu always has the full wording.
       const full = document.createElement('span');
       const short = document.createElement('span');
       full.className = 'dd-full';
@@ -89,7 +83,7 @@ function dropdown(select) {
     root.classList.add('open');
     button.setAttribute('aria-expanded', 'true');
 
-    // Left-aligned under the button, unless that would run off the right of the window
+    // Left-aligned under the button, unless that runs off the right of the window.
     menu.style.left = '0';
     menu.style.right = 'auto';
     if (menu.getBoundingClientRect().right > document.documentElement.clientWidth - 8) {
@@ -135,7 +129,7 @@ function dropdown(select) {
     else if (e.key === 'Escape') { e.preventDefault(); close(true); }
     else if (e.key === 'Tab') close(false);
     else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-      // type the start of a choice to jump to it
+      // Typing the start of a choice jumps to it.
       const now = Date.now();
       typed = (now - typedAt > 700 ? '' : typed) + e.key.toLowerCase();
       typedAt = now;
@@ -149,7 +143,7 @@ function dropdown(select) {
     if (li) highlight(choices().indexOf(li));
   });
 
-  // mousedown, not click, so the button doesn't lose focus and close the menu first
+  // On mousedown, so the button doesn't lose focus and close the menu first.
   menu.addEventListener('mousedown', e => e.preventDefault());
   menu.addEventListener('click', e => choose(e.target.closest('li')));
 

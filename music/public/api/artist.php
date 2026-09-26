@@ -1,82 +1,70 @@
 <?php
+
 /**
- * One artist's page: their eras in order, each split by format.
- *
- * The split is done here rather than in the browser so the page can render an
- * era's headings and counts without walking the whole collection first, and so
- * "More <artist>" — everything not filed into an era yet — is a real section
- * with a position rather than a special case in the JavaScript.
+ * One artist's page: their eras in order, then whatever isn't in an era yet,
+ * then what is still wanted by them.
  */
 
-require_once __DIR__ . '/../../includes/bootstrap_api.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
 
-$artist = artist_by_slug(query('slug'));
+/** Undated records go last. */
+function release_order(array $row): string
+{
+    return item_sort_date($row) ?: '9999-99-99';
+}
 
-if ($artist === null || !$artist['is_published']) {
+function artist_section(int $id, string $slug, string $name, string $years, string $tagline, array $items): array
+{
+    return ['id' => $id, 'slug' => $slug, 'name' => $name, 'years' => $years, 'tagline' => $tagline, 'items' => $items];
+}
+
+$artist = published_artist(query('slug'));
+
+if ($artist === null) {
     json_response(['error' => 'No such artist page.'], 404);
 }
 
-$rows = public_items('collection', ['i.artist_id = ?'], [$artist['id']]);
+$byArtist = ['i.artist_id = ?'];
+$rows = public_items('collection', $byArtist, [$artist['id']]);
 
-// Within an era: the order the era's rules were written (album, then singles),
-// then oldest first by full release date, then by title — the order the
-// hand-built page used, with the day and month now breaking a year's ties.
+// Within an era: the order its rules were written (album, then singles), then release date, then title.
 usort($rows, fn ($a, $b) =>
-    [(int) $a['era_rank'], item_sort_date($a) ?: '9999-99-99', item_title($a)]
-    <=> [(int) $b['era_rank'], item_sort_date($b) ?: '9999-99-99', item_title($b)]
+    [(int) $a['era_rank'], release_order($a), item_title($a)]
+    <=> [(int) $b['era_rank'], release_order($b), item_title($b)]
 );
 
-$grouped = [];
+$eras = eras_for_artist((int) $artist['id']);
+$eraIds = array_column($eras, 'id');
+
+// A record whose era belongs to another artist (its artist changed by hand) goes under "More".
+$cardsByEra = [];
 foreach ($rows as $row) {
-    $grouped[$row['era_id'] ?? 0][] = item_card($row);
+    $cardsByEra[in_array($row['era_id'], $eraIds) ? $row['era_id'] : 0][] = item_card($row);
 }
 
 $sections = [];
-foreach (eras_for_artist((int) $artist['id']) as $era) {
-    if (empty($grouped[$era['id']])) {
-        continue;
+foreach ($eras as $era) {
+    if (!empty($cardsByEra[$era['id']])) {
+        $sections[] = artist_section((int) $era['id'], $era['slug'], $era['name'], (string) $era['years'], (string) $era['tagline'], $cardsByEra[$era['id']]);
     }
-    $sections[] = [
-        'id'      => (int) $era['id'],
-        'slug'    => $era['slug'],
-        'name'    => $era['name'],
-        'years'   => (string) $era['years'],
-        'tagline' => (string) $era['tagline'],
-        'items'   => $grouped[$era['id']],
-    ];
 }
 
-// Anything not mapped to an era still shows, at the end, so a new purchase is
-// never invisible while waiting to be filed.
-if (!empty($grouped[0])) {
-    $sections[] = [
-        'id'      => 0,
-        'slug'    => 'more',
-        'name'    => 'More ' . $artist['name'],
-        'years'   => '',
-        'tagline' => 'Not sorted into an era yet',
-        'items'   => $grouped[0],
-    ];
+// Records not in one of this artist's eras still show, at the end.
+if (!empty($cardsByEra[0])) {
+    $sections[] = artist_section(0, 'more', 'More ' . $artist['name'], '', 'Not sorted into an era yet', $cardsByEra[0]);
 }
 
-// What's still missing for this artist, for the end of the page: the Discogs
-// wantlist and the records being hunted, together, oldest first. Left out
-// entirely when the wantlist isn't public.
 $wanted = [];
 if (setting('show_wantlist', true)) {
-    $missing = [...public_items('wantlist', ['i.artist_id = ?'], [$artist['id']]),
-                ...public_items('searching', ['i.artist_id = ?'], [$artist['id']])];
-
-    usort($missing, fn ($a, $b) =>
-        [item_sort_date($a) ?: '9999-99-99', item_title($a)]
-        <=> [item_sort_date($b) ?: '9999-99-99', item_title($b)]
-    );
-
+    $missing = [
+        ...public_items('wantlist', $byArtist, [$artist['id']]),
+        ...public_items('searching', $byArtist, [$artist['id']]),
+    ];
+    usort($missing, fn ($a, $b) => [release_order($a), item_title($a)] <=> [release_order($b), item_title($b)]);
     $wanted = array_map('item_card', $missing);
 }
 
-json_cache_headers(300);
+json_cache_headers();
 
 json_response([
     'artist' => [

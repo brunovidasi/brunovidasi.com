@@ -1,9 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin.php';
 
-// Nobody has claimed the collection yet — the first thing to do is create the
-// one account, not sign in to it.
 if (!owner_account_exists()) {
     redirect('setup');
 }
@@ -15,7 +13,7 @@ if (current_user()) {
 $error = null;
 $cooldown = login_cooldown();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (is_post()) {
     csrf_verify();
 
     if ($cooldown > 0) {
@@ -27,8 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             clear_login_failures();
             $next = $_SESSION['login_redirect'] ?? url('admin');
             unset($_SESSION['login_redirect']);
-            // Only ever bounce back inside this app: an open redirect here would
-            // let a link to /login?… land someone on another site post-login.
+            // Only back inside this app, never to another site.
             redirect(str_starts_with($next, app_path()) ? $next : url('admin'));
         }
 
@@ -37,26 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pageTitle = 'Sign in';
+auth_header('Sign in');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign in — Bruno's Music Collection</title>
-<meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/svg+xml" href="<?= e(url('favicon/favicon.svg')) ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?= e(url('favicon/favicon-32x32.png')) ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?= e(url('favicon/favicon-16x16.png')) ?>">
-<link rel="apple-touch-icon" sizes="180x180" href="<?= e(url('favicon/apple-touch-icon.png')) ?>">
-<link rel="manifest" href="<?= e(url('favicon/site.webmanifest')) ?>">
-<link rel="stylesheet" href="<?= e(url('css/admin.css')) ?>">
-</head>
-<body>
-
-<div class="auth">
-  <div class="card">
     <svg class="disc" viewBox="0 0 100 100" aria-hidden="true">
       <circle cx="50" cy="50" r="48" fill="#0B0A08"/>
       <circle cx="50" cy="50" r="40" fill="none" stroke="#2a2620" stroke-width="1.5"/>
@@ -69,7 +48,7 @@ $pageTitle = 'Sign in';
     <p class="sub">Sign in to manage the shelf.</p>
 
     <?php if ($error !== null): ?>
-      <div class="flash error"><?= e($error) ?></div>
+      <?= flash_box($error, 'error') ?>
     <?php endif; ?>
 
     <form method="post" novalidate>
@@ -84,8 +63,4 @@ $pageTitle = 'Sign in';
       </div>
       <button type="submit" class="gold"<?= $cooldown > 0 ? ' disabled' : '' ?>>Sign in</button>
     </form>
-  </div>
-</div>
-
-</body>
-</html>
+<?php auth_footer(); ?>

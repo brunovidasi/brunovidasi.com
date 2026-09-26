@@ -1,15 +1,11 @@
 <?php
 
 /**
- * Creates the one account, once.
- *
- * This page is reachable by anyone in the window between a fresh deploy and the
- * account existing, so it will only ever create an account for the address in
- * the config's owner_email — which lives outside the repo. After that it
- * refuses and sends people to the sign-in page.
+ * Creates the one account, once, and only for the config's owner_email.
+ * Afterwards it sends everyone to sign in.
  */
 
-require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin.php';
 
 if (owner_account_exists()) {
     redirect('login');
@@ -17,7 +13,7 @@ if (owner_account_exists()) {
 
 $error = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (is_post()) {
     csrf_verify();
     $error = create_owner_account(post('email'), $_POST['password'] ?? '', $_POST['password_confirm'] ?? '');
 
@@ -26,30 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('admin');
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Set up — Bruno's Music Collection</title>
-<meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/svg+xml" href="<?= e(url('favicon/favicon.svg')) ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?= e(url('favicon/favicon-32x32.png')) ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?= e(url('favicon/favicon-16x16.png')) ?>">
-<link rel="apple-touch-icon" sizes="180x180" href="<?= e(url('favicon/apple-touch-icon.png')) ?>">
-<link rel="manifest" href="<?= e(url('favicon/site.webmanifest')) ?>">
-<link rel="stylesheet" href="<?= e(url('css/admin.css')) ?>">
-</head>
-<body>
 
-<div class="auth">
-  <div class="card">
+auth_header('Set up');
+?>
     <h1>Claim the collection</h1>
     <p class="sub">One account, created once, for the address set in the config. Nobody else can register.</p>
 
     <?php if ($error !== null): ?>
-      <div class="flash error"><?= e($error) ?></div>
+      <?= flash_box($error, 'error') ?>
     <?php endif; ?>
 
     <?php if (owner_email() === null): ?>
@@ -73,8 +53,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="gold">Create the account</button>
       </form>
     <?php endif; ?>
-  </div>
-</div>
-
-</body>
-</html>
+<?php auth_footer(); ?>

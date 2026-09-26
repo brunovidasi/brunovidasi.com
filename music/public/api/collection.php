@@ -1,16 +1,8 @@
 <?php
-/**
- * The whole shelf, as the site draws it.
- *
- * One request, every visible copy — the floor view needs them all at once to
- * lay out the pile, and the payload is small because item_card() carries only
- * what a sleeve needs. The drawer's full detail is a separate call per record
- * (api/item.php), made only when one is actually opened.
- */
 
-require_once __DIR__ . '/../../includes/bootstrap_api.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
 
-json_cache_headers(300);
+json_cache_headers();
 
 $rows = public_items('collection');
 
