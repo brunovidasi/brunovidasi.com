@@ -13,3 +13,4 @@ Disallow: 404.shtml
 Disallow: 500.shtml
 Disallow: README.md
 Disallow: resume_es.pdf
+Disallow: /music/prototypes/

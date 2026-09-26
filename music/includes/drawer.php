@@ -114,7 +114,7 @@ function drawer_box_facts(array $row): array
 
     if (!empty($row['parent_item_id'])) {
         $box = item_by_id((int) $row['parent_item_id']);
-        $facts[] = $box ? drawer_fact('in_box', 'In the box', item_title($box), 'text') : null;
+        $facts[] = $box && item_is_public($box) ? drawer_fact('in_box', 'In the box', item_title($box), 'text') : null;
     }
 
     $discs = db()->prepare('
@@ -177,7 +177,7 @@ function drawer_section(array $row, string $key): mixed
 {
     return match ($key) {
         'gallery'     => drawer_gallery($row) ?: null,
-        'tracklist'   => (item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null)) ?: null,
+        'tracklist'   => clean_track_names(item_override($row, 'tracklist') ?? json_column($row['tracklist_json'] ?? null)) ?: null,
         'credits'     => drawer_credits(json_column($row['extraartists_json'] ?? null)) ?: null,
         'companies'   => drawer_companies(json_column($row['companies_json'] ?? null)) ?: null,
         'identifiers' => drawer_identifiers(json_column($row['identifiers_json'] ?? null)) ?: null,

@@ -55,8 +55,6 @@ if (is_post()) {
             'extra_photos_json' => $photos ? json_encode($photos, JSON_UNESCAPED_SLASHES) : null,
             'notes'             => nullable(post('notes')),
             'is_visible'        => posted_flag('is_visible'),
-            'manual_title'      => nullable(post('manual_title')),
-            'manual_artist'     => nullable(post('manual_artist')),
         ];
 
         // The ticked pictures, in the order shown. A form without the gallery
@@ -68,7 +66,7 @@ if (is_post()) {
             );
         }
 
-        update_item((int) $item['id'], $values + posted_overrides(), [
+        update_item((int) $item['id'], $values + posted_sale_overrides($item), [
             "sold_at = CASE WHEN ? THEN COALESCE(sold_at, datetime('now')) ELSE NULL END" => [posted_flag('sold')],
         ]);
 
@@ -113,7 +111,8 @@ $galleryChosen = gallery_choice($item) ?? array_column($gallery, 'full');
 $discogsTracks = tracklist_to_text(json_column($item['tracklist_json'] ?? null));
 $selfUrl = url('admin_selling_item?id=' . (int) $item['id']);
 
-// Each correction box starts from what Discogs says, so there is something to edit.
+// Each correction box starts from what Discogs says, so there is something to edit;
+// saved unchanged, it stays empty (posted_sale_overrides).
 $ownOr = fn (string $key, string $discogs) => trim((string) $item[$key]) !== '' ? (string) $item[$key] : $discogs;
 
 admin_header(item_title($item), item_byline($item), record_actions(

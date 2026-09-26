@@ -75,12 +75,12 @@ function era_counts(int $artistId): array
 /** How many records each artist has on the shelf, keyed by artist id. */
 function artist_record_counts(bool $visibleOnly = false): array
 {
-    $visible = $visibleOnly ? 'AND is_visible = 1' : '';
+    $visible = $visibleOnly ? 'AND ' . PUBLIC_ITEM_WHERE : 'AND i.missing_since IS NULL';
 
     return array_column(db()->query("
-        SELECT artist_id, COUNT(*) AS n FROM items
-         WHERE source = 'collection' $visible AND missing_since IS NULL AND artist_id IS NOT NULL
-         GROUP BY artist_id
+        SELECT i.artist_id, COUNT(*) AS n FROM items i
+         WHERE i.source = 'collection' $visible AND i.artist_id IS NOT NULL
+         GROUP BY i.artist_id
     ")->fetchAll(), 'n', 'artist_id');
 }
 

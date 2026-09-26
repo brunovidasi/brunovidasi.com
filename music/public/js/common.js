@@ -243,14 +243,18 @@ async function openDrawer(id, fromHash, source) {
 }
 
 function closeDrawer(fromHash) {
+  const id = currentItemId;
   currentItemId = null;
   if (typeof releaseTile === 'function') releaseTile();
   $('overlay').classList.remove('open');
   $('drawer').classList.remove('open');
   if (typeof Spotlight !== 'undefined') Spotlight.close();
 
+  // Undo the entry openDrawer pushed, so Back doesn't reopen what was just closed.
+  // A drawer opened from a pasted link has no entry of its own: just drop the hash.
   if (!fromHash && location.hash.startsWith('#item-')) {
-    history.pushState({}, '', location.pathname + location.search);
+    if (history.state && history.state.item === id) history.back();
+    else history.replaceState(null, '', location.pathname + location.search);
   }
 }
 
@@ -293,7 +297,7 @@ function wireDrawer() {
   // Back and forward move between the drawers opened, and a pasted #item-… link opens one.
   addEventListener('popstate', () => {
     const id = hashItemId();
-    if (id === null) closeDrawer(true);
+    if (id === null) { if (currentItemId !== null) closeDrawer(true); }
     else if (id !== currentItemId) openDrawer(id, true);
   });
 

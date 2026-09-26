@@ -216,3 +216,11 @@ CREATE TABLE IF NOT EXISTS sync_runs (
 );
 
 CREATE INDEX IF NOT EXISTS idx_sync_runs_started ON sync_runs (started_at);
+
+-- Failed sign-ins by address, so the wait after five wrong passwords can't be
+-- skipped by dropping the session cookie. A successful sign-in clears its row.
+CREATE TABLE IF NOT EXISTS login_failures (
+    ip          TEXT PRIMARY KEY,
+    fails       INTEGER NOT NULL DEFAULT 0,
+    last_fail   INTEGER NOT NULL DEFAULT 0              -- unix time
+);

@@ -120,28 +120,42 @@ function logout_user(): void
     }
 }
 
-/** Seconds left before another sign-in may be tried: five free tries, then a doubling wait. */
+/** The address sign-in failures are counted against. */
+function login_client_ip(): string
+{
+    // REMOTE_ADDR, not X-Forwarded-For, which the client can write itself.
+    return (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+}
+
+/** Seconds left before another sign-in may be tried from this address: five free tries, then a doubling wait. */
 function login_cooldown(): int
 {
-    $fails = (int) ($_SESSION['login_fails'] ?? 0);
-    $last = (int) ($_SESSION['login_last_fail'] ?? 0);
+    $stmt = db()->prepare('SELECT fails, last_fail FROM login_failures WHERE ip = ?');
+    $stmt->execute([login_client_ip()]);
+    $row = $stmt->fetch() ?: ['fails' => 0, 'last_fail' => 0];
+    $fails = (int) $row['fails'];
 
     if ($fails < 5) {
         return 0;
     }
 
-    $wait = min(300, 5 * (2 ** ($fails - 5)));
+    $wait = min(300, 5 * (2 ** min(10, $fails - 5)));
 
-    return max(0, $last + $wait - time());
+    return max(0, (int) $row['last_fail'] + $wait - time());
 }
 
 function record_login_failure(): void
 {
-    $_SESSION['login_fails'] = (int) ($_SESSION['login_fails'] ?? 0) + 1;
-    $_SESSION['login_last_fail'] = time();
+    db()->prepare('
+        INSERT INTO login_failures (ip, fails, last_fail) VALUES (?, 1, ?)
+        ON CONFLICT(ip) DO UPDATE SET fails = fails + 1, last_fail = excluded.last_fail
+    ')->execute([login_client_ip(), time()]);
+
+    // Addresses that have gone quiet for a day start again from nothing.
+    db()->prepare('DELETE FROM login_failures WHERE last_fail < ?')->execute([time() - 86400]);
 }
 
 function clear_login_failures(): void
 {
-    unset($_SESSION['login_fails'], $_SESSION['login_last_fail']);
+    db()->prepare('DELETE FROM login_failures WHERE ip = ?')->execute([login_client_ip()]);
 }

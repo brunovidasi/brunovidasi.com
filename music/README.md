@@ -174,7 +174,7 @@ delete the row and run `/setup` again:
 php -r 'require "includes/bootstrap.php"; db()->exec("DELETE FROM users");'
 ```
 
-Sign-in failures back off per session (five tries, then a doubling wait), and a
+Sign-in failures back off per IP address (five tries, then a doubling wait), and a
 wrong address takes exactly as long to answer as a wrong password.
 
 ## Deployment

@@ -17,7 +17,8 @@ header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 
 $expected = cron_token();
-$given = (string) ($_GET['token'] ?? $_SERVER['HTTP_X_CRON_TOKEN'] ?? '');
+$given = $_GET['token'] ?? $_SERVER['HTTP_X_CRON_TOKEN'] ?? '';
+$given = is_string($given) ? $given : '';
 
 if ($expected === '') {
     http_response_code(503);

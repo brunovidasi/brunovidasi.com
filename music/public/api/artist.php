@@ -51,7 +51,7 @@ foreach ($eras as $era) {
 
 // Records not in one of this artist's eras still show, at the end.
 if (!empty($cardsByEra[0])) {
-    $sections[] = artist_section(0, 'more', 'More ' . $artist['name'], '', 'Not sorted into an era yet', $cardsByEra[0]);
+    $sections[] = artist_section(0, 'more', 'More records', '', 'Not sorted into an era yet', $cardsByEra[0]);
 }
 
 $wanted = [];

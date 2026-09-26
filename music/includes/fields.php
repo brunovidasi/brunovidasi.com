@@ -283,6 +283,33 @@ function clean_artist_name(string $name): string
     return trim(preg_replace('/\s\(\d+\)$/', '', $name));
 }
 
+/** A tracklist with Discogs' "(2)" taken off every track's artists and credits, sub-tracks included. */
+function clean_track_names(array $tracks): array
+{
+    $clean = fn (array $people) => array_map(
+        fn ($person) => is_array($person) && isset($person['name'])
+            ? ['name' => clean_artist_name((string) $person['name'])] + $person
+            : $person,
+        $people
+    );
+
+    return array_map(function ($track) use ($clean) {
+        if (!is_array($track)) {
+            return $track;
+        }
+        foreach (['artists', 'extraartists'] as $key) {
+            if (is_array($track[$key] ?? null)) {
+                $track[$key] = $clean($track[$key]);
+            }
+        }
+        if (is_array($track['sub_tracks'] ?? null)) {
+            $track['sub_tracks'] = clean_track_names($track['sub_tracks']);
+        }
+
+        return $track;
+    }, $tracks);
+}
+
 function artists_text(array $artists): string
 {
     $names = array_map(fn ($a) => clean_artist_name((string) ($a['name'] ?? '')), $artists);

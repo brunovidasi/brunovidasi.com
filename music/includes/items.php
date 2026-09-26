@@ -25,8 +25,9 @@ const ITEM_SELECT = '
  */
 const RELEASE_DATE_SQL = "COALESCE(NULLIF(r.released, ''), CASE WHEN r.year > 0 THEN printf('%04d', r.year) END)";
 
-/** What a visitor may see: visible, and still on Discogs. */
-const PUBLIC_ITEM_WHERE = 'i.is_visible = 1 AND i.missing_since IS NULL';
+/** What a visitor may see: visible, and still on Discogs; a disc from a box set only while its box is too. */
+const PUBLIC_ITEM_WHERE = 'i.is_visible = 1 AND i.missing_since IS NULL AND (i.parent_item_id IS NULL OR EXISTS (
+    SELECT 1 FROM items box WHERE box.id = i.parent_item_id AND box.is_visible = 1 AND box.missing_since IS NULL))';
 
 const SALE_CONDITIONS = ['new' => 'New', 'used' => 'Used'];
 
@@ -52,6 +53,21 @@ function item_by_id(int $id): ?array
     $stmt->execute([$id]);
 
     return $stmt->fetch() ?: null;
+}
+
+/** PUBLIC_ITEM_WHERE for a row already read, plus a sold listing: whether its drawer may open. */
+function item_is_public(array $item): bool
+{
+    if (!$item['is_visible'] || $item['missing_since'] !== null
+        || ($item['source'] === 'for_sale' && $item['sold_at'] !== null)) {
+        return false;
+    }
+    if (empty($item['parent_item_id'])) {
+        return true;
+    }
+    $box = item_by_id((int) $item['parent_item_id']);
+
+    return $box !== null && item_is_public($box);
 }
 
 function items_query(string $sql): array
@@ -195,7 +211,8 @@ function item_search_text(array $row): string
         $row['vinyl_color'] ?? '',
         $row['vinyl_size'] ?? '',
         $row['media'] ?? '',
-        $row['notes'] ?? '',
+        // Only while the drawer shows them: a note kept off the page stays out of the API too.
+        drawer_shows((string) $row['media_kind'], 'notes') ? ($row['notes'] ?? '') : '',
     ];
 
     $parts = array_map(fn ($part) => trim((string) $part), array_filter($parts, 'is_scalar'));

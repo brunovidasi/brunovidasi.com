@@ -102,7 +102,7 @@ admin_header(
 
 <?php if ($unfiled): ?>
   <div class="flash ok">
-    <?= $unfiled ?> <?= $unfiled === 1 ? 'record is' : 'records are' ?> on this page but in no era — they show under "More <?= e($artist['name']) ?>" at the end.
+    <?= $unfiled ?> <?= $unfiled === 1 ? 'record is' : 'records are' ?> on this page but in no era — they show under "More records" at the end.
     <a href="<?= e(url('admin_items?artist=' . $artistId . '&state=noera')) ?>">Sort them out →</a>
   </div>
 <?php endif; ?>

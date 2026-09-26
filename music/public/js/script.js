@@ -25,6 +25,8 @@ const prefs = storedPrefs(
   'vinyl_prefs_v1',
   { view: 'floor', mess: 0.7, fmt: 'all', sort: DEFAULT_SORT, organise: DEFAULT_CRATE_ORDER },
   p => {
+    // The crate's Vinyl filter is the crate's, not a choice: a page left with the crate open comes back as it was before it.
+    if (p.fmtBeforeCrate !== undefined) { p.fmt = p.fmtBeforeCrate; delete p.fmtBeforeCrate; }
     if (!VIEWS.includes(p.view)) p.view = 'floor';
     if (!CRATE_ORDERS[p.organise]) p.organise = DEFAULT_CRATE_ORDER;
     p.sort = validSort(p.sort);
@@ -138,6 +140,7 @@ onToggle('viewToggle', 'view', view => {
   // Grid and List have no crate: choosing one puts it away, even mid-flight.
   if (crateOn || (Crate.busy && view !== 'floor')) {
     if (crateOn) setFormat('all');
+    delete prefs.fmtBeforeCrate;
     crateOn = false;
     Crate.destroy();
   }
@@ -162,6 +165,7 @@ $('crateBtn').addEventListener('click', () => {
   setFormat('vinyl');
   const list = visibleItems();
   if (!list.length) { setFormat(before); return; }
+  prefs.fmtBeforeCrate = before;
   prefs.save();
   crateOn = true;
   syncControls();
@@ -172,6 +176,7 @@ $('messBtn').addEventListener('click', () => {
   if (!crateOn || Crate.busy) return;
   crateOn = false;
   setFormat('all');
+  delete prefs.fmtBeforeCrate;
   prefs.save();
   syncControls();
   Crate.exit(visibleItems(), prefs.mess);

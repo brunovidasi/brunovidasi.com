@@ -25,10 +25,15 @@ function handle_record_action(array $item, string $afterDelete, string $selfPage
     }
 }
 
+/** A box set goes with the discs built from it, which mean nothing without it. */
 function delete_item(array $item): void
 {
+    $discs = db()->prepare('DELETE FROM items WHERE parent_item_id = ?');
+    $discs->execute([$item['id']]);
     db()->prepare('DELETE FROM items WHERE id = ?')->execute([$item['id']]);
-    flash('Deleted "' . item_title($item) . '".');
+
+    $count = $discs->rowCount();
+    flash('Deleted "' . item_title($item) . '"' . ($count ? ' and its ' . $count . ' ' . plural($count, 'disc') : '') . '.');
 }
 
 /**
@@ -55,6 +60,39 @@ function posted_overrides(): array
     $values = [];
     foreach (array_keys(OVERRIDE_FIELDS) as $key) {
         $values[$key] = nullable(post($key));
+    }
+
+    return $values;
+}
+
+/**
+ * A posted box that starts out filled with Discogs' value: left as Discogs has
+ * it, it is stored empty, so the record keeps following Discogs.
+ */
+function posted_own_text(string $key, string $discogs): ?string
+{
+    $normalise = fn (string $text) => implode("\n", array_map('trim', preg_split(LINE_BREAK, trim($text))));
+    $value = nullable(post($key));
+
+    return $value !== null && $normalise($value) === $normalise($discogs) ? null : $value;
+}
+
+/** The selling form's boxes that start from Discogs' text, as posted: [column => own value or null]. */
+function posted_sale_overrides(array $item): array
+{
+    $release = item_release($item);
+    $discogs = [
+        'manual_title'  => (string) $item['title'],
+        'manual_artist' => (string) $item['artists_text'],
+        'tracklist'     => tracklist_to_text(json_column($item['tracklist_json'] ?? null)),
+    ];
+    foreach (array_keys(OVERRIDE_BOXES) as $key) {
+        $discogs[$key] = discogs_fallback_text($item, $release, $key, true);
+    }
+
+    $values = [];
+    foreach ($discogs as $key => $text) {
+        $values[$key] = posted_own_text($key, $text);
     }
 
     return $values;
