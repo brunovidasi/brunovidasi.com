@@ -3,15 +3,15 @@
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 
-CKEDITOR.editorConfig = function( config_chamada ) {
+CKEDITOR.editorConfig = function( config ) {
 	// Define changes to default configuration here.
 	// For the complete reference:
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
 
-	config_chamada.toolbar = null;
+	config.toolbar = null;
 	
 	// The toolbar groups arrangement, optimized for two toolbar rows.
-	config_chamada.toolbar = [
+	config.toolbar = [
 		// { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
 		// { name: 'links', items: [ 'Link', 'Unlink'] },
 		// { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'PasteText', '-', 'Undo', 'Redo' ] },
@@ -26,16 +26,16 @@ CKEDITOR.editorConfig = function( config_chamada ) {
 		//{ name: 'about', items: [ 'About' ] }
 	];
 	
-	config_chamada.width = 800;     // 800 pixels wide.
-	config_chamada.height = 100;     // 100 pixels wide.
+	config.width = 800;     // 800 pixels wide.
+	config.height = 100;     // 100 pixels wide.
 	
 	// Remove some buttons, provided by the standard plugins, which we don't
 	// need to have in the Standard(s) toolbar.
-	config_chamada.removeButtons = 'Underline,Subscript,Superscript';
+	config.removeButtons = 'Underline,Subscript,Superscript';
 
 	// Se the most common block elements.
-	config_chamada.format_tags = 'p;h1;h2;h3;pre';
+	config.format_tags = 'p;h1;h2;h3;pre';
 
 	// Make dialogs simpler.
-	config_chamada.removeDialogTabs = 'image:advanced;link:advanced';
+	config.removeDialogTabs = 'image:advanced;link:advanced';
 };

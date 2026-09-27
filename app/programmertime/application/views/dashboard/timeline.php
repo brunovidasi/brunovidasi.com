@@ -1,18 +1,18 @@
-<link type="text/css" href="<?php echo base_url('assets/js/paginacao/paging.css'); ?>" rel="stylesheet" />
-<script type="text/javascript" src="<?php echo base_url('assets/js/paginacao/paging.js'); ?>"></script>
+<link type="text/css" href="<?php echo base_url('assets/js/pagination/paging.css'); ?>" rel="stylesheet" />
+<script type="text/javascript" src="<?php echo base_url('assets/js/pagination/paging.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/js/moment.js'); ?>"></script>
 <script src="<?php echo base_url('assets/js/highcharts/js/highcharts.js'); ?>"></script>
 
-<!--<p class="titulo_pagina"  style="float:left;">Olá! Como foi seu dia? Vamos aos nossos Projetos!</p> <br><br><br><br>--><br />
+<!--<p class="page_title"  style="float:left;">Hi! How was your day? Let's get to our projects!</p> <br><br><br><br>--><br />
 
 <?php 
-if($logou == TRUE){ ?>
+if($just_logged_in == TRUE){ ?>
 	<script>
 	$(document).ready(function(){
 		$(".timeline").slideDown(1000);
 
 		setTimeout(function(){
-			$(".projetos-recentes").slideDown(1000);
+			$(".recent-projects").slideDown(1000);
 		}, 1000);
 	});
 	</script>
@@ -23,8 +23,8 @@ if($logou == TRUE){ ?>
 		$("toggleCSS").href = "<?php echo base_url('assets/js/alertify/themes/alertify.ptime.css'); ?>";
 		alertify.set({
 			labels : {
-				ok     : "Deletar",
-				cancel : "Não Deletar"
+				ok     : "Delete",
+				cancel : "Don't Delete"
 			},
 			delay : 5000,
 			buttonReverse : false,
@@ -35,13 +35,13 @@ if($logou == TRUE){ ?>
 
 <?php 
 
-	$lanca_etapa = $this->session->userdata('lanca_etapa');
-	$lanca_pagamento = $this->session->userdata('lanca_pagamento');
-	$cadastra_projeto = $this->session->userdata('cadastra_projeto');
-	$cadastra_cliente = $this->session->userdata('cadastra_cliente');
-	$envia_relatorio = $this->session->userdata('envia_relatorio');
+	$can_log_time = $this->session->userdata('can_log_time');
+	$can_log_payment = $this->session->userdata('can_log_payment');
+	$can_create_project = $this->session->userdata('can_create_project');
+	$can_create_client = $this->session->userdata('can_create_client');
+	$can_send_report = $this->session->userdata('can_send_report');
 
-	require('application/views/includes/mensagem.php');
+	require('application/views/includes/message.php');
 	if(validation_errors() != ''){
 	echo "<div class='alert alert-danger'><button type='button' class='close' data-dismiss='alert'>&times;</button><ul>".validation_errors('<li>', '</li>')."</ul></div> <br />";
 	}
@@ -49,92 +49,92 @@ if($logou == TRUE){ ?>
 
 	$item = array();
 
-	# TAREFAS ##########################################################################
+	# TASKS ############################################################################
 
-	if($num_tarefas > 0){
-		$tarefa['datetime'] = date('Y-m-d H:i:s');
+	if($task_count > 0){
+		$task['datetime'] = date('Y-m-d H:i:s');
 
-		if($num_tarefas == 1)
-			$numero_tarefas = 'Você tem <strong>1</strong> tarefa pendente.';
+		if($task_count == 1)
+			$number_tasks = 'You have <strong>1</strong> pending task.';
 		else
-			$numero_tarefas = 'Você tem <strong>'. $num_tarefas .'</strong> tarefas pendentes.';
+			$number_tasks = 'You have <strong>'. $task_count .'</strong> pending tasks.';
 
 		$bg = 'bg-aqua';
 
-		$tarefa['conteudo'] = '<li>
+		$task['content'] = '<li>
 		    <i class="glyphicon glyphicon-list-alt '.$bg.'"></i>
 		    	<div class="timeline-item">
-			       	<span class="time"><i class="glyphicon glyphicon-time"></i> <span title="'. fdatetime($tarefa['datetime'], "/") .'">'. fdatetime($tarefa['datetime'], "/") .'</span></span>
+			       	<span class="time"><i class="glyphicon glyphicon-time"></i> <span title="'. fdatetime($task['datetime'], "/") .'">'. fdatetime($task['datetime'], "/") .'</span></span>
 
 			        <h3 class="timeline-header">
-			        	<a href="'. base_url('tarefa/lista/'. $this->session->userdata('id')) .'">Minhas Tarefas</a>
+			        	<a href="'. base_url('task/list/'. $this->session->userdata('id')) .'">My Tasks</a>
 			        </h3>
 		            
 		            <div class="timeline-body">
-		            	'. $numero_tarefas .'
+		            	'. $number_tasks .'
 		            </div>
 
 		            <div class="timeline-footer">
-		                <a href="'. base_url('tarefa/lista/'. $this->session->userdata('id')) .'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-arrow-right"></i> Vizualizar Tarefas</a>
+		                <a href="'. base_url('task/list/'. $this->session->userdata('id')) .'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-arrow-right"></i> View Tasks</a>
 		            </div>
 		    	</div>
 		    </li>
 		';
 
-		$item[] = $tarefa;
+		$item[] = $task;
 	}
 
-	# ETAPA EM ABERTO ##################################################################
+	# OPEN TIME ENTRY #################################################################
 
-	if($etapa_aberta->num_rows() == 1){
+	if($open_time_entry->num_rows() == 1){
 
-		$a_etapa = $etapa_aberta->row();
+		$a_time_entry = $open_time_entry->row();
 
-		$etapa['datetime'] = $a_etapa->data . ' ' . $a_etapa->inicio;
+		$time_entry['datetime'] = $a_time_entry->date . ' ' . $a_time_entry->start_time;
 
-		if($a_etapa->data == date('Y-m-d')){
+		if($a_time_entry->date == date('Y-m-d')){
 			$bg = 'bg-aqua';
 		}else{
 			$bg = 'bg-red';
 		}
 
-		$etapa['conteudo'] = '<li>
+		$time_entry['content'] = '<li>
 		    <i class="glyphicon glyphicon-time '.$bg.'"></i>
 		    	<div class="timeline-item">
-			       	<span class="time"><i class="glyphicon glyphicon-time"></i> <span id="etapa_'.$a_etapa->idetapa.'" title="'. fdatetime($etapa['datetime'], "/") .'">'. fhora($a_etapa->inicio) .'</span></span>
+			       	<span class="time"><i class="glyphicon glyphicon-time"></i> <span id="time_entry_'.$a_time_entry->time_entry_id.'" title="'. fdatetime($time_entry['datetime'], "/") .'">'. ftime($a_time_entry->start_time) .'</span></span>
 
 			        <h3 class="timeline-header">
-			        	<a href="'. base_url('projeto/visualizar/'. $a_etapa->idprojeto) .'">'. $a_etapa->nomeprojeto .'</a>
+			        	<a href="'. base_url('project/view/'. $a_time_entry->project_id) .'">'. $a_time_entry->project_name .'</a>
 			        </h3>
 		            
 		            <div class="timeline-body">
-		            	<strong>'. $a_etapa->fase .'</strong><br />
-		                '. $a_etapa->descricao_tecnica .'
+		            	<strong>'. $a_time_entry->phase .'</strong><br />
+		                '. $a_time_entry->technical_description .'
 		            </div>
 
 		            <div class="timeline-footer">
-		                <a href="'. base_url('etapa') .'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-arrow-right"></i> Terminar Contagem</a>
-		                <a class="btn btn-danger btn-xs" id="excluir_etapa_lt_'.$a_etapa->idetapa.'"><i class="glyphicon glyphicon-remove"></i> Excluir</a>
+		                <a href="'. base_url('time_entry') .'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-arrow-right"></i> Stop Timer</a>
+		                <a class="btn btn-danger btn-xs" id="delete_time_entry_lt_'.$a_time_entry->time_entry_id.'"><i class="glyphicon glyphicon-remove"></i> Delete</a>
 		            </div>
 		    	</div>
 		    </li>
 
 			<script>
-		    	var momento = moment("'.$a_etapa->data.' '.$a_etapa->inicio.'", "YYYY/MM/DD HH:mm:ss").startOf("second").fromNow();
-				$("#etapa_'.$a_etapa->idetapa.'").html(momento);
+		    	var when = moment("'.$a_time_entry->date.' '.$a_time_entry->start_time.'", "YYYY/MM/DD HH:mm:ss").startOf("second").fromNow();
+				$("#time_entry_'.$a_time_entry->time_entry_id.'").html(when);
 
-				$("#excluir_etapa_lt_'.$a_etapa->idetapa.'").click(function () {
+				$("#delete_time_entry_lt_'.$a_time_entry->time_entry_id.'").click(function () {
 					reset();
-					alertify.confirm("Tem certeza que deseja deletar esta Etapa de Projeto permanentemente? <b>'.$a_etapa->fase.'</b> - '.$a_etapa->descricao_tecnica.'", function (e) {
+					alertify.confirm("Are you sure you want to permanently delete this time entry? <b>'.$a_time_entry->phase.'</b> - '.$a_time_entry->technical_description.'", function (e) {
 						if (e) {
-							var url = "'. base_url('etapa/delete/'.$a_etapa->idetapa). '";
+							var url = "'. base_url('time_entry/delete/'.$a_time_entry->time_entry_id). '";
 						
 							if (url) {
 								window.location = url;
 							}
 							
 						} else {
-							alertify.error("Etapa não removida.");
+							alertify.error("Time entry not removed.");
 						}
 					});
 					return false;
@@ -143,58 +143,58 @@ if($logou == TRUE){ ?>
 
 		    ';
 
-		    $item[] = $etapa;
+		    $item[] = $time_entry;
 	}
 
-	# MENSAGENS ########################################################################
+	# MESSAGES #########################################################################
 
-	foreach($mensagens as $msg){
+	foreach($messages as $msg){
 		
-		$mensagem['datetime'] = $msg->data_envio;
+		$message['datetime'] = $msg->sent_at;
 
-		$mensagem['conteudo'] = '<li>
+		$message['content'] = '<li>
 		    <i class="glyphicon glyphicon-envelope bg-blue"></i>
 		    	<div class="timeline-item">
-			       	<span class="time"><i class="glyphicon glyphicon-time"></i> <span id="mensagem_'.$msg->idmensagem.'" title="'. fdatetime($msg->data_envio, "/") .'">'. fdatetime($msg->data_envio, "/") .'</span></span>
+			       	<span class="time"><i class="glyphicon glyphicon-time"></i> <span id="message_'.$msg->message_id.'" title="'. fdatetime($msg->sent_at, "/") .'">'. fdatetime($msg->sent_at, "/") .'</span></span>
 
 			        <h3 class="timeline-header">
-			        	<a href="'.base_url('mensagem/visualizar/'.$msg->idmensagem).'">'.$msg->assunto.'</a>
+			        	<a href="'.base_url('message/view/'.$msg->message_id).'">'.$msg->subject.'</a>
 			        </h3>
 		            
 		            <div class="timeline-body">
 
-		            <a href="'. base_url('usuario/visualizar/'. $msg->id_usuario_from) .'" class="thumbnail" style="width:50px; margin-right:8px; margin-bottom: 5px; float: left; background: '.$msg->cor.';">
-		            	<img src="'. base_url('assets/images/usuarios/'. $msg->imagem) .'"  />
+		            <a href="'. base_url('user/view/'. $msg->from_user_id) .'" class="thumbnail" style="width:50px; margin-right:8px; margin-bottom: 5px; float: left; background: '.$msg->color.';">
+		            	<img src="'. base_url('assets/images/users/'. $msg->image) .'"  />
 		            </a>
 
-		            <a href="'. base_url('usuario/visualizar/'. $msg->id_usuario_from) .'"><strong>'.fnome($msg->nome).'</a>:</strong> '.$msg->mensagem.'
+		            <a href="'. base_url('user/view/'. $msg->from_user_id) .'"><strong>'.short_name($msg->name).'</a>:</strong> '.$msg->message.'
 
 		            </div>
 
 		            <div class="timeline-footer">
-		            	<a href="'.base_url('mensagem/visualizar/'.$msg->idmensagem).'" class="btn btn-primary btn-xs">
-		            	 	<i class="glyphicon glyphicon-th-large"></i> Ver
+		            	<a href="'.base_url('message/view/'.$msg->message_id).'" class="btn btn-primary btn-xs">
+		            	 	<i class="glyphicon glyphicon-th-large"></i> View
 		            	</a>
 
-		            	<a href="'.base_url('mensagem/visualizar/'.$msg->idmensagem).'" class="btn btn-warning btn-xs">
-		            	 	<i class="glyphicon glyphicon-share-alt"></i> Responder
+		            	<a href="'.base_url('message/view/'.$msg->message_id).'" class="btn btn-warning btn-xs">
+		            	 	<i class="glyphicon glyphicon-share-alt"></i> Reply
 		            	</a>
 		            </div>
 		    	</div>
 		    </li>
 
 		    <script>
-		    	var momento = moment("'.$msg->data_envio.'", "YYYY/MM/DD HH:mm:ss").startOf("second").fromNow();
- 				$("#mensagem_'.$msg->idmensagem.'").html(momento);
+		    	var when = moment("'.$msg->sent_at.'", "YYYY/MM/DD HH:mm:ss").startOf("second").fromNow();
+ 				$("#message_'.$msg->message_id.'").html(when);
 		    </script>
 
 		';
 
-		$item[] = $mensagem;
+		$item[] = $message;
 	}
 
 
-	# ORDENANDO ARRAY PELA DATA ########################################################
+	# SORT ITEMS BY DATE #############################################################
 
 	// function cmp($item,$b){
 	//     return strtotime($item['datetime'])<strtotime($b['datetime'])?1:-1;
@@ -216,20 +216,20 @@ if($logou == TRUE){ ?>
 
 <div class="row">
     <div class="col-md-4">
-        <ul class="timeline" <?php if($logou) echo 'style="display:none;"';?>>
+        <ul class="timeline" <?php if($just_logged_in) echo 'style="display:none;"';?>>
 
             <?php 
 
 			if(count($item) == 0){
 				echo '<li class="time-label">
 						<span class="bg-blue">
-							'.semana().', '. tdata(date('Y-m-d')) .'
+							'.weekday().', '. tdate(date('Y-m-d')) .'
 						</span>
 					</li>
 					<li>
 					<i class="glyphicon glyphicon-ok bg-aqua"></i>
 						<div class="timeline-item">
-							<div class="timeline-body">Nenhuma notificação hoje.</div>
+							<div class="timeline-body">No notifications today.</div>
 						</div>
 					</li>
 					';
@@ -237,21 +237,21 @@ if($logou == TRUE){ ?>
 
             for($i = 0; $i < count($item); $i++){
 
-            	list($item[$i]['data'], $item[$i]['hora']) = explode(" ", $item[$i]['datetime']);
+            	list($item[$i]['date'], $item[$i]['time']) = explode(" ", $item[$i]['datetime']);
 
-            	$bg = ($item[$i]['data'] == date('Y-m-d')) ? 'bg-blue' : 'bg-yellow';
+            	$bg = ($item[$i]['date'] == date('Y-m-d')) ? 'bg-blue' : 'bg-yellow';
             	
             	if($i == 0){
-            		if($item[$i]['data'] != date('Y-m-d')){
+            		if($item[$i]['date'] != date('Y-m-d')){
             			echo '<li class="time-label">
 			               <span class="bg-blue">
-			                    '.semana().', '. tdata(date('Y-m-d')) .'
+			                    '.weekday().', '. tdate(date('Y-m-d')) .'
 			                </span>
 			            </li>
 			            <li>
 			            <i class="glyphicon glyphicon-ok bg-aqua"></i>
 		    				<div class="timeline-item">
-		    					<div class="timeline-body">Nenhuma notificação hoje.</div>
+		    					<div class="timeline-body">No notifications today.</div>
 		    				</div>
 			            </li>
 			            ';
@@ -259,20 +259,20 @@ if($logou == TRUE){ ?>
 
             		echo '<li class="time-label">
 		               <span class="'.$bg.'">
-		                    '. tdata($item[$i]['data']) .'
+		                    '. tdate($item[$i]['date']) .'
 		                </span>
 		            </li>';
             	}else{
-            		if($item[$i-1]['data'] != $item[$i]['data']){
+            		if($item[$i-1]['date'] != $item[$i]['date']){
             			echo '<li class="time-label">
 			               <span class="'.$bg.'">
-			                    '. tdata($item[$i]['data']) .'
+			                    '. tdate($item[$i]['date']) .'
 			                </span>
 			            </li>';
             		}
             	}
 
-            	echo $item[$i]['conteudo'];
+            	echo $item[$i]['content'];
 
             }
 
@@ -285,7 +285,7 @@ if($logou == TRUE){ ?>
     </div><!-- /.col --> 
 
 
-    <div class="projetos-recentes col-md-8" <?php //if($logou) echo 'style="display:none;"';?>>
+    <div class="recent-projects col-md-8" <?php //if($just_logged_in) echo 'style="display:none;"';?>>
 
 
     	<div role="tabpanel">
@@ -294,19 +294,19 @@ if($logou == TRUE){ ?>
 			<ul class="nav nav-tabs" role="tablist">
 
 				<li role="presentation" class="active">
-					<a href="#settings" aria-controls="settings" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-signal"></i> Horas Trabalhadas</a>
+					<a href="#settings" aria-controls="settings" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-signal"></i> Hours Worked</a>
 				</li>
 
 				<li role="presentation">
-					<a href="#home" aria-controls="home" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-book"></i> Meus Projetos</a>
+					<a href="#home" aria-controls="home" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-book"></i> My Projects</a>
 				</li>
 
 				<li role="presentation">
-					<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-time"></i> Minhas Etapas</a>
+					<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-time"></i> My Time Entries</a>
 				</li>
 
 				<li role="presentation">
-					<a href="#profile" aria-controls="profile" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> Agora</a>
+					<a href="#profile" aria-controls="profile" role="tab" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> Now</a>
 				</li>
 
 
@@ -319,77 +319,77 @@ if($logou == TRUE){ ?>
 					<br />
 
 					<div class="panel panel-default">
-						<div class="panel-heading">Meus Projetos Recentes</div>
+						<div class="panel-heading">My Recent Projects</div>
 						
 						<div class="panel-body">
-							<table width="100%" class="table table-hover" id="tabela_projetos">
+							<table width="100%" class="table table-hover" id="table_projects">
 								<tr>
 									<th>ID</th>
-									<th>Nome</th>
-									<th>Tipo</th>
-									<th title="Responsável pelo projeto">Responsável</th>
-									<th title="Quantidade de etapas que você realizou neste projeto">Etapas</th>
-									<th title="Horas que você realizou neste projeto">Horas</th>
-									<th>Prazo</th>
+									<th>Name</th>
+									<th>Type</th>
+									<th title="Project owner">Owner</th>
+									<th title="Time entries you logged on this project">Entries</th>
+									<th title="Hours you worked on this project">Hours</th>
+									<th>Deadline</th>
 									<th></th>
 								</tr>
 								
-								<?php foreach($projetos_envolvidos as $projeto_envolvido){
-								$projeto = $projeto_envolvido->row();  ?>
+								<?php foreach($projects_involved as $project_involved){
+								$project = $project_involved->row();  ?>
 								<tr>
-									<td><a href="<?php echo base_url('projeto/visualizar/'.$projeto->idprojeto); ?>"># <?php echo $projeto->idprojeto; ?></a></td>
-									<td><a href="<?php echo base_url('projeto/visualizar/'.$projeto->idprojeto); ?>"><?php echo $projeto->nome; ?></a></td>
-									<td><?php echo $projeto->tipo; ?></td>
+									<td><a href="<?php echo base_url('project/view/'.$project->project_id); ?>"># <?php echo $project->project_id; ?></a></td>
+									<td><a href="<?php echo base_url('project/view/'.$project->project_id); ?>"><?php echo $project->name; ?></a></td>
+									<td><?php echo $project->type; ?></td>
 									
 									<td>
-										<a href="<?php echo base_url('usuario/visualizar/'.$projeto->idresponsavel); ?>" id="a-popover-<?php echo $projeto->idprojeto; ?>">
-											<?php echo $projeto->responsavel; ?>
+										<a href="<?php echo base_url('user/view/'.$project->owner_id); ?>" id="a-popover-<?php echo $project->project_id; ?>">
+											<?php echo $project->owner; ?>
 										</a>
 
-										<div id="div-popover-<?php echo $projeto->idprojeto; ?>" class="hide">
+										<div id="div-popover-<?php echo $project->project_id; ?>" class="hide">
 											
 											<div style="width:80px;">
-												<img src="<?php echo base_url('assets/images/usuarios/'.$projeto->responsavel_imagem); ?>" class="img-thumbnail" style="background-color:<?php echo $projeto->responsavel_cor; ?>;">
+												<img src="<?php echo base_url('assets/images/users/'.$project->owner_image); ?>" class="img-thumbnail" style="background-color:<?php echo $project->owner_color; ?>;">
 											</div>
 										</div>
 
 										<script type="text/javascript">
 											
-												$('#a-popover-<?php echo $projeto->idprojeto; ?>').popover({
+												$('#a-popover-<?php echo $project->project_id; ?>').popover({
 													trigger: 'hover',
 													placement: 'top',
 													html: true,
-													content: $('#div-popover-<?php echo $projeto->idprojeto; ?>').html()
+													content: $('#div-popover-<?php echo $project->project_id; ?>').html()
 												});
 										   
 										 </script>
 									</td>
 
-									<td><?php echo $projeto_envolvido->numero_etapas; ?></td>
-									<td><?php echo $projeto_envolvido->horas_trabalhadas; ?></td>
-									<td><?php echo fdatetime($projeto->prazo, '/'); ?></td>
+									<td><?php echo $project_involved->time_entry_count; ?></td>
+									<td><?php echo $project_involved->hours_worked; ?></td>
+									<td><?php echo fdatetime($project->deadline, '/'); ?></td>
 									<td>
-										<a href="<?php echo base_url('projeto/visualizar/'.$projeto->idprojeto); ?>" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-th-large"></i></a>
-										<?php if($cadastra_projeto){ ?>
-											<a class="btn btn-xs btn-info" alt="Gerar Relatório" title="Gerar Relatório" href="<?php echo base_url('relatorio/gerar/'. $projeto->idprojeto); ?>" id="gerar_relatorio">
+										<a href="<?php echo base_url('project/view/'.$project->project_id); ?>" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-th-large"></i></a>
+										<?php if($can_create_project){ ?>
+											<a class="btn btn-xs btn-info" alt="Create Report" title="Create Report" href="<?php echo base_url('report/generate/'. $project->project_id); ?>" id="generate_report">
 												<i class='glyphicon glyphicon-file'></i>
 											</a>
 										<?php } ?>
 										
-										<?php if($cadastra_projeto){ ?>
-											<a class="btn btn-xs btn-warning" alt="Editar Projeto" title="Editar Projeto" href="<?php echo base_url('projeto/editar/'. $projeto->idprojeto); ?>" id="cadastrar_projeto">
+										<?php if($can_create_project){ ?>
+											<a class="btn btn-xs btn-warning" alt="Edit Project" title="Edit Project" href="<?php echo base_url('project/edit/'. $project->project_id); ?>" id="create_project">
 												<i class='glyphicon glyphicon-pencil'></i>
 											</a>
 										<?php } ?>
 							
-										<?php if($lanca_etapa){ ?>
-											<a class="btn btn-xs btn-info <?php if($projeto->status == 'concluido'){ echo "disabled"; } ?>" alt="Lançar Etapa" title="Lançar Etapa" href="<?php echo base_url('etapa/lancar/'. $projeto->idprojeto); ?>" id="lancar_etapa">
+										<?php if($can_log_time){ ?>
+											<a class="btn btn-xs btn-info <?php if($project->status == 'completed'){ echo "disabled"; } ?>" alt="Log Time" title="Log Time" href="<?php echo base_url('time_entry/start/'. $project->project_id); ?>" id="log_time_entry">
 												<i class='glyphicon glyphicon-time'></i>
 											</a>
 										<?php } ?>
 										
-										<?php if($lanca_pagamento){ ?>
-											<a class="btn btn-xs btn-success <?php if($projeto->status == 'concluido'){ echo "disabled"; } ?>" alt="Lançar Pagamento" title="Lançar Pagamento" href="<?php echo base_url('financeiro/cadastrar/'. $projeto->idprojeto); ?>" id="lancar_pagamento">
+										<?php if($can_log_payment){ ?>
+											<a class="btn btn-xs btn-success <?php if($project->status == 'completed'){ echo "disabled"; } ?>" alt="Add Payment" title="Add Payment" href="<?php echo base_url('finance/create/'. $project->project_id); ?>" id="log_payment">
 												<i class='glyphicon glyphicon-usd'></i>
 											</a>
 										<?php } ?>
@@ -397,21 +397,21 @@ if($logou == TRUE){ ?>
 								</tr>
 								<?php } 
 
-								if(count($projetos_envolvidos) == 0){
-									echo '<td colspan="8" style="text-align:center;">Você não tem projetos recentes.</td>';
+								if(count($projects_involved) == 0){
+									echo '<td colspan="8" style="text-align:center;">You have no recent projects.</td>';
 								}
 
 								?>
 								
 							</table>
 							
-							<?php if(count($projetos_envolvidos) > 5){ ?>
-								<div id="paginacao_projetos" style="display:inline;"></div>
+							<?php if(count($projects_involved) > 5){ ?>
+								<div id="pagination_projects" style="display:inline;"></div>
 
 								<script>
-								var pager = new Pager('tabela_projetos', 5);
+								var pager = new Pager('table_projects', 5);
 								pager.init();
-								pager.showPageNav('pager', 'paginacao_projetos');
+								pager.showPageNav('pager', 'pagination_projects');
 								pager.showPage(1);
 								</script>
 							<?php } ?>
@@ -427,58 +427,58 @@ if($logou == TRUE){ ?>
 					<br />
 
 					<div class="panel panel-default">
-						<div class="panel-heading">Últimas etapas de projeto realizadas</div>
-						<table class="table table-bordered table-hover table-condensed" id="table_etapas">
+						<div class="panel-heading">Latest completed time entries</div>
+						<table class="table table-bordered table-hover table-condensed" id="table_time_entries">
 							
-							<!--<tr class="info"><td colspan="10"><strong>Etapas Concluídas</strong></td></tr>-->
+							<!--<tr class="info"><td colspan="10"><strong>Completed Time Entries</strong></td></tr>-->
 							
 							<tr>
-								<th width="">Projeto</th>
-								<th width="">Fase</th>
-								<th width="">Descrição Técnica</th>
-								<!-- <th width="">Descrição Cliente</th> -->
-								<th width="">Data</th>
-								<th width="">Início</th>
-								<th width="">Fim</th>
-								<th width="">Tempo</th>
+								<th width="">Project</th>
+								<th width="">Phase</th>
+								<th width="">Technical Description</th>
+								<!-- <th width="">Client Description</th> -->
+								<th width="">Date</th>
+								<th width="">Start</th>
+								<th width="">End</th>
+								<th width="">Time</th>
 								<th width="70px"></th>		
 							</tr>
 							
-							<?php if($minhas_etapas->num_rows() == 0){ ?>
-								<tr><td colspan="9" style="text-align:center;">Você ainda não lançou etapas.</td></tr>
+							<?php if($my_time_entries->num_rows() == 0){ ?>
+								<tr><td colspan="9" style="text-align:center;">You haven't logged any time yet.</td></tr>
 							<?php } ?>
 							
-							<?php foreach($minhas_etapas->result() as $etapa){ ?>
+							<?php foreach($my_time_entries->result() as $time_entry){ ?>
 							<tr>
-								<td title="<?php echo '# '.$etapa->idprojeto; ?>">
-									<?php echo  '<a href="'. base_url('projeto/visualizar/'. $etapa->idprojeto) .'" title="'. $etapa->prioridade .'">' . $etapa->nomeprojeto . '</a>'; ?>
+								<td title="<?php echo '# '.$time_entry->project_id; ?>">
+									<?php echo  '<a href="'. base_url('project/view/'. $time_entry->project_id) .'" title="'. $time_entry->priority .'">' . $time_entry->project_name . '</a>'; ?>
 								</td>
-								<td><?php echo  $etapa->fase; ?></td>
-								<td><?php echo  $etapa->descricao_tecnica; ?></td>
-								<!-- <td><?php echo  $etapa->descricao_cliente; ?></td> -->
-								<td><?php echo fdata($etapa->data, '/'); ?></td>
-								<td><?php echo fhora($etapa->inicio); ?></td>
-								<td><?php echo fhora($etapa->fim); ?></td>
-								<td><?php echo calcular_horas($etapa->fim, $etapa->inicio); ?></td>
+								<td><?php echo  $time_entry->phase; ?></td>
+								<td><?php echo  $time_entry->technical_description; ?></td>
+								<!-- <td><?php echo  $time_entry->client_description; ?></td> -->
+								<td><?php echo fdate($time_entry->date, '/'); ?></td>
+								<td><?php echo ftime($time_entry->start_time); ?></td>
+								<td><?php echo ftime($time_entry->end_time); ?></td>
+								<td><?php echo calculate_hours($time_entry->end_time, $time_entry->start_time); ?></td>
 								<td>
-									<a class="btn btn-xs btn-warning" href="<?php echo base_url('etapa/editar/'. $etapa->idetapa); ?>"><i class="glyphicon glyphicon-edit"></i></a>
-									<a class="btn btn-xs btn-danger" id="excluir_etapa_<?php echo $etapa->idetapa; ?>"><i class="glyphicon glyphicon-remove"></i></a>
+									<a class="btn btn-xs btn-warning" href="<?php echo base_url('time_entry/edit/'. $time_entry->time_entry_id); ?>"><i class="glyphicon glyphicon-edit"></i></a>
+									<a class="btn btn-xs btn-danger" id="delete_time_entry_<?php echo $time_entry->time_entry_id; ?>"><i class="glyphicon glyphicon-remove"></i></a>
 								</td>
 							</tr>
 
 							<script>
-							$("#excluir_etapa_<?php echo $etapa->idetapa; ?>").click(function () {
+							$("#delete_time_entry_<?php echo $time_entry->time_entry_id; ?>").click(function () {
 								reset();
-								alertify.confirm("Tem certeza que deseja deletar esta Etapa de Projeto permanentemente? <br /><b><?php echo $etapa->fase; ?></b> - <?php echo $etapa->descricao_tecnica; ?>", function (e) {
+								alertify.confirm("Are you sure you want to permanently delete this time entry? <br /><b><?php echo $time_entry->phase; ?></b> - <?php echo $time_entry->technical_description; ?>", function (e) {
 									if (e) {
-										var url = "<?php echo base_url('etapa/delete/'.$etapa->idetapa); ?>";
+										var url = "<?php echo base_url('time_entry/delete/'.$time_entry->time_entry_id); ?>";
 									
 										if (url) {
 											window.location = url;
 										}
 										
 									} else {
-										alertify.error("Etapa não removida.");
+										alertify.error("Time entry not removed.");
 									}
 								});
 								return false;
@@ -489,13 +489,13 @@ if($logou == TRUE){ ?>
 						</table>
 						</div>
 							
-						<?php if($etapas->num_rows() > 10){ ?>
-							<div id="paginacao_etapas" style="display:inline"></div>
+						<?php if($time_entries->num_rows() > 10){ ?>
+							<div id="pagination_time_entries" style="display:inline"></div>
 
 							<script>
-							var pager = new Pager('table_etapas', 10);
+							var pager = new Pager('table_time_entries', 10);
 							pager.init();
-							pager.showPageNav('pager', 'paginacao_etapas');
+							pager.showPageNav('pager', 'pagination_time_entries');
 							pager.showPage(1);
 							</script>
 						<?php } ?>
@@ -510,50 +510,50 @@ if($logou == TRUE){ ?>
 					<div class="panel panel-default">
 
 						<div class="panel-heading">
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse3">O que estou fazendo agora?</a> <?php if($etapa_aberta->num_rows() == 1){ echo'<span class="badge pull-right">1</span>';} ?></h4>
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse3">What am I working on now?</a> <?php if($open_time_entry->num_rows() == 1){ echo'<span class="badge pull-right">1</span>';} ?></h4>
 						</div>
 						
 						<div class="panel-body">
 
-							<?php if($etapa_aberta->num_rows() == 1){ $a_etapa = $etapa_aberta->row();?>
+							<?php if($open_time_entry->num_rows() == 1){ $a_time_entry = $open_time_entry->row();?>
 
 								<br />
 								
 								<table class="table table-hover">
 
 									<tr>
-										<td width="150px;"><strong>Projeto:</strong></td>
+										<td width="150px;"><strong>Project:</strong></td>
 										<td>
-											<a href="<?php echo base_url('projeto/visualizar/'. $a_etapa->idprojeto); ?>" title="<?php echo $a_etapa->projeto_descricao; ?>"><?php echo $a_etapa->nomeprojeto.'</a> - <strong>Prioridade: </strong>'.ucfirst($a_etapa->projeto_prioridade); ?>
+											<a href="<?php echo base_url('project/view/'. $a_time_entry->project_id); ?>" title="<?php echo $a_time_entry->project_description; ?>"><?php echo $a_time_entry->project_name.'</a> - <strong>Priority: </strong>'.ucfirst($a_time_entry->project_priority); ?>
 										</td>
 									</tr>
 
 									<tr>
-										<td><strong>Fase:</strong></td>
-										<td><?php echo $a_etapa->fase; ?></td>
+										<td><strong>Phase:</strong></td>
+										<td><?php echo $a_time_entry->phase; ?></td>
 									</tr>
 
 									<tr>
-										<td><strong>Descrição Técnica:</strong></td>
-										<td><?php echo $a_etapa->descricao_tecnica; ?></td>
+										<td><strong>Technical Description:</strong></td>
+										<td><?php echo $a_time_entry->technical_description; ?></td>
 									</tr>
 
 									<tr>
-										<td><strong>Descrição Cliente:</strong></td>
-										<td><?php echo $a_etapa->descricao_cliente; ?></td>
+										<td><strong>Client Description:</strong></td>
+										<td><?php echo $a_time_entry->client_description; ?></td>
 									</tr>
 
 								</table>
 
 							<?php }else{
-								#echo 'Não existe etapa em aberto no momento.';
+								#echo 'There is no open time entry right now.';
 							} ?>
 
-							<?php if($etapa_aberta->num_rows() == 1){ $a_etapa = $etapa_aberta->row();?> <span class="pull-left"><strong><?php echo fdata($a_etapa->data, "/") . ' - ' . fhora($a_etapa->inicio); ?></strong><br> <?php echo $a_etapa->fase . ' - ' . $a_etapa->nomeprojeto; ?></span>
-								<span class="pull-right"><a href="<?php echo base_url('etapa'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Terminar Contagem</a>
-								<a href="<?php echo base_url('etapa'); ?>" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> Excluir Contagem</a></span>
+							<?php if($open_time_entry->num_rows() == 1){ $a_time_entry = $open_time_entry->row();?> <span class="pull-left"><strong><?php echo fdate($a_time_entry->date, "/") . ' - ' . ftime($a_time_entry->start_time); ?></strong><br> <?php echo $a_time_entry->phase . ' - ' . $a_time_entry->project_name; ?></span>
+								<span class="pull-right"><a href="<?php echo base_url('time_entry'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Stop Timer</a>
+								<a href="<?php echo base_url('time_entry'); ?>" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> Delete Timer</a></span>
 							<?php }else{ ?>
-								<span class="pull-right"><a href="<?php echo base_url('etapa'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Lançar Horas de Etapa</a></span>
+								<span class="pull-right"><a href="<?php echo base_url('time_entry'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Log Time</a></span>
 							<?php } ?>
 						</div>
 					</div>
@@ -566,28 +566,28 @@ if($logou == TRUE){ ?>
 					<br />
 					<div class="panel panel-default">
 
-						<div class="panel-heading">Quantidades de horas trabalhadas por dia</div>
+						<div class="panel-heading">Hours worked per day</div>
 
-						<div id="grafico_horas_trabalhadas" style="min-width: 500px; width: 100%; height: 350px; margin: 0 auto"></div>
+						<div id="chart_hours_worked" style="min-width: 500px; width: 100%; height: 350px; margin: 0 auto"></div>
 
 						<?php /*
-						<table class="table table-bordered table-hover table-condensed" id="table_horas_trabalhadas">
+						<table class="table table-bordered table-hover table-condensed" id="table_hours_worked">
 
-							<!--<tr class="info"><td colspan="10"><strong>Etapas Concluídas</strong></td></tr>-->
+							<!--<tr class="info"><td colspan="10"><strong>Completed Time Entries</strong></td></tr>-->
 							
 							<tr>
-								<th width="150px;" title="Data">Data</th>
-								<th width="" title="Quantidade de horas realizadas no dia">Horas</th>	
+								<th width="150px;" title="Date">Date</th>
+								<th width="" title="Hours worked that day">Hours</th>	
 							</tr>
 							
-							<?php if(count($horas_trabalhadas) == 0){ ?>
-								<tr><td colspan="2" style="text-align:center;">Você ainda não tem horas trabalhadas.</td></tr>
+							<?php if(count($hours_worked) == 0){ ?>
+								<tr><td colspan="2" style="text-align:center;">You have no hours worked yet.</td></tr>
 							<?php } ?>
 							
-							<?php foreach($horas_trabalhadas as $hr_data => $hora){ ?>
+							<?php foreach($hours_worked as $hr_date => $time){ ?>
 							<tr>
-								<td><?php echo fdata($hr_data, '/'); ?></td>
-								<td><?php echo $hora; ?></td>
+								<td><?php echo fdate($hr_date, '/'); ?></td>
+								<td><?php echo $time; ?></td>
 							</tr>
 							<?php } ?>
 							
@@ -596,13 +596,13 @@ if($logou == TRUE){ ?>
 						*/ ?>
 					</div>
 							
-						<?php /*if($etapas->num_rows() > 10){ ?>
-							<div id="paginacao_horas_trabalhadas" style="display:inline"></div>
+						<?php /*if($time_entries->num_rows() > 10){ ?>
+							<div id="pagination_hours_worked" style="display:inline"></div>
 
 							<script>
-							var pager2 = new Pager('table_horas_trabalhadas', 10);
+							var pager2 = new Pager('table_hours_worked', 10);
 							pager2.init();
-							pager2.showPageNav('pager2', 'paginacao_horas_trabalhadas');
+							pager2.showPageNav('pager2', 'pagination_hours_worked');
 							pager2.showPage(1);
 							</script>
 						<?php } */ ?>
@@ -621,45 +621,45 @@ if($logou == TRUE){ ?>
 
 <script>
 $(function () {
-        $('#grafico_horas_trabalhadas').highcharts({
+        $('#chart_hours_worked').highcharts({
 			credits: false,
             chart: {
             },
             title: {
-                text: 'Últimos 10 dias'
+                text: 'Last 10 days'
             },
             xAxis: {
 				categories: [
 				<?php 
-				$cont = 0;
-				foreach($horas_trabalhadas as $hr_data => $hora){ 
-					echo "'". fdata($hr_data, '/') . "',";
-					$cont++;
-					if($cont == 10) break;
+				$counter = 0;
+				foreach($hours_worked as $hr_date => $time){ 
+					echo "'". fdate($hr_date, '/') . "',";
+					$counter++;
+					if($counter == 10) break;
 				} ?>
 				]
             },
 			yAxis: {
 				title: {
-                    text: 'Quantidade de Horas'
+                    text: 'Hours'
                 },
             },
 			
             series: [	
 			{
                 type: 'column',
-                name: 'Horas',
+                name: 'Hours',
                 data: [
                 <?php 
-				$cont = 0;
-				foreach($horas_trabalhadas as $hr_data => $hora){ 
-					$hr = explode(':', $hora);
+				$counter = 0;
+				foreach($hours_worked as $hr_date => $time){ 
+					$hr = explode(':', $time);
 
 					echo (float) $hr[0].'.'.$hr[1];
 					echo ",";
 
-					$cont++;
-					if($cont == 10) break;
+					$counter++;
+					if($counter == 10) break;
 				} ?>		
                 ],
                 marker: {

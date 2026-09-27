@@ -1,39 +1,39 @@
 <?php
 if(!defined('BASEPATH')) exit('No direct script access allowed');
 
-if (!function_exists('salvar_log')) {
+if (!function_exists('save_log')) {
 
-    function salvar_log($controlador, $metodo, $idregistro = 0, $nome = ''){
+    function save_log($controller, $method, $record_id = 0, $name = ''){
 
         $CI = & get_instance();
 
-        if(($controlador != "acesso") || ($metodo != "nova_senha")){
+        if(($controller != "auth") || ($method != "new_password")){
             
-            if(empty($CI->session->userdata('usuario')->idusuario)){
+            if(empty($CI->session->userdata('user')->user_id)){
                 $CI->session->sess_destroy();
                 redirect("/");
             }
 
-            $idusuario = $CI->session->userdata('usuario')->idusuario;
+            $user_id = $CI->session->userdata('user')->user_id;
 			
         }else{
-            $idusuario = $idregistro;
+            $user_id = $record_id;
         }
 		
-        if(!empty($idusuario)){
-			$objeto              = new stdClass();
-			$objeto->data        = date("Y-m-d H:i:s");
-			$objeto->idusuario   = $idusuario;
-			$objeto->controle    = $controlador;
-			$objeto->metodo      = $metodo;
-			$objeto->idregistro  = $idregistro;
-			$objeto->nome        = $nome;
-			$objeto->ip          = $CI->session->userdata('ip_address');
-			$objeto->user_agent  = $CI->session->userdata('user_agent');
+        if(!empty($user_id)){
+			$entry              = new stdClass();
+			$entry->date        = date("Y-m-d H:i:s");
+			$entry->user_id     = $user_id;
+			$entry->controller  = $controller;
+			$entry->method      = $method;
+			$entry->record_id   = $record_id;
+			$entry->name        = $name;
+			$entry->ip          = $CI->session->userdata('ip_address');
+			$entry->user_agent  = $CI->session->userdata('user_agent');
 			
-            $log_salvo = $CI->db->insert("log", $objeto);
+            $saved = $CI->db->insert("log", $entry);
 
-            if($log_salvo)
+            if($saved)
                 return TRUE;
             else
                 return FALSE;

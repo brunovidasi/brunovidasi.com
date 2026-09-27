@@ -11,8 +11,8 @@ line-height: 20px;
 }
 
 ul{ list-style:none;}
-.btn-entrar{ background:#ccff00;}
-.btn-entrar:hover{ background:#bae900;}
+.btn-signin{ background:#ccff00;}
+.btn-signin:hover{ background:#bae900;}
 
 table{font-size:13px;}
 table form{float:left; margin:0;}

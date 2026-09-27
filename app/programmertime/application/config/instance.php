@@ -102,7 +102,7 @@ function pt_config($key = null)
  * Creates the SQLite database from schema.sqlite.sql the first time the app
  * runs, so there is no manual import step. The seeded admin account gets its
  * password from the config's admin_password: passwords are stored as
- * md5(encryption_key . password) (see cripto_helper.php), so the hash can only
+ * md5(encryption_key . password) (see hash_password_helper.php), so the hash can only
  * be made here, once the key is known. admin_password is not read again after
  * this and can be removed from the config file.
  */
@@ -136,7 +136,7 @@ function pt_create_database($config)
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$pdo->exec(file_get_contents(dirname(__DIR__, 2).'/schema.sqlite.sql'));
 
-			$admin = $pdo->prepare('UPDATE usuario SET senha = ?, data_cadastro = ? WHERE idusuario = 1');
+			$admin = $pdo->prepare('UPDATE user SET password = ?, created_at = ? WHERE user_id = 1');
 			$admin->execute(array(md5($config['encryption_key'].$config['admin_password']), date('Y-m-d H:i:s')));
 			$pdo = null;
 

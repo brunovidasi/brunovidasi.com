@@ -2,12 +2,12 @@
 
 	<style>
 /*
-		.header-principal #programmer_time{
-			color: <?php echo $this->session->userdata('cor'); ?> !important;
+		.header-main #programmer_time{
+			color: <?php echo $this->session->userdata('color'); ?> !important;
 		}
 
-		.menu-principal .glyphicon{
-			color: <?php echo $this->session->userdata('cor'); ?> !important;
+		.menu-main .glyphicon{
+			color: <?php echo $this->session->userdata('color'); ?> !important;
 		}
 */
 		.off{
@@ -20,7 +20,7 @@
 
 	</style>
 
-	<?php if($this->session->flashdata("logou")){ ?>
+	<?php if($this->session->flashdata("just_logged_in")){ ?>
 
 	<script>
 	(function() {
@@ -102,21 +102,21 @@
 
 	<?php } ?>
 
-	<div id="header-principal">
+	<div id="header-main">
 		<a class="ptime_logo" href="<?php echo base_url(); ?>">
-			<?php if($this->session->flashdata("logou")){ ?>
+			<?php if($this->session->flashdata("just_logged_in")){ ?>
 			<div id="programmer_time"></div>
 
 			<?php }else{ ?>
 
-			<div id="programmer_time" class="visible-lg visible-md visible-sm">P<span style="color:#CCC;" >rogrammer</span> Time <span style="color:#CCC;"><span id="texto"></span></span></div>
-			<div id="programmer_time" class="hidden-lg hidden-md hidden-sm">P Time <span style="color:#CCC;"><span id="texto_mobile"></span></span></div>
+			<div id="programmer_time" class="visible-lg visible-md visible-sm">P<span style="color:#CCC;" >rogrammer</span> Time <span style="color:#CCC;"><span id="text"></span></span></div>
+			<div id="programmer_time" class="hidden-lg hidden-md hidden-sm">P Time <span style="color:#CCC;"><span id="text_mobile"></span></span></div>
 
 			<?php } ?>
 		</a>
-		<div id='imagem_usuario_div'>
-			<a href="<?php echo base_url('usuario/visualizar'); ?>">
-				<img src="<?php echo base_url('assets/images/usuarios/'.$this->session->userdata('imagem')); ?>" class="img-thumbnail img-circle" id="imagem_usuario" style="background-color:<?php echo $this->session->userdata('cor'); ?>;" />
+		<div id='image_user_div'>
+			<a href="<?php echo base_url('user/view'); ?>">
+				<img src="<?php echo base_url('assets/images/users/'.$this->session->userdata('image')); ?>" class="img-thumbnail img-circle" id="user_image" style="background-color:<?php echo $this->session->userdata('color'); ?>;" />
 			</a>
 		</div>
 
@@ -127,126 +127,126 @@
 	<script>
 	// $(document).ready(function(){
 	// 	$("#hide-header").on('click', function(){
-	// 			$("#header-principal").toggle(1000);
+	// 			$("#header-main").toggle(1000);
 	// 	});
 	// });
 	</script>
 
 	
 	
-	<div class="menu-principal">
+	<div class="menu-main">
 	
 	<ul class="nav nav-tabs">
 
 		<li class="<?php if($this->session->userdata('dashboard')){echo 'active';} ?>" style="margin-left: 5px;">
-			<a href="<?php echo base_url('dashboard/'); ?>" id="dashboard" title="<?php echo lang('pagina_inicial'); ?>">
+			<a href="<?php echo base_url('dashboard/'); ?>" id="dashboard" title="<?php echo lang('home_page'); ?>">
 				<i class='glyphicon glyphicon-home'></i>
 			</a>
 		</li>
 
-		<li class="dropdown <?php if($this->session->userdata('clientes')){echo 'active';}?>">
+		<li class="dropdown <?php if($this->session->userdata('clients')){echo 'active';}?>">
 			
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_cliente'); ?>">
-				<i class='glyphicon glyphicon-user'></i> <?php echo lang('clientes'); ?> <span class="caret"></span>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_client'); ?>">
+				<i class='glyphicon glyphicon-user'></i> <?php echo lang('clients'); ?> <span class="caret"></span>
 			</a>
 			
 			<ul class="dropdown-menu">
 				<li>
-					<a tabindex="-1" href="<?php echo base_url('cliente/'); ?>">
-						<i class='glyphicon glyphicon-user'></i> <?php echo lang('lista_clientes'); ?>
+					<a tabindex="-1" href="<?php echo base_url('client/'); ?>">
+						<i class='glyphicon glyphicon-user'></i> <?php echo lang('client_list'); ?>
 					</a>
 				</li>
 
-				<?php if($this->session->userdata('cadastra_cliente')){ ?>
+				<?php if($this->session->userdata('can_create_client')){ ?>
 
 					<li class="divider"></li>
 
 					<li>
-						<a tabindex="-1" href="<?php echo base_url('cliente/cadastrar'); ?>">
-							<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('cadastra_cliente'); ?>
+						<a tabindex="-1" href="<?php echo base_url('client/create'); ?>">
+							<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('menu_new_client'); ?>
 						</a>
 					</li>
 				<?php } ?>
 			</ul>
 		</li>
 
-		<li class="dropdown <?php if($this->session->userdata('projetos')){echo 'active';}?>">
+		<li class="dropdown <?php if($this->session->userdata('projects')){echo 'active';}?>">
 
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_projeto'); ?>">
-				<i class='glyphicon glyphicon-file'></i> <?php echo lang('projetos'); ?> <span class="caret"></span>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_project'); ?>">
+				<i class='glyphicon glyphicon-file'></i> <?php echo lang('projects'); ?> <span class="caret"></span>
 			</a>
 			
 			<ul class="dropdown-menu">
-				<li class="dropdown-header"><?php echo lang('painel'); ?></li>
+				<li class="dropdown-header"><?php echo lang('menu_dashboard'); ?></li>
 
 				<!--<li><a tabindex="-1" href="<?php echo base_url('dashboard/'); ?>"><i class='glyphicon glyphicon-home'></i> Dashboard</a></li>-->
 
 				<li>
-					<a tabindex="-1" href="<?php echo base_url('dashboard/calendario/'); ?>">
-						<i class='glyphicon glyphicon-calendar'></i> <?php echo lang('calendario'); ?>
+					<a tabindex="-1" href="<?php echo base_url('dashboard/calendar/'); ?>">
+						<i class='glyphicon glyphicon-calendar'></i> <?php echo lang('calendar'); ?>
 					</a>
 				</li>
 
 				<li class="divider"></li>
 
 				<li class="dropdown-header">
-					<?php echo lang('projetos'); ?>
+					<?php echo lang('projects'); ?>
 				</li>
 
 					<li>
-						<a tabindex="-1" href="<?php echo base_url('projeto/lista'); ?>">
-							<i class='glyphicon glyphicon-folder-close'></i> <?php echo lang('lista_projetos'); ?></a></li>
+						<a tabindex="-1" href="<?php echo base_url('project/list'); ?>">
+							<i class='glyphicon glyphicon-folder-close'></i> <?php echo lang('project_list'); ?></a></li>
 
-							<?php if($this->session->userdata('cadastra_projeto')){ ?>
+							<?php if($this->session->userdata('can_create_project')){ ?>
 								<li>
-									<a tabindex="-1" href="<?php echo base_url('projeto/cadastrar'); ?>">
-										<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('cadastra_projeto'); ?>
+									<a tabindex="-1" href="<?php echo base_url('project/create'); ?>">
+										<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('menu_new_project'); ?>
 									</a>
 								</li>
 							<?php } ?>
 				
-					<?php if($this->session->userdata('lanca_etapa')){ ?>
+					<?php if($this->session->userdata('can_log_time')){ ?>
 
 						<li class="divider"></li>
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('etapa/lista'); ?>">
-								<i class='glyphicon glyphicon-time'></i> <?php echo lang('lista_etapas'); ?>
+							<a tabindex="-1" href="<?php echo base_url('time_entry/list'); ?>">
+								<i class='glyphicon glyphicon-time'></i> <?php echo lang('time_entry_list'); ?>
 							</a>
 						</li>
 
 					<?php }
-					if($this->session->userdata('lanca_pagamento')){ ?>
-						<!--<li><a tabindex="-1" href="<?php echo base_url('financeiro/lista'); ?>"><i class='glyphicon glyphicon-usd'></i> Lista de Pagamentos</a></li>-->
+					if($this->session->userdata('can_log_payment')){ ?>
+						<!--<li><a tabindex="-1" href="<?php echo base_url('finance/list'); ?>"><i class='glyphicon glyphicon-usd'></i> Payment List</a></li>-->
 					<?php } ?>
 			</ul>
 		</li>
 		
-		<?php if($this->session->userdata('confirmado') == 'sim'){ ?>
+		<?php if($this->session->userdata('confirmed') == 'yes'){ ?>
 
 
-			<?php if($this->session->userdata('lanca_etapa')){ ?>
+			<?php if($this->session->userdata('can_log_time')){ ?>
 
-				<!--<li class="<?php if($this->session->userdata('tarefas')){echo 'active';} ?>">
-					<a href="<?php echo base_url('tarefa/lista/'.$this->session->userdata('id')); ?>" title="<?php echo lang('alt_tarefa'); ?>">
-						<i class='glyphicon glyphicon-list-alt'></i> <span class="visible-lg-in visible-md-in"><?php echo lang('tarefa'); ?></span>
+				<!--<li class="<?php if($this->session->userdata('tasks')){echo 'active';} ?>">
+					<a href="<?php echo base_url('task/list/'.$this->session->userdata('id')); ?>" title="<?php echo lang('alt_task'); ?>">
+						<i class='glyphicon glyphicon-list-alt'></i> <span class="visible-lg-in visible-md-in"><?php echo lang('task'); ?></span>
 						<?php 
-							$numero_tarefas = $this->tarefa_model->get_tarefas(0, $this->session->userdata('id'), "ASC", 0, 0, "", 'numero', 'concluido');
-							if($numero_tarefas > 0)echo '<span class="badge">'.$numero_tarefas.'</span>';
+							$number_tasks = $this->task_model->get_tasks(0, $this->session->userdata('id'), "ASC", 0, 0, "", 'count', 'completed');
+							if($number_tasks > 0)echo '<span class="badge">'.$number_tasks.'</span>';
 						?>
 					</a>
 
 
 				</li> -->
 
-				<li class="dropdown <?php if($this->session->userdata('tarefas')){echo 'active';}?>">
+				<li class="dropdown <?php if($this->session->userdata('tasks')){echo 'active';}?>">
 
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_tarefa'); ?>">
-						<i class='glyphicon glyphicon-list-alt'></i> <?php echo lang('tarefa'); ?> 
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_task'); ?>">
+						<i class='glyphicon glyphicon-list-alt'></i> <?php echo lang('task'); ?> 
 						<?php 
-							$numero_tarefas = $this->tarefa_model->get_tarefas(0, $this->session->userdata('id'), "ASC", 0, 0, "", 'numero', 'concluido');
-							$numero_tarefas_totais = $this->tarefa_model->get_tarefas(0, 0, "ASC", 0, 0, "", 'numero', 'concluido');
-							if($numero_tarefas > 0)echo '<span class="badge">'.$numero_tarefas.'</span>';
+							$number_tasks = $this->task_model->get_tasks(0, $this->session->userdata('id'), "ASC", 0, 0, "", 'count', 'completed');
+							$number_tasks_totals = $this->task_model->get_tasks(0, 0, "ASC", 0, 0, "", 'count', 'completed');
+							if($number_tasks > 0)echo '<span class="badge">'.$number_tasks.'</span>';
 						?>
 						<span class="caret"></span>
 					</a>
@@ -254,24 +254,24 @@
 					<ul class="dropdown-menu">
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('tarefa/lista/'.$this->session->userdata('id')); ?>">
-								<i class='glyphicon glyphicon-folder-close'></i> Minhas Tarefas 
-								<?php if($numero_tarefas > 0) echo '<span class="badge">'.$numero_tarefas.'</span>'; ?>
+							<a tabindex="-1" href="<?php echo base_url('task/list/'.$this->session->userdata('id')); ?>">
+								<i class='glyphicon glyphicon-folder-close'></i> My Tasks 
+								<?php if($number_tasks > 0) echo '<span class="badge">'.$number_tasks.'</span>'; ?>
 							</a>
 						</li>
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('tarefa/lista/'); ?>">
-								<i class='glyphicon glyphicon-folder-close'></i> Todas as Tarefas
-								<?php if($numero_tarefas_totais > 0) echo '<span class="badge">'.$numero_tarefas_totais.'</span>'; ?>
+							<a tabindex="-1" href="<?php echo base_url('task/list/'); ?>">
+								<i class='glyphicon glyphicon-folder-close'></i> All Tasks
+								<?php if($number_tasks_totals > 0) echo '<span class="badge">'.$number_tasks_totals.'</span>'; ?>
 							</a>
 						</li>
 
 						<li class="divider"></li>
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('tarefa/cadastrar/'); ?>">
-								<i class='glyphicon glyphicon-pencil'></i> Cadastrar Nova
+							<a tabindex="-1" href="<?php echo base_url('task/create/'); ?>">
+								<i class='glyphicon glyphicon-pencil'></i> New Task
 							</a>
 						</li>
 
@@ -280,83 +280,83 @@
 					</ul>
 				</li>
 
-				<li class="<?php if($this->session->userdata('etapas')){echo 'active';} ?>">
-					<a href="<?php echo base_url('etapa/'); ?>" id="lancar_etapa" title="<?php echo lang('alt_etapa'); ?>">
-						<i class='glyphicon glyphicon-time'></i> <span class="visible-lg-in visible-md-in"><?php echo lang('etapa'); ?></span>
+				<li class="<?php if($this->session->userdata('time_entries')){echo 'active';} ?>">
+					<a href="<?php echo base_url('time_entry/'); ?>" id="log_time_entry" title="<?php echo lang('alt_time_entry'); ?>">
+						<i class='glyphicon glyphicon-time'></i> <span class="visible-lg-in visible-md-in"><?php echo lang('time_entry'); ?></span>
 						<?php 
-							$etapa_aberta = $this->etapa_model->etapa_aberta($this->session->userdata('id'));
-							if($etapa_aberta->num_rows() > 0)echo '<span class="badge">1</span>';
+							$open_time_entry = $this->time_entry_model->open_time_entry($this->session->userdata('id'));
+							if($open_time_entry->num_rows() > 0)echo '<span class="badge">1</span>';
 						?>
 					</a>
 				</li>
 
 			<?php } ?>
 			
-			<?php if($this->session->userdata('lanca_pagamento')){ ?>
+			<?php if($this->session->userdata('can_log_payment')){ ?>
 
-				<li class="<?php if($this->session->userdata('financeiro')){echo 'active';} ?>" id="lancar_pagamento">
-					<a href="<?php echo base_url('financeiro/'); ?>" title="<?php echo lang('alt_financeiro'); ?>">
-						<i class='glyphicon glyphicon-usd'></i> <span class="visible-lg-in visible-md-in"><?php echo lang('financeiro'); ?></span>
+				<li class="<?php if($this->session->userdata('finance')){echo 'active';} ?>" id="log_payment">
+					<a href="<?php echo base_url('finance/'); ?>" title="<?php echo lang('alt_finance'); ?>">
+						<i class='glyphicon glyphicon-usd'></i> <span class="visible-lg-in visible-md-in"><?php echo lang('finance'); ?></span>
 					</a>
 				</li>
 
 			<?php } ?>
 			
-			<?php if($this->session->userdata('envia_relatorio')){ ?>
+			<?php if($this->session->userdata('can_send_report')){ ?>
 
-				<li class="<?php if($this->session->userdata('relatorios')){echo 'active';} ?>">
-					<a href="<?php echo base_url('relatorio/'); ?>" id="relatorios" title="<?php echo lang('alt_relatorio'); ?>">
-						<i class='glyphicon glyphicon-file'></i> <span class="visible-lg-in"><?php echo lang('relatorios'); ?></span>
+				<li class="<?php if($this->session->userdata('reports')){echo 'active';} ?>">
+					<a href="<?php echo base_url('report/'); ?>" id="reports" title="<?php echo lang('alt_report'); ?>">
+						<i class='glyphicon glyphicon-file'></i> <span class="visible-lg-in"><?php echo lang('reports'); ?></span>
 					</a>
 				</li>
 
 			<?php } ?>
 			
-			<!--<li class="<?php if($this->session->userdata('mensagem')){echo 'active';} ?>">
-				<a href="<?php echo base_url('mensagem/'); ?>" id="mensagens" title="Caixa de Entrada">
-					<i class='glyphicon glyphicon-envelope'></i> <span class="visible-lg-in">Mensagens</span>
+			<!--<li class="<?php if($this->session->userdata('message')){echo 'active';} ?>">
+				<a href="<?php echo base_url('message/'); ?>" id="messages" title="Inbox">
+					<i class='glyphicon glyphicon-envelope'></i> <span class="visible-lg-in">Messages</span>
 						<?php
-							$mensagens = $this->mensagem_model->get_mensagens_nao_lidas();
-							if($mensagens->num_rows() > 0) echo '<span class="badge">'. $mensagens->num_rows() .'</span>';
+							$messages = $this->message_model->get_unread_messages();
+							if($messages->num_rows() > 0) echo '<span class="badge">'. $messages->num_rows() .'</span>';
 						?>
 				</a>
 			</li>-->
 			
-			<?php if($this->session->userdata('cadastra_usuario')){ ?>
+			<?php if($this->session->userdata('can_create_user')){ ?>
 
-				<li class="dropdown <?php if($this->session->userdata('usuarios')){echo 'active';}?>">
+				<li class="dropdown <?php if($this->session->userdata('users')){echo 'active';}?>">
 
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_usuario'); ?>">
-						<i class='glyphicon glyphicon-user'></i> <?php echo lang('usuarios'); ?> <span class="caret"></span>
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('alt_user'); ?>">
+						<i class='glyphicon glyphicon-user'></i> <?php echo lang('users'); ?> <span class="caret"></span>
 					</a>
 					
 					<ul class="dropdown-menu">
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('usuario/lista'); ?>">
-								<i class='glyphicon glyphicon-user'></i> <?php echo lang('lista_usuarios'); ?>
+							<a tabindex="-1" href="<?php echo base_url('user/list'); ?>">
+								<i class='glyphicon glyphicon-user'></i> <?php echo lang('user_list'); ?>
 							</a>
 						</li>
 
 						<li class="divider"></li>
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('usuario/cadastrar'); ?>">
-								<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('cadastra_usuario'); ?>
+							<a tabindex="-1" href="<?php echo base_url('user/create'); ?>">
+								<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('menu_new_user'); ?>
 							</a>
 						</li>
 
-						<li class="dropdown-header"><?php echo lang('niveis_acesso'); ?></li>
+						<li class="dropdown-header"><?php echo lang('access_levels'); ?></li>
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('nivel_acesso/cadastrar'); ?>">
-								<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('cadastra_cargo'); ?>
+							<a tabindex="-1" href="<?php echo base_url('access_level/create'); ?>">
+								<i class='glyphicon glyphicon-pencil'></i> <?php echo lang('create_role'); ?>
 							</a>
 						</li>
 
 						<li>
-							<a tabindex="-1" href="<?php echo base_url('nivel_acesso/'); ?>">
-								<i class='glyphicon glyphicon-saved'></i> <?php echo lang('acesso_cargo'); ?>
+							<a tabindex="-1" href="<?php echo base_url('access_level/'); ?>">
+								<i class='glyphicon glyphicon-saved'></i> <?php echo lang('access_by_role'); ?>
 							</a>
 						</li>
 					</ul>
@@ -366,52 +366,52 @@
 		<?php } ?>
 		
 		<li class="navbar-right">
-			<a href="<?php echo base_url('acesso/sair'); ?>" style="color: #CC0000;" title="<?php echo lang('sair'); ?>" class="sair"><i class='glyphicon glyphicon-off'></i></a>
+			<a href="<?php echo base_url('auth/logout'); ?>" style="color: #CC0000;" title="<?php echo lang('logout'); ?>" class="logout"><i class='glyphicon glyphicon-off'></i></a>
 		</li>
 		
 		<?php #if(($this->session->userdata('id') == '1') OR ($this->session->userdata('id') == '2')){ ?>
-			<li class="dropdown <?php if($this->session->userdata('configuracao')){echo 'active';}?> navbar-right">
+			<li class="dropdown <?php if($this->session->userdata('settings')){echo 'active';}?> navbar-right">
 				
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('configuracoes'); ?>">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo lang('settings'); ?>">
 					<i class='glyphicon glyphicon-cog'></i>
 				</a>
 				
 				<ul class="dropdown-menu">
 
-					<li class="dropdown-header"><?php echo lang('configuracoes_gerais'); ?></li>
+					<li class="dropdown-header"><?php echo lang('general_settings'); ?></li>
 
-					<li><a tabindex="-1" href="<?php echo base_url('nivel_acesso/'); ?>"> <?php echo lang('configuracoes_acesso'); ?></a></li>
+					<li><a tabindex="-1" href="<?php echo base_url('access_level/'); ?>"> <?php echo lang('access_settings'); ?></a></li>
 
-					<li><a tabindex="-1" href="<?php echo base_url('usuario/editar'); ?>"> <?php echo lang('configuracoes_conta'); ?></a></li>
+					<li><a tabindex="-1" href="<?php echo base_url('user/edit'); ?>"> <?php echo lang('account_settings'); ?></a></li>
 
-					<li><a tabindex="-1" href="<?php echo base_url('empresa/editar'); ?>"> <?php echo lang('editar_empresa'); ?></a></li>
+					<li><a tabindex="-1" href="<?php echo base_url('company/edit'); ?>"> <?php echo lang('edit_company'); ?></a></li>
 
-					<!--<li><a tabindex="-1" href="<?php echo base_url('empresa/pagamento'); ?>"> Informações de Pagamento <i class='glyphicon glyphicon-usd'></i></a></li>-->
+					<!--<li><a tabindex="-1" href="<?php echo base_url('company/payment'); ?>"> Payment Information <i class='glyphicon glyphicon-usd'></i></a></li>-->
 					
 					<li class="divider"></li>
 
-					<li><a tabindex="-1" href="<?php echo base_url('dashboard/sobre'); ?>"> <?php echo lang('sobre'); ?></a></li>
+					<li><a tabindex="-1" href="<?php echo base_url('dashboard/about'); ?>"> <?php echo lang('about'); ?></a></li>
 
-					<!--<li><a tabindex="-1" href="<?php echo base_url('ajuda/'); ?>"><i class='glyphicon glyphicon-info-sign'></i> Ajuda </a></li>
+					<!--<li><a tabindex="-1" href="<?php echo base_url('help/'); ?>"><i class='glyphicon glyphicon-info-sign'></i> Help </a></li>
 					<?php if(($this->session->userdata('id') == '1') OR ($this->session->userdata('id') == '2')){ ?>
-						<li><a tabindex="-1" href="<?php echo base_url('ajuda/cadastrar'); ?>"><i class='glyphicon glyphicon-edit'></i> Cadastrar Ajuda </a></li>
+						<li><a tabindex="-1" href="<?php echo base_url('help/create'); ?>"><i class='glyphicon glyphicon-edit'></i> New Help Article </a></li>
 					<?php } ?>-->
 				</ul>
 			</li>
 
 		<?php #} ?>
 		
-		<li class="dropdown navbar-right <?php if($this->session->userdata('editar_usuario')){echo 'active';} ?>">
+		<li class="dropdown navbar-right <?php if($this->session->userdata('edit_user')){echo 'active';} ?>">
 
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class='glyphicon glyphicon-user'></i> <span class="visible-lg-in"><?php echo lang('ola'); ?><b><?php echo $this->session->userdata('nome_duplo'); ?></b>!</span> <span class="caret"></span>
+				<i class='glyphicon glyphicon-user'></i> <span class="visible-lg-in"><?php echo lang('hello'); ?><b><?php echo $this->session->userdata('short_name'); ?></b>!</span> <span class="caret"></span>
 			</a>
 			
 			<ul class="dropdown-menu">
 
 				<li class="disabled">
 					<a tabindex="-1" href="">
-						<i class='glyphicon glyphicon-user'></i> <?php echo $this->session->userdata('nome_completo'); ?>
+						<i class='glyphicon glyphicon-user'></i> <?php echo $this->session->userdata('full_name'); ?>
 					</a>
 				</li>
 
@@ -424,34 +424,34 @@
 				<li class="divider"></li>
 
 				<li>
-					<a tabindex="-1" href="<?php echo base_url('usuario/visualizar/'); ?>">
-						<i class='glyphicon glyphicon-user'></i> <?php echo lang('visualizar_perfil'); ?>
+					<a tabindex="-1" href="<?php echo base_url('user/view/'); ?>">
+						<i class='glyphicon glyphicon-user'></i> <?php echo lang('view_profile'); ?>
 					</a>
 				</li>
 
 				<li>
-					<a tabindex="-1" href="<?php echo base_url('usuario/editar/'); ?>">
-						<i class='glyphicon glyphicon-edit'></i> <?php echo lang('editar_perfil'); ?>
+					<a tabindex="-1" href="<?php echo base_url('user/edit/'); ?>">
+						<i class='glyphicon glyphicon-edit'></i> <?php echo lang('edit_profile'); ?>
 					</a>
 				</li>
 
 				<li>
-					<a tabindex="-1" href="<?php echo base_url('usuario/desativar_usuario'); ?>" style="color:#CC0000;">
-						<i class='glyphicon glyphicon-remove'></i> <?php echo lang('desativar_perfil'); ?>
+					<a tabindex="-1" href="<?php echo base_url('user/deactivate'); ?>" style="color:#CC0000;">
+						<i class='glyphicon glyphicon-remove'></i> <?php echo lang('deactivate_profile'); ?>
 					</a>
 				</li>
 
 				<li class="divider"></li>
 
 				<li>
-					<a tabindex="-1" id="bloquear_sessao_" href="<?php echo base_url('acesso/bloquear'); ?>">
-						<i class='glyphicon glyphicon-ban-circle'></i> <?php echo lang('bloquear_sessao'); ?>
+					<a tabindex="-1" id="lock_session_" href="<?php echo base_url('auth/lock'); ?>">
+						<i class='glyphicon glyphicon-ban-circle'></i> <?php echo lang('lock_session'); ?>
 					</a>
 				</li>
 
 				<li>
-					<a tabindex="-1" href="<?php echo base_url('acesso/sair'); ?>" class="sair">
-						<i class='glyphicon glyphicon-off'></i> <?php echo lang('sair'); ?>
+					<a tabindex="-1" href="<?php echo base_url('auth/logout'); ?>" class="logout">
+						<i class='glyphicon glyphicon-off'></i> <?php echo lang('logout'); ?>
 					</a>
 				</li>
 			</ul>
@@ -459,9 +459,9 @@
 	
 	</ul>
 
-	<?php if($this->session->userdata('confirmado') == 'nao'){ ?>
+	<?php if($this->session->userdata('confirmed') == 'no'){ ?>
 		<div class="alert alert-warning" style="text-align:center;">
-			<?php echo lang('confirmar_conta'); ?><a href="<?php echo base_url('usuario/envia_email_confirmacao/'); ?>"><?php echo lang('clique_aqui'); ?>.</a>
+			<?php echo lang('confirm_account'); ?><a href="<?php echo base_url('user/send_confirmation_email/'); ?>"><?php echo lang('click_here'); ?>.</a>
 		</div>
 	<?php } ?>
 	
@@ -470,27 +470,27 @@
 <script>	
 	$(function(){
 		$.contextMenu({
-			selector: '#imagem_usuario_div', 
+			selector: '#image_user_div', 
 			
 			callback: function(key, options) {
 				
-				if(key == "ver"){
-					var url = '<?php echo base_url("usuario/visualizar/"); ?>';
+				if(key == "view"){
+					var url = '<?php echo base_url("user/view/"); ?>';
 					if (url) {
 						window.location = url;
 					}
 				}
 				
-				if(key == "editar"){
-					var url = '<?php echo base_url("usuario/editar/".$this->session->userdata("id")); ?>';
+				if(key == "edit"){
+					var url = '<?php echo base_url("user/edit/".$this->session->userdata("id")); ?>';
 					if (url) {
 						window.location = url;
 					}
 				}
 				
-				if(key == "sair"){
-					if(validaForm()){
-						var url = '<?php echo base_url("acesso/sair/"); ?>';
+				if(key == "logout"){
+					if(validateForm()){
+						var url = '<?php echo base_url("auth/logout/"); ?>';
 						if (url) {
 							window.location = url;
 						}
@@ -500,15 +500,15 @@
 			},
 			
 			items: {
-				"ver": {name: "<?php echo lang('visualizar_perfil'); ?>", icon: "paste"},
-				"editar": {name: "<?php echo lang('editar_perfil'); ?>", icon: "edit"},
+				"view": {name: "<?php echo lang('view_profile'); ?>", icon: "paste"},
+				"edit": {name: "<?php echo lang('edit_profile'); ?>", icon: "edit"},
 				"sep1": "---------",
-				"sair": {name: "<?php echo lang('sair'); ?>", icon: "delete"},
+				"logout": {name: "<?php echo lang('logout'); ?>", icon: "delete"},
 			}
 		});
 	});
 	
-	$(".nav").on("click", "li ul li a, #lancar_etapa, #lancar_pagamento, #relatorios", function(){
+	$(".nav").on("click", "li ul li a, #log_time_entry, #log_payment, #reports", function(){
 		$("html").css("cursor", "progress");
 	});
 	
@@ -520,8 +520,8 @@
 			$("toggleCSS").href = "<?php echo base_url('assets/js/alertify/themes/alertify.ptime.css'); ?>";
 			alertify.set({
 				labels : {
-					ok     : "<?php echo lang('bloquear_sessao'); ?>",
-					cancel : "<?php echo lang('cancelar_sessao'); ?>"
+					ok     : "<?php echo lang('lock_session'); ?>",
+					cancel : "<?php echo lang('cancel_session'); ?>"
 				},
 				delay : 5000,
 				buttonReverse : false,
@@ -529,22 +529,22 @@
 			});
 		};
 
-	$(".sair").click(function () {
-		$(".sair").html("<i class='glyphicon glyphicon-off'></i> <?php echo lang('saindo'); ?> ...");
+	$(".logout").click(function () {
+		$(".logout").html("<i class='glyphicon glyphicon-off'></i> <?php echo lang('logging_out'); ?> ...");
 	});
 
-	// $("#bloquear_sessao").click(function () {
+	// $("#lock_session").click(function () {
 	// 	reset();
-	// 	alertify.confirm("Hora de almoço? Não vai utilizar o PTime agora? É sempre bom bloquear a sessão! Mas tem certeza?", function (e) {
+	// 	alertify.confirm("Lunch break? Not using PTime right now? It is always a good idea to lock your session. Are you sure?", function (e) {
 	// 		if (e) {
-	// 			var url = '<?php echo base_url('acesso/bloquear'); ?>';
+	// 			var url = '<?php echo base_url('auth/lock'); ?>';
 			
 	// 			if (url) {
 	// 				window.location = url;
 	// 			}
 				
 	// 		} else {
-	// 			alertify.info("Sessão não bloqueada.");
+	// 			alertify.info("Session not locked.");
 	// 		}
 	// 	});
 	// 	return false;
@@ -553,5 +553,5 @@
 
 </header>
 
-<main class="conteudo">
+<main class="content">
 <div>

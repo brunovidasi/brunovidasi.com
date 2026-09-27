@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Erro na Base de Dados</title>
+<title>Database Error</title>
 <style type="text/css">
 @font-face {
 	font-family: 'Fjalla One';
@@ -24,7 +24,7 @@ body{
 	padding:0; 
 }
 	
-#box_erro{
+#box_error{
 	width: 500px;
 	height: 368px;
 	margin: 0 auto;
@@ -35,7 +35,7 @@ body{
 	margin-left: -250px;
 }
 
-#mensagem{
+#message{
 	font-family: "Fjalla One", sans-serif;
 	color: #0077bb;
 	padding-top: 75px;
@@ -59,12 +59,12 @@ body{
 	
 	<div id='wrap'>
 		
-		<div id="box_erro">
+		<div id="box_error">
 			
 			<div id="programmer_time" class="visible-lg visible-md">P<span style="color:#CCC;" >rogrammer</span> Time <span style="color:#CCC;">_</span></span></div>
 			
-			<div id="mensagem">
-				Erro na Base de Dados: <br /><?php echo $message; ?>
+			<div id="message">
+				Database error: <br /><?php echo $message; ?>
 			</div>
 		
 		</div>

@@ -3,80 +3,80 @@
 class Json extends CI_Controller{
 
 	public function index(){
-		$this->logar();
+		$this->login();
 	}
 	
-	public function logar($login = NULL, $senha = NULL, $view = 'json'){
+	public function login($login = NULL, $password = NULL, $view = 'json'){
 
-		if(empty($login) && empty($senha)){
+		if(empty($login) && empty($password)){
 			$login = $this->input->post('login');
-			$senha = cripto($this->input->post('senha'));
+			$password = hash_password($this->input->post('password'));
 		}
 
-		$usuario = $this->acesso_model->get_informacao($login)->row();
-		$id	= (isset($usuario->idusuario)) ? $usuario->idusuario : 0;
+		$user = $this->auth_model->get_by_login($login)->row();
+		$id	= (isset($user->user_id)) ? $user->user_id : 0;
 
 		if ((!empty($id)) && ($id > 0)){
 
-			if(($senha == $usuario->senha) && ($usuario->status == 'ativo')){
+			if(($password == $user->password) && ($user->status == 'active')){
 
-				if($view != 'verifica') $this->acesso_model->log($usuario->numero_acesso, $id);
+				if($view != 'verify') $this->auth_model->log($user->login_count, $id);
 
-				$nivel_acesso = $this->acesso_model->nivel_acesso($usuario->nivel_acesso);
-				$empresa = $this->empresa_model->get_empresa()->row();
-				$info = $this->acesso_model->get_info()->row();
+				$access_level = $this->auth_model->access_level($user->access_level);
+				$company = $this->company_model->get_company()->row();
+				$info = $this->auth_model->get_info()->row();
 
-				$cor['hexadecimal'] = $usuario->cor;
-				$cor['rgb']['red'] = hexdec(substr(substr($usuario->cor, 1), 0, 2));
-				$cor['rgb']['green'] = hexdec(substr(substr($usuario->cor, 1), 2, 2));
-				$cor['rgb']['blue'] = hexdec(substr(substr($usuario->cor, 1), 4, 2));
-				$cor['rgb']['color'] = "rgb(".$cor['rgb']['red'].",".$cor['rgb']['green'].",".$cor['rgb']['blue'].")";
+				$color['hexadecimal'] = $user->color;
+				$color['rgb']['red'] = hexdec(substr(substr($user->color, 1), 0, 2));
+				$color['rgb']['green'] = hexdec(substr(substr($user->color, 1), 2, 2));
+				$color['rgb']['blue'] = hexdec(substr(substr($user->color, 1), 4, 2));
+				$color['rgb']['color'] = "rgb(".$color['rgb']['red'].",".$color['rgb']['green'].",".$color['rgb']['blue'].")";
 
-				$imagem['image'] = $usuario->imagem;
-				$imagem['link'] = base_url('assets/images/usuarios/'.$usuario->imagem);
-				$imagem['path'] = FCPATH.'assets/images/usuarios/'.basename((string) $usuario->imagem);
-				$imagem['extension'] = pathinfo($imagem['link'], PATHINFO_EXTENSION);
-				$imagem['width'] = $imagem['height'] = $imagem['type'] = $imagem['attr'] = NULL;
-				$imagem['base64'] = NULL;
-				if(is_file($imagem['path'])){
-					$tamanho = getimagesize($imagem['path']);
-					if($tamanho) list($imagem['width'], $imagem['height'], $imagem['type'], $imagem['attr']) = $tamanho;
-					$imagem['base64'] = base64_encode(file_get_contents($imagem['path']));
+				$image['image'] = $user->image;
+				$image['link'] = base_url('assets/images/users/'.$user->image);
+				$image['path'] = FCPATH.'assets/images/users/'.basename((string) $user->image);
+				$image['extension'] = pathinfo($image['link'], PATHINFO_EXTENSION);
+				$image['width'] = $image['height'] = $image['type'] = $image['attr'] = NULL;
+				$image['base64'] = NULL;
+				if(is_file($image['path'])){
+					$size = getimagesize($image['path']);
+					if($size) list($image['width'], $image['height'], $image['type'], $image['attr']) = $size;
+					$image['base64'] = base64_encode(file_get_contents($image['path']));
 				}
 
 
-				$asterisco = '';
-				for($a = 0; $a < strlen($this->input->post('senha')); $a++) $asterisco .= '*';
+				$asterisks = '';
+				for($a = 0; $a < strlen($this->input->post('password')); $a++) $asterisks .= '*';
 
 
 				$result["login"] = array(
-					"acesso"		=> $nivel_acesso, 
-					"funcao"		=> 'logar('.$login.', '.$asterisco.', '.$view.')', 
-					"erro"			=> 0, 
-					"mensagem"		=> NULL, 
-					"data_acesso"	=> date('Y-m-d H:i:s'), 
-					"token"			=> $usuario->senha, 
-					"email_token"	=> $usuario->email_senha, 
-					"nome"			=> $usuario->nome, 
-					"login"			=> $usuario->login, 
-					"email"			=> $usuario->email, 
-					"status"		=> $usuario->status, 
-					"nivel_acesso"	=> $usuario->nivel_acesso, 
-					"numero_acesso"	=> $usuario->numero_acesso, 
-					"confirmado"	=> $usuario->usuario_confirmado, 
-					"data_nasc"		=> $usuario->data_nascimento, 
-					"data_cadastro"	=> $usuario->data_cadastro, 
-					"ultimo_acesso"	=> $usuario->ultimo_acesso, 
-					"matricula"		=> $usuario->matricula, 
-					"rg"			=> $usuario->rg, 
-					"cpf"			=> $usuario->cpf, 
-					"imagem"		=> $imagem, 
-					"cor"			=> $cor, 
-					"empresa"		=> $empresa, 
+					"access"		=> $access_level, 
+					"function"		=> 'login('.$login.', '.$asterisks.', '.$view.')', 
+					"error"		=> 0, 
+					"message"		=> NULL, 
+					"access_date"	=> date('Y-m-d H:i:s'), 
+					"token"			=> $user->password, 
+					"email_token"	=> $user->email_token, 
+					"name"			=> $user->name, 
+					"login"			=> $user->login, 
+					"email"			=> $user->email, 
+					"status"		=> $user->status, 
+					"access_level"	=> $user->access_level, 
+					"login_count"	=> $user->login_count, 
+					"confirmed"	=> $user->confirmed, 
+					"birth_date"		=> $user->birth_date, 
+					"created_at"	=> $user->created_at, 
+					"last_access"	=> $user->last_access, 
+					"employee_id"		=> $user->employee_id, 
+					"id_number"			=> $user->id_number, 
+					"tax_id"			=> $user->tax_id, 
+					"image"		=> $image, 
+					"color"			=> $color, 
+					"company"		=> $company, 
 					"ptime_info"	=> $info 
 				);
 				
-				if($view == 'verifica') return $result["login"];
+				if($view == 'verify') return $result["login"];
 
 				else{
 					echo json_encode($result);
@@ -84,28 +84,28 @@ class Json extends CI_Controller{
 				}
 			}
 
-			elseif(($senha == $usuario->senha) && ($usuario->status == 'inativo')){
+			elseif(($password == $user->password) && ($user->status == 'inactive')){
 
-					if($view != 'verifica')
-						$this->enviar_email->inativo($usuario->email, "contato@programmertime.com", $usuario->nome, $login);
+					if($view != 'verify')
+						$this->send_email->inactive($user->email, "contact@programmertime.com", $user->name, $login);
 
 					$result["login"] = array(
-						"acesso"	=> FALSE,
-						"funcao"	=> 'logar('.$login.', *****, '.$view.')',
-						"mensagem"	=> "user_inactive",
-						"erro"		=> 3 // user inactive
+						"access"		=> FALSE,
+						"function"		=> 'login('.$login.', *****, '.$view.')',
+						"message"		=> "user_inactive",
+						"error"		=> 3 // user inactive
 					);
 
 					echo json_encode($result);
 					die();
 
-			}elseif($senha != $usuario->senha){
+			}elseif($password != $user->password){
 
 				$result["login"] = array(
-					"acesso"	=> FALSE,
-					"funcao"	=> 'logar('.$login.', *****, '.$view.')',
-					"mensagem"	=> "wrong_password",
-					"erro"		=> 2 // wrong password
+					"access"		=> FALSE,
+					"function"		=> 'login('.$login.', *****, '.$view.')',
+					"message"		=> "wrong_password",
+					"error"		=> 2 // wrong password
 				);
 
 				echo json_encode($result);
@@ -114,10 +114,10 @@ class Json extends CI_Controller{
 			}else{
 
 				$result["login"] = array(
-					"acesso"	=> FALSE,
-					"funcao"	=> 'logar('.$login.', *****, '.$view.')',
-					"mensagem"	=> "indefined_error",
-					"erro"		=> 4 // indefined error
+					"access"		=> FALSE,
+					"function"		=> 'login('.$login.', *****, '.$view.')',
+					"message"		=> "undefined_error",
+					"error"		=> 4 // undefined error
 				);
 
 				echo json_encode($result);
@@ -129,10 +129,10 @@ class Json extends CI_Controller{
 		else{
 
 			$result["login"] = array(
-				"acesso"	=> FALSE,
-				"funcao"	=> 'logar('.$login.', *****, '.$view.')',
-				"mensagem"	=> "user_not_found",
-				"erro"		=> 1 // user not found
+				"access"		=> FALSE,
+				"function"		=> 'login('.$login.', *****, '.$view.')',
+				"message"		=> "user_not_found",
+				"error"		=> 1 // user not found
 			);
 
 			echo json_encode($result);
@@ -141,147 +141,147 @@ class Json extends CI_Controller{
 
 	}
 
-	private function verificaUsuario($login = NULL, $token = NULL, $cripto = 0){
+	private function verifyUser($login = NULL, $token = NULL, $hash = 0){
 		
 		$login = $this->input->post('login');
-		$cripto = (int) $this->input->post('cripto');
+		$hash = (int) $this->input->post('hash'); // 1 = 'password' is plain text and must be hashed
 
-		$token = ($cripto == 1) ? cripto($this->input->post('senha')) : $this->input->post('senha');
+		$token = ($hash == 1) ? hash_password($this->input->post('password')) : $this->input->post('password');
 
-		return $this->logar($login, $token, 'verifica');
+		return $this->login($login, $token, 'verify');
 	}
 
-	public function getUsuario($idusuario = NULL){
+	public function getUser($user_id = NULL){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
-		if(empty($idusuario)) $idusuario = $this->input->post('idusuario');
-		$idusuario = (int) $idusuario;
+		if(empty($user_id)) $user_id = $this->input->post('user_id');
+		$user_id = (int) $user_id;
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getUsuario('.$idusuario.')',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getUser('.$user_id.')',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 
-		$array["usuario"] = $this->usuario_model->get_usuario($idusuario)->row();
-		$array["nivel_acesso"] = $this->acesso_model->nivel_acesso($array["usuario"]->nivel_acesso);
+		$array["user"] = $this->user_model->get_user($user_id)->row();
+		$array["access_level"] = $this->auth_model->access_level($array["user"]->access_level);
 
 		echo json_encode($array);
 		die();
 
 	}
 
-	public function getProjetos(){
+	public function getProjects(){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getProjetos()',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getProjects()',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 
-		$array["projetos"] = $this->projeto_model->get_projetos()->result();
+		$array["projects"] = $this->project_model->get_projects()->result();
 
 		echo json_encode($array);
 		die();
 	}
 
-	public function getProjeto($idprojeto = NULL){
+	public function getProject($project_id = NULL){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
-		if(empty($idprojeto)) $idprojeto = $this->input->post('idprojeto');
-		$idprojeto = (int) $idprojeto;
+		if(empty($project_id)) $project_id = $this->input->post('project_id');
+		$project_id = (int) $project_id;
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getProjeto('.$idprojeto.')',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getProject('.$project_id.')',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 
-		$array["projeto"] = $this->projeto_model->get_informacoes_projeto($idprojeto)->row();
+		$array["project"] = $this->project_model->get_project($project_id)->row();
 
 		echo json_encode($array);
 		die();
 	}
 
-	public function getEtapas($idprojeto = NULL){
+	public function getTimeEntries($project_id = NULL){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
-		if(empty($idprojeto)) $idprojeto = $this->input->post('idprojeto');
-		$idprojeto = (int) $idprojeto;
+		if(empty($project_id)) $project_id = $this->input->post('project_id');
+		$project_id = (int) $project_id;
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getEtapas('.$idprojeto.')',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getTimeEntries('.$project_id.')',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 
-		$array["etapas"] = $this->etapa_model->get_etapas($idprojeto)->result();
+		$array["time_entries"] = $this->time_entry_model->get_time_entries($project_id)->result();
 
 		echo json_encode($array);
 		die();
 	}
 
-	public function getEtapa($idetapa = NULL){
+	public function getTimeEntry($time_entry_id = NULL){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
-		if(empty($idetapa)) $idetapa = $this->input->post('idetapa');
-		$idetapa = (int) $idetapa;
+		if(empty($time_entry_id)) $time_entry_id = $this->input->post('time_entry_id');
+		$time_entry_id = (int) $time_entry_id;
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getEtapa('.$idetapa.')',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getTimeEntry('.$time_entry_id.')',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 		
-		$array["etapa"] = $this->etapa_model->get_etapa_relatorio($idetapa)->result();
+		$array["time_entry"] = $this->time_entry_model->get_time_entry_report($time_entry_id)->result();
 
 		echo json_encode($array);
 		die();
 	}
 
-	public function getClientes(){
+	public function getClients(){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getClientes()',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getClients()',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 
-		$array["clientes"] = $this->cliente_model->get_clientes()->result();
+		$array["clients"] = $this->client_model->get_clients()->result();
 
 		echo json_encode($array);
 		die();
 	}
 
-	public function getCliente($idcliente = NULL){
+	public function getClient($client_id = NULL){
 
-		$this->verificaUsuario();
+		$this->verifyUser();
 
-		if(empty($idcliente)) $idcliente = $this->input->post('idcliente');
-		$idcliente = (int) $idcliente;
+		if(empty($client_id)) $client_id = $this->input->post('client_id');
+		$client_id = (int) $client_id;
 
 		$array["login"] = array(
-			"acesso"	=> TRUE,
-			"funcao"	=> 'getCliente('.$idcliente.')',
-			"mensagem"	=> NULL,
-			"erro"		=> 0
+			"access"		=> TRUE,
+			"function"		=> 'getClient('.$client_id.')',
+			"message"		=> NULL,
+			"error"		=> 0
 		);
 
-		$array["cliente"] = $this->cliente_model->get_cliente($idcliente)->row();
+		$array["client"] = $this->client_model->get_client($client_id)->row();
 
 		echo json_encode($array);
 		die();
@@ -291,7 +291,7 @@ class Json extends CI_Controller{
 
 /*
 
-// MANEIRAS DE REQUISIÇÃO COM PHP
+// WAYS TO CALL THIS API FROM PHP
 
 
 if($_POST){
@@ -301,11 +301,11 @@ if($_POST){
 	// DATA TO POST
 	$data = array(
 		'login' => $_POST['username'], 
-		'senha' => $_POST['password'], 
-		'cripto' => $_POST['cripto'], 
-		'idprojeto' => $_POST['project_id'],
-		'idetapa' => $_POST['stage_id'],
-		'idcliente' => $_POST['client_id'],
+		'password' => $_POST['password'], 
+		'hash' => $_POST['hash'], 
+		'project_id' => $_POST['project_id'],
+		'time_entry_id' => $_POST['time_entry_id'],
+		'client_id' => $_POST['client_id'],
 	);
 
 	// CURL FUNCTION

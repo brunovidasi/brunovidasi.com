@@ -1,189 +1,188 @@
 <?php
 
-# Acesso
+# Auth
 
-$lang['msg_sistema_inativo']			= 'Sistema inativado. Entre em contato com o administrador do sistema.';
-$lang['msg_entre_em_contato_adm']		= 'Entre em contado com o administrador do sistema.';
-$lang['msg_usuario_nao_cadastrado']		= 'Cadastro <strong>não</strong> efetuado. Tente novamente.';
-$lang['msg_usuario_confirmado']			= 'Usuário confirmado. Faça o login para acessar o sistema.';
-$lang['msg_usuario_nao_confirmado']		= 'Usuário <strong>não</strong> confirmado, contate o administrador do sistema.';
-$lang['msg_email_confirmacao']			= 'Email de confirmação de conta enviado novamente.';
-$lang['msg_sem_acesso']					= 'Você não tem acesso a este módulo do sistema. Se for necessário, contate o seu gerente ou o administrador do sistema.';
+$lang['msg_system_inactive']			= 'The system has been deactivated. Please contact the system administrator.';
+$lang['msg_contact_admin']				= 'Please contact the system administrator.';
+$lang['msg_user_not_created']			= 'Account <strong>not</strong> created. Please try again.';
+$lang['msg_user_confirmed']				= 'Account confirmed. Log in to access the system.';
+$lang['msg_user_not_confirmed']			= 'Account <strong>not</strong> confirmed. Please contact the system administrator.';
+$lang['msg_email_confirmation']			= 'The account confirmation email has been sent again.';
+$lang['msg_no_access']					= 'You do not have access to this part of the system. If you need it, contact your manager or the system administrator.';
 
-$lang['msg_bem_vindo']					= 'Seja bem-vindo ao Programmer Time! <br> Digite suas informações para começar a utilizar o sistema.';
-$lang['btn_prosseguir']					= 'Prosseguir';
+$lang['msg_welcome']					= 'Welcome to Programmer Time! <br> Enter your details to start using the system.';
+$lang['btn_continue']					= 'Continue';
 
 # Labels
 
-$lang['lbl_email'] 						= 'E-mail';
-$lang['lbl_nome_usuario'] 				= 'Nome de Usuário';
-$lang['lbl_senha'] 						= 'Senha';
-$lang['lbl_confirma_senha'] 			= 'Confirmação de Senha';
-$lang['lbl_nivel_acesso'] 				= 'Nível de Acesso';
-$lang['lbl_razao_social'] 				= 'Razão Social';
-$lang['lbl_cpf'] 						= 'CPF';
-$lang['lbl_cnpj'] 						= 'CNPJ';
-$lang['lbl_representante'] 				= 'Representante';
-$lang['lbl_telefone'] 					= 'Telefone';
-$lang['lbl_cliente'] 					= 'Cliente';
-$lang['lbl_projeto'] 					= 'Projeto';
-$lang['lbl_tipo'] 						= 'Tipo';
-$lang['lbl_titulo'] 					= 'Título';
-$lang['lbl_etapa'] 						= 'Etapa';
-$lang['lbl_tarefa'] 					= 'Tarefa';
-$lang['lbl_fase'] 						= 'Fase';
-$lang['lbl_nome'] 						= 'Nome';
-$lang['lbl_nome_cargo'] 				= 'Nome Cargo';
-$lang['lbl_prazo'] 						= 'Prazo';
-$lang['lbl_prazo_hora'] 				= 'Prazo Hora';
-$lang['lbl_usuario'] 					= 'Usuário';
-$lang['lbl_responsavel'] 				= 'Responsável';
-$lang['lbl_descricao'] 					= 'Descrição';
-$lang['lbl_descricao_tecnica'] 			= 'Descrição Técnica';
-$lang['lbl_descricao_cliente'] 			= 'Descrição Cliente';
-$lang['lbl_prioridade'] 				= 'Prioridade';
+$lang['lbl_email'] 						= 'Email';
+$lang['lbl_username'] 					= 'Username';
+$lang['lbl_password'] 					= 'Password';
+$lang['lbl_confirm_password'] 			= 'Confirm Password';
+$lang['lbl_access_level'] 				= 'Access Level';
+$lang['lbl_legal_name'] 				= 'Legal Name';
+$lang['lbl_tax_id'] 					= 'Tax ID';
+$lang['lbl_company_tax_id'] 			= 'Company Registration Number';
+$lang['lbl_representative'] 			= 'Representative';
+$lang['lbl_phone'] 						= 'Phone';
+$lang['lbl_client'] 					= 'Client';
+$lang['lbl_project'] 					= 'Project';
+$lang['lbl_type'] 						= 'Type';
+$lang['lbl_title'] 						= 'Title';
+$lang['lbl_time_entry'] 				= 'Time Entry';
+$lang['lbl_task'] 						= 'Task';
+$lang['lbl_phase'] 						= 'Phase';
+$lang['lbl_name'] 						= 'Name';
+$lang['lbl_role_name'] 					= 'Role Name';
+$lang['lbl_deadline'] 					= 'Deadline';
+$lang['lbl_deadline_time'] 				= 'Deadline Time';
+$lang['lbl_user'] 						= 'User';
+$lang['lbl_owner'] 						= 'Owner';
+$lang['lbl_description'] 				= 'Description';
+$lang['lbl_technical_description'] 		= 'Technical Description';
+$lang['lbl_client_description'] 		= 'Client Description';
+$lang['lbl_priority'] 					= 'Priority';
 $lang['lbl_status'] 					= 'Status';
-$lang['lbl_data'] 						= 'Data';
-$lang['lbl_data_pago'] 					= 'Data Pago';
-$lang['lbl_data_cobrado'] 				= 'Data Cobrado';
-$lang['lbl_data_inicio'] 				= 'Data Início';
-$lang['lbl_data_final'] 				= 'Data Fim';
-$lang['lbl_hora_inicio'] 				= 'Hora Início';
-$lang['lbl_hora_final'] 				= 'Hora Final';
-$lang['lbl_valor'] 						= 'Valor';
-$lang['lbl_valor_pago'] 				= 'Valor Pago';
-$lang['lbl_pago_por'] 					= 'Pago por';
-$lang['lbl_imagem'] 					= 'Imagem';
-$lang['lbl_comentario'] 				= 'Comentário';
-$lang['lbl_seu_nome_completo'] 			= 'Seu Nome Completo';
-$lang['lbl_seu_email'] 					= 'Seu E-mail';
-$lang['lbl_seu_nome_usuario'] 			= 'Seu Nome de Usuário';
-$lang['lbl_sua_senha'] 					= 'Sua Senha';
-$lang['lbl_repita_senha'] 				= 'Repita a Senha';
+$lang['lbl_date'] 						= 'Date';
+$lang['lbl_paid_date'] 					= 'Paid On';
+$lang['lbl_invoiced_date'] 				= 'Invoiced On';
+$lang['lbl_start_date'] 				= 'Start Date';
+$lang['lbl_end_date'] 					= 'End Date';
+$lang['lbl_start_time'] 				= 'Start Time';
+$lang['lbl_end_time'] 					= 'End Time';
+$lang['lbl_amount'] 					= 'Amount';
+$lang['lbl_amount_paid'] 				= 'Amount Paid';
+$lang['lbl_paid_by'] 					= 'Paid By';
+$lang['lbl_image'] 						= 'Image';
+$lang['lbl_comment'] 					= 'Comment';
+$lang['lbl_your_full_name'] 			= 'Your Full Name';
+$lang['lbl_your_email'] 				= 'Your Email';
+$lang['lbl_your_username'] 				= 'Your Username';
+$lang['lbl_your_password'] 				= 'Your Password';
+$lang['lbl_repeat_password'] 			= 'Repeat Password';
 
-$lang['carregando'] 					= 'Carregando ...';
-$lang['carregando_projetos'] 			= 'Carregando projetos ...';
-$lang['carregando_tarefas'] 			= 'Carregando tarefas ...';
-$lang['carregando_dados'] 				= 'Carregando dados ...';
-$lang['encerrar'] 						= 'Encerrar';
+$lang['loading'] 						= 'Loading ...';
+$lang['loading_projects'] 				= 'Loading projects ...';
+$lang['loading_tasks'] 					= 'Loading tasks ...';
+$lang['loading_data'] 					= 'Loading data ...';
+$lang['close'] 							= 'Close';
 
-# Usuário
+# User
 
-$lang['msg_usuario_inexistente']		= 'Usuário inexistente.';
-$lang['msg_usuario_cadastro_sucesso']	= 'Cadastro efetuado com sucesso.';
-$lang['msg_usuario_cadastro_erro']		= 'Cadastro <strong>não</strong> efetuado. Tente novamente.';
-$lang['msg_usuario_editar_sucesso']		= 'Usuário atualizado com sucesso.';
-$lang['msg_usuario_editar_erro']		= 'Usuário <strong>não</strong> atualizado. Tente novamente.';
-$lang['msg_cpf_invalido']				= '<b>CPF</b> inválido.';
+$lang['msg_user_not_found']				= 'User not found.';
+$lang['msg_user_create_success']		= 'User created successfully.';
+$lang['msg_user_create_error']			= 'User <strong>not</strong> created. Please try again.';
+$lang['msg_user_edit_success']			= 'User updated successfully.';
+$lang['msg_user_edit_error']			= 'User <strong>not</strong> updated. Please try again.';
 
-# Nível de Acesso
+# Access Level
 
-$lang['msg_na_cadastro_sucesso']		= 'Cadastro efetuado com sucesso.';
-$lang['msg_na_cadastro_erro']			= 'Cadastro <strong>não</strong> efetuado. Tente novamente.';
+$lang['msg_level_create_success']		= 'Access level created successfully.';
+$lang['msg_level_create_error']			= 'Access level <strong>not</strong> created. Please try again.';
 
-# Empresa
+# Company
 
-$lang['msg_empresa_editar_sucesso']		= 'Perfil da Empresa atualizado com sucesso.';
-$lang['msg_empresa_editar_erro']		= 'Perfil da Empresa <strong>não</strong> atualizado. Tente novamente.';
+$lang['msg_company_edit_success']		= 'Company profile updated successfully.';
+$lang['msg_company_edit_error']			= 'Company profile <strong>not</strong> updated. Please try again.';
 
-# Cliente
+# Client
 
-$lang['msg_cliente_inexistente']		= 'Cliente inexistente.';
-$lang['msg_cliente_cadastro_sucesso']	= 'Cadastro efetuado com sucesso.';
-$lang['msg_cliente_cadastro_erro']		= 'Cadastro <strong>não</strong> efetuado. Tente novamente.';
-$lang['msg_cliente_editar_sucesso']		= 'Cliente atualizado com sucesso.';
-$lang['msg_cliente_editar_erro']		= 'Cliente <strong>não</strong> atualizado. Tente novamente.';
-$lang['msg_cliente_excluir_sucesso']	= 'Cliente excluído com sucesso.';
-$lang['msg_cliente_excluir_erro']		= 'Cliente <strong>não</strong> excluído, tente novamente.';
+$lang['msg_client_not_found']			= 'Client not found.';
+$lang['msg_client_create_success']		= 'Client created successfully.';
+$lang['msg_client_create_error']		= 'Client <strong>not</strong> created. Please try again.';
+$lang['msg_client_edit_success']		= 'Client updated successfully.';
+$lang['msg_client_edit_error']			= 'Client <strong>not</strong> updated. Please try again.';
+$lang['msg_client_delete_success']		= 'Client deleted successfully.';
+$lang['msg_client_delete_error']		= 'Client <strong>not</strong> deleted. Please try again.';
 
-# Projeto
+# Project
 
-$lang['msg_projeto_inexistente']		= 'Projeto inexistente.';
-$lang['msg_projeto_cadastro_sucesso']	= 'Projeto cadastrado com sucesso.';
-$lang['msg_projeto_cadastro_erro']		= 'Projeto <strong>não</strong> cadastrado com sucesso. Tente novamente.';
-$lang['msg_projeto_editar_sucesso']		= 'Projeto atualizado com sucesso.';
-$lang['msg_projeto_editar_erro']		= 'Projeto <strong>não</strong> atualizado. Tente novamente.';
-$lang['msg_observacao_editar_sucesso']	= 'Observação atualizado com sucesso.';
-$lang['msg_observacao_editar_erro']		= 'Observação <strong>não</strong> atualizado. Tente novamente.';
-$lang['msg_projeto_excluir_sucesso']	= 'Projeto excluído com sucesso.';
-$lang['msg_projeto_excluir_erro']		= 'Projeto <strong>não</strong> excluído. Tente novamente.';
+$lang['msg_project_not_found']			= 'Project not found.';
+$lang['msg_project_create_success']		= 'Project created successfully.';
+$lang['msg_project_create_error']		= 'Project <strong>not</strong> created. Please try again.';
+$lang['msg_project_edit_success']		= 'Project updated successfully.';
+$lang['msg_project_edit_error']			= 'Project <strong>not</strong> updated. Please try again.';
+$lang['msg_notes_edit_success']			= 'Notes updated successfully.';
+$lang['msg_notes_edit_error']			= 'Notes <strong>not</strong> updated. Please try again.';
+$lang['msg_project_delete_success']		= 'Project deleted successfully.';
+$lang['msg_project_delete_error']		= 'Project <strong>not</strong> deleted. Please try again.';
 
-# Financeiro
+# Finance
 
-$lang['msg_financeiro_inexistente']		= 'Informação de Pagamento inexistente.';
-$lang['msg_financeiro_cadastro_sucesso']= 'Informação de Pagamento cadastrada com sucesso.';
-$lang['msg_financeiro_cadastro_erro']	= 'Informação de Pagamento <strong>não</strong> cadastrada com sucesso. Tente novamente.';
-$lang['msg_financeiro_editar_sucesso']	= 'Informação de Pagamento atualizada com sucesso.';
-$lang['msg_financeiro_editar_erro']		= 'Informação de Pagamento <strong>não</strong> atualizada. Tente novamente.';
-$lang['msg_financeiro_excluir_sucesso']	= 'Informação de Pagamento excluída com sucesso.';
-$lang['msg_financeiro_excluir_erro']	= 'Informação de Pagamento <strong>não</strong> excluída. Tente novamente.';
+$lang['msg_finance_not_found']			= 'Payment not found.';
+$lang['msg_finance_create_success']		= 'Payment added successfully.';
+$lang['msg_finance_create_error']		= 'Payment <strong>not</strong> added. Please try again.';
+$lang['msg_finance_edit_success']		= 'Payment updated successfully.';
+$lang['msg_finance_edit_error']			= 'Payment <strong>not</strong> updated. Please try again.';
+$lang['msg_finance_delete_success']		= 'Payment deleted successfully.';
+$lang['msg_finance_delete_error']		= 'Payment <strong>not</strong> deleted. Please try again.';
 
-# Etapa
+# Time Entry
 
-$lang['msg_etapa_inexistente']			= 'Etapa de projeto inexistente.';
-$lang['msg_etapa_erro_andamento']		= 'Não é possível editar uma etapa em andamento.';
-$lang['msg_etapa_cadastro_sucesso']		= 'Etapa cadastrada com sucesso.';
-$lang['msg_etapa_cadastro_erro']		= 'Etapa <strong>não</strong> cadastrada com sucesso.';
-$lang['msg_etapa_retorno_sucesso']		= 'Etapa finalizada com sucesso.';
-$lang['msg_etapa_retorno_erro']			= 'Etapa <strong>não</strong> finalizada, tente novamente.';
-$lang['msg_etapa_editar_sucesso']		= 'Etapa editada com sucesso.';
-$lang['msg_etapa_editar_erro']			= 'Etapa <strong>não</strong> editada, tente novamente.';
-$lang['msg_etapa_excluir_sucesso']		= 'Etapa excluída com sucesso.';
-$lang['msg_etapa_excluir_erro']			= 'Etapa <strong>não</strong> excluída, tente novamente.';
+$lang['msg_time_entry_not_found']			= 'Time entry not found.';
+$lang['msg_time_entry_error_in_progress']	= 'A time entry cannot be edited while its timer is running.';
+$lang['msg_time_entry_create_success']		= 'Timer started successfully.';
+$lang['msg_time_entry_create_error']		= 'Timer <strong>not</strong> started. Please try again.';
+$lang['msg_time_entry_finish_success']		= 'Time entry finished successfully.';
+$lang['msg_time_entry_finish_error']		= 'Time entry <strong>not</strong> finished. Please try again.';
+$lang['msg_time_entry_edit_success']		= 'Time entry updated successfully.';
+$lang['msg_time_entry_edit_error']			= 'Time entry <strong>not</strong> updated. Please try again.';
+$lang['msg_time_entry_delete_success']		= 'Time entry deleted successfully.';
+$lang['msg_time_entry_delete_error']		= 'Time entry <strong>not</strong> deleted. Please try again.';
 
-$lang['msg_hora_final_menor_inicial']	= '<b>Hora Final</b> é menor que a hora inicial.';
-$lang['msg_hora_final_igual_inicial']	= '<b>Hora Final</b> é igual a hora inicial.';
-$lang['msg_data_invalida']				= '<b>Data</b> é inválida.';
-$lang['msg_hora_inicio_invalida']		= '<b>Hora Início</b> é inválida.';
-$lang['msg_hora_final_invalida']		= '<b>Hora Final</b> é inválida.';
+$lang['msg_end_time_before_start']		= '<b>End Time</b> is earlier than the start time.';
+$lang['msg_end_time_equals_start']		= '<b>End Time</b> is the same as the start time.';
+$lang['msg_date_invalid']				= '<b>Date</b> is invalid.';
+$lang['msg_start_time_invalid']			= '<b>Start Time</b> is invalid.';
+$lang['msg_end_time_invalid']			= '<b>End Time</b> is invalid.';
 
-$lang['msg_selecione_cliente'] 			= 'Selecione o Cliente';
-$lang['msg_sem_projeto_cliente']		= 'Não há projetos em desenvolvimento deste cliente.';
-$lang['msg_selecione_projeto']			= 'Selecione o Projeto';
-$lang['msg_sem_tarefa_projeto']			= 'Não há tarefas para este projeto.';
-$lang['msg_selecione_tarefa']			= 'Cadastrar horas sem tarefa especificada';
+$lang['msg_select_client'] 				= 'Select the client';
+$lang['msg_no_client_projects']			= 'This client has no projects in progress.';
+$lang['msg_select_project']				= 'Select the project';
+$lang['msg_no_project_tasks']			= 'This project has no tasks.';
+$lang['msg_no_task_selected']			= 'Log hours without a specific task';
 
-$lang['msg_prazo']						= 'Prazo';
-$lang['msg_prioridade']					= 'Prioridade';
-$lang['msg_horas_previstas']			= 'Horas Previstas';
+$lang['msg_deadline']					= 'Deadline';
+$lang['msg_priority']					= 'Priority';
+$lang['msg_estimated_hours']			= 'Estimated Hours';
 
-$lang['placeholder_descricao_tecnica']	= 'Descrição técnica da etapa';
-$lang['placeholder_descricao_cliente']	= 'Descrição simplificada da etapa';
-$lang['title_clonar_descricao']			= 'Clonar descrição técnica para a descrição de cliente';
+$lang['placeholder_technical_description']	= 'Technical description of the work';
+$lang['placeholder_client_description']		= 'Simplified description of the work for the client';
+$lang['title_clone_description']			= 'Copy the technical description into the client description';
 
-$lang['etapa_titulo'] 					= 'Lançamento de Horas de Etapas de Projetos';
-$lang['etapa_editar_titulo'] 			= 'Editar Lançamento de Horas de Etapas de Projetos';
+$lang['time_entry_title'] 				= 'Log Time on a Project';
+$lang['time_entry_edit_title'] 			= 'Edit Time Entry';
 
-# Tarefa
+# Task
 
-$lang['msg_tarefa_inexistente']			= 'Tarefa inexistente.';
-$lang['msg_tarefa_cadastro_sucesso']	= 'Tarefa cadastrada com sucesso.';
-$lang['msg_tarefa_cadastro_erro']		= 'Tarefa <strong>não</strong> cadastrada com sucesso.';
-$lang['msg_tarefa_editar_sucesso']		= 'Tarefa atualizada com sucesso.';
-$lang['msg_tarefa_editar_erro']			= 'Tarefa <strong>não</strong> atualizada com sucesso.';
-$lang['msg_tarefa_excluir_sucesso']		= 'Tarefa excluída com sucesso.';
-$lang['msg_tarefa_excluir_erro']		= 'Tarefa <strong>não</strong> excluída com sucesso.';
+$lang['msg_task_not_found']				= 'Task not found.';
+$lang['msg_task_create_success']		= 'Task created successfully.';
+$lang['msg_task_create_error']			= 'Task <strong>not</strong> created. Please try again.';
+$lang['msg_task_edit_success']			= 'Task updated successfully.';
+$lang['msg_task_edit_error']			= 'Task <strong>not</strong> updated. Please try again.';
+$lang['msg_task_delete_success']		= 'Task deleted successfully.';
+$lang['msg_task_delete_error']			= 'Task <strong>not</strong> deleted. Please try again.';
 
-$lang['titulo_cadastrar_tarefa'] 		= 'Cadastrar Tarefa';
-$lang['titulo_editar_tarefa'] 			= 'Editar Tarefa';
+$lang['title_create_task'] 				= 'New Task';
+$lang['title_edit_task'] 				= 'Edit Task';
 
 # Upload
 
-$lang['msg_upload_erro']				= 'Ocorreu um erro, tente novamente.';
-$lang['msg_upload_erro_tipo_imagem']	= 'Só é aceito imagem no formato jpeg, gif e png.';
-$lang['msg_upload_erro_crop']			= 'Ocorreu um erro no crop do arquivo, tente novamente.';
-$lang['msg_trocar_imagem']				= 'Trocar Imagem';
+$lang['msg_upload_error']				= 'Something went wrong. Please try again.';
+$lang['msg_upload_error_type_image']	= 'Only JPEG, GIF and PNG images are accepted.';
+$lang['msg_upload_error_crop']			= 'The image could not be cropped. Please try again.';
+$lang['msg_change_image']				= 'Change Image';
 
-# Imagem
+# Image
 
-$lang['msg_imagem_inexistente']			= 'Imagem não encontrada.';
-$lang['msg_imagem_cadastro_sucesso']	= 'Imagem cadastrada com sucesso.';
-$lang['msg_imagem_cadastro_erro']		= 'Imagem <strong>não</strong> cadastrada com sucesso.';
-$lang['msg_comentario_cadastro_sucesso']= 'Comentário efetuado com sucesso.';
-$lang['msg_comentario_cadastro_erro']	= 'Comentário <strong>não</strong> efetuado. Tente novamente.';
-$lang['msg_imagem_editar_sucesso']		= 'Imagem atualizada com sucesso.';
-$lang['msg_imagem_editar_erro']			= 'Imagem <strong>não</strong> atualizada com sucesso.';
-$lang['msg_imagem_excluir_sucesso']		= 'Imagem excluída com sucesso.';
-$lang['msg_imagem_excluir_erro']		= 'Imagem <strong>não</strong> excluída com sucesso.';
-$lang['msg_comentario_excluir_sucesso']	= 'Comentário excluído com sucesso.';
-$lang['msg_comentario_excluir_erro']	= 'Comentário <strong>não</strong> excluído. Tente novamente.';
+$lang['msg_image_not_found']			= 'Image not found.';
+$lang['msg_image_create_success']		= 'Image added successfully.';
+$lang['msg_image_create_error']			= 'Image <strong>not</strong> added. Please try again.';
+$lang['msg_comment_create_success']		= 'Comment posted successfully.';
+$lang['msg_comment_create_error']		= 'Comment <strong>not</strong> posted. Please try again.';
+$lang['msg_image_edit_success']			= 'Image updated successfully.';
+$lang['msg_image_edit_error']			= 'Image <strong>not</strong> updated. Please try again.';
+$lang['msg_image_delete_success']		= 'Image deleted successfully.';
+$lang['msg_image_delete_error']			= 'Image <strong>not</strong> deleted. Please try again.';
+$lang['msg_comment_delete_success']		= 'Comment deleted successfully.';
+$lang['msg_comment_delete_error']		= 'Comment <strong>not</strong> deleted. Please try again.';

@@ -2,32 +2,32 @@
 
 $hook['post_controller_constructor'][] = array(
 	'class' => '',
-	'function' => 'acesso',
-	'filename' => 'acesso.php',
+	'function' => 'auth',
+	'filename' => 'auth.php',
 	'filepath' => 'hooks',
 	'params' => array()
 );
 
 $hook['post_controller_constructor'][] = array(
 	'class' => '',
-	'function' => 'logado',
-	'filename' => 'logado.php',
+	'function' => 'logged_in',
+	'filename' => 'logged_in.php',
 	'filepath' => 'hooks',
 	'params' => array()
 );
 
 $hook['post_controller_constructor'][] = array(
 	'class' => '',
-	'function' => 'bloqueado',
-	'filename' => 'bloqueado.php',
+	'function' => 'locked',
+	'filename' => 'locked.php',
 	'filepath' => 'hooks',
 	'params' => array()
 );
 
 $hook['post_controller_constructor'][] = array(
 	'class' => '',
-	'function' => 'recarregar',
-	'filename' => 'recarregar.php',
+	'function' => 'reload',
+	'filename' => 'reload.php',
 	'filepath' => 'hooks',
 	'params' => array()
 );

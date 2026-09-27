@@ -2,101 +2,90 @@
 
 # Projects
 
-$lang['titulo_lista_projetos']			= 'Project List';
+$lang['title_project_list']				= 'Project List';
 
-$lang['placeholder_filtro_projeto']		= 'Search a Project';
-$lang['alt_cadastrar_projeto']			= 'Start a new Project';
-$lang['alt_btn_cadastrar_projeto']		= 'Search Project by Name';
+$lang['placeholder_filter_project']		= 'Search for a project';
+$lang['alt_create_project']				= 'Start a new project';
+$lang['alt_btn_search_project']			= 'Search projects by name';
 
-$lang['administrador']					= 'Administrator';
-$lang['tabela_sem_resultado']			= 'No matching results.';
+$lang['administrator']					= 'Administrator';
+$lang['table_no_results']				= 'No matching results.';
 
-$lang['tabela_id']						= 'ID';
-$lang['tabela_prioridade']				= 'Priority';
-$lang['tabela_status']					= 'Status';
-$lang['tabela_nome']					= 'Name';
-$lang['tabela_nome_projeto']			= 'Project Name';
-$lang['tabela_cliente']					= 'Client';
-$lang['tabela_tipo']					= 'Type';
-$lang['tabela_etapas']					= 'Tasks';
-$lang['tabela_horas']					= 'Hours';
-$lang['tabela_data']					= 'Date';
-$lang['tabela_data_cadastro']			= 'Creation Date';
-$lang['tabela_prazo']					= 'Deadline';
-$lang['tabela_responsavel']				= 'Owner';
-$lang['tabela_email']					= 'E-mail';
-$lang['tabela_projeto']					= 'Project';
-$lang['tabela_fase']					= 'Situation';
-$lang['tabela_descricao_cliente']		= 'Client Description';
-$lang['tabela_descricao_tecnica']		= 'Technical Description';
-$lang['tabela_usuario']					= 'User';
-$lang['tabela_inicio']					= 'Start';
-$lang['tabela_fim']						= 'End';
-$lang['tabela_tempo']					= 'Time';
-$lang['tabela_login']					= 'Login';
-$lang['tabela_nivel_acesso']			= 'Access Level';
-$lang['tabela_ultimo_acesso']			= 'Last Access';
-$lang['tabela_confirmado']				= 'Confirmed';
-$lang['tabela_porcentagem']				= '%';
-$lang['tabela_horas_gastas']			= 'Horas Gastas';  ////////////////
-$lang['tabela_horas_previstas']			= 'Previstas';  ////////////////
+$lang['table_id']						= 'ID';
+$lang['table_priority']					= 'Priority';
+$lang['table_status']					= 'Status';
+$lang['table_name']						= 'Name';
+$lang['table_project_name']				= 'Project Name';
+$lang['table_client']					= 'Client';
+$lang['table_type']						= 'Type';
+$lang['table_time_entries']				= 'Entries';
+$lang['table_hours']					= 'Hours';
+$lang['table_date']						= 'Date';
+$lang['table_created_at']				= 'Created';
+$lang['table_deadline']					= 'Deadline';
+$lang['table_owner']					= 'Owner';
+$lang['table_email']					= 'Email';
+$lang['table_project']					= 'Project';
+$lang['table_phase']					= 'Phase';
+$lang['table_client_description']		= 'Client Description';
+$lang['table_technical_description']	= 'Technical Description';
+$lang['table_user']						= 'User';
+$lang['table_start']					= 'Start';
+$lang['table_end']						= 'End';
+$lang['table_time']						= 'Time';
+$lang['table_login']					= 'Login';
+$lang['table_access_level']				= 'Access Level';
+$lang['table_last_access']				= 'Last Access';
+$lang['table_confirmed']				= 'Confirmed';
+$lang['table_percentage']				= '%';
+$lang['table_hours_spent']				= 'Hours Spent';
+$lang['table_estimated_hours']			= 'Estimated';
 
-$lang['prioridade_baixa']				= 'Low';
-$lang['prioridade_normal']				= 'Normal';
-$lang['prioridade_urgente']				= 'High';
+$lang['priority_low']					= 'Low';
+$lang['priority_normal']				= 'Normal';
+$lang['priority_urgent']				= 'Urgent';
 
-$lang['status_nao_comecado']			= 'Not yet Started';
-$lang['status_desenvolvimento']			= 'In Progress';
-$lang['status_pausado']					= 'Paused';
-$lang['status_concluido']				= 'Finished';
-$lang['status_cancelado']				= 'Canceled';
+$lang['status_not_started']				= 'Not Started';
+$lang['status_in_progress']				= 'In Progress';
+$lang['status_paused']					= 'Paused';
+$lang['status_completed']				= 'Completed';
+$lang['status_cancelled']				= 'Cancelled';
 
-$lang['projeto_nao_removido']			= 'Project removal has been canceled.';
-$lang['projeto_confirma_exclusao']		= 'Deleting this project will also delete all of its tasks, finances and other informations within. Are you sure you want to delete this project?';
+$lang['project_not_removed']			= 'Project removal has been cancelled.';
+$lang['project_confirm_deletion']		= 'Deleting this project will also delete all of its time entries, payments and everything else in it. Are you sure you want to delete this project?';
 
-$lang['titulo_lista_clientes']			= 'Client List';
+$lang['title_client_list']				= 'Client List';
 
-$lang['placeholder_filtro_cliente']		= 'Search a Client';
-$lang['alt_cadastrar_cliente']			= 'Register a new Client';
-$lang['alt_btn_cadastrar_cliente']		= 'Search Client by Name';
+$lang['placeholder_filter_client']		= 'Search for a client';
+$lang['alt_create_client']				= 'Add a new client';
+$lang['alt_btn_search_client']			= 'Search clients by name';
 
-$lang['placeholder_filtro_tarefa']		= 'Search a Task';
-$lang['alt_cadastrar_tarefa']			= 'Register a new Task';
-$lang['alt_btn_cadastrar_tarefa']		= 'Search Task by name';
+$lang['placeholder_filter_task']		= 'Search for a task';
+$lang['alt_create_task']				= 'Add a new task';
+$lang['alt_btn_search_task']			= 'Search tasks by name';
 
-$lang['cliente_nao_removido']			= 'Client hasn\'t been removed';
-$lang['cliente_nao_desativado']			= 'Client activation has been canceled.';
-$lang['cliente_nao_reativado']			= 'Client reactivation has been canceled.';
-$lang['cliente_confirma_reativar']		= 'Are you sure you wish to reactivate this client?';
-$lang['cliente_confirma_exclusao']		= 'Deleting this project will also delete all of its tasks, finances and other informations within. Are you sure you want to delete this project?';
+$lang['client_not_removed']				= 'The client has not been removed.';
+$lang['client_not_deactivated']			= 'Client deactivation has been cancelled.';
+$lang['client_not_reactivated']			= 'Client reactivation has been cancelled.';
+$lang['client_confirm_reactivate']		= 'Are you sure you want to reactivate this client?';
+$lang['client_confirm_deactivation']	= 'Deactivating this client will cancel all of its projects that are in progress. Are you sure you want to deactivate this client?';
 
-$lang['titulo_lista_tarefas']			= 'Tasks';
-$lang['titulo_lista_etapas']			= 'Project Tasks';
+$lang['title_task_list']				= 'Tasks';
+$lang['title_time_entry_list']			= 'Time Entries';
 
-$lang['etapas_andamento']				= 'On-Going Tasks';
-$lang['etapas_concluidas']				= 'Finished Tasks';
-$lang['nao_existe_etapas']				= 'No active Tasks.';
-$lang['nao_existe_tarefas']				= 'Não existem tarefas cadastradas.'; ////////////////////////
+$lang['time_entries_in_progress']		= 'Running Time Entries';
+$lang['time_entries_completed']			= 'Completed Time Entries';
+$lang['no_time_entries']				= 'No active time entries.';
+$lang['no_tasks']						= 'There are no tasks yet.';
 
-$lang['titulo_lista_usuarios']			= 'System\'s User List';
+$lang['title_user_list']				= 'User List';
 
-$lang['placeholder_filtro_usuario']		= 'Search a User';
-$lang['alt_cadastrar_usuario']			= 'Register a new User';
-$lang['alt_btn_cadastrar_usuario']		= 'Search User by Name';
+$lang['placeholder_filter_user']		= 'Search for a user';
+$lang['alt_create_user']				= 'Add a new user';
+$lang['alt_btn_search_user']			= 'Search users by name';
 
-$lang['usuario_nao_removido']			= 'User hasn\'t been removed';
-$lang['usuario_nao_desativado']			= 'User activation has been canceled.';
-$lang['usuario_nao_reativado']			= 'User reactivation has been canceled.';
-$lang['usuario_confirma_reativar']		= 'Are you sure you wish to reactivate this user?';
-$lang['usuario_confirma_exclusao']		= "Deactivating %s, will no longer allow him to access ProgrammerTime. Are you sure you wish to deactivate this user?";
-
-
-
-/*
-<strong>Request for Client Deactivation <?php echo $cliente->nome; ?></strong>
-		<br /><br />
-		By deactivating a client all his projects "In Progress" will change status to "Canceled".
-		<br /><br />
-
-	Are you sure you want to deactivate client <?php echo $cliente->nome; ?>, ID <?php echo $cliente->idcliente; ?>? <br /><br />
-*/
+$lang['user_not_removed']				= 'The user has not been removed.';
+$lang['user_not_deactivated']			= 'User deactivation has been cancelled.';
+$lang['user_not_reactivated']			= 'User reactivation has been cancelled.';
+$lang['user_confirm_reactivate']		= 'Are you sure you want to reactivate this user?';
+$lang['user_confirm_deactivation']		= "Once deactivated, %s will no longer be able to access ProgrammerTime. Are you sure you want to deactivate this user?";

@@ -6,422 +6,421 @@
 -- 'db' => array('driver' => 'sqlite'); there is no manual import step.
 --
 -- Differences from the MySQL schema: ENUM columns are TEXT, secondary keys are
--- separate CREATE INDEX statements, and usuario.login/email are COLLATE NOCASE
+-- separate CREATE INDEX statements, and user.login/email are COLLATE NOCASE
 -- to keep MySQL's case-insensitive matching on login.
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
--- usuario_nivel_acesso  (acesso_model.php / usuario_model.php / nivel_acesso.php)
--- Permission profiles ("cargo"), referenced by usuario.nivel_acesso.
--- Flags are stored as 'sim'/'nao' strings (see acesso_model->nivel_acesso()).
+-- access_level  (auth_model.php / user_model.php / access_level.php)
+-- Permission profiles ("roles"), referenced by user.access_level.
+-- Flags are stored as 'yes'/'no' strings (see auth_model->access_level()).
 -- ----------------------------------------------------------------------------
-CREATE TABLE usuario_nivel_acesso (
-    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    cargo               VARCHAR(100) NOT NULL,
-    cadastra_projeto    TEXT NOT NULL DEFAULT 'nao',
-    edita_projeto       TEXT NOT NULL DEFAULT 'nao',
-    cadastra_cliente    TEXT NOT NULL DEFAULT 'nao',
-    edita_cliente       TEXT NOT NULL DEFAULT 'nao',
-    cadastra_usuario    TEXT NOT NULL DEFAULT 'nao',
-    edita_usuario       TEXT NOT NULL DEFAULT 'nao',
-    envia_relatorio     TEXT NOT NULL DEFAULT 'nao',
-    lanca_etapa         TEXT NOT NULL DEFAULT 'nao',
-    lanca_pagamento     TEXT NOT NULL DEFAULT 'nao',
-    UNIQUE (cargo));
+CREATE TABLE access_level (
+    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+    role                  VARCHAR(100) NOT NULL,
+    can_create_project    TEXT NOT NULL DEFAULT 'no',
+    can_edit_project      TEXT NOT NULL DEFAULT 'no',
+    can_create_client     TEXT NOT NULL DEFAULT 'no',
+    can_edit_client       TEXT NOT NULL DEFAULT 'no',
+    can_create_user       TEXT NOT NULL DEFAULT 'no',
+    can_edit_user         TEXT NOT NULL DEFAULT 'no',
+    can_send_report       TEXT NOT NULL DEFAULT 'no',
+    can_log_time          TEXT NOT NULL DEFAULT 'no',
+    can_log_payment       TEXT NOT NULL DEFAULT 'no',
+    UNIQUE (role));
 
 -- ----------------------------------------------------------------------------
--- usuario  (usuario_model.php / acesso_model.php)
--- login/senha verified in acesso.php::logar() via cripto() (md5 helper).
+-- user  (user_model.php / auth_model.php)
+-- login/password verified in auth.php::login() via hash_password() (md5 helper).
 -- ----------------------------------------------------------------------------
-CREATE TABLE usuario (
-    idusuario           INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE user (
+    user_id             INTEGER PRIMARY KEY AUTOINCREMENT,
     login               VARCHAR(100) COLLATE NOCASE NOT NULL,
-    nome                VARCHAR(150) NOT NULL,
+    name                VARCHAR(150) NOT NULL,
     email               VARCHAR(150) COLLATE NOCASE NOT NULL,
-    matricula           VARCHAR(50)  DEFAULT NULL,
-    rg                  VARCHAR(20)  DEFAULT NULL,
-    cpf                 VARCHAR(20)  DEFAULT NULL,
-    data_nascimento     DATE         DEFAULT NULL,
+    employee_id         VARCHAR(50)  DEFAULT NULL,
+    id_number           VARCHAR(50)  DEFAULT NULL,
+    tax_id              VARCHAR(50)  DEFAULT NULL,
+    birth_date          DATE         DEFAULT NULL,
     salt                VARCHAR(50)  DEFAULT NULL,
-    senha               VARCHAR(255) NOT NULL,
-    email_senha         VARCHAR(255) DEFAULT NULL,
-    nivel_acesso        INT DEFAULT NULL,
-    cor                 VARCHAR(10)  DEFAULT '#3c8dbc',
-    imagem              VARCHAR(255) NOT NULL DEFAULT 'none.png',
-    status              TEXT NOT NULL DEFAULT 'ativo',
-    usuario_confirmado  TEXT NOT NULL DEFAULT 'nao',
-    recarregar          TEXT DEFAULT 'nao',
-    numero_acesso       INT NOT NULL DEFAULT 0,
-    ultimo_acesso       DATETIME     DEFAULT NULL,
-    data_cadastro       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    password            VARCHAR(255) NOT NULL,
+    email_token         VARCHAR(255) DEFAULT NULL,
+    access_level        INT DEFAULT NULL,
+    color               VARCHAR(10)  DEFAULT '#3c8dbc',
+    image               VARCHAR(255) NOT NULL DEFAULT 'none.png',
+    status              TEXT NOT NULL DEFAULT 'active',
+    confirmed           TEXT NOT NULL DEFAULT 'no',
+    reload              TEXT DEFAULT 'no',
+    login_count         INT NOT NULL DEFAULT 0,
+    last_access         DATETIME     DEFAULT NULL,
+    created_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (login),
     UNIQUE (email),
-    CONSTRAINT fk_usuario_nivel_acesso FOREIGN KEY (nivel_acesso)
-        REFERENCES usuario_nivel_acesso (id) ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT fk_user_access_level FOREIGN KEY (access_level)
+        REFERENCES access_level (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- cliente  (cliente_model.php)
+-- client  (client_model.php)
 -- ----------------------------------------------------------------------------
-CREATE TABLE cliente (
-    idcliente               INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome                     VARCHAR(150) NOT NULL,
-    website                  VARCHAR(150) DEFAULT NULL,
-    email                    VARCHAR(150) DEFAULT NULL,
-    telefone                 VARCHAR(20)  DEFAULT NULL,
-    celular                  VARCHAR(20)  DEFAULT NULL,
-    razao_social             VARCHAR(150) DEFAULT NULL,
-    nome_contato             VARCHAR(150) DEFAULT NULL,
-    email_contato            VARCHAR(150) DEFAULT NULL,
-    telefone_contato         VARCHAR(20)  DEFAULT NULL,
-    endereco                 VARCHAR(150) DEFAULT NULL,
-    endereco_numero          VARCHAR(20)  DEFAULT NULL,
-    endereco_complemento     VARCHAR(100) DEFAULT NULL,
-    endereco_bairro          VARCHAR(100) DEFAULT NULL,
-    endereco_estado          VARCHAR(2)   DEFAULT NULL,
-    endereco_cidade          VARCHAR(100) DEFAULT NULL,
-    endereco_cep             VARCHAR(20)  DEFAULT NULL,
-    cpf                      VARCHAR(20)  DEFAULT NULL,
-    cnpj                     VARCHAR(20)  DEFAULT NULL,
-    status                   TEXT NOT NULL DEFAULT 'ativo',
-    data_cadastro            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE client (
+    client_id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    name                    VARCHAR(150) NOT NULL,
+    website                 VARCHAR(150) DEFAULT NULL,
+    email                   VARCHAR(150) DEFAULT NULL,
+    phone                   VARCHAR(30)  DEFAULT NULL,
+    mobile                  VARCHAR(30)  DEFAULT NULL,
+    legal_name              VARCHAR(150) DEFAULT NULL,
+    contact_name            VARCHAR(150) DEFAULT NULL,
+    contact_email           VARCHAR(150) DEFAULT NULL,
+    contact_phone           VARCHAR(30)  DEFAULT NULL,
+    address                 VARCHAR(150) DEFAULT NULL,
+    address_number          VARCHAR(20)  DEFAULT NULL,
+    address_line2           VARCHAR(100) DEFAULT NULL,
+    address_district        VARCHAR(100) DEFAULT NULL,
+    address_state           VARCHAR(100) DEFAULT NULL,
+    address_city            VARCHAR(100) DEFAULT NULL,
+    address_postcode        VARCHAR(20)  DEFAULT NULL,
+    tax_id                  VARCHAR(50)  DEFAULT NULL,
+    company_tax_id          VARCHAR(50)  DEFAULT NULL,
+    status                  TEXT NOT NULL DEFAULT 'active',
+    created_at              DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (email)
 );
 
 -- ----------------------------------------------------------------------------
--- empresa  (empresa_model.php) - singleton row (idempresa = 1) with company info
--- idrepresentante references the responsible usuario.
+-- company  (company_model.php) - singleton row (company_id = 1) with company info
+-- representative_id references the responsible user.
 -- ----------------------------------------------------------------------------
-CREATE TABLE empresa (
-    idempresa               INTEGER PRIMARY KEY AUTOINCREMENT,
-    idrepresentante         INT DEFAULT NULL,
-    nome                     VARCHAR(150) DEFAULT NULL,
-    razao_social             VARCHAR(150) DEFAULT NULL,
-    cnpj                     VARCHAR(20)  DEFAULT NULL,
-    email                    VARCHAR(150) DEFAULT NULL,
-    telefone                 VARCHAR(20)  DEFAULT NULL,
-    celular                  VARCHAR(20)  DEFAULT NULL,
-    website                  VARCHAR(150) DEFAULT NULL,
-    imagem_logo              VARCHAR(255) DEFAULT NULL,
-    data_fundacao            DATE DEFAULT NULL,
-    plano                    VARCHAR(50)  DEFAULT NULL,
-    ativacao                 VARCHAR(20)  DEFAULT NULL,
-    endereco                 VARCHAR(150) DEFAULT NULL,
-    endereco_numero          VARCHAR(20)  DEFAULT NULL,
-    endereco_bairro          VARCHAR(100) DEFAULT NULL,
-    endereco_complemento     VARCHAR(100) DEFAULT NULL,
-    endereco_municipio       VARCHAR(100) DEFAULT NULL,
-    endereco_estado          VARCHAR(2)   DEFAULT NULL,
-    endereco_cep             VARCHAR(20)  DEFAULT NULL,
-    CONSTRAINT fk_empresa_representante FOREIGN KEY (idrepresentante)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE company (
+    company_id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    representative_id       INT DEFAULT NULL,
+    name                    VARCHAR(150) DEFAULT NULL,
+    legal_name              VARCHAR(150) DEFAULT NULL,
+    company_tax_id          VARCHAR(50)  DEFAULT NULL,
+    email                   VARCHAR(150) DEFAULT NULL,
+    phone                   VARCHAR(30)  DEFAULT NULL,
+    mobile                  VARCHAR(30)  DEFAULT NULL,
+    website                 VARCHAR(150) DEFAULT NULL,
+    logo_image              VARCHAR(255) DEFAULT NULL,
+    founding_date           DATE DEFAULT NULL,
+    plan                    VARCHAR(50)  DEFAULT NULL,
+    activation              VARCHAR(20)  DEFAULT NULL,
+    address                 VARCHAR(150) DEFAULT NULL,
+    address_number          VARCHAR(20)  DEFAULT NULL,
+    address_district        VARCHAR(100) DEFAULT NULL,
+    address_line2           VARCHAR(100) DEFAULT NULL,
+    address_city            VARCHAR(100) DEFAULT NULL,
+    address_state           VARCHAR(100) DEFAULT NULL,
+    address_postcode        VARCHAR(20)  DEFAULT NULL,
+    CONSTRAINT fk_company_representative FOREIGN KEY (representative_id)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_tipo  (projeto_model.php::get_tipos())
+-- project_type  (project_model.php::get_types())
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_tipo (
-    idtipo   INTEGER PRIMARY KEY AUTOINCREMENT,
-    tipo     VARCHAR(100) NOT NULL
+CREATE TABLE project_type (
+    type_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    type      VARCHAR(100) NOT NULL
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_fase  (etapa_model.php::get_fases())
+-- project_phase  (time_entry_model.php::get_phases())
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_fase (
-    idfase   INTEGER PRIMARY KEY AUTOINCREMENT,
-    fase     VARCHAR(100) NOT NULL
+CREATE TABLE project_phase (
+    phase_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+    phase     VARCHAR(100) NOT NULL
 );
 
 -- ----------------------------------------------------------------------------
--- projeto  (projeto_model.php)
+-- project  (project_model.php)
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto (
-    idprojeto        INTEGER PRIMARY KEY AUTOINCREMENT,
-    idcliente         INT DEFAULT NULL,
-    idtipo            INT DEFAULT NULL,
-    idresponsavel     INT DEFAULT NULL,
-    nome              VARCHAR(200) NOT NULL,
-    imagem            VARCHAR(255) DEFAULT NULL,
-    status            TEXT NOT NULL DEFAULT 'nao_comecado',
-    prioridade        VARCHAR(20)  DEFAULT NULL,
-    descricao         TEXT,
-    obs               TEXT,
+CREATE TABLE project (
+    project_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id         INT DEFAULT NULL,
+    type_id           INT DEFAULT NULL,
+    owner_id          INT DEFAULT NULL,
+    name              VARCHAR(200) NOT NULL,
+    image             VARCHAR(255) DEFAULT NULL,
+    status            TEXT NOT NULL DEFAULT 'not_started',
+    priority          VARCHAR(20)  DEFAULT NULL,
+    description       TEXT,
+    notes             TEXT,
     link              VARCHAR(255) DEFAULT NULL,
-    prazo             DATETIME DEFAULT NULL,
-    data_inicio       DATETIME DEFAULT NULL,
-    data_fim          DATETIME DEFAULT NULL,
-    CONSTRAINT fk_projeto_cliente FOREIGN KEY (idcliente)
-        REFERENCES cliente (idcliente) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_projeto_tipo FOREIGN KEY (idtipo)
-        REFERENCES projeto_tipo (idtipo) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_projeto_responsavel FOREIGN KEY (idresponsavel)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE
+    deadline          DATETIME DEFAULT NULL,
+    start_date        DATETIME DEFAULT NULL,
+    end_date          DATETIME DEFAULT NULL,
+    CONSTRAINT fk_project_client FOREIGN KEY (client_id)
+        REFERENCES client (client_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_project_type FOREIGN KEY (type_id)
+        REFERENCES project_type (type_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_project_owner FOREIGN KEY (owner_id)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_tarefa  (tarefa_model.php) - "tarefa" = task
+-- task  (task_model.php)
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_tarefa (
-    idtarefa                 INTEGER PRIMARY KEY AUTOINCREMENT,
-    idprojeto                 INT NOT NULL,
-    idfase                    INT DEFAULT NULL,
-    nome                      VARCHAR(200) NOT NULL,
-    descricao                 TEXT,
-    horas                     INT DEFAULT NULL,
-    data_prazo                DATETIME DEFAULT NULL,
-    idusuario_responsavel     INT DEFAULT NULL,
-    status                    TEXT NOT NULL DEFAULT 'nao_comecado',
-    idusuario_cadastro        INT DEFAULT NULL,
-    data_cadastro             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_tarefa_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_tarefa_fase FOREIGN KEY (idfase)
-        REFERENCES projeto_fase (idfase) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_tarefa_responsavel FOREIGN KEY (idusuario_responsavel)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_tarefa_cadastro FOREIGN KEY (idusuario_cadastro)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE task (
+    task_id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id                INT NOT NULL,
+    phase_id                  INT DEFAULT NULL,
+    name                      VARCHAR(200) NOT NULL,
+    description               TEXT,
+    hours                     INT DEFAULT NULL,
+    due_date                  DATETIME DEFAULT NULL,
+    owner_id                  INT DEFAULT NULL,
+    status                    TEXT NOT NULL DEFAULT 'not_started',
+    created_by                INT DEFAULT NULL,
+    created_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_task_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_task_phase FOREIGN KEY (phase_id)
+        REFERENCES project_phase (phase_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_task_owner FOREIGN KEY (owner_id)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_task_created_by FOREIGN KEY (created_by)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_tarefa_hora  (etapa_model.php) - "etapa" = a logged work session/stage
--- fim IS NULL means the stage is still open (see etapa_aberta()).
+-- time_entry  (time_entry_model.php) - a logged work session on a project
+-- end_time IS NULL means the timer is still running (see open_time_entry()).
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_tarefa_hora (
-    idetapa              INTEGER PRIMARY KEY AUTOINCREMENT,
-    idusuario             INT NOT NULL,
-    idprojeto             INT NOT NULL,
-    idtarefa              INT DEFAULT NULL,
-    idfase                INT DEFAULT NULL,
-    descricao_tecnica     TEXT,
-    descricao_cliente     TEXT,
-    data                  DATE DEFAULT NULL,
-    inicio                VARCHAR(10) DEFAULT NULL,
-    fim                   VARCHAR(10) DEFAULT NULL,
-    retroativa            VARCHAR(5)  DEFAULT NULL,
-    data_cadastro         DATETIME DEFAULT NULL,
-    data_retorno          DATETIME DEFAULT NULL,
-    CONSTRAINT fk_etapahora_usuario FOREIGN KEY (idusuario)
-        REFERENCES usuario (idusuario) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_etapahora_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_etapahora_tarefa FOREIGN KEY (idtarefa)
-        REFERENCES projeto_tarefa (idtarefa) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_etapahora_fase FOREIGN KEY (idfase)
-        REFERENCES projeto_fase (idfase) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE time_entry (
+    time_entry_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id               INT NOT NULL,
+    project_id            INT NOT NULL,
+    task_id               INT DEFAULT NULL,
+    phase_id              INT DEFAULT NULL,
+    technical_description TEXT,
+    client_description    TEXT,
+    date                  DATE DEFAULT NULL,
+    start_time            VARCHAR(10) DEFAULT NULL,
+    end_time              VARCHAR(10) DEFAULT NULL,
+    backdated             VARCHAR(5)  DEFAULT NULL,
+    created_at            DATETIME DEFAULT NULL,
+    finished_at           DATETIME DEFAULT NULL,
+    CONSTRAINT fk_time_entry_user FOREIGN KEY (user_id)
+        REFERENCES user (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_time_entry_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_time_entry_task FOREIGN KEY (task_id)
+        REFERENCES task (task_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_time_entry_phase FOREIGN KEY (phase_id)
+        REFERENCES project_phase (phase_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_financeiro  (financeiro_model.php) - "financeiro" = payments/charges
+-- payment  (finance_model.php) - payments and costs of a project
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_financeiro (
-    idfinanceiro       INTEGER PRIMARY KEY AUTOINCREMENT,
-    idprojeto           INT NOT NULL,
-    descricao           VARCHAR(255) NOT NULL,
-    obs                 TEXT,
-    status              TEXT NOT NULL DEFAULT 'nao_pago',
-    tipo                TEXT NOT NULL DEFAULT 'custo_projeto',
-    pago_por            TEXT NOT NULL DEFAULT 'cliente',
+CREATE TABLE payment (
+    payment_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id          INT NOT NULL,
+    description         VARCHAR(255) NOT NULL,
+    notes               TEXT,
+    status              TEXT NOT NULL DEFAULT 'unpaid',
+    type                TEXT NOT NULL DEFAULT 'project_cost',
+    paid_by             TEXT NOT NULL DEFAULT 'client',
     link                VARCHAR(255) DEFAULT NULL,
-    valor               DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    valor_pago          DECIMAL(10,2) DEFAULT NULL,
-    data_pago           DATETIME DEFAULT NULL,
-    data_cobrado        DATETIME DEFAULT NULL,
-    CONSTRAINT fk_financeiro_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE CASCADE ON UPDATE CASCADE
+    amount              DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    amount_paid         DECIMAL(10,2) DEFAULT NULL,
+    paid_date           DATETIME DEFAULT NULL,
+    invoiced_date       DATETIME DEFAULT NULL,
+    CONSTRAINT fk_payment_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_imagem  (imagem_model.php)
+-- project_image  (image_model.php)
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_imagem (
-    idimagem     INTEGER PRIMARY KEY AUTOINCREMENT,
-    idprojeto     INT NOT NULL,
-    idusuario     INT DEFAULT NULL,
-    titulo        VARCHAR(150) DEFAULT NULL,
-    legenda       VARCHAR(255) DEFAULT NULL,
-    imagem        VARCHAR(255) DEFAULT NULL,
-    data          DATETIME DEFAULT NULL,
-    CONSTRAINT fk_imagem_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_imagem_usuario FOREIGN KEY (idusuario)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE project_image (
+    image_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id    INT NOT NULL,
+    user_id       INT DEFAULT NULL,
+    title         VARCHAR(150) DEFAULT NULL,
+    caption       VARCHAR(255) DEFAULT NULL,
+    image         VARCHAR(255) DEFAULT NULL,
+    date          DATETIME DEFAULT NULL,
+    CONSTRAINT fk_image_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_image_user FOREIGN KEY (user_id)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_imagem_comentario  (imagem_model.php)
+-- image_comment  (image_model.php)
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_imagem_comentario (
-    idcomentario   INTEGER PRIMARY KEY AUTOINCREMENT,
-    idimagem        INT NOT NULL,
-    idusuario       INT DEFAULT NULL,
-    comentario      TEXT,
-    data            DATETIME DEFAULT NULL,
-    CONSTRAINT fk_comentario_imagem FOREIGN KEY (idimagem)
-        REFERENCES projeto_imagem (idimagem) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_comentario_usuario FOREIGN KEY (idusuario)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE image_comment (
+    comment_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    image_id        INT NOT NULL,
+    user_id         INT DEFAULT NULL,
+    comment         TEXT,
+    date            DATETIME DEFAULT NULL,
+    CONSTRAINT fk_comment_image FOREIGN KEY (image_id)
+        REFERENCES project_image (image_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_comment_user FOREIGN KEY (user_id)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- projeto_email  (enviar_email.php::relatorio_cliente() logs sent client reports)
+-- project_email  (send_email.php::client_report() logs sent client reports)
 -- ----------------------------------------------------------------------------
-CREATE TABLE projeto_email (
-    idemail       INTEGER PRIMARY KEY AUTOINCREMENT,
-    idprojeto      INT NOT NULL,
-    assunto        VARCHAR(255) DEFAULT NULL,
-    mensagem       TEXT,
-    de_nome        VARCHAR(150) DEFAULT NULL,
-    de_email       VARCHAR(150) DEFAULT NULL,
-    para_email     VARCHAR(150) DEFAULT NULL,
-    copia          VARCHAR(150) DEFAULT NULL,
-    data           DATETIME DEFAULT NULL,
-    CONSTRAINT fk_projeto_email_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE project_email (
+    email_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id     INT NOT NULL,
+    subject        VARCHAR(255) DEFAULT NULL,
+    message        TEXT,
+    from_name      VARCHAR(150) DEFAULT NULL,
+    from_email     VARCHAR(150) DEFAULT NULL,
+    to_email       VARCHAR(150) DEFAULT NULL,
+    cc             VARCHAR(150) DEFAULT NULL,
+    date           DATETIME DEFAULT NULL,
+    CONSTRAINT fk_project_email_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- mensagem  (mensagem_model.php) - internal user-to-user messaging/inbox
--- idusuario = mailbox owner (the row is duplicated per-recipient), see
--- enviar_mensagem() which inserts once per side of the conversation.
+-- message  (message_model.php) - internal user-to-user messaging/inbox
+-- user_id = mailbox owner (the row is duplicated per recipient), see
+-- send_message() which inserts once per side of the conversation.
 -- ----------------------------------------------------------------------------
-CREATE TABLE mensagem (
-    idmensagem          INTEGER PRIMARY KEY AUTOINCREMENT,
-    idusuario            INT NOT NULL,
-    id_usuario_from      INT NOT NULL,
-    idusuario_to         INT DEFAULT NULL,
-    idprojeto            INT DEFAULT NULL,
-    assunto              VARCHAR(255) DEFAULT NULL,
-    mensagem             TEXT,
-    resposta_de          INT DEFAULT NULL,
-    data_envio           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    rascunho             TINYINT(1) NOT NULL DEFAULT 0,
-    favorito             TINYINT(1) NOT NULL DEFAULT 0,
-    lixo                 TINYINT(1) NOT NULL DEFAULT 0,
-    lida                 TINYINT(1) NOT NULL DEFAULT 0,
-    CONSTRAINT fk_mensagem_usuario FOREIGN KEY (idusuario)
-        REFERENCES usuario (idusuario) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_mensagem_from FOREIGN KEY (id_usuario_from)
-        REFERENCES usuario (idusuario) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_mensagem_to FOREIGN KEY (idusuario_to)
-        REFERENCES usuario (idusuario) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_mensagem_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_mensagem_resposta FOREIGN KEY (resposta_de)
-        REFERENCES mensagem (idmensagem) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE message (
+    message_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id             INT NOT NULL,
+    from_user_id        INT NOT NULL,
+    to_user_id          INT DEFAULT NULL,
+    project_id          INT DEFAULT NULL,
+    subject             VARCHAR(255) DEFAULT NULL,
+    message             TEXT,
+    reply_to            INT DEFAULT NULL,
+    sent_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_draft            TINYINT(1) NOT NULL DEFAULT 0,
+    is_favorite         TINYINT(1) NOT NULL DEFAULT 0,
+    is_trash            TINYINT(1) NOT NULL DEFAULT 0,
+    is_read             TINYINT(1) NOT NULL DEFAULT 0,
+    CONSTRAINT fk_message_user FOREIGN KEY (user_id)
+        REFERENCES user (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_message_from FOREIGN KEY (from_user_id)
+        REFERENCES user (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_message_to FOREIGN KEY (to_user_id)
+        REFERENCES user (user_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_message_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_message_reply FOREIGN KEY (reply_to)
+        REFERENCES message (message_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- relatorio  (relatorio_model.php) - saved/generated HTML project reports
+-- report  (report_model.php) - saved/generated HTML project reports
 -- ----------------------------------------------------------------------------
-CREATE TABLE relatorio (
-    idrelatorio    INTEGER PRIMARY KEY AUTOINCREMENT,
-    idprojeto       INT NOT NULL,
-    relatorio       TEXT,
-    data            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_relatorio_projeto FOREIGN KEY (idprojeto)
-        REFERENCES projeto (idprojeto) ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE report (
+    report_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id     INT NOT NULL,
+    report         TEXT,
+    date           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_report_project FOREIGN KEY (project_id)
+        REFERENCES project (project_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ----------------------------------------------------------------------------
--- ajuda  (ajuda_model.php) - in-app help articles, no FKs
+-- help  (help_model.php) - in-app help articles, no FKs
 -- ----------------------------------------------------------------------------
-CREATE TABLE ajuda (
-    idajuda   INTEGER PRIMARY KEY AUTOINCREMENT,
-    titulo     VARCHAR(200) NOT NULL,
-    texto      TEXT,
-    tipo       VARCHAR(50)  DEFAULT NULL,
-    status     TEXT NOT NULL DEFAULT 'ativo'
+CREATE TABLE help (
+    help_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    title      VARCHAR(200) NOT NULL,
+    text       TEXT,
+    type       VARCHAR(50)  DEFAULT NULL,
+    status     TEXT NOT NULL DEFAULT 'active'
 );
 
 -- ----------------------------------------------------------------------------
--- info  (acesso_model.php::get_info() / dashboard::sobre()) - system version info
+-- info  (auth_model.php::get_info() / dashboard::about()) - system version info
 -- ----------------------------------------------------------------------------
 CREATE TABLE info (
-    idinfo                INTEGER PRIMARY KEY AUTOINCREMENT,
-    versao                 VARCHAR(20) NOT NULL DEFAULT '1.0.0.0',
+    info_id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    version                VARCHAR(20) NOT NULL DEFAULT '1.0.0.0',
     php                    VARCHAR(20) DEFAULT NULL,
     site                   VARCHAR(150) DEFAULT NULL,
-    desenvolvedor          VARCHAR(150) DEFAULT NULL,
-    desenvolvedor_email    VARCHAR(150) DEFAULT NULL,
-    data_lancamento        DATETIME DEFAULT NULL
+    developer              VARCHAR(150) DEFAULT NULL,
+    developer_email        VARCHAR(150) DEFAULT NULL,
+    release_date           DATETIME DEFAULT NULL
 );
 
 
-CREATE INDEX idx_usuario_nivel_acesso ON usuario (nivel_acesso);
-CREATE INDEX idx_cliente_nome ON cliente (nome);
-CREATE INDEX idx_empresa_idrepresentante ON empresa (idrepresentante);
-CREATE INDEX idx_projeto_idcliente ON projeto (idcliente);
-CREATE INDEX idx_projeto_idtipo ON projeto (idtipo);
-CREATE INDEX idx_projeto_idresponsavel ON projeto (idresponsavel);
-CREATE INDEX idx_tarefa_idprojeto ON projeto_tarefa (idprojeto);
-CREATE INDEX idx_tarefa_idfase ON projeto_tarefa (idfase);
-CREATE INDEX idx_tarefa_responsavel ON projeto_tarefa (idusuario_responsavel);
-CREATE INDEX idx_tarefa_cadastro ON projeto_tarefa (idusuario_cadastro);
-CREATE INDEX idx_etapahora_idusuario ON projeto_tarefa_hora (idusuario);
-CREATE INDEX idx_etapahora_idprojeto ON projeto_tarefa_hora (idprojeto);
-CREATE INDEX idx_etapahora_idtarefa ON projeto_tarefa_hora (idtarefa);
-CREATE INDEX idx_etapahora_idfase ON projeto_tarefa_hora (idfase);
-CREATE INDEX idx_financeiro_idprojeto ON projeto_financeiro (idprojeto);
-CREATE INDEX idx_imagem_idprojeto ON projeto_imagem (idprojeto);
-CREATE INDEX idx_imagem_idusuario ON projeto_imagem (idusuario);
-CREATE INDEX idx_comentario_idimagem ON projeto_imagem_comentario (idimagem);
-CREATE INDEX idx_comentario_idusuario ON projeto_imagem_comentario (idusuario);
-CREATE INDEX idx_projeto_email_idprojeto ON projeto_email (idprojeto);
-CREATE INDEX idx_mensagem_idusuario ON mensagem (idusuario);
-CREATE INDEX idx_mensagem_from ON mensagem (id_usuario_from);
-CREATE INDEX idx_mensagem_to ON mensagem (idusuario_to);
-CREATE INDEX idx_mensagem_idprojeto ON mensagem (idprojeto);
-CREATE INDEX idx_mensagem_resposta_de ON mensagem (resposta_de);
-CREATE INDEX idx_relatorio_idprojeto ON relatorio (idprojeto);
+CREATE INDEX idx_user_access_level ON user (access_level);
+CREATE INDEX idx_client_name ON client (name);
+CREATE INDEX idx_company_representative_id ON company (representative_id);
+CREATE INDEX idx_project_client_id ON project (client_id);
+CREATE INDEX idx_project_type_id ON project (type_id);
+CREATE INDEX idx_project_owner_id ON project (owner_id);
+CREATE INDEX idx_task_project_id ON task (project_id);
+CREATE INDEX idx_task_phase_id ON task (phase_id);
+CREATE INDEX idx_task_owner_id ON task (owner_id);
+CREATE INDEX idx_task_created_by ON task (created_by);
+CREATE INDEX idx_time_entry_user_id ON time_entry (user_id);
+CREATE INDEX idx_time_entry_project_id ON time_entry (project_id);
+CREATE INDEX idx_time_entry_task_id ON time_entry (task_id);
+CREATE INDEX idx_time_entry_phase_id ON time_entry (phase_id);
+CREATE INDEX idx_payment_project_id ON payment (project_id);
+CREATE INDEX idx_image_project_id ON project_image (project_id);
+CREATE INDEX idx_image_user_id ON project_image (user_id);
+CREATE INDEX idx_comment_image_id ON image_comment (image_id);
+CREATE INDEX idx_comment_user_id ON image_comment (user_id);
+CREATE INDEX idx_project_email_project_id ON project_email (project_id);
+CREATE INDEX idx_message_user_id ON message (user_id);
+CREATE INDEX idx_message_from ON message (from_user_id);
+CREATE INDEX idx_message_to ON message (to_user_id);
+CREATE INDEX idx_message_project_id ON message (project_id);
+CREATE INDEX idx_message_reply_to ON message (reply_to);
+CREATE INDEX idx_report_project_id ON report (project_id);
 
 -- ============================================================================
 -- Seed data
 --
--- application/controllers/acesso.php::index() checks
--- usuario_model->get_usuarios()->num_rows() == 1 to decide whether to route
--- to /acesso/primeira_vez/ (first-access setup). That means exactly ONE
--- usuario row must already exist for the app to be in its expected
--- "fresh install" browsable state, and that row is the admin account -- see
--- the seed insert below for the dev password / how to regenerate the hash.
+-- application/controllers/auth.php::index() checks
+-- user_model->get_users()->num_rows() == 1 to decide whether to route
+-- to /auth/first_access/ (first-access setup). That means exactly ONE
+-- user row must already exist for the app to be in its expected
+-- "fresh install" browsable state, and that row is the admin account.
 --
--- usuario.nivel_acesso is a FK to usuario_nivel_acesso.id, so a matching
+-- user.access_level is a FK to access_level.id, so a matching
 -- access-level row is required for the seed admin insert to succeed. A
--- second row (id=2, "Gerente") is also seeded because
--- usuario_model->post_primeira_vez() hard-codes nivel_acesso = '2' for the
+-- second row (id=2, "Manager") is also seeded because
+-- user_model->post_first_access() hard-codes access_level = '2' for the
 -- account created through the first-access flow.
 -- ============================================================================
 
-INSERT INTO usuario_nivel_acesso
-    (id, cargo, cadastra_projeto, edita_projeto, cadastra_cliente, edita_cliente, cadastra_usuario, edita_usuario, envia_relatorio, lanca_etapa, lanca_pagamento)
+INSERT INTO access_level
+    (id, role, can_create_project, can_edit_project, can_create_client, can_edit_client, can_create_user, can_edit_user, can_send_report, can_log_time, can_log_payment)
 VALUES
-    (1, 'Administrador', 'sim', 'sim', 'sim', 'sim', 'sim', 'sim', 'sim', 'sim', 'sim'),
-    (2, 'Gerente',        'sim', 'sim', 'sim', 'sim', 'nao', 'nao', 'sim', 'sim', 'sim');
+    (1, 'Administrator', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes'),
+    (2, 'Manager',       'yes', 'yes', 'yes', 'yes', 'no',  'no',  'yes', 'yes', 'yes');
 
 -- Admin account. Its password is set when the database is created, from the
 -- config's admin_password (see application/config/instance.php): stored
 -- passwords are md5(encryption_key . password), so no hash can be shipped here.
-INSERT INTO usuario
-    (idusuario, login, nome, email, salt, senha, email_senha, nivel_acesso, cor, imagem, status, usuario_confirmado, numero_acesso, data_cadastro)
+INSERT INTO user
+    (user_id, login, name, email, salt, password, email_token, access_level, color, image, status, confirmed, login_count, created_at)
 VALUES
-    (1, 'admin', 'Administrador', 'admin@programmertime.local', '', '', NULL, 1, '#3c8dbc', 'none.png', 'ativo', 'sim', 5, CURRENT_TIMESTAMP);
+    (1, 'admin', 'Administrator', 'admin@programmertime.local', '', '', NULL, 1, '#3c8dbc', 'none.png', 'active', 'yes', 5, CURRENT_TIMESTAMP);
 
--- Minimal lookup data so the "Cadastrar Projeto" form has options to pick
--- from on a fresh install (projeto_tipo/projeto_fase have no other source).
-INSERT INTO projeto_tipo (tipo) VALUES
-    ('Website'), ('Sistema Web'), ('Aplicativo Mobile'), ('Consultoria');
+-- Minimal lookup data so the "New Project" form has options to pick
+-- from on a fresh install (project_type/project_phase have no other source).
+INSERT INTO project_type (type) VALUES
+    ('Website'), ('Web System'), ('Mobile App'), ('Consulting');
 
-INSERT INTO projeto_fase (fase) VALUES
-    ('Planejamento'), ('Desenvolvimento'), ('Testes'), ('Homologação'), ('Entrega');
+INSERT INTO project_phase (phase) VALUES
+    ('Planning'), ('Development'), ('Testing'), ('Acceptance'), ('Delivery');
 
--- empresa is a singleton row (idempresa=1, hardcoded in empresa_model.php's
--- get_empresa()); empresa/editar fatals without it since CI2's ->row()
+-- company is a singleton row (company_id=1, hardcoded in company_model.php's
+-- get_company()); company/edit fatals without it since CI2's ->row()
 -- returns an empty array (not an object) when the query has no rows.
-INSERT INTO empresa (idempresa, idrepresentante, nome, razao_social) VALUES
-    (1, 1, 'ProgrammerTime', 'ProgrammerTime Ltda');
+INSERT INTO company (company_id, representative_id, name, legal_name) VALUES
+    (1, 1, 'ProgrammerTime', 'ProgrammerTime Ltd');
 
--- info is likewise a singleton row (idinfo=1, hardcoded in
--- acesso_model.php's get_info()), read by dashboard/sobre.
-INSERT INTO info (idinfo, versao, php, site, desenvolvedor, desenvolvedor_email, data_lancamento) VALUES
+-- info is likewise a singleton row (info_id=1, hardcoded in
+-- auth_model.php's get_info()), read by dashboard/about.
+INSERT INTO info (info_id, version, php, site, developer, developer_email, release_date) VALUES
     (1, '1.0.0', '8.1', 'www.programmertime.com', 'Bruno Vieira', 'bruno@programmertime.com', CURRENT_TIMESTAMP);

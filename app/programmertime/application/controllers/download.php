@@ -6,12 +6,12 @@ class Download extends CI_Controller {
 		
 	}
 	
-	public function especificacoes_tecnicas(){
-		$this->download_model->especificacoes_tecnicas();
+	public function technical_specs(){
+		$this->download_model->technical_specs();
 	}	
 	
-	public function informacao_suporte(){
-		$this->download_model->informacao_suporte();
+	public function support_info(){
+		$this->download_model->support_info();
 	}
 	
 }

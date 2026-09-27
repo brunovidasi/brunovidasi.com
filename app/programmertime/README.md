@@ -1,8 +1,8 @@
 # ProgrammerTime
 
 A project-management tool for small software teams — clients, projects,
-tasks, logged work hours ("etapas"), billing, internal messaging, and
-client-facing PDF reports. Portuguese UI throughout. Originally built as a
+tasks, logged work hours (time entries), billing, internal messaging, and
+client-facing PDF reports. Originally built in Portuguese as a
 TCC (undergraduate thesis) project by Bruno Vieira ([@brunovidasi](https://github.com/brunovidasi))
 and Filipe Moreira.
 
@@ -62,9 +62,16 @@ PHP 8. It has been fixed and modernized:
   `unserialize()` trailing-data warning) fixed, and CI's upload MIME
   sniffing restored for PHP 8.1's `finfo` objects.
 - Model queries now cast/escape every interpolated value (the login form
-  was injectable), and `upload/salva_imagem` is no longer URL-callable.
+  was injectable), and `upload/save_image` is no longer URL-callable.
 - Reconstructed `schema.sql` from the model queries, since no database dump
   existed anywhere in the project.
+- Translated from Portuguese to English: the interface, emails, PDF reports,
+  code (file, class, method, variable and route names) and the database
+  schema, including stored values (`'sim'`/`'nao'` are now `'yes'`/`'no'`,
+  statuses like `'nao_comecado'` are `'not_started'`, and so on). It was also
+  localized: the Brazil-only CPF/CNPJ/CEP validation, input masks and address
+  lookup are gone, and money is shown as `$ 1,234.56`. See
+  [Translation to English](#translation-to-english).
 
 See [Security](#security) below for what else was found and fixed in the
 credential/secret scan.
@@ -102,7 +109,7 @@ password, database) live in one file, never in the repo. See
 **MySQL instead of SQLite.** Set `'db' => array('driver' => 'mysql', ...)` with
 credentials and load `schema.sql` yourself (`mysql -u root < schema.sql`). Its
 seeded admin has no usable password; set one with
-`UPDATE usuario SET senha = MD5(CONCAT('<encryption_key>', '<password>')) WHERE login = 'admin';`
+`UPDATE user SET password = MD5(CONCAT('<encryption_key>', '<password>')) WHERE login = 'admin';`
 (stored passwords are `md5(encryption_key . password)`).
 
 ### How SQLite runs on CodeIgniter 2
@@ -117,7 +124,7 @@ are now buffered so `num_rows()` and seeking work, and each connection turns
 on `foreign_keys` (the schema's cascades depend on it) and a busy timeout.
 
 Two MySQL behaviours the app relied on are handled in the app itself:
-optional references posted as `''`/`0` are stored as NULL (`id_ou_null()` in
+optional references posted as `''`/`0` are stored as NULL (`id_or_null()` in
 `sql_helper.php`), and the date helpers accept a bare date in a `DATETIME`
 column, which MySQL would have padded with `00:00:00`.
 
@@ -162,7 +169,7 @@ is shorter than 8; the reason goes to PHP's error log.
    It is open to anyone until that account exists, so do it immediately.
 4. Log in as `admin`, then remove `admin_password` from the config (it is only
    read when the database is created).
-5. Make `assets/images/{usuarios,projetos,empresa,temp}` writable by PHP (755,
+5. Make `assets/images/{users,projects,company,temp}` writable by PHP (755,
    or 775 if uploads fail).
 
 **Backups:** the whole database is `programmertime-instance/data/programmertime.sqlite`.
@@ -177,21 +184,23 @@ so it isn't sent to other apps on the same host.
 
 Standard CodeIgniter 2 MVC layout:
 
-- `application/controllers/` — one file per feature area: `acesso`
-  (login/registration), `projeto`, `cliente`, `tarefa`, `etapa` (logged
-  work hours), `financeiro` (billing), `relatorio` (PDF/HTML reports),
-  `mensagem` (internal messages), `usuario`, `nivel_acesso` (permission
-  profiles), `empresa` (company settings), `dashboard`.
+- `application/controllers/` — one file per feature area: `auth`
+  (login/registration), `project`, `client`, `task`, `time_entry` (logged
+  work hours), `finance` (payments), `report` (PDF/HTML reports),
+  `message` (internal messages), `user`, `access_level` (permission
+  profiles), `company` (company settings), `dashboard`, plus `json` (a small
+  read-only API) and `ajax` (see below).
 - `application/models/` — one model per feature area, mirroring the
   controllers above.
 - `application/views/` — Bootstrap 3 / AdminLTE-style templates, one
   subfolder per feature area.
-- `application/helpers/fdata_helper.php`, `cripto_helper.php`,
-  `sql_helper.php`, `gera_senha_helper.php` — app-specific helpers (date
-  formatting, password hashing, escaping, password generation).
+- `application/helpers/fdate_helper.php`, `hours_helper.php`,
+  `hash_password_helper.php`, `sql_helper.php`, `generate_password_helper.php`,
+  `currency_helper.php` — app-specific helpers (date and duration formatting,
+  password hashing, escaping, password generation, money formatting).
 - `application/controllers/ajax.php` — inline click-to-edit endpoints used
-  by `assets/js/atualizaAjax.js`.
-- `assets/mpdf/` — vendored mPDF, used by the `relatorio` PDF export.
+  by `assets/js/inlineUpdate.js`.
+- `assets/mpdf/` — vendored mPDF, used by the `report` PDF export.
 - `system/` — CodeIgniter 2.2.0 core, patched only where it broke under
   PHP 8 (see Status above); not upgraded to a newer framework version.
 - `schema.sql` — reconstructed from the model layer (MySQL); not part of stock
@@ -200,11 +209,39 @@ Standard CodeIgniter 2 MVC layout:
 - `config.example.php` — template for the per-machine settings file;
   `application/config/instance.php` finds and loads it.
 
-A couple of stray old files worth knowing about (left in place, not part of
-the working app): `application/controllers/acesso_old_2014_05_20.php` and
-`java_old_2015_03_03.php` are dated snapshots with class names that don't
-match CodeIgniter's routing convention for their filenames, so they aren't
-reachable — safe to delete if you want to tidy the tree further.
+## Translation to English
+
+The app was originally written entirely in Portuguese. Everything the app
+owns is now in English; the vendored libraries (CodeIgniter core, mPDF,
+CKEditor, AdminLTE, jQuery plugins) are untouched apart from the English
+day/month names in `assets/js/bootstrap-datepicker.js`.
+
+The main renames, for anyone comparing with the old code:
+
+| Before | After |
+| --- | --- |
+| `acesso` | `auth` |
+| `projeto`, `cliente`, `usuario`, `empresa` | `project`, `client`, `user`, `company` |
+| `tarefa` | `task` |
+| `etapa` (table `projeto_tarefa_hora`) | `time_entry` |
+| `financeiro` (table `projeto_financeiro`) | `finance` controller, `payment` table |
+| `relatorio`, `mensagem`, `ajuda`, `imagem` | `report`, `message`, `help`, `image` |
+| `nivel_acesso` (table `usuario_nivel_acesso`) | `access_level` |
+| `lista` / `visualizar` / `cadastrar` / `editar` | `list` / `view` / `create` / `edit` |
+| `etapa/lancar`, `etapa/retornar` | `time_entry/start`, `time_entry/finish` |
+
+The database schema changed with it (tables, columns and stored values), so
+**a database created before the translation will not work with this code**.
+Delete `data/programmertime.sqlite` (on the server,
+`programmertime-instance/data/programmertime.sqlite`) and let the app create
+a fresh one; there is no migration.
+
+Some dead code was removed rather than translated: the unreachable
+`acesso_old_2014_05_20.php` and `java_old_2015_03_03.php` snapshots, the
+`licenca` licence controller (it read constants that no longer existed and
+was reachable without logging in), CodeIgniter's and the app's
+`brazilian_portuguese` language packs, `leia-me.txt`, and an unused sample
+report (`relatorio.html`).
 
 ## Security
 
@@ -217,23 +254,23 @@ working tree — see comments at each site):
 - `application/config/config.php`'s `encryption_key` (now read from the
   untracked config file) — used for both
   CodeIgniter's session-cookie HMAC and password hashing
-  (`cripto_helper.php`). With the old key public, anyone could forge a
-  valid session cookie (e.g. set `logado => true`) for any deployment
+  (`hash_password_helper.php`). With the old key public, anyone could forge a
+  valid session cookie (e.g. set `logged_in => true`) for any deployment
   still using it, or brute-force stored password hashes offline knowing
   the salt.
 - `config.php` (project root)'s `PT_DB_*`/`DB_*_P` database credentials and
   `PT_LINCENSE_KEY`/`PT_ACCESS_PASS`/`PT_VERIFICATION` licensing secrets.
-  Unused by the current app (the license check in `acesso.php` is
+  Unused by the current app (the license check in `auth.php` is
   hardcoded to always pass) but real-looking hosting credentials. That file
   has since been removed; `config.php` at the root is now the gitignored
   local settings file (see Setup).
-- A hardcoded shared token in `acesso.php`'s `logar()`, used as an
+- A hardcoded shared token in `auth.php`'s `login()`, used as an
   API-key-style check for external/JSON callers.
 
 **Flagged, not silently changed** — rotate these on any real server where
 they were actually used, since replacing them in the repo doesn't undo the
 exposure:
-- The admin account's MD5 password hash was sitting in `acesso.php` as a
+- The admin account's MD5 password hash was sitting in `auth.php` as a
   plain comment; removed from source. If this corresponds to a real
   deployment's admin account, change that password now.
 - All of the above secrets remain visible in this repo's git history even
@@ -255,7 +292,7 @@ linked from the app's own UI, no functional loss):
 - Added `.gitignore` for OS files, logs, and local config overrides.
 
 **Not a secret, left as-is**: several `@programmertime.com` addresses used
-as the app's own from/reply-to addresses (e.g. `naoresponda@programmertime.com`
-in `enviar_email.php`) — these are meant to be public-facing. One personal
-Gmail address embedded in a sample report fixture
-(`application/views/relatorio/relatorio.html`) was genericized.
+as the app's own from/reply-to addresses (e.g. `noreply@programmertime.com`
+in `send_email.php`) — these are meant to be public-facing. One personal
+Gmail address embedded in a sample report fixture was genericized (the
+fixture has since been removed).

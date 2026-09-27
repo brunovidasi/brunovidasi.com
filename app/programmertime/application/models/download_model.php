@@ -1,58 +1,58 @@
-<?php  
+<?php
 
 class Download_model extends CI_Model {
 
     function __construct() {
         parent::__construct();
     }
-	
-	function especificacoes_tecnicas(){
-	
-		$especificações = 'PROGRAMMER TIME - Gerenciamento de Projetos\n
+
+	function technical_specs(){
+
+		$specs = 'PROGRAMMER TIME - Project Management\n
 ________________________________________________________________________________________\n\n
 
 http://www.programmertime.com/ \n\n
 
 
-Especificações Técnicas \n
+Technical Specifications \n
 ________________________________________________________________________________________\n\n
 
-Versão do Sistema Atual: 1.0.0.0 \n
-Versão do CodeIgniter: 2.1.4 \n
-Data de Lançamento: - \n
-Data de Atualização: - \n
+Current System Version: 1.0.0.0 \n
+CodeIgniter Version: 2.1.4 \n
+Release Date: - \n
+Last Updated: - \n
 
 
-Informações de PHP \n
+PHP Information \n
 ________________________________________________________________________________________\n\n
 
-Versão do PHP: 5.3.28 \n
-Outras versões do PHP podem causar incompatibilidade com o sistema. \n\n
+PHP Version: 5.3.28 \n
+Other PHP versions may be incompatible with the system. \n\n
 
 
-Informações de Banco de Dados \n
+Database Information \n
 ________________________________________________________________________________________\n\n
 
 Database: MySQL 5.5.36-cll \n
-SGBD: PHPMyAdmin \n\n
+DBMS: PHPMyAdmin \n\n
 
 
-Informações de Desenvolvimento \n
+Development Information \n
 ________________________________________________________________________________________\n\n
 
-Desenvolvedor WEB: Bruno Vieira - bruno@programmertime.com - www.brunovidasi.com \n
-Desenvolvedor ANDORID: Filipe Moreira - filipe@programmertime.com \n';
-		
-		$título = 'Programmer Time - Especificações Técnicas.txt';
+Web Developer: Bruno Vieira - bruno@programmertime.com - www.brunovidasi.com \n
+Android Developer: Filipe Moreira - filipe@programmertime.com \n';
 
-		force_download($título, $especificações);
+		$title = 'Programmer Time - Technical Specifications.txt';
+
+		force_download($title, $specs);
 	}
-	
-	
-	function informacao_suporte(){
-	
-		$useragent = $_SERVER['HTTP_USER_AGENT'];
-	 
+
+
+	function support_info(){
+
+		$useragent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+
 		if (preg_match('|MSIE ([0-9].[0-9]{1,2})|',$useragent,$matched)) {
 			$browser_version=$matched[1];
 			$browser = 'IE';
@@ -70,28 +70,28 @@ Desenvolvedor ANDORID: Filipe Moreira - filipe@programmertime.com \n';
 			$browser = 'Safari';
 		}else {
 			$browser_version = '';
-			$browser= 'Outro';
+			$browser= 'Other';
 		}
 
-		$informações = 'Informações de Usuário\n
+		$info = 'User Information\n
 ________________________________________________________________________________________\n\n
 
-Nome: '. $this->session->userdata('nome_completo') .'\n
+Name: '. $this->session->userdata('full_name') .'\n
 Login: '. $this->session->userdata('login') .' \n
 ID: '. $this->session->userdata('id') .' \n
-E-mail: '. $this->session->userdata('email') .' \n
-Matrícula: '. $this->session->userdata('matricula') .' \n
-Imagem: '. $this->session->userdata('imagem') .' \n\n
+Email: '. $this->session->userdata('email') .' \n
+Employee ID: '. $this->session->userdata('employee_id') .' \n
+Image: '. $this->session->userdata('image') .' \n\n
 
-Número de Acessos ao Sistema: '. $this->session->userdata('numero_acesso') .' \n
-Nível de Acesso: '. $this->session->userdata('nivel_acesso') .' \n
+Number of Logins: '. $this->session->userdata('login_count') .' \n
+Access Level: '. $this->session->userdata('access_level') .' \n
 Status: '. $this->session->userdata('status') .' \n
-Confirmado: '. $this->session->userdata('confirmado') .' \n
-Confirmação: '. $this->session->userdata('email_senha') .' \n
-Logado: '. $this->session->userdata('logado') .' \n\n
+Confirmed: '. $this->session->userdata('confirmed') .' \n
+Confirmation Code: '. $this->session->userdata('email_token') .' \n
+Logged In: '. $this->session->userdata('logged_in') .' \n\n
 
 
-Dados da Sessão \n
+Session Data \n
 ________________________________________________________________________________________\n\n
 
 SESSION ID: '. $this->session->userdata('session_id') .' \n
@@ -102,15 +102,15 @@ LAST VISIT: '. $this->session->userdata('last_visit') .' \n
 Browser: '.  $browser . ' - ' . $browser_version .' \n
 IP: '. $this->session->userdata('ip_address') .' \n
 
-Informações do Sistema \n
+System Information \n
 ________________________________________________________________________________________ \n\n
 
-Versão do Programmer Time: 1.0.0.0 \n
-Versão do PHP: '. phpversion() .'';
-		 
-		$título = 'Informações de Sessão - '. $this->session->userdata('login') .'.txt';
+Programmer Time Version: 1.0.0.0 \n
+PHP Version: '. phpversion() .'';
 
-		force_download($título, $informações);
+		$title = 'Session Information - '. $this->session->userdata('login') .'.txt';
+
+		force_download($title, $info);
 	}
 
 }

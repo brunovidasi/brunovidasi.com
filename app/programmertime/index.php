@@ -3,16 +3,14 @@
    /*
 	*
 	* Programmer Time _ 1.0
-	* @autor Bruno Vieira da Silva - @brunovidasi - bruno@brunovidasi.com
-	* Sistema de Gerenciamento de Projetos para Desenvolvimento de Softwares
-	* Desenvolvimento PHP (Codeigniter 2.2)
+	* @author Bruno Vieira da Silva - @brunovidasi - bruno@brunovidasi.com
+	* Project management system for software development teams
+	* Built with PHP (CodeIgniter 2.2)
 	*
 	*/
 	
-	if(phpversion() < '5.3.28')
-		exit('É impossível executar o Programmer Time em um servidor com a versão do PHP menor que 5.3.28. O ideal é ter instalada uma versão igual ou superior a 5.4.31 do PHP.');
-	
-	setlocale(LC_ALL, "pt_BR", "pt_BR.iso-8859-1", "pt_BR.utf-8", "portuguese");
+	if(version_compare(PHP_VERSION, '8.1.0', '<'))
+		exit('Programmer Time requires PHP 8.1 or newer.');
 
 	# Environment, timezone, base URL and credentials come from the instance
 	# config (see application/config/instance.php), never from this repo.
@@ -29,7 +27,7 @@
 			case 'development': error_reporting(E_ALL & ~E_DEPRECATED); break;
 			case 'testing':
 			case 'production': error_reporting(0); break;
-			default: exit('O ambiente de aplicação não está definido corretamente.');
+			default: exit('The application environment is not set correctly.');
 		}
 	}
 
@@ -42,7 +40,7 @@
 	
 	$system_path = rtrim($system_path, '/').'/';
 
-	if(!is_dir($system_path)) exit("O caminho da pasta do sistema não parece estar definida corretamente. Por favor, abra o seguinte arquivo e corrigir o problema: ".pathinfo(__FILE__, PATHINFO_BASENAME));
+	if(!is_dir($system_path)) exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
 	
 	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 	define('EXT', '.php');
@@ -54,7 +52,7 @@
 		define('APPPATH', $application_folder.'/');
 	}else{
 		if(!is_dir(BASEPATH.$application_folder.'/'))
-			exit("O caminho da pasta do aplicativo não parece estar definida corretamente. Por favor, abra o seguinte arquivo e corrigir o problema: ".SELF);
+			exit("Your application folder path does not appear to be set correctly. Please open the following file and correct this: ".SELF);
 		define('APPPATH', BASEPATH.$application_folder.'/');
 	}
 

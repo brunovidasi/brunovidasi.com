@@ -9,257 +9,257 @@ class upload extends CI_Controller {
         parent::__construct();
     }
 
-    public function upload_imagem($origem = "assets.images.temp." , $destino = "assets.images.", $altura = "200", $largura = "200") {
+    public function upload_image($source = "assets.images.temp." , $destination = "assets.images.", $height = "200", $width = "200") {
         
-        $dados = array();
-        $dados["parms"] = new stdClass();
-        $dados["parms"]->origem = $origem;
-        $dados["parms"]->destino = $destino;
-        $dados["parms"]->altura = $altura;
-        $dados["parms"]->largura = $largura;
+        $data = array();
+        $data["parms"] = new stdClass();
+        $data["parms"]->source = $source;
+        $data["parms"]->destination = $destination;
+        $data["parms"]->height = $height;
+        $data["parms"]->width = $width;
 		 
-        $this->load->view('upload/upload_imagem', $dados);
+        $this->load->view('upload/upload_image', $data);
     }
 
-    public function salva_upload() {
+    public function save_upload() {
 
-        $dados = new stdClass();
+        $data = new stdClass();
 		
-        $dados->origem     = $this->input->post('origem');
-        $dados->destino    = $this->input->post('destino');
-        $dados->altura     = $this->input->post('altura');
-        $dados->largura    = $this->input->post('largura');
+        $data->source     = $this->input->post('source');
+        $data->destination    = $this->input->post('destination');
+        $data->height     = $this->input->post('height');
+        $data->width    = $this->input->post('width');
 		
-        $file_types_permitidos = array("image/gif", "image/jpeg", "image/pjpeg", "image/png", "image/x-png");
+        $file_types_allowed = array("image/gif", "image/jpeg", "image/pjpeg", "image/png", "image/x-png");
 
-        if (isset($_FILES["foto"]["type"]) && in_array($_FILES["foto"]["type"], $file_types_permitidos)) {
+        if (isset($_FILES["photo"]["type"]) && in_array($_FILES["photo"]["type"], $file_types_allowed)) {
 			
-            $origem_uso     = str_replace(".", "/", $dados->origem);
-            $destino_uso    = str_replace(".", "/", $dados->destino);
+            $source_use     = str_replace(".", "/", $data->source);
+            $destination_use    = str_replace(".", "/", $data->destination);
 
-            $config = array('upload_path' => "./{$origem_uso}", 'allowed_types' => 'gif|jpg|jpeg|png|bmp', 'max_size' => '4096', 'encrypt_name' => 'true');
+            $config = array('upload_path' => "./{$source_use}", 'allowed_types' => 'gif|jpg|jpeg|png|bmp', 'max_size' => '4096', 'encrypt_name' => 'true');
             $this->upload->initialize($config);
 
 
-            if($this->upload->do_upload('foto')){
-                $dados->upload = $this->upload->data();
+            if($this->upload->do_upload('photo')){
+                $data->upload = $this->upload->data();
 
-                setcookie('ptime_img_crop', json_encode($dados), time()+5, '/');
+                setcookie('ptime_img_crop', json_encode($data), time()+5, '/');
                 redirect('/upload/crop/');
             }
-            $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro'));
-            redirect("/upload/upload_imagem/" . $dados->origem . "/" . $dados->destino . "/" . $dados->altura . "/" . $dados->largura);
+            $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error'));
+            redirect("/upload/upload_image/" . $data->source . "/" . $data->destination . "/" . $data->height . "/" . $data->width);
         }
-        $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro_tipo_imagem'));
-        redirect("/upload/upload_imagem/" . $dados->origem . "/" . $dados->destino . "/" . $dados->altura . "/" . $dados->largura);
+        $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error_type_image'));
+        redirect("/upload/upload_image/" . $data->source . "/" . $data->destination . "/" . $data->height . "/" . $data->width);
     }
 
     public function crop(){
 
-        $imagem = isset($_COOKIE["ptime_img_crop"]) ? json_decode($_COOKIE["ptime_img_crop"]) : NULL;
+        $image = isset($_COOKIE["ptime_img_crop"]) ? json_decode($_COOKIE["ptime_img_crop"]) : NULL;
 
-        if(!is_object($imagem) || empty($imagem->upload)){
-            $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro'));
-            redirect("/upload/upload_imagem/");
+        if(!is_object($image) || empty($image->upload)){
+            $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error'));
+            redirect("/upload/upload_image/");
         }
 
-        $imagem->upload = (array) $imagem->upload;
-        $imagem->altura = max(1, (int) $imagem->altura);
-        $imagem->largura = max(1, (int) $imagem->largura);
+        $image->upload = (array) $image->upload;
+        $image->height = max(1, (int) $image->height);
+        $image->width = max(1, (int) $image->width);
 
         $this->load->library('image_lib');
 
-        $dados = array();
-		$dados["parms"] = new stdClass();
-        $dados["parms"]->origem     = $imagem->origem;
-        $dados["parms"]->destino    = $imagem->destino;
-        $dados["parms"]->altura     = $imagem->altura;
-        $dados["parms"]->largura    = $imagem->largura;
+        $data = array();
+		$data["parms"] = new stdClass();
+        $data["parms"]->source     = $image->source;
+        $data["parms"]->destination    = $image->destination;
+        $data["parms"]->height     = $image->height;
+        $data["parms"]->width    = $image->width;
         
-        $origem_uso  = str_replace(".", "/", $imagem->origem);
-        $destino_uso = str_replace(".", "/", $imagem->destino);
+        $source_use  = str_replace(".", "/", $image->source);
+        $destination_use = str_replace(".", "/", $image->destination);
 		
-        $dados["nome_arquivo_original"] = $imagem->upload['orig_name'];
-        $dados["nome_arquivo"] = $imagem->upload['file_name'];
+        $data["original_file_name"] = $image->upload['orig_name'];
+        $data["file_name"] = $image->upload['file_name'];
 
-        $dir_temp = "./$origem_uso";
-        $dir_imag = "./$destino_uso";
+        $dir_temp = "./$source_use";
+        $dir_imag = "./$destination_use";
 		
-        list($width, $height, $type, $attr) = getimagesize($dir_temp . $imagem->upload['file_name']);
+        list($width, $height, $type, $attr) = getimagesize($dir_temp . $image->upload['file_name']);
 		
         $x = "1000";
         $y = "500";
 		
-        $xt = $imagem->largura;
-        $yt = $imagem->altura;
+        $xt = $image->width;
+        $yt = $image->height;
 		
-        $raito = $xt / $yt;
-        $proporcao = 1;
-        $Alarg = $width;
-        $Aalt = $height;
-        $propa = 1;
+        $aspect_ratio = $xt / $yt;
+        $scale = 1;
+        $hfit_width = $width;
+        $hfit_height = $height;
+        $height_scale = 1;
 		
-        $Lalt = $height;
-        $Llarg = $width;
-        $propw = 1;
+        $wfit_height = $height;
+        $wfit_width = $width;
+        $width_scale = 1;
 
         if($width > 700){
-            $propw  = $width / 700;
-            $Llarg  = 700;
-            $Lalt   = $height / $propw;
+            $width_scale  = $width / 700;
+            $wfit_width  = 700;
+            $wfit_height   = $height / $width_scale;
         }
 
-        if(($Llarg <= 700) and ($Lalt <= 400)){
+        if(($wfit_width <= 700) and ($wfit_height <= 400)){
 
-            $proporcao  = $propw;
-            $width      = $Llarg;
-            $height     = $Lalt;
+            $scale  = $width_scale;
+            $width      = $wfit_width;
+            $height     = $wfit_height;
 
         }else{
 
             if($height > 400){
-                $propa  = $height / 400;
-                $Aalt   = 400;
-                $Alarg  = $width / $propa;
+                $height_scale  = $height / 400;
+                $hfit_height   = 400;
+                $hfit_width  = $width / $height_scale;
             }
 
-            if(($Alarg <= 700) and ($Aalt <= 400)){
-                $proporcao  = $propa;
-                $width      = $Alarg;
-                $height     = $Aalt;
+            if(($hfit_width <= 700) and ($hfit_height <= 400)){
+                $scale  = $height_scale;
+                $width      = $hfit_width;
+                $height     = $hfit_height;
             }
         }
 		
-        $dados["medidas"] = new stdClass();
+        $data["dimensions"] = new stdClass();
 
-        $dados["medidas"]->tam_h        = $yt;
-        $dados["medidas"]->tam_w        = $xt;
-        $dados["medidas"]->raito        = $raito;
-        $dados["medidas"]->imgL         = $width;
-        $dados["medidas"]->imgA         = $height;
-        $dados["medidas"]->proporcao    = $proporcao;
-        $dados["medidas"]->tipo_imagem  = $type;
+        $data["dimensions"]->target_h        = $yt;
+        $data["dimensions"]->target_w        = $xt;
+        $data["dimensions"]->aspect_ratio        = $aspect_ratio;
+        $data["dimensions"]->imgW         = $width;
+        $data["dimensions"]->imgH         = $height;
+        $data["dimensions"]->scale    = $scale;
+        $data["dimensions"]->image_type  = $type;
 		
-        $this->load->view('upload/crop', $dados);
+        $this->load->view('upload/crop', $data);
     }
 
     public function upload_crop(){
 		
-        $imagem = new stdClass();
+        $image = new stdClass();
 
-        $imagem->nome_arquivo   = $this->input->post('nome_arquivo');
-        $imagem->nome_original  = $this->input->post('nome_original');
-        $imagem->origem         = $this->input->post('origem');
-        $imagem->destino        = $this->input->post('destino');
-        $imagem->altura         = $this->input->post('altura');
-        $imagem->largura        = $this->input->post('largura');
+        $image->file_name   = $this->input->post('file_name');
+        $image->original_name  = $this->input->post('original_name');
+        $image->source         = $this->input->post('source');
+        $image->destination        = $this->input->post('destination');
+        $image->height         = $this->input->post('height');
+        $image->width        = $this->input->post('width');
 
-        $imagem->w  = $this->input->post('w');
-        $imagem->ax = $this->input->post('ax');
-        $imagem->h  = $this->input->post('h');
-        $imagem->ay = $this->input->post('ay');
+        $image->w  = $this->input->post('w');
+        $image->ax = $this->input->post('ax');
+        $image->h  = $this->input->post('h');
+        $image->ay = $this->input->post('ay');
 		
-        if(!empty($imagem->nome_arquivo)){
+        if(!empty($image->file_name)){
 		
-            $origem_uso     = str_replace(".", "/", $imagem->origem);
-            $destino_uso    = str_replace(".", "/", $imagem->destino);
+            $source_use     = str_replace(".", "/", $image->source);
+            $destination_use    = str_replace(".", "/", $image->destination);
 			
-            $xt = max(1, (int) $imagem->largura);
-            $yt = max(1, (int) $imagem->altura);
+            $xt = max(1, (int) $image->width);
+            $yt = max(1, (int) $image->height);
 			
-            $dir_temp = "./{$origem_uso}";
-            $dir_imag = "./{$destino_uso}";
+            $dir_temp = "./{$source_use}";
+            $dir_imag = "./{$destination_use}";
 
-            $imagem->tipo = (float) str_replace(",", ".", (string) $this->input->post('tipo'));
-            if($imagem->tipo <= 0) $imagem->tipo = 1;
+            $image->scale = (float) str_replace(",", ".", (string) $this->input->post('scale'));
+            if($image->scale <= 0) $image->scale = 1;
 			
             // Empty/non-numeric strings in arithmetic throw a TypeError in PHP 8
-            $ww     = intval((float) $imagem->w * $imagem->tipo);
-            $aax    = intval((float) $imagem->ax * $imagem->tipo);
-            $hh     = intval((float) $imagem->h * $imagem->tipo);
-            $aay    = intval((float) $imagem->ay * $imagem->tipo);
+            $ww     = intval((float) $image->w * $image->scale);
+            $aax    = intval((float) $image->ax * $image->scale);
+            $hh     = intval((float) $image->h * $image->scale);
+            $aay    = intval((float) $image->ay * $image->scale);
 			
-            $tipo_imagem = $this->input->post('tipo_imagem');
+            $image_type = $this->input->post('image_type');
 
-            if($tipo_imagem == "2"){
+            if($image_type == "2"){
 			
                 $jpeg_quality = 100;
-                $img_r = imagecreatefromjpeg($dir_temp . $imagem->nome_arquivo);
+                $img_r = imagecreatefromjpeg($dir_temp . $image->file_name);
                 $dst_r = imagecreatetruecolor($xt, $yt);
-                $nomeArqP = "&_" . $imagem->nome_arquivo;
+                $croppedName = "&_" . $image->file_name;
                 imagecopyresampled($dst_r, $img_r, 0, 0, $aax, $aay, $xt, $yt, $ww, $hh);
 				
-                if(imagejpeg($dst_r, $dir_temp . $nomeArqP, $jpeg_quality)){
-                    chmod($dir_temp . $nomeArqP, 0777);
+                if(imagejpeg($dst_r, $dir_temp . $croppedName, $jpeg_quality)){
+                    chmod($dir_temp . $croppedName, 0777);
                 }else{
-                    $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro_crop'));
-                    redirect("/upload/upload_imagem/" . $imagem->origem . "/" . $imagem->destino . "/" . $imagem->altura . "/" . $imagem->largura);
+                    $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error_crop'));
+                    redirect("/upload/upload_image/" . $image->source . "/" . $image->destination . "/" . $image->height . "/" . $image->width);
                 }
 
-            }elseif($tipo_imagem == "1"){
+            }elseif($image_type == "1"){
 			
                 $jpeg_quality = 100;
-                $img_r = imagecreatefromgif($dir_temp . $imagem->nome_arquivo);
+                $img_r = imagecreatefromgif($dir_temp . $image->file_name);
                 $dst_r = imagecreatetruecolor($xt, $yt);
-                $nomeArqP = "&_" . $imagem->nome_arquivo;
+                $croppedName = "&_" . $image->file_name;
                 imagecopyresampled($dst_r, $img_r, 0, 0, $aax, $aay, $xt, $yt, $ww, $hh);
 				
-                if(imagegif($dst_r, $dir_temp . $nomeArqP)){
-                    chmod($dir_temp . $nomeArqP, 0777);
+                if(imagegif($dst_r, $dir_temp . $croppedName)){
+                    chmod($dir_temp . $croppedName, 0777);
                 }else{
-                    $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro_crop'));
-                    redirect("/upload/upload_imagem/" . $imagem->origem . "/" . $imagem->destino . "/" . $imagem->altura . "/" . $imagem->largura);
+                    $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error_crop'));
+                    redirect("/upload/upload_image/" . $image->source . "/" . $image->destination . "/" . $image->height . "/" . $image->width);
                 }
 
-            }elseif($tipo_imagem == "3"){
+            }elseif($image_type == "3"){
 			
                 $jpeg_quality = 100;
-                $img_r = imagecreatefrompng($dir_temp . $imagem->nome_arquivo);
+                $img_r = imagecreatefrompng($dir_temp . $image->file_name);
                 $dst_r = imagecreatetruecolor($xt, $yt);
-                $nomeArqP = "&_" . $imagem->nome_arquivo;
+                $croppedName = "&_" . $image->file_name;
                 imagecopyresampled($dst_r, $img_r, 0, 0, $aax, $aay, $xt, $yt, $ww, $hh);
 				
-                if(imagepng($dst_r, $dir_temp . $nomeArqP)){
-                    chmod($dir_temp . $nomeArqP, 0777);
+                if(imagepng($dst_r, $dir_temp . $croppedName)){
+                    chmod($dir_temp . $croppedName, 0777);
                 }else{
-                    $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro_crop'));
-                    redirect("/upload/upload_imagem/" . $imagem->origem . "/" . $imagem->destino . "/" . $imagem->altura . "/" . $imagem->largura);
+                    $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error_crop'));
+                    redirect("/upload/upload_image/" . $image->source . "/" . $image->destination . "/" . $image->height . "/" . $image->width);
                 }
             }
 			
-            $caminho_image = base_url("$origem_uso$nomeArqP");
+            $path_image = base_url("$source_use$croppedName");
 			
-            $caminho_temp = $dir_temp . $imagem->nome_arquivo;
-            @unlink($caminho_temp);
+            $path_temp = $dir_temp . $image->file_name;
+            @unlink($path_temp);
 
-			echo "<script> console.log(parent); parent.insereimagem('$caminho_image', '$nomeArqP','$imagem->nome_original'); </script>\n";
+			echo "<script> console.log(parent); parent.insertImage('$path_image', '$croppedName','$image->original_name'); </script>\n";
 			echo "<script>  parent.$('.close').trigger('click'); </script>";
 
 			echo '<link href="'. base_url("assets/css/bootstrap.css") .'" rel="stylesheet" />
-			<img src="'. $caminho_image .'" /><br><br>
-			<a href="'. base_url("upload/upload_imagem/". $this->session->userdata('config_imag')) .'" class="btn btn-primary">'.lang('msg_trocar_imagem').'</a>';
+			<img src="'. $path_image .'" /><br><br>
+			<a href="'. base_url("upload/upload_image/". $this->session->userdata('image_config')) .'" class="btn btn-primary">'.lang('msg_change_image').'</a>';
 
             exit();
 
         }else{
-            $this->session->set_flashdata('msg_controller_erro', lang('msg_upload_erro'));
-            redirect("/upload/upload_imagem/" . $imagem->origem . "/" . $imagem->destino . "/" . $imagem->altura . "/" . $imagem->largura);
+            $this->session->set_flashdata('msg_controller_error', lang('msg_upload_error'));
+            redirect("/upload/upload_image/" . $image->source . "/" . $image->destination . "/" . $image->height . "/" . $image->width);
         }
     }
 
-    private function salva_imagem($dir_imag, $dir_temp, $nome_arquivo){
+    private function save_image($dir_imag, $dir_temp, $file_name){
 		
-        $config = array('source_image' => $dir_temp . $nome_arquivo, 'new_image' => $dir_imag);
+        $config = array('source_image' => $dir_temp . $file_name, 'new_image' => $dir_imag);
 		$this->image_lib->clear();
         $this->image_lib->initialize($config);
         $this->image_lib->resize();
 
-        $caminho_temp = $dir_temp . $nome_arquivo;
-        @unlink($caminho_temp);
+        $path_temp = $dir_temp . $file_name;
+        @unlink($path_temp);
     }
 
-    public function valida(){
-        $this->form_validation->set_message('valida_check', lang('msg_upload_erro'));
+    public function validate(){
+        $this->form_validation->set_message('validate_check', lang('msg_upload_error'));
         return false;
     }
 

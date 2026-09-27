@@ -26,13 +26,13 @@ application/cache/*
 
 # User uploads. Keep each folder's index.html and the default avatar so the
 # folders still deploy, but never commit what people upload.
-assets/images/usuarios/*
-!assets/images/usuarios/index.html
-!assets/images/usuarios/none.png
-assets/images/projetos/*
-!assets/images/projetos/index.html
-assets/images/empresa/*
-!assets/images/empresa/index.html
+assets/images/users/*
+!assets/images/users/index.html
+!assets/images/users/none.png
+assets/images/projects/*
+!assets/images/projects/index.html
+assets/images/company/*
+!assets/images/company/index.html
 assets/images/temp/*
 !assets/images/temp/index.html
 

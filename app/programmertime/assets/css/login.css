@@ -107,7 +107,7 @@ input, textarea{
 }
 
 
-#senha{
+#password{
 	width: 370px;
 	margin-bottom:10px;
 	
@@ -133,7 +133,7 @@ input, textarea{
 	border-radius: 10px;
 }
 
-#mensagem{
+#message{
 	font-family: "Fjalla One", sans-serif;
 	color: white;
 	padding-top: 75px;
@@ -166,7 +166,7 @@ input, textarea{
 	        user-select: none;
 }
 
-.btn-entrar{
+.btn-signin{
 	color: #fff;
 	background-color: #428bca;
 	border-color: #357ebd;
@@ -174,7 +174,7 @@ input, textarea{
 	margin-right: 18px;
 }
 
-.btn-entrar:hover{
+.btn-signin:hover{
 	background-color: #0077bb;
 }
 
@@ -343,7 +343,7 @@ transform:scale(.3)}
 
 }
 
-/* bolinhas */
+/* loading dots */
 
 .bubblingG {
 margin:0 auto;

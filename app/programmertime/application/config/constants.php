@@ -1,6 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include('./config.php');
 
 define('FILE_READ_MODE', 0644);
 define('FILE_WRITE_MODE', 0666);

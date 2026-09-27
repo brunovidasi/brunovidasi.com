@@ -25,7 +25,7 @@ DirectoryIndex index.php
     # PHP file other than the front controller: config files and mPDF are only
     # ever include()d, and this also stops an uploaded script from executing.
     RewriteRule ^(application|system|data)(/|$) - [F,L]
-    RewriteRule ^(schema\.sql|README\.md|leia-me\.txt|\.git.*)$ - [F,L,NC]
+    RewriteRule ^(schema\.sql|README\.md|\.git.*)$ - [F,L,NC]
     RewriteRule ^(?!index\.php$).*\.(php[0-9]?|phtml|phar)$ - [F,L,NC]
 
     # Remove "index.php" from URLs: everything that isn't a real file goes

@@ -27,7 +27,7 @@ if ($pt_db['driver'] === 'sqlite') {
 }
 
 
-# Configura��es Gerais de Banco de Dados
+# General database settings
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = ENVIRONMENT !== 'production';

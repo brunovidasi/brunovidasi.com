@@ -12,38 +12,35 @@ $autoload['libraries'] 	= array(
 
 $autoload['helper'] 	= array(
 							'form', 
-							'fdata', 
+							'fdate', 
 							'url', 
 							'pr_helper', 
-							'cripto', 
-							'gera_senha', 
+							'hash_password', 
+							'generate_password', 
 							'log', 
-							'mascara', 
-							'horas', 
-							'cpf',
-							'telefone',
-							'moeda',
+							'hours', 
+							'currency',
 							'download',
 							'sql',
 							'language',
-							'usuario'
+							'user'
 						);
 						
 $autoload['model'] 		= array(
-							'imagem_model',
-							'empresa_model',
-							'ajuda_model',
-							'enviar_email',
+							'image_model',
+							'company_model',
+							'help_model',
+							'send_email',
 							'download_model',
-							'acesso_model', 
-							'projeto_model', 
-							'usuario_model', 
-							'tarefa_model', 
-							'etapa_model', 
-							'financeiro_model',
-							'cliente_model',
-							'mensagem_model',
-							'relatorio_model'
+							'auth_model', 
+							'project_model', 
+							'user_model', 
+							'task_model', 
+							'time_entry_model', 
+							'finance_model',
+							'client_model',
+							'message_model',
+							'report_model'
 						);
 
 $autoload['language'] 	= array(

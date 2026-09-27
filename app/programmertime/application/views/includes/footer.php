@@ -10,10 +10,10 @@
 </script>
 
 <script>
-	// Versão do Programmer Time
+	// Programmer Time version
 	console.log('Programmer Time v1.0.0.0');
 
-	// Atalhos
+	// Keyboard shortcuts
 
 	$(document).ready(function(){
 
@@ -28,26 +28,26 @@
 			if(e.which == 17) 
 				pressedCtrl = true; 
 
-			// CTRL+S - Salvar um formulário
+			// CTRL+S - Save a form
 			if(e.which == 83 && pressedCtrl == true) { 
-				//Aqui vai o código e chamadas de funções para o ctrl+s 
-				alert("CTRL + S pressionados"); 
+				// Code and function calls for ctrl+s go here
+				alert("CTRL + S pressed"); 
 				//pressedCtrl=false;
 			} 
 
-			// CTRL+N - Novo Projeto
+			// CTRL+N - New project
 			if(e.which == 78 && pressedCtrl == true) {
-				window.location.href = "<?php echo base_url('projeto/cadastrar'); ?>";
+				window.location.href = "<?php echo base_url('project/create'); ?>";
 			} 
 
-			// CTRL+E - Lançar Etapa
+			// CTRL+E - Log time
 			if(e.which == 69 && pressedCtrl == true) {
-				window.location.href = "<?php echo base_url('etapa/lancar'); ?>";
+				window.location.href = "<?php echo base_url('time_entry/start'); ?>";
 			} 
 
-			// CTRL+F - Financeiro
+			// CTRL+F - Finance
 			if(e.which == 69 && pressedCtrl == true) {
-				window.location.href = "<?php echo base_url('financeiro'); ?>";
+				window.location.href = "<?php echo base_url('finance'); ?>";
 			} 
 		}); 
 

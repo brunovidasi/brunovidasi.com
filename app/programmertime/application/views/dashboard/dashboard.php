@@ -1,16 +1,16 @@
-<link type="text/css" href="<?php echo base_url('assets/js/paginacao/paging.css'); ?>" rel="stylesheet" />
-<script type="text/javascript" src="<?php echo base_url('assets/js/paginacao/paging.js'); ?>"></script>
+<link type="text/css" href="<?php echo base_url('assets/js/pagination/paging.css'); ?>" rel="stylesheet" />
+<script type="text/javascript" src="<?php echo base_url('assets/js/pagination/paging.js'); ?>"></script>
 
-<p class="titulo_pagina"  style="float:left;">Olá! Como foi seu dia? Vamos aos nossos Projetos!</p> <br><br><br><br>
+<p class="page_title"  style="float:left;">Hi! How was your day? Let's get to our projects!</p> <br><br><br><br>
 
 <?php
-	$lanca_etapa = $this->session->userdata('lanca_etapa');
-	$lanca_pagamento = $this->session->userdata('lanca_pagamento');
-	$cadastra_projeto = $this->session->userdata('cadastra_projeto');
-	$cadastra_cliente = $this->session->userdata('cadastra_cliente');
-	$envia_relatorio = $this->session->userdata('envia_relatorio');
+	$can_log_time = $this->session->userdata('can_log_time');
+	$can_log_payment = $this->session->userdata('can_log_payment');
+	$can_create_project = $this->session->userdata('can_create_project');
+	$can_create_client = $this->session->userdata('can_create_client');
+	$can_send_report = $this->session->userdata('can_send_report');
 
-	require('application/views/includes/mensagem.php');
+	require('application/views/includes/message.php');
 	if(validation_errors() != ''){
 	echo "<div class='alert alert-danger'><button type='button' class='close' data-dismiss='alert'>&times;</button><ul>".validation_errors('<li>', '</li>')."</ul></div> <br />";
 	}
@@ -19,53 +19,53 @@
 <div class="pull-left" style="width:58%">
 
 	<div class="panel panel-default">
-		<div class="panel-heading">Meus Projetos Recentes</div>
+		<div class="panel-heading">My Recent Projects</div>
 		
 		<div class="panel-body">
-			<table width="100%" class="table table-hover" id="tabela_projetos">
+			<table width="100%" class="table table-hover" id="table_projects">
 				<tr>
 					<th>ID</th>
-					<th>Nome</th>
-					<th>Tipo</th>
-					<th title="Responsável pelo projeto">Responsável</th>
-					<th title="Quantidade de etapas que você realizou neste projeto">Etapas</th>
-					<th title="Horas que você realizou neste projeto">Horas</th>
-					<th>Prazo</th>
+					<th>Name</th>
+					<th>Type</th>
+					<th title="Project owner">Owner</th>
+					<th title="Time entries you logged on this project">Entries</th>
+					<th title="Hours you worked on this project">Hours</th>
+					<th>Deadline</th>
 					<th></th>
 				</tr>
 				
-				<?php foreach($projetos_envolvidos as $projeto_envolvido){
-				$projeto = $projeto_envolvido->row();  ?>
+				<?php foreach($projects_involved as $project_involved){
+				$project = $project_involved->row();  ?>
 				<tr>
-					<td><a href="<?php echo base_url('projeto/visualizar/'.$projeto->idprojeto); ?>"># <?php echo $projeto->idprojeto; ?></a></td>
-					<td><?php echo $projeto->nome; ?></td>
-					<td><?php echo $projeto->tipo; ?></td>
-					<td><a href="<?php echo base_url('usuario/visualizar/'.$projeto->idresponsavel); ?>"><?php echo $projeto->responsavel; ?></a></td>
-					<td><?php echo $projeto_envolvido->numero_etapas; ?></td>
-					<td><?php echo $projeto_envolvido->horas_trabalhadas; ?></td>
-					<td><?php echo fdatetime($projeto->prazo, '/'); ?></td>
+					<td><a href="<?php echo base_url('project/view/'.$project->project_id); ?>"># <?php echo $project->project_id; ?></a></td>
+					<td><?php echo $project->name; ?></td>
+					<td><?php echo $project->type; ?></td>
+					<td><a href="<?php echo base_url('user/view/'.$project->owner_id); ?>"><?php echo $project->owner; ?></a></td>
+					<td><?php echo $project_involved->time_entry_count; ?></td>
+					<td><?php echo $project_involved->hours_worked; ?></td>
+					<td><?php echo fdatetime($project->deadline, '/'); ?></td>
 					<td>
-						<a href="<?php echo base_url('projeto/visualizar/'.$projeto->idprojeto); ?>" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-th-large"></i></a>
-						<?php if($cadastra_projeto){ ?>
-							<a class="btn btn-xs btn-info" alt="Gerar Relatório" title="Gerar Relatório" href="<?php echo base_url('relatorio/gerar/'. $projeto->idprojeto); ?>" id="gerar_relatorio">
+						<a href="<?php echo base_url('project/view/'.$project->project_id); ?>" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-th-large"></i></a>
+						<?php if($can_create_project){ ?>
+							<a class="btn btn-xs btn-info" alt="Create Report" title="Create Report" href="<?php echo base_url('report/generate/'. $project->project_id); ?>" id="generate_report">
 								<i class='glyphicon glyphicon-file'></i>
 							</a>
 						<?php } ?>
 						
-						<?php if($cadastra_projeto){ ?>
-							<a class="btn btn-xs btn-warning" alt="Editar Projeto" title="Editar Projeto" href="<?php echo base_url('projeto/editar/'. $projeto->idprojeto); ?>" id="cadastrar_projeto">
+						<?php if($can_create_project){ ?>
+							<a class="btn btn-xs btn-warning" alt="Edit Project" title="Edit Project" href="<?php echo base_url('project/edit/'. $project->project_id); ?>" id="create_project">
 								<i class='glyphicon glyphicon-pencil'></i>
 							</a>
 						<?php } ?>
 			
-						<?php if($lanca_etapa){ ?>
-							<a class="btn btn-xs btn-info <?php if($projeto->status == 'concluido'){ echo "disabled"; } ?>" alt="Lançar Etapa" title="Lançar Etapa" href="<?php echo base_url('etapa/lancar/'. $projeto->idprojeto); ?>" id="lancar_etapa">
+						<?php if($can_log_time){ ?>
+							<a class="btn btn-xs btn-info <?php if($project->status == 'completed'){ echo "disabled"; } ?>" alt="Log Time" title="Log Time" href="<?php echo base_url('time_entry/start/'. $project->project_id); ?>" id="log_time_entry">
 								<i class='glyphicon glyphicon-time'></i>
 							</a>
 						<?php } ?>
 						
-						<?php if($lanca_pagamento){ ?>
-							<a class="btn btn-xs btn-success <?php if($projeto->status == 'concluido'){ echo "disabled"; } ?>" alt="Lançar Pagamento" title="Lançar Pagamento" href="<?php echo base_url('financeiro/cadastrar/'. $projeto->idprojeto); ?>" id="lancar_pagamento">
+						<?php if($can_log_payment){ ?>
+							<a class="btn btn-xs btn-success <?php if($project->status == 'completed'){ echo "disabled"; } ?>" alt="Add Payment" title="Add Payment" href="<?php echo base_url('finance/create/'. $project->project_id); ?>" id="log_payment">
 								<i class='glyphicon glyphicon-usd'></i>
 							</a>
 						<?php } ?>
@@ -75,13 +75,13 @@
 				
 			</table>
 			
-			<?php if(count($projetos_envolvidos) > 5){ ?>
-				<div id="paginacao_projetos" style="display:inline;"></div>
+			<?php if(count($projects_involved) > 5){ ?>
+				<div id="pagination_projects" style="display:inline;"></div>
 
 				<script>
-				var pager = new Pager('tabela_projetos', 5);
+				var pager = new Pager('table_projects', 5);
 				pager.init();
-				pager.showPageNav('pager', 'paginacao_projetos');
+				pager.showPageNav('pager', 'pagination_projects');
 				pager.showPage(1);
 				</script>
 			<?php } ?>
@@ -89,14 +89,14 @@
 		
 	</div>
 	
-	<button id="form-field-1" class="btn btn-primary" href="#etapas_modal" data-toggle="modal" data-target="#etapas_modal"></button>
+	<button id="form-field-1" class="btn btn-primary" href="#time_entries_modal" data-toggle="modal" data-target="#time_entries_modal"></button>
 	
-	<div class="modal fade" id="etapas_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal fade" id="time_entries_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<span type="button" class="close" data-dismiss="modal" aria-hidden="true"></span>
 				<div class="modal-body">
-					<iframe id="frame_modal" src="<?php echo base_url("teste/modal/"); ?>" width="100%"  scrolling="auto" border="0" height="530px" style="border:0"></iframe>
+					<iframe id="frame_modal" src="<?php echo base_url("test/modal/"); ?>" width="100%"  scrolling="auto" border="0" height="530px" style="border:0"></iframe>
 				</div>
 				
 			</div>
@@ -111,7 +111,7 @@
 <div class="panel panel-default">
 
 	<div class="panel-heading">
-		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse">Avisos Gerais</a> <span class="badge pull-right">3</span></h4>
+		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse">General Notices</a> <span class="badge pull-right">3</span></h4>
 	</div>
 	
 	<div id="collapse" class="panel-collapse collapse">
@@ -128,8 +128,8 @@
 				</tr>
 				
 				<tr>
-					<td rowspan="2"><img src="<?php echo base_url('assets/images/sistema/logo.png'); ?>" width="100px" height="100px"/></td>
-					<td><strong>Aviso Automático:</strong> Prazo do projeto Site Pessoal, vai expirar em 10 dias.</td>
+					<td rowspan="2"><img src="<?php echo base_url('assets/images/system/logo.png'); ?>" width="100px" height="100px"/></td>
+					<td><strong>Automatic notice:</strong> The deadline for project Personal Site expires in 10 days.</td>
 					
 				</tr>
 				<tr>
@@ -151,48 +151,48 @@
 	</div>
 	
 	<div class="panel-body">
-		Existem 3 novos avisos desde a última vez que você entrou no Programmer Time! <a data-toggle="collapse" data-parent="#accordion" href="#collapse">Clique para ver!</a>
+		There are 3 new notices since you last logged in to Programmer Time! <a data-toggle="collapse" data-parent="#accordion" href="#collapse">Click to view!</a>
 	</div>
 </div>
 
 <div class="panel panel-default">
 
 	<div class="panel-heading">
-		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse3">O que estou fazendo agora?</a> <?php if($etapa_aberta->num_rows() == 1){ echo'<span class="badge pull-right">1</span>';} ?></h4>
+		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse3">What am I working on now?</a> <?php if($open_time_entry->num_rows() == 1){ echo'<span class="badge pull-right">1</span>';} ?></h4>
 	</div>
 	
 	<div id="collapse3" class="panel-collapse collapse in">
-		<?php if($etapa_aberta->num_rows() == 1){ $a_etapa = $etapa_aberta->row();?>
+		<?php if($open_time_entry->num_rows() == 1){ $a_time_entry = $open_time_entry->row();?>
 			
 			<table class="table table-condensed">
 			<tr>
-				<td><strong>Projeto:</strong></td>
-				<td><?php echo $a_etapa->nomeprojeto; ?></td>
+				<td><strong>Project:</strong></td>
+				<td><?php echo $a_time_entry->project_name; ?></td>
 			</tr>
 			<tr>
-				<td><strong>Fase:</strong></td>
-				<td><?php echo $a_etapa->fase; ?></td>
+				<td><strong>Phase:</strong></td>
+				<td><?php echo $a_time_entry->phase; ?></td>
 			</tr>
 			<tr>
-				<td><strong>Descrição Técnica:</strong></td>
-				<td><?php echo $a_etapa->descricao_tecnica; ?></td>
+				<td><strong>Technical Description:</strong></td>
+				<td><?php echo $a_time_entry->technical_description; ?></td>
 			</tr>
 			<tr>
-				<td><strong>Descrição Cliente:</strong></td>
-				<td><?php echo $a_etapa->descricao_cliente; ?></td>
+				<td><strong>Client Description:</strong></td>
+				<td><?php echo $a_time_entry->client_description; ?></td>
 			</tr>
 		</table>
 		<?php }else{
-			#echo 'Não existe etapa em aberto no momento.';
+			#echo 'There is no open time entry right now.';
 		} ?>
 	</div>
 	
 	<div class="panel-body">
-		<?php if($etapa_aberta->num_rows() == 1){ $a_etapa = $etapa_aberta->row();?> <span class="pull-left"><strong><?php echo fdata($a_etapa->data, "/") . ' - ' . fhora($a_etapa->inicio); ?></strong><br> <?php echo $a_etapa->fase . ' - ' . $a_etapa->nomeprojeto; ?></span>
-			<span class="pull-right"><a href="<?php echo base_url('etapa'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Terminar Contagem</a>
-			<a href="<?php echo base_url('etapa'); ?>" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> Excluir Contagem</a></span>
+		<?php if($open_time_entry->num_rows() == 1){ $a_time_entry = $open_time_entry->row();?> <span class="pull-left"><strong><?php echo fdate($a_time_entry->date, "/") . ' - ' . ftime($a_time_entry->start_time); ?></strong><br> <?php echo $a_time_entry->phase . ' - ' . $a_time_entry->project_name; ?></span>
+			<span class="pull-right"><a href="<?php echo base_url('time_entry'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Stop Timer</a>
+			<a href="<?php echo base_url('time_entry'); ?>" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> Delete Timer</a></span>
 		<?php }else{ ?>
-			<span class="pull-right"><a href="<?php echo base_url('etapa'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Lançar Horas de Etapa</a></span>
+			<span class="pull-right"><a href="<?php echo base_url('time_entry'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-time"></i> Log Time</a></span>
 		<?php } ?>
 	</div>
 </div>
@@ -201,28 +201,28 @@
 <div class="panel panel-default">
 
 	<div class="panel-heading">
-		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Minhas Anotações</a></h4>
+		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse2">My Notes</a></h4>
 	</div>
 	
 	<div id="collapse2" class="panel-collapse collapse">
 		<div class="panel-body">
-			<label>O que temos para hoje?</label>
-			<form action="<?php echo base_url('usuario/obs') ?>" method="post" name="form1" class="form1">
-				<textarea name="obs" class="form-control" id="obs" rows="6"><?php echo set_value('obs', 'Minhas Anotações blablabla');  ?></textarea>
-				<br><button type="submit" name="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-file"></i> Salvar Nota</button>
+			<label>What's on for today?</label>
+			<form action="<?php echo base_url('user/notes') ?>" method="post" name="form1" class="form1">
+				<textarea name="notes" class="form-control" id="notes" rows="6"><?php echo set_value('notes', 'My notes blah blah');  ?></textarea>
+				<br><button type="submit" name="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-file"></i> Save Note</button>
 			</form>
 		</div>
 	</div>
 	
 	<div class="panel-body">
-		<strong>20/05/2014: </strong>Minhas Anotações blablabla
+		<strong>20/05/2014: </strong>My notes blah blah
 	</div>
 </div>
 
 <div class="panel panel-default">
 
 	<div class="panel-heading">
-		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Outro menu</a> <span class="badge pull-right">1</span></h4>
+		<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Another menu</a> <span class="badge pull-right">1</span></h4>
 	</div>
 	
 	<div id="collapse4" class="panel-collapse collapse">
@@ -232,7 +232,7 @@
 	</div>
 	
 	<div class="panel-body">
-		<strong>20/05/2014 - 12:54 </strong> Projeto Tal
+		<strong>20/05/2014 - 12:54 </strong> Some Project
 	</div>
 </div>
 
