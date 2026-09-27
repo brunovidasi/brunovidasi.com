@@ -1,0 +1,73 @@
+@charset "utf-8";
+
+h2{ color:#6d2b26; 
+line-height: 10px;
+margin-bottom: 50px;
+}
+
+h4 {
+font-size: 18px;
+line-height: 20px;
+}
+
+ul{ list-style:none;}
+.btn-entrar{ background:#ccff00;}
+.btn-entrar:hover{ background:#bae900;}
+
+table{font-size:13px;}
+table form{float:left; margin:0;}
+
+.form-style{ background:white; padding: 10px 10px 2px 10px; box-shadow: 1px 1px 10px white; margin-bottom:40px;}
+
+.form-style label{	display: inline-block;	width: 70px; vertical-align: top;}
+.form-style legend{ font-size:16px; color:#f79a1d; border-bottom:1px dotted #F0F0F0; font-weight:bold;}
+.form-style ul{margin: 0 0 10px 10px;}
+
+
+li { line-height: 20px; margin-bottom: 5px; }
+
+.label{padding: 1px 8px 2px;}
+table .label{padding: 0px 7px 0px;}
+.table td{ font-size:12px;}
+
+input[type="file"]{ line-height:20px;}
+
+
+.form-style label.checkbox{ display:block !important; width: 95%; cursor:pointer; padding:0px; margin-bottom:0px; margin-left: 20px; font-size:12px}
+.form-style label.checkbox:hover{ display:block !important; cursor:pointer; background:#F8F0E0;}
+
+.box-checkbox {width: 60%; height: 120px; overflow: auto; border: 1px solid #EEEEEE; padding: 3px; display: inline-block; background:#FFFFFF; margin-bottom:5px;}
+
+
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+padding: 3px 6px;
+}
+input[type="radio"]{margin-bottom:8px;}
+
+.close {
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #000000;
+  text-shadow: 0 1px 0 #ffffff;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+}
+
+.close:hover {
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+
+button.close {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  -webkit-appearance: none;
+}
