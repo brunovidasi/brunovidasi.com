@@ -1,0 +1,12 @@
+# User uploads (avatars, project and company images) land in subfolders here.
+# Uploads are restricted to images, but never let anything in this tree run as
+# a script, even if the root .htaccess rewrite rules are not in effect.
+<FilesMatch "\.(php[0-9]?|phtml|phar|pl|py|cgi|sh)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>

@@ -1,0 +1,84 @@
+# Programmer Time 1.0 ###################################################################
+
+Sistema de gerenciamento de projetos para o desenvolvimento de softwares, baseado em 
+metodologia ágil.
+
+Desenvolvido na plataforma WEB com a linguagem de Programação PHP.
+
+Desenvolvimento - Bruno Vieira (@brunovidasi) e Filipe Moreira
+
+# Instalação ############################################################################
+
+- Configure o banco de dados no arquivo application/config/database.php
+- Copie todos os arquivos desta pasta para o servidor
+- Comece a usar o programa
+
+# Desenvolvimento #######################################################################
+
+Linguagem de Programação 		PHP 			5.4
+Framework 						CodeIgniter		2.2.0
+
+Linguagem de Marcação			HTML			5
+Estilo							CSS				3
+Framework						Bootstrap		3.1
+
+Script							Javascript		ES6
+Framework						JQuery			1.9.1
+
+
+# Requisitos ############################################################################
+
+Requisito 			Versão		
+
+PHP					5.4.x
+HTML				5
+CSS					3
+Javascript			ES6
+
+
+# Navegadores ###########################################################################
+
+Versões mínimas de navegadores para rodar o ProgrammerTime
+
+Navegador 			Versão
+
+Google Chrome		37.0.2062.103 m
+Mozilla Firefox		31.0
+Safari				5.1.7
+Internet Explorer	11.0.9600.17280
+
+Outro				Que seja compatível com os requisitos apresentados.
+
+-  Recomenda-se usar o navegador Google Chrome em sua versão mais atualizada.
+
+
+# Bugs e Erros ##########################################################################
+
+O ProgrammerTime está em sua versão 1.0, estamos abertos a dúvidas e sugestões.
+
+Para reportar algum erro, bug ou enviar sugestões, envie um e-mail para:
+
+	contato@programmertime.com
+
+
+# Direitos Autorais #####################################################################
+
+É proibída a cópia total ou parcial, não autorizada por meio de um documento oficial.
+
+Para a compra da licensa de uso do ProgrammerTime, entre em contato através do e-mail:
+
+	contato@programmertime.com
+
+
+# PARA O DESENVOLVEDOR ##################################################################
+
+Após o término da fase de desenvolvimento 1.0:
+
+	1 - Trocar o modo de desenvolvimento na index.php para o modo de produção.
+	2 - Configurar o banco de dados corretamente no database.php e no ajax.
+	3 - Trocar o modo de log de 4 para 0 no config.php.
+	4 - Limpar arquivos old.
+
+E por fim apagar esta parte final do arquivo leia-me.
+
+#########################################################################################

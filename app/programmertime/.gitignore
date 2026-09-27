@@ -1,0 +1,41 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+
+# CodeIgniter runtime logs and caches
+application/logs/*.php
+application/cache/*
+!application/cache/index.html
+
+# Local environment overrides
+*.local.php
+.env
+
+# Local settings (copy of config.example.php). On a server the real config
+# lives in programmertime-instance/ above public_html, outside this tree.
+/config.php
+/programmertime-instance/
+
+# Local SQLite database (on a server it lives in programmertime-instance/data/)
+/data/
+
+# User uploads. Keep each folder's index.html and the default avatar so the
+# folders still deploy, but never commit what people upload.
+assets/images/usuarios/*
+!assets/images/usuarios/index.html
+!assets/images/usuarios/none.png
+assets/images/projetos/*
+!assets/images/projetos/index.html
+assets/images/empresa/*
+!assets/images/empresa/index.html
+assets/images/temp/*
+!assets/images/temp/index.html
+
+# Never commit real credentials
+error_log
+*.sql.bak
