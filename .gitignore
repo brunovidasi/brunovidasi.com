@@ -1,3 +1,7 @@
 .DS_Store
 .claude/
 .vscode/
+
+# Local staging copy of a server-only instance folder (secrets + database).
+# Never commit: this repo is public and deploys to public_html.
+/programmertime-instance/
