@@ -1,6 +1,18 @@
 
 RewriteEngine on
 
+# Caching: without explicit headers browsers guess a cache lifetime from Last-Modified,
+# so deploys don't show up until the guess expires. Code/data files must revalidate on
+# every load (cheap 304 via ETag when unchanged); static media can be cached for a week.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html?|shtml|js|mjs|css|json|pdf)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|gif|webp|avif|svg|ico|woff2?|ttf|otf|eot|mp3|mp4|webm)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
 ErrorDocument 400 /400.shtml
 ErrorDocument 401 /401.shtml
 ErrorDocument 403 /403.shtml
