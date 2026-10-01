@@ -1,5 +1,22 @@
 [
   {
+    "id": "flowparty",
+    "title": "FLOW Party Sydney",
+    "url": "flowpartysyd.com",
+    "year": 2026,
+    "live": "https://flowpartysyd.com/",
+    "status": "live",
+    "icon": "🏳️‍🌈",
+    "role": "Freelance — Front-End Design & Development",
+    "description": "Website for FLOW, Sydney's biggest Brazilian queer party: a bold, animated single-page site that tells the story of the community, its last party and every edition since 2021.",
+    "extendedDescription": "Built from scratch with vanilla HTML, CSS and JavaScript, no framework or build step. It features an animated rainbow logo, scrolling marquees, count-up stats, a photo gallery with lightbox, a sideways-scrolling archive of all seventeen editions and a countdown that switches on when the next party is announced. A partners section with audience numbers helps the team pitch brands and venues.",
+    "logo": "img/clients/flow.webp",
+    "screenshot": "img/screenshots/flow-party.jpg",
+    "screenshotGif": "img/screenshots/flow-party.gif",
+    "github": "https://github.com/brunovidasi/flowpartysyd.com",
+    "company": "Freelance"
+  },
+  {
     "id": "vinylcollection",
     "title": "Vinyl Collection",
     "url": "brunovida.si/music",

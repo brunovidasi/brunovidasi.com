@@ -5,3 +5,4 @@
 # Local staging copy of a server-only instance folder (secrets + database).
 # Never commit: this repo is public and deploys to public_html.
 /programmertime-instance/
+projects/landing-pages/flowparty.com.au/Archive.zip
