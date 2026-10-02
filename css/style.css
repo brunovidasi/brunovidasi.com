@@ -2586,22 +2586,6 @@ h1.hero {
   margin-bottom: 12px;
 }
 
-.cv-skills {
-  margin-bottom: 30px;
-}
-
-.cv-skill-line {
-  font-family: var(--sans);
-  font-size: 13.5px;
-  line-height: 2;
-  color: var(--text);
-}
-
-.cv-skill-key {
-  color: var(--accent);
-  font-weight: 600;
-}
-
 .skill-grid {
   display: flex;
   flex-wrap: wrap;
@@ -2721,6 +2705,20 @@ h1.hero {
 .skill-card[data-name="Portuguese"] { --brand: #009C3B; }
 
 .skill-card[data-name="Spanish"] { --brand: #F1BF00; }
+
+.skill-card[data-name="Laravel"] { --brand: #FF2D20; }
+
+.skill-card[data-name="Git"] { --brand: #F05032; }
+
+.skill-card[data-name="Bitbucket"] { --brand: #2684FF; }
+
+.skill-card[data-name="Jira"] { --brand: #2684FF; }
+
+.skill-card[data-name="Confluence"] { --brand: #2684FF; }
+
+.skill-card[data-name="Salesforce Commerce Cloud"] { --brand: #00A1E0; }
+
+.skill-card[data-name="SAP Hybris"] { --brand: #0FAAFF; }
 
 .skill-card[data-name="PHP"] { --brand: #777BB4; }
 

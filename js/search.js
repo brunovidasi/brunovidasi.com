@@ -50,7 +50,7 @@ function extractText(el){
 const STATIC_CONTENT_SOURCES = {
   experience: ':scope > .commit',
   education: ':scope > .commit',
-  skills: '.cv-skill-line',
+  skills: '.skill-group',
   freelance: '.bio-text, .bio-list li',
   documents: '.doc-card'
 };
