@@ -19,7 +19,8 @@ const ICON_GLYPHS = {
   sh:   { char: '\ue089', color: '#8dc149' },
   eml:  { char: '\ue023', color: '#6d8086' },
   pdf:  { char: '\ue06d', color: '#cc3e44' },
-  css:  { char: '\ue01d', color: '#519aba' }
+  css:  { char: '\ue01d', color: '#519aba' },
+  git:  { char: '\ue034', color: '#e37933' }
 };
 
 const FOLDER_COLOR = '#ffb454';

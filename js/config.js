@@ -33,6 +33,8 @@ export const files = {
   'mini-tools-converters':  { label: 'converters.md',      icon: 'md',   folder: 'mini-tools' },
   'mini-tools-generators':  { label: 'generators.md',      icon: 'md',   folder: 'mini-tools' },
   'mini-tools-pdf':         { label: 'pdf-tools.md',       icon: 'md',   folder: 'mini-tools' },
+  github:                   { label: '.gitconfig',         icon: 'git',  folder: null,
+                              aliases: ['github', 'git'] },
   freelance:                { label: 'freelance.css',      icon: 'css',  folder: null },
   contact:                  { label: 'contact.eml',        icon: 'eml',  folder: null },
   documents:                { label: 'documents.pdf',      icon: 'pdf',  folder: null,
@@ -63,7 +65,7 @@ export const FOLDER_DEFAULT_FILE = {
 };
 
 /** Top-level explorer order. Also the terminal's root `ls` listing. */
-export const rootOrder = ['intro', 'about', 'projects', 'mini-tools', 'freelance', 'documents', 'contact'];
+export const rootOrder = ['intro', 'about', 'projects', 'mini-tools', 'github', 'freelance', 'documents', 'contact'];
 
 export const DEFAULT_OPEN_TABS = ['intro'];
 

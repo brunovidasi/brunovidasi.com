@@ -25,7 +25,7 @@ SPA_ROUTES = re.compile(
     r"^/(about|intro|experience|education|skills|websites|web-systems|landing-pages"
     r"|mini-tools|mini-tools-readme|mini-tools-dev|mini-tools-media|mini-tools-converters"
     r"|mini-tools-generators|mini-tools-pdf|edm-tools|mini-games|edm-work|site-history"
-    r"|freelance|contact|documents"
+    r"|github|freelance|contact|documents"
     r"|campo-minado|color-palette-generator|cron-builder|css-beautifier|css-minifier"
     r"|css-visual-builder|currency-converter|exif-viewer|gerador-de-cpf|ig-relationship-checker"
     r"|image-compressor|image-to-pdf|js-beautifier|js-minifier|json-csv-converter|password-generator"

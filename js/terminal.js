@@ -44,9 +44,12 @@ export function bootTerminal(){
 
 // ---- Name resolution ------------------------------------------------------
 
-/** Strips a file extension and lowercases, so `cd about` matches `README.md`. */
+/**
+ * Strips a file extension and lowercases, so `cd about` matches `README.md`.
+ * A dotfile's leading dot isn't an extension, so `.gitconfig` stays whole.
+ */
 function baseName(label){
-  return label.replace(/\.[^.]+$/, '').toLowerCase();
+  return label.replace(/(.)\.[^.]+$/, '$1').toLowerCase();
 }
 
 function folderName(id){

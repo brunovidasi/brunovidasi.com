@@ -21,6 +21,7 @@ import { initGames } from './games.js';
 import { initWebsites } from './websites.js';
 import { initProjects } from './projects.js';
 import { initContact } from './contact.js';
+import { initGithub } from './github.js';
 import { initBottomPanel } from './bottom-panel.js';
 import { initTerminal } from './terminal.js';
 import { initSearch } from './search.js';
@@ -73,6 +74,7 @@ function main(){
   // Kick the project JSON off before the boot animation, not after, so the
   // network request overlaps it instead of queueing behind it.
   initProjects();
+  initGithub();
   startBoot();
 }
 

@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  # Daily redeploy so json/github.json (repos, stars, contributions) stays fresh.
+  # Only the changed file is uploaded.
+  schedule:
+    - cron: '0 18 * * *'   # 04:00/05:00 Sydney time
+  workflow_dispatch:
 
 jobs:
   ftp-deploy:
@@ -13,6 +18,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # GH_STATS_TOKEN is a fine-grained personal access token (public repos,
+      # read-only). Falls back to the workflow's own token if it isn't set.
+      # A failure here shouldn't block a deploy: the panel then falls back to
+      # the public REST API in the browser.
+      - name: Snapshot GitHub profile
+        continue-on-error: true
+        run: node scripts/fetch-github.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GH_STATS_TOKEN || github.token }}
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -27,3 +42,4 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.github/**
+            scripts/**

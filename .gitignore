@@ -6,3 +6,6 @@
 # Never commit: this repo is public and deploys to public_html.
 /programmertime-instance/
 projects/landing-pages/flowparty.com.au/Archive.zip
+
+# Generated at deploy time by scripts/fetch-github.mjs (needs a token).
+/json/github.json
