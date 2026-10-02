@@ -2609,6 +2609,40 @@ h1.hero {
   margin-bottom: 30px;
 }
 
+.skill-groups {
+  margin-bottom: 30px;
+}
+
+.skill-group {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.skill-group:last-child {
+  border-bottom: none;
+}
+
+.skill-group .skill-label {
+  margin-bottom: 0;
+}
+
+.skill-group .skill-grid {
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .skill-group {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px 0;
+  }
+}
+
 .skill-card {
   --brand: var(--accent);
   display: flex;
@@ -2661,16 +2695,38 @@ h1.hero {
   transition: background .18s ease, color .18s ease;
 }
 
+.skill-icon-emoji {
+  font-size: 15px;
+  line-height: 16px;
+  flex-shrink: 0;
+}
+
 .skill-card:hover .skill-icon-letter {
   background: var(--brand);
   color: #0b0e0c;
 }
 
+.skill-card[data-name="TypeScript"] { --brand: #3178C6; }
+
+.skill-card[data-name="Next.js"] { --brand: #FFFFFF; }
+
+.skill-card[data-name="Tailwind CSS"] { --brand: #06B6D4; }
+
+.skill-card[data-name="Contentful"] { --brand: #2478CC; }
+
+.skill-card[data-name="REST APIs"] { --brand: #FF6C37; }
+
+.skill-card[data-name="English"] { --brand: #5B8DEF; }
+
+.skill-card[data-name="Portuguese"] { --brand: #009C3B; }
+
+.skill-card[data-name="Spanish"] { --brand: #F1BF00; }
+
 .skill-card[data-name="PHP"] { --brand: #777BB4; }
 
 .skill-card[data-name="Node.js"] { --brand: #339933; }
 
-.skill-card[data-name="React"] { --brand: #61DAFB; }
+.skill-card[data-name="React.js"] { --brand: #61DAFB; }
 
 .skill-card[data-name="MySQL"] { --brand: #4479A1; }
 
