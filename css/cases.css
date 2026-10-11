@@ -13,7 +13,7 @@
 .k-ps3    { --pl: rgba(196,212,226,.62); --bb: #0c0c0e; --bf: #fff;                                --sb: #141418; --sf: #e6e6e6; --st: #0c0c0e; --stf: #cfd3d8; --ph1: #121214; --ph2: #2c2c33; }
 .k-ps4    { --pl: #1e4ea8; --bb: #003791; --bf: #fff;                                --sb: #0d1a33; --sf: #fff; --st: #003791; --stf: #fff;    --ph1: #0b1631; --ph2: #1d3a78; }
 .k-ps5    { --pl: #2456b0; --bb: #ffffff; --bf: #000;                                --sb: #0b0b0b; --sf: #fff; --st: #ffffff; --stf: #000;    --ph1: #0e1016; --ph2: #262b38; }
-.k-xbox   { --pl: #111;    --bb: linear-gradient(#5fbf2a,#2f8a12); --bf: #0b1a05;    --sb: #0e0e0e; --sf: #fff; --st: #3c9a1a; --stf: #0b1a05; --ph1: #0c140b; --ph2: #1d3318; }
+.k-xbox   { --pl: #2d8a1e; --bb: linear-gradient(#5fbf2a,#2f8a12); --bf: #0b1a05;    --sb: #0e0e0e; --sf: #fff; --st: #3c9a1a; --stf: #0b1a05; --ph1: #0c140b; --ph2: #1d3318; }
 .k-x360   { --pl: #2f8f33; --bb: linear-gradient(#ffffff,#cfd4d8); --bf: #2b8a2b;    --sb: #18301a; --sf: #fff; --st: linear-gradient(90deg,#e9ecef,#bfc5ca); --stf: #2b8a2b; --ph1: #0d1a0e; --ph2: #24452a; }
 /* Kinect games came in purple */
 .k-x360.kinect { --pl: #6b2a8f; --bb: linear-gradient(#8e42b6,#5c2280); --bf: #fff; --sb: #5c2280; --sf: #fff; --st: linear-gradient(90deg,#9446bd,#6a2a8f); --stf: #fff; --ph1: #1d0d26; --ph2: #43205a; }
@@ -23,8 +23,8 @@
 .k-gbc    { --pl: transparent; --bb: #111; --bf: #fff;                               --sb: #262626; --sf: #fff; --st: #111; --stf: #fff;       --ph1: #1c1c1c; --ph2: #3c3c3c; }
 .k-gba    { --pl: transparent; --bb: #2c2a86; --bf: #fff;                            --sb: #2c2a86; --sf: #fff; --st: #2c2a86; --stf: #fff;    --ph1: #1c1b52; --ph2: #3b39a8; }
 .k-ds     { --pl: #2b2b30; --bb: #ececec; --bf: #555;                                --sb: #f2f2f2; --sf: #222; --st: #d9d9d9; --stf: #444;    --ph1: #ececec; --ph2: #d4d4d8; --phf: #222; }
-/* most DS games came in a black case; some in clear plastic, tagged with clearCase */
-.k-ds.clear { --pl: rgba(214,222,230,.5); }
+/* most DS games came in a black case; some in clear plastic, tagged with clearCase (and so are the PC games in one) */
+.k-ds.clear, .k-pc.clear { --pl: rgba(214,222,230,.5); }
 .k-3ds    { --pl: #f3f3f3; --bb: #ffffff; --bf: #444;                                --sb: #fbfbfb; --sf: #222; --st: #ffffff; --stf: #d0021b; --ph1: #ffffff; --ph2: #e9e9ec; --phf: #222; }
 .k-wii    { --pl: #f7f7f7; --bb: #ffffff; --bf: #8a8f94;                             --sb: #fbfbfb; --sf: #333; --st: #ffffff; --stf: #8a8f94; --ph1: #ffffff; --ph2: #e8eaec; --phf: #2a2d30; }
 .k-wiiu   { --pl: #1c9bd1; --bb: #009ac7; --bf: #fff;                                --sb: #009ac7; --sf: #fff;  --st: #009ac7; --stf: #fff;    --ph1: #e9f5fa; --ph2: #c6e4f1; --phf: #12384a; }
@@ -79,9 +79,9 @@
   linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.12) 35%, rgba(255,255,255,.04) 60%, rgba(255,255,255,.25)), rgba(178,198,216,.55); }
 .k-ps3.kind-keep:not(.steel).cv::before { background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(150,170,190,.35) 40%, rgba(255,255,255,.3) 70%, rgba(120,140,160,.4)); }
 /* a Switch case (and a clear DS one): clear plastic, untinted, round the insert */
-:is(.k-switch, .k-ds.clear).kind-keep:not(.steel):not(.tinted):is(.cv, .bk) { background:
+:is(.k-switch, .k-ds.clear, .k-pc.clear).kind-keep:not(.steel):not(.tinted):is(.cv, .bk) { background:
   linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.1) 35%, rgba(255,255,255,.03) 60%, rgba(255,255,255,.22)), rgba(205,212,220,.45); }
-:is(.k-switch, .k-ds.clear).kind-keep:not(.steel):not(.tinted).cv::before { background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(170,178,188,.35) 40%, rgba(255,255,255,.3) 70%, rgba(130,138,148,.4)); }
+:is(.k-switch, .k-ds.clear, .k-pc.clear).kind-keep:not(.steel):not(.tinted).cv::before { background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(170,178,188,.35) 40%, rgba(255,255,255,.3) 70%, rgba(130,138,148,.4)); }
 .hdr { position: absolute; z-index: 4; left: 0; right: 0; top: 0; height: var(--iy); display: flex; align-items: center; justify-content: space-between;
   padding: 0 5% 0 calc(var(--ix) + 2.5%); white-space: nowrap; color: rgba(95,118,140,.75);
   background: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,.18) 45%, rgba(255,255,255,.05) 80%, rgba(80,100,120,.25));
@@ -254,7 +254,7 @@
 .ps-ea-pcgame .pmid { background: var(--sb); box-shadow: inset 0 1px 0 rgba(0,0,0,.6), inset 0 -1px 0 rgba(0,0,0,.6); }
 .ps-ea-pcgame.solid .pmid { background: var(--band); }
 .ps-ea-pcgame.solid .pfoot { background: var(--band); color: var(--bandf); }
-.ps-ea-pcgame .slogo { width: calc(var(--d) * .9); }
+.ps-ea-pcgame .slogo { width: var(--d); filter: none; flex-shrink: 0; }
 .ps-ea-pcgame .stext { font-size: .72em; }
 .art .pmid::before, .ps-art.art::before { content: ""; position: absolute; inset: -15%; background: var(--cv) center / 100% 100% no-repeat; filter: blur(calc(var(--d) * .035)) saturate(1.25); }
 .art .pmid::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.28), rgba(0,0,0,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,.32)); }
@@ -298,7 +298,8 @@
 .rate-M { background: #1d8fd8; }
 .rate-G { background: #3aa94a; }
 .rate-G b { border-radius: 0; border: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); background: #fff; color: #3aa94a; padding-top: 22%; }
-.rate-PG { background: #f2c21b; }
+.rate-PG { background: #f2c21b; color: #111; }
+.rate-PG b { border-radius: 8%; border-color: #111; width: 80%; font-size: calc(var(--d) * .26); }
 .rate-MA15 { background: #e0312c; }
 /* a British 12: white numbers in a red ring */
 .pegi { border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 calc(var(--d) * .07) #d42a28; color: #d42a28; }
@@ -316,6 +317,78 @@
 .ea-games small { font: 700 .3em/1 'Exo 2', sans-serif; letter-spacing: .08em; }
 .ea-mark { width: auto; aspect-ratio: auto; transform: none; font: italic 900 1em/1 'Arial Black', 'Exo 2', sans-serif; letter-spacing: -.06em; color: inherit; }
 .ps-white .ea-mark { color: #1a1a1a; }
+
+/* the dark spines of the Rockstar years (and LucasArts' purple): the top's strip takes the spine's own colour */
+.solid:is(.top-pccd, .top-pcdvd-block) .ptop { background: transparent; }
+/* PC DVD-ROM and PC CD ROM in white on a dark block (Bully, Sold Out); on a dark spine the block is the spine */
+.top-pcdvd-block .ptop, .top-pccdrom-block .ptop { height: 9%; background: #3d3d40; }
+.pt-dvd.pt-light { color: #fff; }
+.pt-cdrom small { font: 900 .9em/1.02 'Arial Black', 'Exo 2', sans-serif; letter-spacing: .02em; }
+.top-pccdrom-block .pt-pccd { font-size: .46em; }
+/* Games for Windows: a white band, the Windows orb over its name, and a line under it (blue, or LIVE's orange) */
+.top-gfw .ptop, .top-gfw-live .ptop { height: auto; padding: calc(var(--d) * .14) 0 calc(var(--d) * .2);
+  background: linear-gradient(90deg, #eef1f3, #fff 60%, #e6eaee); box-shadow: inset 0 calc(var(--d) * -.1) 0 #9ccbea; }
+.top-gfw-live .ptop { box-shadow: inset 0 calc(var(--d) * -.1) 0 #e07a26; }
+.pt-gfw { display: flex; flex-direction: column; align-items: center; gap: calc(var(--d) * .06); }
+.pt-gfw .orb { width: calc(var(--d) * .56); aspect-ratio: 1; border-radius: 50%;
+  background: conic-gradient(from -90deg at 52% 48%, #f25022 0 25%, #7fba00 0 50%, #00a4ef 0 75%, #ffb900 0) center / 44% 44% no-repeat,
+    radial-gradient(circle at 40% 30%, #6aa8dc, #1f4f8f 65%, #0e2a55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.35); }
+.pt-gfw > span { display: flex; flex-direction: column; align-items: center; text-align: center; white-space: nowrap; line-height: 1; }
+.pt-gfw b { font: 400 calc(var(--d) * .17)/1.05 'Segoe UI', 'Exo 2', sans-serif; color: #2a72b8; }
+.pt-gfw small { font: 400 calc(var(--d) * .13)/1.05 'Segoe UI', 'Exo 2', sans-serif; color: #333; letter-spacing: -.02em; }
+.pt-gfw em { font: italic 400 calc(var(--d) * .15)/1 'Segoe UI', 'Exo 2', sans-serif; color: #e2511f; letter-spacing: .04em; }
+/* badges straight under the top */
+.phead { position: relative; z-index: 1; flex: none; padding-top: calc(var(--d) * .12); display: flex; flex-direction: column; align-items: center; }
+/* a badge standing upright across the spine */
+.sbg.up { transform: none; }
+/* Rockstar's logo, upright */
+.sbg.rockstar { transform: none; width: calc(var(--d) * .66); aspect-ratio: auto; }
+.sbg.rockstar img { display: block; width: 100%; height: auto; }
+/* Australia's later MA15+: MA in a white hexagon and 15+ on red, RESTRICTED on a black strip under them, in a white border */
+.sbg.ma15r { transform: none; aspect-ratio: auto; width: calc(var(--d) * .84); display: flex; flex-direction: column; align-items: stretch; background: #fff;
+  border-radius: calc(var(--d) * .05); padding: calc(var(--d) * .03); }
+.ma15r > b { display: flex; align-items: center; justify-content: center; gap: 3%; height: calc(var(--d) * .4); background: #d6202a; border-radius: calc(var(--d) * .03) calc(var(--d) * .03) 0 0; }
+.ma15r > b > svg { width: 52%; height: auto; display: block; }
+.ma15r > b > span { font: 400 calc(var(--d) * .12)/1 Arial, 'Exo 2', sans-serif; color: #fff; }
+.ma15r > small { display: block; padding: calc(var(--d) * .04) 0; background: #141414; color: #fff; text-align: center; border-radius: 0 0 calc(var(--d) * .03) calc(var(--d) * .03);
+  font: 400 calc(var(--d) * .095)/1 Arial, 'Exo 2', sans-serif; letter-spacing: .01em; white-space: nowrap; }
+/* a British 18 (Sold Out's): white numbers in a ring on a red disc; Bully's 15 on the BBFC's pink pattern */
+.pegi.bbfc18 { background: #d42a28; box-shadow: inset 0 0 0 calc(var(--d) * .05) #fff, inset 0 0 0 calc(var(--d) * .1) #d42a28, inset 0 0 0 calc(var(--d) * .12) #fff; color: #fff; }
+.pegi.bbfc15 { background: repeating-linear-gradient(0deg, #f6d4dc 0 2px, #fbe9ee 2px 4px); }
+/* small print across the spine, or turned to read down it (a catalogue number) */
+.sbg.txt { transform: none; width: auto; aspect-ratio: auto; font: 700 calc(var(--d) * .09)/1.25 Arial, 'Exo 2', sans-serif; text-align: center; white-space: nowrap; opacity: .92; }
+.sbg.txt.down { writing-mode: vertical-rl; font-size: calc(var(--d) * .13); letter-spacing: .03em; }
+/* PC DVD in a grey block at the very foot of the Games for Windows ones */
+.sbg.txt.pcdvd { align-self: stretch; padding: calc(var(--d) * .12) 0 calc(var(--d) * .16); background: linear-gradient(90deg, #cfcfcf, #e4e4e4 50%, #cbcbcb); color: #9a9a9a;
+  font: 400 calc(var(--d) * .2)/1.05 Arial, 'Exo 2', sans-serif; opacity: 1; }
+.sbg.txt.pcdvd b { color: #3a3a3a; font-weight: 700; }
+.pfoot:has(.pcdvd) { padding-bottom: 0; }
+
+/* a wordmark right down the spine (logos/gta-*.webp, Bully), set in the middle with the pack's name after it */
+.slogo.wide { width: calc(var(--d) * .6); max-height: 70%; filter: none; }
+.pttl:has(.wide) { justify-content: center; padding-bottom: 12%; }
+/* Episodes from Liberty City in gold under Episodes From */
+.ssub.ss-gold { flex-direction: column-reverse; align-items: flex-start; }
+.ssub.ss-gold b, .ssub.ss-gold small { color: transparent; background: linear-gradient(90deg, #e9d79a, #b99a52 55%, #8c7236); -webkit-background-clip: text; background-clip: text; text-shadow: none; }
+.ssub.ss-gold b { font: 700 .8em/1 Arial, 'Exo 2', sans-serif; letter-spacing: -.01em; }
+.ssub.ss-gold small { margin: 0 0 0 .12em; font: 700 .48em/1 Arial, 'Exo 2', sans-serif; letter-spacing: 0; opacity: 1; }
+/* Bully's SCHOLARSHIP·EDITION on its navy plaque, framed in gold */
+.ssub.ss-plaque { padding: .5em .15em; background: #1d2456; border: max(1px, .07em) solid #c99a3c; outline: max(1px, .04em) solid #c99a3c; outline-offset: .1em; border-radius: .1em; }
+.ssub.ss-plaque b { font: 400 .34em/1 'Trajan Pro', 'Fraunces', serif; letter-spacing: .04em; text-transform: uppercase; color: #e7c46e; text-shadow: none; }
+/* the plain Arial of LucasArts' spines, set big in the middle */
+.stext.f-arial { font: 400 calc(1.25em * var(--fit, 1))/1 Arial, Helvetica, sans-serif; font-variant: normal; letter-spacing: 0; color: #fff; }
+.pttl:has(.f-arial) { justify-content: center; padding-bottom: 20%; }
+.stext.f-arial sup { font-size: .4em; left: .2em; }
+/* Sold Out's copperplate capitals */
+.stext.f-copper { font: 400 calc(.44em * var(--fit, 1))/1.3 'Copperplate', 'Copperplate Gothic Light', 'Exo 2', sans-serif; letter-spacing: .05em; }
+.pttl:has(.f-copper) { justify-content: center; padding-bottom: .3em; }
+/* Sold Out: its logo down the spine, the orange band blurred across it, then fine lines */
+.so-logo { flex: none; position: relative; z-index: 1; writing-mode: vertical-rl; display: flex; align-items: center; padding: .5em 0 .4em; font-style: normal; line-height: .9; }
+.so-logo b { font: 700 .6em/1 'Arial Rounded MT Bold', 'Exo 2', sans-serif; letter-spacing: -.02em; color: transparent; -webkit-text-stroke: max(1px, .05em) #1f6fa3; }
+.so-logo b.out { color: #f08a24; margin-top: -.1em; }
+.so-logo small { font: 400 .26em/1 'Exo 2', sans-serif; color: #3b6f96; letter-spacing: .1em; margin: 0 .3em; }
+.so-band { flex: none; width: 100%; height: 13%; background: linear-gradient(#fff, #f6b75a 6%, #ee8424 20%, #ffd36b 38%, #f39a2c 54%, #f7c04d 70%, #ee8a26 88%, #fff); filter: blur(.5px); }
+.so-lines { flex: none; width: 100%; height: 5%; background: repeating-linear-gradient(#f3f3f1 0 3px, #b9b9b9 3px 4px); }
 
 /* SimCity 4's Classics band: a blue swoosh under the top */
 .pclassics { flex: none; width: 100%; height: 22%; display: grid; place-items: center; font-style: normal; background: linear-gradient(90deg, #b9cde6, #e3edf8 50%, #9db7da);
@@ -373,18 +446,15 @@
 .k-gbc .bkin { top: 15%; }
 .k-gba .bkin { top: 6%; bottom: 15%; }
 .k-gb .bkin { top: 20%; }
-/* the SNES box is wide and short: the words on the left, the picture and barcode beside them */
+/* the SNES box is wide and short: the title across it, the details on the left, the barcode beside them */
 .k-snes .bkin { top: 6%; display: grid; grid-template: 1.7em auto minmax(0, 1fr) auto / 1.25fr 1fr; column-gap: 5%; }
-.k-snes .bkt { grid-area: 2 / 1; font-size: .6em; }
+.k-snes .bkt { grid-area: 2 / 1 / 3 / 3; font-size: .6em; }
 .k-snes .bkm { grid-area: 3 / 1 / 5 / 2; overflow: hidden; }
 .k-snes .bkf { grid-area: 4 / 2; }
-.k-snes .thumb { grid-area: 2 / 2 / 4 / 3; }
 .bkt { font: 700 .82em/1.1 'Fraunces', serif; }
 .bkm { font-size: .4em; line-height: 1.5; opacity: .8; }
 .bkm b { font-weight: 600; opacity: 1; }
-.thumb { flex: 1; min-height: 0; border-radius: 2px; overflow: hidden; position: relative; box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
-.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.bkf { display: flex; align-items: flex-end; justify-content: space-between; gap: .4em; }
+.bkf { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: .4em; }
 .rg { font: 700 .4em/1 'Space Grotesk', sans-serif; letter-spacing: .1em; border: 1px solid currentColor; padding: .3em .45em; border-radius: .2em; }
 .bar { width: 3em; height: 1.4em; background: repeating-linear-gradient(90deg, #000 0 1px, #fff 1px 2px, #000 2px 4px, #fff 4px 5px, #000 5px 6px, #fff 6px 8px); border: .2em solid #fff; }
 
@@ -448,10 +518,9 @@
 .bx.kind-jewel .leaf .inner { background: rgba(200,210,220,.6); }
 .manual { width: 100%; height: 100%; background: #f4efe4; color: #2a251c; padding: 10%; display: flex; flex-direction: column; gap: .5em; font-size: calc(var(--w) / 12); }
 .mt { font: 700 .7em/1.1 'Fraunces', serif; }
-.ml { display: flex; flex-direction: column; gap: .3em; }
-.ml i { display: block; height: .16em; background: currentColor; opacity: .25; border-radius: 1px; }
-.mthumb { position: relative; flex: 1; overflow: hidden; background: linear-gradient(160deg, var(--ph1), var(--ph2)); }
-.mthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ml { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: .3em; }
+.ml i { display: block; flex: none; height: .16em; background: currentColor; opacity: .25; border-radius: 1px; }
+.ml b { display: block; flex: none; height: .3em; }
 .bx.open .leaf { transform: rotateY(-155deg); }
 .bx.kind-keep.open, .bx.kind-jewel.open { translate: calc(var(--w) * .42) 0; scale: .82; }
 /* a cardboard box sinks and shrinks while the cartridge rises out of the top, inside the closed box's outline (sizes from js/cases.js) */
@@ -626,3 +695,60 @@
 .clab.small .art img { height: 100%; }
 .clab.small .seal { position: absolute; left: 4%; bottom: 7%; width: 30cqh; height: 30cqh; border-radius: 50%; background: radial-gradient(circle, #f6f0d8 0 55%, #c9ae5c 57% 100%); box-shadow: 0 0 0 1px rgba(0,0,0,.2); }
 .clab.small .code { position: absolute; right: 4%; bottom: 7%; font: 600 8cqh/1 Arial, Helvetica, sans-serif; color: #fff; text-shadow: 0 0 3px rgba(0,0,0,.6); letter-spacing: .02em; }
+
+/* ---------- a box built from its parts (js/cases.js, MODELS): The Sims 3 Collector's Edition ---------- */
+/* a side that is a picture of the real one */
+.sp.photo { background: #0d1a0a; }
+.sp.photo .scan { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.bx.model .mp, .bx.model .pb, .bx.model .pb-spin, .bx.model .pb-spin > *, .bx.model .m-hinge { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.bx.model .mp { backface-visibility: hidden; }
+/* the DVD holder's front: green card printed with a holographic burst of light from low in the middle */
+.bx.model .m-panel { background:
+  radial-gradient(ellipse 55% 42% at 50% 64%, rgba(250,248,190,.8), rgba(214,222,120,.4) 45%, transparent 75%),
+  repeating-conic-gradient(from 4deg at 50% 64%, rgba(255,250,200,.16) 0 3deg, transparent 3deg 9deg, rgba(255,250,200,.07) 9deg 12deg, transparent 12deg 19deg),
+  linear-gradient(115deg, rgba(120,220,255,.1), transparent 30%, rgba(255,230,110,.12) 60%, transparent 80%),
+  linear-gradient(#35602a, #5d8a34 45%, #93b04c); }
+.bx.model .m-card { background: linear-gradient(#2d5a1c, #4a8228); }
+.bx.model .m-ledge { background: linear-gradient(#86a844, #b3cb78); box-shadow: inset 0 -2px 3px rgba(0,0,0,.15); }
+.bx.model .m-bot { background: linear-gradient(#4f7f26, #6c9a34); filter: brightness(.7); }
+.bx.model .m-r { filter: brightness(.9); }
+/* clear plastic: a sheen across it and its edges catching the light */
+.bx.model .m-clear { backface-visibility: visible; background: linear-gradient(118deg, rgba(255,255,255,.2), rgba(255,255,255,.05) 28%, rgba(255,255,255,0) 50%, rgba(255,255,255,.07) 74%, rgba(255,255,255,.17));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.42), inset 0 0 6px rgba(255,255,255,.08); }
+.bx.model .m-lid { position: absolute; top: 0; transform-origin: 50% 0; transform: rotateX(90deg); transition: transform .9s cubic-bezier(.3,.9,.3,1); }
+.bx.model.open .m-lid { transform: rotateX(205deg); }
+/* the plumbob: its glassy faces, the board and the plug showing through them */
+.bx.model .pf { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.bx.model .pf svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.bx.model .pb-board { background: rgba(18,64,24,.85); box-shadow: inset 0 0 0 1px rgba(160,220,120,.3); backface-visibility: visible; }
+.bx.model .pb-board i { position: absolute; left: 22%; top: 30%; width: 56%; height: 26%; background: #111; border-radius: 1px; }
+.bx.model .pb-board i + i { left: 30%; top: 66%; width: 40%; height: 10%; background: #c9a24e; }
+.bx.model .pb-plug i { position: absolute; top: 12%; width: 22%; height: 9%; background: #222; }
+.bx.model .pb-plug i:first-child { left: 18%; } .bx.model .pb-plug i + i { right: 18%; }
+.bx.model .pb-ring { border: 1px solid #c4c7cc; border-radius: 50%; backface-visibility: visible; box-shadow: 0 0 1px rgba(0,0,0,.5); }
+/* taken out: it rises out of the box, its cap comes off the plug, and it turns */
+.bx.model .pb, .bx.model .pb-cap { transition: translate .9s cubic-bezier(.3,.9,.3,1); }
+.bx.model.open .pb { translate: 0 calc(var(--ty) * -1); }
+.bx.model.open .pb-cap { translate: 0 var(--cap); }
+.bx.model.open .pb-spin { animation: pbTurn 9s linear infinite; }
+@keyframes pbTurn { to { transform: rotateY(360deg); } }
+
+/* ---------- The Sims Medieval Collector's Edition (js/cases.js, MODELS 'medieval-ce'): a gold book in a card sleeve ---------- */
+.bx.model .m-sleeve, .bx.model .m-leaf { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.bx.model .m-sli { background: linear-gradient(#efe6d2, #d9cdb3); filter: brightness(.75); }
+/* the boards: gold card, a fine linen grain, a pressed line round the cover */
+.bx.model .m-gold { background: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px),
+  linear-gradient(135deg, #d9bd62, #b8973f 45%, #d4b65a 70%, #a8893a); }
+.bx.model .m-cover { box-shadow: inset 0 0 0 calc(var(--w) * .035) transparent, inset 0 0 0 calc(var(--w) * .04) rgba(90,64,18,.35); }
+.bx.model .m-t { filter: brightness(1.1); }
+.bx.model .m-b { filter: brightness(.6); }
+.bx.model .m-band { filter: brightness(.92); }
+/* the cover swings open to the left, taking the spine with it */
+.bx.model .m-leaf { transition: transform 1s cubic-bezier(.3,.9,.3,1); }
+.bx.model.open .m-leaf { transform: rotateY(-140deg); transition-delay: .85s; }
+/* the sleeve: down off the book, then aside and behind it; coming back, the other way round, once the cover is shut */
+.bx.model .m-sleeve { transition: transform .7s cubic-bezier(.4,0,.2,1) .55s, translate .7s cubic-bezier(.4,0,.2,1) 1.2s; }
+.bx.model.open .m-sleeve { translate: 0 var(--slide); transform: var(--aside); transition: translate .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1) .65s; }
+.bx.model .m-end { transition: opacity .2s 1.9s; }
+.bx.model.open .m-end { opacity: 0; transition-delay: 0s; }
+.bx.model.m-book.open { translate: var(--ox) 0; }

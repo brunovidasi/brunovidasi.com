@@ -1,0 +1,7 @@
+{
+  "clientId": "PASTE_MICROSOFT_APP_CLIENT_ID_HERE",
+  "redirectUri": "http://localhost:3000/callback",
+  "port": 3000,
+  "outputDir": "./output",
+  "requestDelayMs": 400
+}

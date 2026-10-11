@@ -58,6 +58,15 @@ window.LAUNCHERS = {
   none:      { name: 'DRM-free disc',   bg: '#3a3a3a', fg: '#ffffff', glyph: '◌' },
 };
 
+/* The little marks on the PC's library filter: a disc for the boxed copies, then each launcher's logo.
+   A launcher without one here shows its glyph on its colours instead. */
+window.STORE_LOGOS = {
+  disc: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c3cad5" fill-rule="evenodd" d="M12 1.5a10.5 10.5 0 1 0 0 21a10.5 10.5 0 1 0 0-21zM12 10.3a1.7 1.7 0 1 1 0 3.4a1.7 1.7 0 1 1 0-3.4z"/><path fill="#eef1f6" d="M12 1.5a10.5 10.5 0 0 1 9.1 5.25L15.5 10a4 4 0 0 0-3.5-2z"/><path fill="#d6c6f2" d="M12 22.5a10.5 10.5 0 0 1-9.1-5.25L8.5 14a4 4 0 0 0 3.5 2z"/><circle cx="12" cy="12" r="4" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1"/><circle cx="12" cy="12" r="10.1" fill="none" stroke="rgba(0,0,0,.25)" stroke-width=".8"/></svg>`,
+  steam: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11.5" fill="#1b2838"/><circle cx="15.2" cy="9" r="3.6" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="15.2" cy="9" r="1.6" fill="#fff"/><path d="M12.3 11.4L8.6 14.6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.6" cy="15.6" r="2.4" fill="#1b2838" stroke="#fff" stroke-width="1.6"/></svg>`,
+  ea: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11.5" fill="#ff4747"/><g fill="#fff"><path d="M4.6 8h9.2l-.9 1.6H4.6z"/><path d="M5.8 11.2h4.9l-.9 1.6h-4z"/><path d="M4.6 14.4h5.2l-.9 1.6H4.6z"/><path d="M15.4 8h1.7l3.9 8h-1.9l-.8-1.7h-3.9l.8-1.6h2.3l-1.3-2.8-2.9 6.1h-1.9z"/></g></svg>`,
+  rockstar: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x=".5" y=".5" width="23" height="23" rx="5" fill="#fcaf17"/><text x="3.6" y="19.5" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="16" fill="#111">R</text><polygon points="17.5,2.8 18.5,5.62 21.49,5.7 19.12,7.53 19.97,10.4 17.5,8.7 15.03,10.4 15.88,7.53 13.51,5.7 16.5,5.62" fill="#fff" stroke="#111" stroke-width=".9" stroke-linejoin="round"/></svg>`,
+};
+
 /* Where a copy was sold: the code printed on the box (AUS, EUR, HOL, UK, USA, JPN) when it is
    known, else just the standard it plays on. std groups them for the filter: a PAL copy wants
    a PAL console, and a 3DS only plays games from its own region. */

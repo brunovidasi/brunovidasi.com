@@ -26,6 +26,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
+import { palette } from './palette.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const DATA = path.join(ROOT, 'data/games.json');
@@ -287,26 +288,6 @@ async function download(url) {
   throw new Error(`failed ${url}`);
 }
 
-const hex = ([r, g, b]) => '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
-// A tiny k-means over a 24×24 thumbnail: the three colours that cover most of the cover.
-async function palette(buf) {
-  const { data } = await sharp(buf).resize(24, 24, { fit: 'fill' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  const px = [];
-  for (let i = 0; i < data.length; i += 3) px.push([data[i], data[i + 1], data[i + 2]]);
-  let cs = [px[0], px[Math.floor(px.length / 2)], px[px.length - 1], px[Math.floor(px.length / 3)]];
-  let groups;
-  for (let it = 0; it < 12; it++) {
-    groups = cs.map(() => []);
-    for (const p of px) {
-      let bi = 0, bd = Infinity;
-      cs.forEach((c, i) => { const d = (p[0] - c[0]) ** 2 + (p[1] - c[1]) ** 2 + (p[2] - c[2]) ** 2; if (d < bd) { bd = d; bi = i; } });
-      groups[bi].push(p);
-    }
-    cs = groups.map((g, i) => g.length ? [0, 1, 2].map(k => g.reduce((s, p) => s + p[k], 0) / g.length) : cs[i]);
-  }
-  return cs.map((c, i) => ({ c, n: groups[i].length })).sort((a, b) => b.n - a.n).slice(0, 3).map(x => hex(x.c));
-}
-
 async function save(buf, g) {
   const rel = `covers/${g.console}/${g.id.slice(g.console.length + 1)}.jpg`;
   const abs = path.join(ROOT, rel);
@@ -334,6 +315,8 @@ const report = { found: [], offRegion: [], missing: [], skipped: 0 };
 
 for (const g of db.games) {
   if (g.cover && g.cover.source === 'manual') { await measure(g); report.skipped++; continue; }
+  // a Steam copy keeps its Steam library art (tools/steam-sync.mjs) unless it is asked for by name
+  if (g.cover && g.cover.source === 'steam' && ONLY !== g.id) { report.skipped++; continue; }
   const had = g.cover && g.cover.file ? g.cover : null;
   const sys = g.caseStyle || g.console;
   const upgrade = UPGRADE_WIKI && had && had.source === 'en.wikipedia.org' && WIKIPEDIA_ONLY.includes(sys);

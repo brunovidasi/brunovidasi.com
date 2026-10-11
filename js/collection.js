@@ -1,4 +1,4 @@
-/* collection.js — what the collection pages' checklists (sims.html, gta.html) share:
+/* collection.js — what the collections' checklists (js/sims.js, js/gta.js) share:
    a game's case standing on a stretch of shelf with its name and tags under it, the
    meter of how much of a set is there, and a want-list card. A case opens in the
    spotlight in place (js/app.js). */
@@ -6,19 +6,19 @@
 (function () {
   const esc = Case.esc;
   const $ = (s, el = document) => el.querySelector(s);
-  const byRelease = (a, b) => (a.released || '9999').localeCompare(b.released || '9999') || a.title.localeCompare(b.title);
+  const byRelease = (a, b) => (a.shelfDate || a.released || '9999').localeCompare(b.shelfDate || b.released || '9999') || a.title.localeCompare(b.title);
 
   // a DVD case stands the height of the stage, and the rest keep their real size beside it
   const stageH = () => innerWidth < 640 ? 130 : 168;
 
-  /** A game's case and caption, linking to it on the shelf. `name` is what the caption calls it.
+  /** A game's case and caption, linking to it in the collection. `name` is what the caption calls it.
       A console copy is tagged with its console; `platformTag` false leaves that off, where the
       caption already names the platform. */
   function card(g, name = g.title, platformTag = true) {
     const c = CONSOLE_BY_ID[g.console];
     const a = document.createElement('a');
     a.className = 'cell';
-    a.href = './#' + encodeURIComponent(g.id);
+    a.href = '#' + encodeURIComponent(g.id);
     a.dataset.id = g.id; // the shelf opens it in place (js/app.js)
     a.setAttribute('aria-label', `${g.title}, ${c.name}${g.mac ? ' and Mac' : ''}, ${Case.year(g)}`);
     const stage = document.createElement('span');
@@ -29,7 +29,6 @@
     if (g.format === 'cartridge-only') tile.append(Case.cart(g, s * 2));
     else {
       const face = Case.front(g, Math.min(s, (stageH() * 0.95) / Case.layout(g, 1).w));
-      if (g.format === 'digital') face.classList.add('ghosted');
       tile.append(face);
     }
     stage.append(tile);

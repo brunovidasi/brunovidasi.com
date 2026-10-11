@@ -2,9 +2,11 @@
   "name": "games-website-tools",
   "private": true,
   "type": "module",
-  "description": "Finds box art for games in data/games.json",
+  "description": "Finds box art for games in data/games.json and brings in the Steam library and PSN",
   "scripts": {
-    "covers": "node fetch-covers.mjs"
+    "covers": "node fetch-covers.mjs",
+    "steam": "node steam-sync.mjs",
+    "psn": "node psn-sync.mjs"
   },
   "dependencies": {
     "sharp": "^0.34.0"

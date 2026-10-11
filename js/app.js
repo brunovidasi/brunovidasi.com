@@ -5,10 +5,12 @@
    lifts off the page and flies to the middle, where it can be turned round and
    opened; closing flies it back into its place.
 
-   A collection page (sims.html, gta.html) sets window.SHELF_PAGE before this script
-   to show only its games, grouped by game rather than by console, with its own
-   header and a fourth view, its checklist:
-     id          names what the page remembers in this browser
+   The collections (js/sims.js, js/gta.js) are filters at the top of the same page:
+   each adds itself to window.COLLECTIONS before this script, and picking one (?sims,
+   ?gta in the address) shows only its games, grouped by game rather than by console,
+   with its own header, its own look (a class on <html>) and one more view, its checklist:
+     name        what the top bar calls it ("The Sims")
+     title, icon the page's title and favicon while it is picked
      data        more JSON files to load besides data/games.json
      games(db, …data)   the games on this page
      group(g)    { key, label, name, order } — the game a copy belongs to
@@ -26,28 +28,30 @@
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const ORDER = Object.fromEntries(CONSOLES.map((c, i) => [c.id, i]));
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-  const CFG = window.SHELF_PAGE || null;
+  // the collections picked at the top (js/sims.js, js/gta.js); CFG is the one showing, null for the whole shelf
+  const COLLECTIONS = window.COLLECTIONS || {};
+  let CFG = null, COL = '';
 
-  /* ---------- remembered choices (this browser only), each page its own ---------- */
-  const KEY = CFG ? `games.${CFG.id}.` : 'games.';
+  /* ---------- remembered choices (this browser only) ---------- */
   const store = {
-    get(k, d) { try { const v = localStorage.getItem(KEY + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } },
+    get(k, d) { try { const v = localStorage.getItem('games.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem('games.' + k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } },
   };
 
-  /* ---------- groups: the shelf stands its games by console, or on a collection page by game ---------- */
-  const GROUP = CFG ? 'group' : 'console';
-  const groupOf = CFG ? CFG.group : g => {
+  /* ---------- groups: the shelf stands its games by console, or in a collection by game ---------- */
+  const byConsole = g => {
     const c = CONSOLE_BY_ID[g.console];
     return { key: g.console, label: c.short, name: c.name, order: ORDER[g.console], art: CONSOLE_ART[g.console] };
   };
+  let GROUP = 'console', groupOf = byConsole;
 
   /* ---------- sorting: the menu and the list's headers set the same sort ---------- */
   // where a game files by title: without a leading article (The Sims under S), or where its sortAs says
   // (LEGO Rock Band with the Rock Band games). Games filed under the same name go in the order they came out
+  // (or by their shelfDate)
   const fileAs = g => (g.sortAs || g.title).replace(/^(the|a|an)\s+/i, '');
   const byTitle = (a, b) => collator.compare(fileAs(a), fileAs(b))
-    || ((a.sortAs || b.sortAs) && (a.released || '9999').localeCompare(b.released || '9999'))
+    || ((a.sortAs || b.sortAs) && (a.shelfDate || a.released || '9999').localeCompare(b.shelfDate || b.released || '9999'))
     || collator.compare(a.title, b.title);
   const SORT_BY = {
     title:     { label: 'Title',     value: g => g.title, cmp: byTitle },
@@ -56,11 +60,12 @@
     region:    { label: 'Region',    value: g => g.region },
     publisher: { label: 'Publisher', value: g => g.publisher || '' },
     genre:     { label: 'Genre',     value: g => g.genre || '' },
-    // a collection page's games, each in the order its copies came out
-    group:     { label: 'Game',      value: g => String(groupOf(g).order).padStart(3, '0') + (g.released || '9999'), plain: true },
+    // a collection's games, each in the order its copies came out
+    // (a game can file under another date than its own, g.shelfDate: The Sims Deluxe Edition beside The Sims)
+    group:     { label: 'Game',      value: g => String(groupOf(g).order).padStart(3, '0') + (g.shelfDate || g.released || '9999'), plain: true },
   };
   const MENU = {
-    console: { key: GROUP, dir: 'asc', label: CFG ? `By ${CFG.groupNoun}` : 'By console' },
+    console: { key: GROUP, dir: 'asc', label: 'By console' },
     title: { key: 'title', dir: 'asc', label: 'Title A–Z' },
     newest: { key: 'released', dir: 'desc', label: 'Newest release first', short: 'Newest first' },
     oldest: { key: 'released', dir: 'asc', label: 'Oldest release first', short: 'Oldest first' },
@@ -79,41 +84,54 @@
     });
   }
 
-  const VIEWS = ['shelf', 'rows', 'grid', 'showcase', 'list', ...(CFG && CFG.checklist ? ['checklist'] : [])];
+  let VIEWS = ['shelf', 'rows', 'grid', 'showcase', 'list'];
   const flat = v => v === 'checklist'; // views with no cases to carry across
   const state = {
-    view: VIEWS.includes(store.get('view')) ? store.get('view') : 'shelf',
+    view: [...VIEWS, 'checklist'].includes(store.get('view')) ? store.get('view') : 'shelf', // checked again once a collection is picked
     mode: ['mixed', 'spines', 'covers'].includes(store.get('mode')) ? store.get('mode') : 'mixed',
-    sort: validSort(store.get('sort')),
-    sel: new Set(), q: '', covers: '',
+    sort: store.get('sort'), // checked once a collection is picked
+    sel: new Set(), q: '', covers: '', lib: '',
   };
-  let ALL = [], games = [];
-  const byId = new Map();
+  let ALL = [], games = [], DB = [];
+  const byId = new Map(), LISTS = {}; // LISTS: each collection's games
 
   /* ---------- filtering ---------- */
   const fold = s => String(s || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  // short names people search by, added to a game's search text when its title has the long one
+  const NICKNAMES = [[/grand theft auto/i, 'GTA']];
+  const nicknames = g => NICKNAMES.filter(([re]) => re.test(g.title) || re.test(g.listedAs || '')).map(([, nick]) => nick);
   function base() {
     const words = fold(state.q).split(/\s+/).filter(Boolean);
     return ALL.filter(g =>
       (!state.covers || (state.covers === 'with') === !!g.cover) &&
       (!words.length || words.every(w => g._hay.includes(w))));
   }
-  const list = () => sortList(base().filter(g => !state.sel.size || state.sel.has(g.console)), state.sort);
+  // with only the PC picked, its games can be narrowed to the boxed ones or to one launcher's library
+  const pcOnly = () => state.sel.size === 1 && state.sel.has('pc');
+  const inLib = (g, k) => k === 'disc' ? g.format !== 'digital' : g.launcher === k;
+  const list = () => sortList(base().filter(g =>
+    (!state.sel.size || state.sel.has(g.console)) &&
+    (!state.lib || !pcOnly() || inLib(g, state.lib))), state.sort);
 
   /* ---------- the header and controls ---------- */
+  // the header: on the shelf only room above the consoles, its figures small in the top bar beside its name;
+  // a collection's own header, with its figures in it
+  function hero() {
+    const figures = $('#figures');
+    if (figures) {
+      const consoles = CONSOLES.filter(c => !c.hidden && DB.some(g => g.console === c.id));
+      const years = DB.map(g => g.released).filter(Boolean).map(r => +r.slice(0, 4));
+      figures.innerHTML = `<span><b>${consoles.length}</b> Consoles</span><span><b>${DB.length}</b> Games</span>`;
+      figures.hidden = !!CFG;
+    }
+    $('#hero').innerHTML = CFG ? CFG.hero(ALL) : `<header class="hero hero-figures"><h1 class="sr-only">Bruno's Game Shelf</h1></header>`;
+  }
+
+  // the bar holds every console on the shelf; a collection hides those it has no games on (sync)
   function shell() {
-    const consoles = CONSOLES.filter(c => !c.hidden && ALL.some(g => g.console === c.id));
-    const years = ALL.map(g => g.released).filter(Boolean).map(r => +r.slice(0, 4));
+    const consoles = CONSOLES.filter(c => !c.hidden && DB.some(g => g.console === c.id));
     $('#shell').innerHTML = `
-      ${CFG ? CFG.hero(ALL) : `<header class="hero">
-        <h1>The Game Shelf</h1>
-        <div class="stats">
-          <div><b>${ALL.length}</b><span>Games</span></div>
-          <div><b>${consoles.length}</b><span>Consoles</span></div>
-          <div><b>${Math.min(...years)}</b><span>Oldest</span></div>
-          <div><b>${Math.max(...years)}</b><span>Newest</span></div>
-        </div>
-      </header>`}
+      <div id="hero"></div>
       <div class="consoles-bar"><div class="consoles" role="toolbar" aria-label="Filter by console">
           <button class="chip all" data-all><span class="lab"><b>All</b><i data-n="all"></i></span></button>
           <div class="cscroll">${FAMILIES.filter(f => consoles.some(c => c.fam === f.id)).map(f => `<div class="fam" style="--fc:${f.color}">
@@ -142,7 +160,7 @@
             <button type="button" data-view="grid">Grid</button>
             <button type="button" data-view="showcase">Showcase</button>
             <button type="button" data-view="list">List</button>
-            ${VIEWS.includes('checklist') ? '<button type="button" data-view="checklist">Checklist</button>' : ''}
+            <button type="button" data-view="checklist">Checklist</button>
           </div>
       </div></div>`;
     // how many games are showing: on the line under the bar, at its right, beside the pills
@@ -162,7 +180,7 @@
       changed();
     }));
     $$('.famname').forEach(b => b.addEventListener('click', e => {
-      const ids = consoles.filter(c => c.fam === b.dataset.fam).map(c => c.id);
+      const ids = $$('.chip[data-c]', b.parentElement).filter(c => !c.hidden).map(c => c.dataset.c);
       if (multi(e)) {
         const all = ids.every(i => state.sel.has(i));
         ids.forEach(i => all ? state.sel.delete(i) : state.sel.add(i));
@@ -197,6 +215,7 @@
     });
     cs.addEventListener('click', e => { if (performance.now() - csDragged < 100) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
     addEventListener('resize', edges);
+    cs.edges = edges;
     edges();
     let t;
     $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; changed(); }, 120); });
@@ -213,6 +232,12 @@
     }));
     $$('#mode button').forEach(b => b.addEventListener('click', () => { state.mode = b.dataset.m; store.set('mode', state.mode); changed(); }));
     $$('#covers button').forEach(b => b.addEventListener('click', () => { state.covers = b.dataset.cv; changed(); }));
+    // the PC's libraries: its boxed copies, then each launcher, a logo on each (js/consoles.js)
+    const libIcon = k => STORE_LOGOS[k] || `<i class="lib-glyph" style="--lb:${LAUNCHERS[k].bg};--lf:${LAUNCHERS[k].fg}">${LAUNCHERS[k].glyph}</i>`;
+    $('#lib').innerHTML = `<button type="button" data-lib="">All</button>` +
+      ['disc', ...Object.keys(LAUNCHERS).filter(k => k !== 'none')].map(k =>
+        `<button type="button" data-lib="${k}">${libIcon(k)}${k === 'disc' ? 'Physical' : esc(LAUNCHERS[k].name)} <em data-ln="${k}"></em></button>`).join('');
+    $$('#lib button').forEach(b => b.addEventListener('click', () => { state.lib = b.dataset.lib; changed(); }));
   }
 
   // scroll the consoles sideways to the first picked one, from its family's name if that fits too
@@ -256,6 +281,13 @@
     const b = base();
     const counts = {};
     b.forEach(g => counts[g.console] = (counts[g.console] || 0) + 1);
+    // a collection shows only the consoles it has games on, and its own view and words
+    const has = new Set(ALL.map(g => g.console));
+    $$('.chip[data-c]').forEach(c => { c.hidden = !has.has(c.dataset.c); });
+    $$('.fam').forEach(f => { f.hidden = !$$('.chip[data-c]', f).some(c => !c.hidden); });
+    $('#view [data-view="checklist"]').hidden = !VIEWS.includes('checklist');
+    $('#mode [data-m="mixed"]').textContent = `One cover per ${CFG ? CFG.groupNoun : 'console'}`;
+    $('#sort option[value="console"]').textContent = MENU.console.label;
     $$('[data-n]').forEach(i => {
       const k = i.dataset.n, n = k === 'all' ? b.length : (counts[k] || 0);
       i.textContent = n + (n === 1 ? ' game' : ' games');
@@ -264,7 +296,7 @@
     $$('.chip[data-c]').forEach(c => { const on = state.sel.has(c.dataset.c); c.classList.toggle('on', on); c.setAttribute('aria-pressed', on); });
     $('[data-all]').classList.toggle('on', !state.sel.size);
     $$('.famname').forEach(f => {
-      const ids = $$('.chip[data-c]', f.parentElement).map(c => c.dataset.c);
+      const ids = $$('.chip[data-c]', f.parentElement).filter(c => !c.hidden).map(c => c.dataset.c);
       f.classList.toggle('on', ids.every(i => state.sel.has(i)));
     });
     $$('#view button').forEach(x => x.classList.toggle('on', x.dataset.view === state.view));
@@ -274,6 +306,15 @@
     $$('#covers button').forEach(x => x.classList.toggle('on', x.dataset.cv === state.covers));
     $('#cv-with').textContent = ALL.filter(g => g.cover).length;
     $('#cv-without').textContent = ALL.filter(g => !g.cover).length;
+    // a library with no PC games on this page isn't offered
+    $('#libWrap').hidden = !pcOnly();
+    const pcs = ALL.filter(g => g.console === 'pc');
+    $$('#lib [data-ln]').forEach(i => {
+      const n = pcs.filter(g => inLib(g, i.dataset.ln)).length;
+      i.textContent = n;
+      i.parentElement.hidden = !n;
+    });
+    $$('#lib button').forEach(x => x.classList.toggle('on', x.dataset.lib === state.lib));
     // the sort menu names the sort, or a line of its own for one set from a column
     const [choice] = Object.entries(MENU).find(([, m]) => m.key === state.sort.key && m.dir === state.sort.dir) || [];
     const custom = $('#sort option[value="custom"]');
@@ -335,7 +376,7 @@
     const item = e.target.closest('.lrow[data-id]');
     if (item) { e.preventDefault(); Detail.open(byId.get(item.dataset.id), faceOf(item)); }
   });
-  // a case on a collection page's checklist opens here too, rather than on the shelf it links to
+  // a case on a collection's checklist opens here too, in place
   document.addEventListener('click', e => {
     const item = state.view === 'checklist' && e.target.closest('#checklist [data-id]');
     if (!item || e.metaKey || e.ctrlKey || e.shiftKey || !byId.has(item.dataset.id)) return;
@@ -585,7 +626,6 @@
       } else {
         const L = Case.layout(g, 1);
         const face = Case.front(g, Math.min(48 / L.h, 58 / L.w));
-        if (g.format === 'digital') face.classList.add('ghosted');
         thumb.append(face);
       }
       row.append(thumb);
@@ -623,7 +663,6 @@
       const L = Case.layout(g, 1);
       const k = Math.min(s, room / L.w, stage / L.h);
       const face = Case.front(g, k);
-      if (g.format === 'digital') face.classList.add('ghosted');
       tile.append(face);
       w = L.w * k;
     }
@@ -773,11 +812,11 @@
         w = w1 * k;
       } else {
         // a solid case, front, spine and edges, so turned to the side it shows its spine and depth;
-        // a digital copy, which has no case, stays a flat outline
+        // a digital copy, which has no case, stays a flat cover
         const L = Case.layout(g, 1);
         const k = Math.min(scSize(), maxH / L.h, (innerWidth * 0.5) / L.w);
         let face;
-        if (g.format === 'digital') { face = Case.front(g, k); face.classList.add('ghosted'); }
+        if (g.format === 'digital') face = Case.front(g, k);
         else face = Case.slab(g, k, true);
         tile.append(face);
         // its reflection in the floor: a mirrored cover (a 3D case can't take the browser's own reflection)
@@ -785,7 +824,6 @@
         refl.className = 'sc-refl';
         refl.style.setProperty('--sd', (L.d * k).toFixed(1) + 'px');
         const mirror = Case.front(g, k);
-        if (g.format === 'digital') mirror.classList.add('ghosted');
         refl.append(mirror);
         tile.append(refl);
         w = L.w * k;
@@ -1024,7 +1062,6 @@
         // it flies at the size it lands, so it is crisp when it gets there
         const s = cart ? unitOf(a.face, a.kind, g) : hOf(a.face) / Case.layout(g, 1).h;
         const fly = cart ? Case.cart(g, s) : Case.slab(g, s);
-        if (g.format === 'digital') $('.cv', fly)?.classList.add('ghosted');
         const [W, H] = cart ? Case.cartSize(g, s) : [Case.layout(g, s).w, hOf(a.face)];
         const cx = a.r.left + a.r.width / 2, cy = a.r.top + a.r.height / 2;
         const wrap = document.createElement('div');
@@ -1132,10 +1169,75 @@
         obj = document.createElement('div');
         obj.className = 'flat';
         obj.append(sh === 'cart' ? Case.cart(g, k) : Case.front(g, k, false));
-        if (sh === 'card') obj.insertAdjacentHTML('beforeend', '<span class="stamp">Digital copy</span>');
+        if (sh === 'card') {
+          obj.classList.add('card');
+          obj.insertAdjacentHTML('beforeend', '<span class="stamp">Digital copy</span>' + receipt(g, k));
+        }
       }
       turn.append(obj);
       return { turn, obj, sh };
+    }
+    /* A digital copy has no case to turn round, so its back is the licence it came as: a store receipt
+       with the shop it activates in and what was bought. (Purchase details can join it once a store's API is wired in.) */
+    const STORE = { switch: { name: 'Nintendo eShop', bg: '#e60012', fg: '#ffffff', glyph: 'N' } };
+    function receipt(g, k) {
+      const c = CONSOLE_BY_ID[g.console];
+      const L = (g.launcher && g.launcher !== 'none' && LAUNCHERS[g.launcher]) || STORE[g.console] || { name: 'Digital store', bg: '#3a3a3a', fg: '#ffffff', glyph: '↓' };
+      const pack = g.pack && g.pack !== 'Base game' ? [g.pack, g.packCode].filter(Boolean).join(' · ') : '';
+      const rows = [
+        ['Platform', c.name + (g.mac ? ' / Mac' : '')],
+        ['Region', REGIONS[g.region]?.name || g.region],
+        ['Released', Case.date(g.released, true)],
+        ['Publisher', g.publisher],
+        ['Edition', g.edition],
+        ['Played', g.steam && played(g.steam.playtime.total)],
+        ['App ID', g.steam?.appid],
+      ].filter(r => r[1]);
+      // a barcode of uneven stripes, only for the look of it: the same for the same game
+      let seed = [...String(g.id || g.title)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 2147483647, 7) || 7;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      const bars = [];
+      for (let x = 0; x < 98;) { const e = Math.min(x + 0.6 + rnd() * 2.4, 100); bars.push(`#2a2723 ${x.toFixed(1)}% ${e.toFixed(1)}%`, `#0000 ${e.toFixed(1)}%`); x = e + 0.8 + rnd() * 2; }
+      const { w } = Case.layout(g, k);
+      return `<div class="receipt" style="--rf:${(w * 0.052).toFixed(2)}px" aria-hidden="true">
+        <div class="rc-shop" style="--lb:${L.bg};--lf:${L.fg}"><i>${L.glyph}</i><span>${esc(L.name)}</span></div>
+        <p class="rc-kind">Digital licence</p>
+        <p class="rc-title">${esc(g.title)}</p>
+        ${pack ? `<p class="rc-pack">${esc(pack)}</p>` : ''}
+        <dl>${rows.map(([a, b]) => `<dt>${a}</dt><dd>${esc(b)}</dd>`).join('')}</dl>
+        <i class="rc-bar" style="--bar:linear-gradient(90deg,${bars.join(',')})"></i>
+        <p class="rc-foot">Licence held in ${esc(L.name)} account</p>
+      </div>`;
+    }
+    /* What Steam or PlayStation Network says of a game tied to it (data/steam.json, data/psn.json): how long it
+       was played and when, its achievements or trophies, and for Steam what the store says it is and a link to it. */
+    const played = m => !m ? 'Not yet' : m < 60 ? `${m} min` : `${+(m / 60).toFixed(m < 600 ? 1 : 0)} h`;
+    const day = t => Case.date(t.slice(0, 10), true);
+    const TROPHY = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c9a24a" d="M7 3h10v2h3v3a4 4 0 0 1-4.3 4A5 5 0 0 1 13 14.9V18h3v2H8v-2h3v-3.1A5 5 0 0 1 8.3 12 4 4 0 0 1 4 8V5h3zm0 4H6v1a2 2 0 0 0 1.2 1.8A6 6 0 0 1 7 8zm10 0v1a6 6 0 0 1-.2 1.8A2 2 0 0 0 18 8V7z"/></svg>`;
+    function onlineInfo(g, n) {
+      const line = (icon, facts) => `<p>${icon}<span>${facts.filter(Boolean).map(esc).join(' · ')}</span></p>`;
+      let html = '';
+      if (g.steam) {
+        const s = g.steam, a = s.achievements;
+        html += line(STORE_LOGOS.steam, [
+          s.playtime.total ? `${played(s.playtime.total)} played` : 'Not played yet',
+          s.lastPlayed && `last on ${day(s.lastPlayed)}`,
+          a.total && (a.unlocked != null ? `${a.unlocked} of ${a.total} achievements` : `${a.total} achievements`),
+        ]);
+        if (s.store?.description) html += `<p class="spot-about">${esc(s.store.description)}</p>`;
+        html += `<a class="spot-find" href="${esc(s.storeUrl)}" target="_blank" rel="noopener">Steam store page ↗</a>`;
+      }
+      if (g.psn) {
+        const p = g.psn, t = p.trophies;
+        html += line(TROPHY, [
+          p.playtime != null && (p.playtime ? `${played(p.playtime)} played` : 'Not played yet'),
+          p.playCount > 1 && `${p.playCount} sessions`,
+          p.firstPlayed && p.firstPlayed.slice(0, 10) !== p.lastPlayed?.slice(0, 10) && `first on ${day(p.firstPlayed)}`,
+          p.lastPlayed && `last on ${day(p.lastPlayed)}`,
+          t && `${t.earned} of ${t.total} trophies${t.platinum ? ', platinum' : ''}`,
+        ]);
+      }
+      return `<div class="spot-online" style="--n:${n}">${html}</div>`;
     }
     function sizeOf(g, k) {
       if (shape(g) === 'cart') return Case.cartSize(g, k);
@@ -1167,17 +1269,20 @@
       const c = CONSOLE_BY_ID[g.console];
       const made = g.developer && g.developer !== g.publisher ? `Developed by ${g.developer}` : '';
       const pack = g.pack && g.pack !== 'Base game' ? [g.pack, g.packCode].filter(Boolean).join(' ') : '';
-      const rest = [pack, g.genre, FORMATS[g.format], g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.alsoDigital && 'Also in the EA app', g.edition, made].filter(Boolean);
+      const rest = [pack, g.genre, FORMATS[g.format], g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.alsoDigital && (g.launcher === 'ea' ? 'Also in the EA app' : `Also on ${LAUNCHERS[g.launcher]?.name || 'a launcher'}`), g.edition, made].filter(Boolean);
       const q = encodeURIComponent(`${g.title} ${c.name} ${REGIONS[g.region]?.name || g.region} box art`);
       let n = 2;
       return `
         <p class="spot-who" style="--n:${n++}">${[Case.date(g.released, true), g.publisher].filter(Boolean).map(esc).join(' · ')}</p>
         ${rest.length ? `<p class="spot-rest" style="--n:${n++}">${rest.map(esc).join(' · ')}</p>` : ''}
         ${g.note ? `<p class="spot-note" style="--n:${n++}">${esc(g.note)}</p>` : ''}
+        ${g.steam || g.psn ? onlineInfo(g, n++) : ''}
         ${g.cover ? '' : `<a class="spot-find" style="--n:${n++}" href="https://www.google.com/search?tbm=isch&amp;q=${q}" target="_blank" rel="noopener">Find the cover on Google Images ↗</a>`}
         ${shape(g) === 'box' ? `<div class="views" style="--n:${n++}">
           <button type="button" data-v="front">Front</button><button type="button" data-v="spine">Spine</button><button type="button" data-v="back">Back</button>
-          <button type="button" class="open-btn" data-v="open">${Case.layout(g, 1).kind === 'box' ? 'Take it out' : 'Open case'}</button></div>` : ''}`;
+          <button type="button" class="open-btn" data-v="open">${Case.layout(g, 1).kind === 'box' ? 'Take it out' : 'Open case'}</button></div>`
+        // a digital copy has only its cover and, on the back, its licence
+        : shape(g) === 'card' ? `<div class="views" style="--n:${n++}"><button type="button" data-v="front">Cover</button><button type="button" data-v="back">Licence</button></div>` : ''}`;
     }
 
     /* ---------- turning it round ---------- */
@@ -1190,7 +1295,8 @@
       $$('[data-v]', cur.layer).forEach(b => b.classList.toggle('on', b.dataset.v === v));
     }
     function view(v) {
-      if (!cur || cur.sh !== 'box') return;
+      if (!cur || cur.sh === 'cart') return;
+      if (cur.sh === 'card' && !['front', 'back'].includes(v)) return;
       const isBox = Case.layout(cur.g, 1).kind === 'box';
       if (v === 'open' || v === 'close') {
         cur.open = v === 'open';
@@ -1226,6 +1332,8 @@
       });
       el.addEventListener('pointerup', () => {
         if (drag && !drag.moved && cur && cur.sh === 'box') view(cur.open ? 'close' : 'open');
+        // a tap turns a digital copy over
+        else if (drag && !drag.moved && cur && cur.sh === 'card') { const n = ((cur.ry % 360) + 360) % 360; view(n > 90 && n < 270 ? 'front' : 'back'); }
         drag = null;
       });
     }
@@ -1258,6 +1366,22 @@
       if (Math.abs(spine[0] - real[0]) < 0.5) return;
       const keys = (out ? [spine, real] : [real, spine]).map(([d, f]) => ({ '--sd': d + 'px', '--sfs': f + 'px' }));
       a.obj.animate(keys, { duration, easing: 'cubic-bezier(.4,.1,.2,1)', fill });
+    }
+
+    // A digital copy has no case to turn edge on, so it folds down into the dashed outline it stands as on the
+    // shelf, like a download going back into the library, and unfolds out of it coming out (out). sw: that
+    // outline's width on the screen, s: the scale it is drawn at there.
+    const flatOff = (a, el) => a.sh === 'card' && !!el && el.classList.contains('sp');
+    function fold(a, sw, s, duration, out) {
+      const o = a.obj;
+      a.folding?.cancel();
+      const open = { '--fold': 0, '--fx': '0px', '--px': '1px' };
+      const shut = { '--fold': 1, '--fx': (Math.max(0, a.L.w - sw / s) / 2).toFixed(1) + 'px', '--px': (1 / s).toFixed(3) + 'px' };
+      const ease = 'cubic-bezier(.6,0,.3,1)';
+      const keys = out ? [{ ...shut, easing: ease }, { ...open, offset: 0.55 }, open] : [open, { ...open, offset: 0.45, easing: ease }, shut];
+      o.classList.add('folding');
+      a.folding = o.animate(keys, { duration, fill: out ? 'none' : 'forwards' });
+      if (out) a.folding.finished.then(() => { if (!a.closing) o.classList.remove('folding'); }, () => {});
     }
 
     function hide(a, el) {
@@ -1295,7 +1419,6 @@
       el.dataset.dir = dir;
       el.setAttribute('aria-label', `${dir < 0 ? 'Previous' : 'Next'}: ${g.title}`);
       const face = shape(g) === 'cart' ? Case.cart(g, P.k) : Case.front(g, P.k, false);
-      if (shape(g) === 'card') face.classList.add('ghosted');
       el.append(face);
       el.style.cssText = `left:${(P.cx - P.w / 2).toFixed(1)}px;top:${(P.cy - P.h / 2).toFixed(1)}px;width:${P.w.toFixed(1)}px;height:${P.h.toFixed(1)}px;--ry:${P.ry}deg`;
       el._pose = P;
@@ -1395,7 +1518,9 @@
           { transform: piecePose(L, (from.cx + L.cx) / 2, (from.cy + L.cy) / 2 - lift, (s0 + 1) / 2, from.z * 0.4), offset: 0.45 },
           { transform: rest },
         ], { duration, easing: 'cubic-bezier(.3,.05,.2,1)', fill: 'backwards' });
-        turn.animate([{ transform: rot(fromPose(a.source)) }, { transform: rot(restPose) }], { duration: duration * 0.9, easing: 'cubic-bezier(.4,.1,.2,1)', fill: 'backwards' });
+        const flat = flatOff(a, a.source);
+        turn.animate([{ transform: rot(flat ? [0, 0, 0] : fromPose(a.source)) }, { transform: rot(restPose) }], { duration: duration * 0.9, easing: 'cubic-bezier(.4,.1,.2,1)', fill: 'backwards' });
+        if (flat) fold(a, from.w, s0, duration, true);
         // off the shelf facing out, it starts seen from its foot as it stood there
         if (footed(a.source)) piece.animate([footView(a.source, s0), { perspective: getComputedStyle(piece).perspective, perspectiveOrigin: '50% 50%' }], { duration: duration * 0.9, easing: 'cubic-bezier(.4,.1,.2,1)', fill: 'backwards' });
         depth(a, a.source, s0, duration * 0.9, 'backwards', true);
@@ -1530,7 +1655,9 @@
         const lift = 40 + Math.min(100, dist * 0.1);
         const duration = 760 + Math.min(300, dist * 0.22);
         a.turn.style.transition = `transform ${duration * 0.85}ms cubic-bezier(.4,0,.2,1)`;
-        a.turn.style.transform = rot(fromPose(home));
+        const flat = flatOff(a, home);
+        a.turn.style.transform = rot(flat ? [0, Math.round(a.ry / 360) * 360, 0] : fromPose(home));
+        if (flat) fold(a, to.w, scaleFrom(home, to, L.w, L.h), duration, false);
         // and going back to stand facing out on the shelf, it ends seen from its foot, as it stands there
         if (footed(home)) {
           const ease = `${(duration * 0.85).toFixed(0)}ms cubic-bezier(.4,0,.2,1)`;
@@ -1647,25 +1774,103 @@
     if (CONSOLE_BY_ID[h] && !(state.sel.size === 1 && state.sel.has(h))) { state.sel = new Set([h]); changed(); showPicked(); }
   });
 
+  /* ---------- the collections: the whole shelf, or one series in its own look ---------- */
+  // ?sims or ?gta in the address picks one; the top bar's links pick one in place
+  const colInUrl = () => { const q = new URLSearchParams(location.search); return Object.keys(COLLECTIONS).find(k => q.has(k)) || ''; };
+  const SHELF = { title: document.title, icon: $('link[rel="icon"]')?.getAttribute('href'), about: $('meta[name="description"]')?.content };
+  function setCollection(col) {
+    const root = document.documentElement;
+    if (COL) root.classList.remove('collection', COL);
+    COL = COLLECTIONS[col] ? col : '';
+    CFG = COLLECTIONS[COL] || null;
+    if (COL) root.classList.add('collection', COL);
+    ALL = CFG ? LISTS[COL] : DB;
+    GROUP = CFG ? 'group' : 'console';
+    groupOf = CFG ? CFG.group : byConsole;
+    MENU.console.key = GROUP;
+    MENU.console.label = CFG ? `By ${CFG.groupNoun}` : 'By console';
+    VIEWS = ['shelf', 'rows', 'grid', 'showcase', 'list', ...(CFG && CFG.checklist ? ['checklist'] : [])];
+    if (!VIEWS.includes(state.view)) state.view = 'shelf';
+    // sorted by console on the shelf is sorted by game in a collection, and back
+    const s = state.sort || {};
+    state.sort = validSort(s.key === 'console' || s.key === 'group' ? { key: GROUP, dir: s.dir } : s);
+    // the consoles picked stay picked where the collection has games on them
+    state.sel = new Set([...state.sel].filter(id => ALL.some(g => g.console === id)));
+    if (state.lib && !ALL.some(g => g.console === 'pc' && inLib(g, state.lib))) state.lib = '';
+    document.title = CFG ? `${CFG.title} · ${SHELF.title}` : SHELF.title;
+    $('link[rel="icon"]')?.setAttribute('href', CFG ? CFG.icon : SHELF.icon);
+    $('meta[name="description"]')?.setAttribute('content', CFG ? CFG.about : SHELF.about);
+    $$('.topnav [data-col]').forEach(a => a.dataset.col === COL ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+    hero();
+  }
+  // a click on the top bar's links changes the collection where it stands, fading from one look to the other
+  $$('.topnav [data-col], .brand').forEach(a => a.addEventListener('click', e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button || !DB.length) return; // a new tab or window
+    e.preventDefault();
+    const col = a.dataset.col || '';
+    if (col === COL) return;
+    try { history.replaceState(null, '', location.pathname + (col ? '?' + col : '')); } catch (err) { /* some viewers refuse it */ }
+    const go = () => {
+      setCollection(col);
+      changed();
+      showPicked();
+      scrollTo(0, 0);
+    };
+    if (document.startViewTransition && !reduced()) document.startViewTransition(go); else go();
+  }));
+
+  /* A copy's PSN play history and trophies. A copy with more than one game in it (a trilogy) is tied to
+     each one's, and gets them added up. */
+  function psnOf(g, psn) {
+    const ts = [g.psnTitleId || []].flat().map(id => psn.titles[id]).filter(Boolean);
+    const ss = [g.psnTrophySet || []].flat().map(id => psn.trophySets[id]).filter(Boolean);
+    if (!ts.length && !ss.length) return null;
+    const sum = (xs, f) => xs.reduce((a, x) => a + (f(x) || 0), 0);
+    const times = k => ts.map(t => t[k]).filter(Boolean).sort();
+    return {
+      playtime: ts.length ? sum(ts, t => t.playtime) : null,
+      playCount: ts.length ? sum(ts, t => t.playCount) : null,
+      firstPlayed: times('firstPlayed')[0] || null,
+      lastPlayed: times('lastPlayed').at(-1) || null,
+      trophies: ss.length ? { total: sum(ss, s => s.total), earned: sum(ss, s => s.earnedTotal), platinum: ss.some(s => s.earned.platinum) } : null,
+    };
+  }
+
   /* ---------- start ---------- */
   const json = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
-  Promise.all(['data/games.json', ...(CFG && CFG.data || [])].map(json))
+  const EXTRA = [...new Set(Object.values(COLLECTIONS).flatMap(c => c.data || []))];
+  // what Steam says about the games tied to it (steamAppId), written by tools/steam-sync.mjs; the shelf does without it
+  // and what PlayStation Network says about the ones tied to it (psnTitleId, psnTrophySet), from tools/psn-sync.mjs
+  const ONLINE = ['data/steam.json', 'data/psn.json'].map(u => json(u).catch(() => null));
+  Promise.all([...['data/games.json', ...EXTRA].map(json), ...ONLINE])
     .then(([db, ...more]) => {
+      const [steam, psn] = more.splice(-2);
+      const file = Object.fromEntries(EXTRA.map((u, i) => [u, more[i]]));
       // games marked hidden stay in the list, but off every shelf and count
       db.games = db.games.filter(g => !g.hidden);
-      ALL = CFG ? CFG.games(db, ...more) : db.games;
-      ALL.forEach(g => {
+      DB = db.games;
+      DB.forEach(g => {
         byId.set(g.id, g);
-        g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, CONSOLE_BY_ID[g.console].name, CONSOLE_BY_ID[g.console].short, g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac'].join(' | '));
+        if (g.steamAppId && steam?.games[g.steamAppId]) g.steam = steam.games[g.steamAppId];
+        if (psn) g.psn = psnOf(g, psn);
+        g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, CONSOLE_BY_ID[g.console].name, CONSOLE_BY_ID[g.console].short, g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac', g.steam && 'Steam', ...(g.steam?.store?.genres || []), g.psn?.trophies?.platinum && 'Platinum trophy', ...nicknames(g)].join(' | '));
       });
+      for (const [k, c] of Object.entries(COLLECTIONS)) LISTS[k] = c.games(db, ...(c.data || []).map(u => file[u]));
       shell();
       const h = location.hash.slice(1);
+      // a game that isn't in the collection in the address opens on the whole shelf
+      let col = colInUrl();
+      if (col && byId.has(h) && !LISTS[col].includes(byId.get(h))) {
+        col = '';
+        try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* some viewers refuse it */ }
+      }
+      setCollection(col);
       if (CONSOLE_BY_ID[h]) state.sel = new Set([h]);
       games = list();
       sync();
       showPicked();
       render(true);
-      // a collection page's link to one of its checklist's sections opens the checklist there
+      // a collection's link to one of its checklist's sections (?gta#want-list) opens the checklist there
       if (h && VIEWS.includes('checklist') && !byId.has(h) && !CONSOLE_BY_ID[h]) {
         state.view = 'checklist';
         sync();

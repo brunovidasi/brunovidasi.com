@@ -9,10 +9,11 @@ The game collection site: black, finely pinstriped pages with a blue accent and 
 - **The showcase**: one game at a time on a glossy stage, with the rest fanned out either side and the light behind it in the colour of its cover, as in `prototypes/3-showcase.html`. Drag, scroll sideways, use the arrows or the arrow keys to move along, or jump with the strip under it (a block per console). The game in the middle is picked up like anywhere else, and one to the side comes to the middle first. The cases fly across between the showcase and the other views, as between the shelf and the grid.
 - **The list**: the same games as a sortable table, like the record site's list.
 - **A game up close**: click a case on the shelf, in the grid or in the list. It lifts out of its place, which stays empty, and flies to the middle of the screen with its name above it and its details below. Drag it to turn it round, or use *Front*, *Spine* and *Back*. *Open case* shows the disc, and *Take it out* lifts the cartridge out of its box. The arrows at the bottom (or the arrow keys) go to the next and previous game. On a big screen the previous and next games stand smaller to the left and right; stepping, the game in the middle moves aside into the place beside the next one as that one comes in from its own, and a click on either one steps to it; closing flies it back into its place. On a phone held sideways the details stand beside it.
-- **The Sims collection** (`sims.html`): every Sims game and pack, on the same bookcase, in the same grid and list, grouped by game (The Sims, The Sims 2, The Sims Stories, The Sims 3, The Sims Medieval, The Sims 4, SimCity, MySims) rather than by console. Its *Checklist* view sorts them by game and pack, with how much of each is there and the want list. A solid case is on disc, an outline is in the EA app.
-- **Grand Theft Auto** (`gta.html`): every GTA copy on the bookcase, grouped by game. Its *Checklist* goes era by era, one row per game with its copies on every platform and a dashed outline at the real case size for each version still to find. Those outlines are the want list at the bottom.
+- **The collections**: *The Sims* and *GTA* in the top bar are filters on the same page, not pages of their own. Picking one (`?sims`, `?gta` in the address) leaves only its games on the shelf, gives it its own header and a *Checklist* view, and changes the whole page's look (a class on `<html>`, `css/sims.css` and `css/gta.css`), fading from one to the other; *The Shelf* goes back to everything. The view, the sort and the consoles picked carry across where they can.
+- **The Sims collection** (`?sims`): the page in the game's own clothes: a deep Sims-blue sky, glossy round blue panels, plumbob green for what is picked, a cream wallpapered room behind the bookcase, Fredoka and Nunito. A plumbob (`assets/plumbob.svg`, turning) bobs beside the title, and over whichever case the pointer is on, as over a picked Sim. Every Sims game and pack, on the same bookcase, in the same grid and list, grouped by game (The Sims, The Sims 2, The Sims Stories, The Sims 3, The Sims Medieval, The Sims 4, SimCity, MySims) rather than by console. Its *Checklist* view sorts them by game and pack, with how much of each is there and the want list. A solid case is on disc, an outline is in the EA app.
+- **Grand Theft Auto** (`?gta`): the page after GTA VI's Vice City (the `leonida` style prototype): a sunset over the water with palms, the shelf as a collage of panels split by black gutters, Anton, Yellowtail and Manrope. Every GTA copy on the bookcase, grouped by game. Its *Checklist* goes era by era, one row per game with its copies on every platform and a dashed outline at the real case size for each version still to find. Those outlines are the want list at the bottom.
 - **Design prototypes** (`prototypes/`): the four early designs, kept as they were.
-- **Style prototypes** (`prototypes/styles/`): eleven looks for the same site, none of them live yet. `prototypes/styles/index.html` is a gallery of them with a screenshot of each, and every style has a full preview of the site in its own folder (`prototypes/styles/neon/`, with its own `sims.html` and `gta.html`). Each look is one stylesheet, `prototypes/styles/<name>.css`, loaded after the site's own CSS: `neon` (Neon Arcade), `hud` (Holo Vault), `pixel` (Pixel Quest), `dashboard` (Next-Gen Home), `museum` (Hall of Fame), `atomic` (Atomic Purple), `comic` (Game Mag), `console` (Super Console), `glitch` (Glitch City), `leonida` (Leonida, after GTA VI's Vice City) and `datacore` (Data Core). The top of each names the Google Fonts it needs. The previews are copies of the site's pages, so after changing `index.html`, `sims.html` or `gta.html`, run `node tools/style-previews.mjs` to rebuild them.
+- **Style prototypes** (`prototypes/styles/`): eleven looks for the same site, none of them live yet. `prototypes/styles/index.html` is a gallery of them with a screenshot of each, and every style has a full preview of the site in its own folder (`prototypes/styles/neon/`, and `?sims`, `?gta` on it). Each look is one stylesheet, `prototypes/styles/<name>.css`, loaded after the site's own CSS: `neon` (Neon Arcade), `hud` (Holo Vault), `pixel` (Pixel Quest), `dashboard` (Next-Gen Home), `museum` (Hall of Fame), `atomic` (Atomic Purple), `comic` (Game Mag), `console` (Super Console), `glitch` (Glitch City), `leonida` (Leonida, after GTA VI's Vice City) and `datacore` (Data Core). The top of each names the Google Fonts it needs. The previews are copies of the site's page, so after changing `index.html`, run `node tools/style-previews.mjs` to rebuild them.
 
 ## Running it
 
@@ -23,9 +24,9 @@ python3 -m http.server 8000     # or: npx serve
 # then open http://localhost:8000
 ```
 
-There is no build step. A link like `index.html#ps2` opens straight onto one console, and `index.html#ps2-final-fantasy-x` opens one game. On the collection pages a section's name opens the checklist there: `gta.html#want-list`.
+There is no build step. A link like `index.html#ps2` opens straight onto one console, and `index.html#ps2-final-fantasy-x` opens one game. `?sims` or `?gta` opens a collection, and in one a section's name opens the checklist there: `?gta#want-list`.
 
-The collection pages are the same shelf (`js/app.js`): each sets `window.SHELF_PAGE` with its games, how they group, its header and its checklist (see the top of `js/app.js`).
+The collections are the same shelf (`js/app.js`): each adds itself to `window.COLLECTIONS` with its name, its games, how they group, its header and its checklist (see the top of `js/app.js`), and its look is a stylesheet scoped to its class on `<html>` (`.sims`, `.gta`).
 
 ## The collection: `data/games.json`
 
@@ -41,7 +42,7 @@ One entry per copy on the shelf:
 | `edition` | `"Nintendo Switch 2 Edition"` | optional |
 | `region` | `"AUS"` | the region code on the box: `AUS`, `EUR`, `HOL` (Netherlands), `UK`, `USA` or `JPN`. When it isn't known, just `PAL`, `NTSC-U` or `NTSC-J` |
 | `released` | `"2001-07-19"` | first release on that console. Can be `"2001-07"` or `"2001"` |
-| `dateSource` | `"manual"` | `libretro-database`, or `manual` (from memory, worth checking) |
+| `dateSource` | `"manual"` | `libretro-database`, `steam` (the Steam store's date, which for an older game is its Steam release), or `manual` (from memory, worth checking) |
 | `publisher`, `developer`, `genre` | | |
 | `format` | `"boxed"` | `boxed`, `cartridge-only` (stands loose on the shelf) or `digital` (an outline) |
 | `kinect` | `true` | optional: a Kinect game, drawn in a purple case |
@@ -57,23 +58,61 @@ One entry per copy on the shelf:
 | `topLabel` | `false` | optional: a SNES cartridge with no label over its top edge (an unofficial one). It faces out on the shelf |
 | `steelbook` | `true` | optional: a SteelBook (tin case). Drawn as metal with rounded corners and no plastic rim, its art to the edge, and a metal spine tinted in the cover's colour. Its `cover` is the tin's own art, not the box's, and `cover.back` (any game can have one) is a picture of its back, shown on the back of the case |
 | `caseStyle` | `"ps4"` | optional: drawn in another console's case (a PS4 disc on the PS5 shelf) |
+| `shelfDate` | `"2000-02-05"` | optional: the date it files under on the shelves (the whole shelf's and a collection's) and the checklist instead of its release date (The Sims Deluxe Edition right after The Sims) |
+| `box` | `{ "w": 148, "h": 208, "d": 60 }` | optional: a copy sold in a box of its own instead of its console's case (a bundle, a collector's edition), its size in mm |
+| `model` | `"sims3-ce"` | optional: a special box built in 3D from its parts instead of as a block (`js/cases.js`, `MODELS`). `sims3-ce` is The Sims 3 Collector's Edition: the clear box, the card sleeve round its lower half, the DVD's holder across the back with its green panel, and the plumbob USB drive standing in the window, which *Take it out* lifts out of the lid with its cap off the plug. `medieval-ce` is The Sims Medieval Collector's Edition: a gold book in a card sleeve open at both ends (its gilt page edges show there); *Take it out* slides the sleeve off and sets it behind, and the cover swings open on the kingdom's map, the plumbob board and the open fore-edge with the DVD case in it. Its extra photos are in `cover.parts` |
 | `note` | `"No guitar controller"` | shown under the details |
 | `fav` | `true` | optional: faces out on the shelf in "One cover per console" |
 | `faceOut` | `true` | optional: faces out (`true`) or stands on its side (`false`) on the shelf in "One cover per console", whether or not it is a `fav` (and, with `false`, even a cartridge with no top label, which is then drawn with its title on its top like the others) |
 | `reproduction` | `true` | optional: a reproduction cartridge, not an official one. Only a record: it doesn't change how the game is shown |
 | `hidden` | `true` | optional: kept in the list but left off the site (off every shelf and out of the counts) |
 | `check` | | something still to confirm. Not shown on the site |
-| `cover` | `{ "file": "covers/ps2/final-fantasy-x.jpg", … }` | the box art, or `null`. `"plain": true` marks a picture that is only the game's key art, not that console's box (the PS5 and Switch 2 pictures from Wikipedia): the case keeps its real size, the console's band is printed across the top and the art fills the rest |
+| `cover` | `{ "file": "covers/ps2/final-fantasy-x.jpg", … }` | the box art, or `null`. `"plain": true` marks a picture that is only the game's key art, not that console's box (the PS5 and Switch 2 pictures from Wikipedia): the case keeps its real size, the console's band is printed across the top and the art fills the rest. `cover.spine` and `cover.side` are pictures of a box's real left and right sides: the left is its spine on the shelf, the right shows in the showcase |
 | `colors` | `["#fcfcfc", …]` | taken from the cover. Some spines use them |
 | `spine` | `{ "style": "white", "top": "pccd", "title": "The Sims™ 2 Seasons *expansion pack**", "foot": ["M", "ea"] }` | optional: how the copy's spine is printed, drawn in that box family's own design (below) instead of the plain one |
 
 To add a game, copy an entry, change it, and set `cover` and `colors` to `null`. Then fetch its cover (below).
 
-**PC games**: use `"console": "pc"` and add `"launcher"` (`steam`, `origin`, `ea`, `rockstar`, `battlenet`, `gog`, `ubisoft` or `none`). Add `"big": true` for a big-box release (cardboard), `"bigCase": true` for one in the thick plastic case of the early 2000s (EA's *PC GAME* and *PC CD* cases: a DVD case's height and 28 mm deep, with a CD inside), `"mac": true` when it plays on a Mac too, and `"alsoDigital": true` for a disc that is also in the launcher's library.
+**PC games**: use `"console": "pc"` and add `"launcher"` (`steam`, `origin`, `ea`, `rockstar`, `battlenet`, `gog`, `ubisoft` or `none`). Add `"big": true` for a big-box release (cardboard), `"bigCase": true` for one in the thick plastic case of the early 2000s (EA's *PC GAME* and *PC CD* cases: a DVD case's height and 28 mm deep, with a CD inside), `"mac": true` when it plays on a Mac too, and `"alsoDigital": true` for a disc that is also in the launcher's library. A disc in a clear case instead of the usual black one gets `"clearCase": true` (San Andreas, Bully, the Sold Out pack). A copy in the Steam library has `"steamAppId"` (below).
+
+## Steam
+
+The Steam library comes in through `tools/steam-sync.mjs`, from an export made by `api/steam-exporter` (see its README; its `config.php` holds the API key and is never committed, and neither are its exports):
+
+```sh
+cd api/steam-exporter && php export.php    # a new export in exports/
+cd ../../tools && node steam-sync.mjs --dry  # show what it would change
+node steam-sync.mjs                          # bring it in
+```
+
+Run it again whenever the library changes. It writes two files:
+
+- `data/steam.json`: everything Steam says about each game, by app id: playtime (in minutes, in all and per system), when it was last played, its achievements (how many, and each one with its name, description, icon and, once Steam returns them, when it was unlocked), and its store page (description, genres, categories, platforms, languages, age ratings, Metacritic, price, DLC, screenshots, trailers, pictures). The sync writes it whole each time, so it is never edited by hand. The account's own details (its SteamID, bans, badges) stay out of it.
+- `data/games.json`: each copy in the Steam library has `"steamAppId"`. A game in the library with no copy tied to it gets a new digital one (`"launcher": "steam"`, `"dateSource": "steam"`, the region from the store's currency), with the game's Steam library art as its cover (`"source": "steam"`; `fetch-covers.mjs` leaves it alone except with `--only`). A digital PC copy with the same title, no `steamAppId` and no other launcher is tied to it instead. A boxed copy never is: a Steam copy is a copy of its own, as RollerCoaster Tycoon 2: Triple Thrill Pack is both on the shelf and on Steam (a disc that activates on Steam can be tied by hand with `steamAppId` and `"alsoDigital": true`). After that the copy is yours: the sync only fills its fields that are still empty and never changes one that is set, so titles, `sortAs`, a better cover and the rest can be edited as on any game. To keep a Steam game off the site, give it `"hidden": true` rather than deleting it, or the next sync brings it back. A tied copy that drops out of the library is only reported, never deleted.
+
+On the site, a game with Steam data shows its playtime, when it was last played, its achievements, the store's description and a link to its store page under its details, and its licence (the back of a digital copy) has the playtime and app id. Achievements unlocked need the Steam profile's *Game details* to be public; until then only how many a game has shows.
+
+When the site talks to the Steam API itself, the PHP side can hand `fromExport()` in `tools/steam-sync.mjs` the same shape the exporter writes, or another reader can return what it returns, and the rest stays as it is.
+
+## PlayStation Network
+
+What PSN knows about the PlayStation games comes in the same way, through `tools/psn-sync.mjs`, from an export made by `api/psn-exporter` (see its README: it needs a fresh NPSSO token, which is never written down anywhere, and its exports are never committed):
+
+```sh
+cd api/psn-exporter && PSN_NPSSO='…' php export.php
+cd ../../tools && node psn-sync.mjs --dry   # show what it would change
+node psn-sync.mjs                           # bring it in
+```
+
+It writes `data/psn.json`, by PSN id, written whole each time: each game's play history (PS4 and PS5 only: how long, how many times, when first and last played), each trophy set (PS3, PS4 and PS5: how many trophies of each grade it has, how many were earned and when it last changed) and the account's trophy level. The account's ids, profile and friends stay out of it, and so do the apps that aren't games (Netflix, YouTube, Spotify).
+
+The PlayStation games are discs already on the shelf, so the sync never adds a copy: it ties one with `"psnTitleId"` (`CUSA…`, `PPSA…`: its play history) and `"psnTrophySet"` (`NPWR…`: its trophies). A PSN game is tied to the one copy on its console with the same name, or with a name that starts with it (*The Sims 4* is *The Sims 4 Plus Cats & Dogs*). The export doesn't say which console a trophy set is for, only whether it is the PS5's trophy service, so an older one can be a PS3 or a PS4 set. When there is no copy or more than one to choose from, the sync only reports it, and it is tied by hand: *Mortal Kombat*'s trophies are *Mortal Kombat: Komplete Edition*'s, the two *SingStar* sets the PS3's and the PS4's (`check` on `ps3-singstar`). A copy with more than one game in it takes a list, and its numbers are added up: *GTA: The Trilogy – The Definitive Edition* has each game's own play history and trophies (`"psnTitleId": ["CUSA26613_00"]`, with Vice City's and San Andreas' to join it once they have been played).
+
+On the site, a tied game shows under its details how long it was played, over how many sessions, when it was first and last played, and how many of its trophies were earned.
 
 **The Sims page** takes every game with a `"series"` (`"The Sims"`, `"The Sims 2"`, `"The Sims Stories"`, `"The Sims 3"`, `"The Sims Medieval"`, `"The Sims 4"`, `"SimCity"` or `"MySims"`), on any console. `"pack"` says what it is (`Base game`, `Collection`, `Expansion Pack`, `Game Pack`, `Stuff Pack`, `Kit`, `World` or `Extra`) and `"packCode"` gives The Sims 4's numbering (`EP01`, `GP04`, `SP12`). Serial keys are never kept here.
 
-**The GTA page** reads `data/gta.json`: the eras, and in each its games with `copies` (ids from `games.json`) and `missing` (console ids, plus `psp` and `xsx` for Xbox Series X|S). When a missing version comes home, add it to `games.json` and move its id from `missing` to `copies`.
+**The GTA page** reads `data/gta.json`: the eras, and in each its games with `copies` (ids from `games.json`) and `missing` (console ids, plus `psp` and `xsx` for Xbox Series X|S). When a missing version comes home, add it to `games.json` and move its id from `missing` to `copies`. A copy with two games in it (Grand Theft Auto & GTA London) goes in both games' `copies`: it shows in both rows of the checklist and stands on the shelf once, with the first.
 
 **The Sims want list** is `data/sims-wants.json`: the games and packs not in the collection yet, with the same `series`, `pack` and `packCode`, plus `platform` and an optional `note`. When one comes home, delete it there and add it to `games.json`.
 
@@ -82,11 +121,11 @@ To add a game, copy an entry, change it, and set `cover` and `colors` to `null`.
 A game's `spine` draws its spine as the real box prints it. Every part is drawn, so it stays sharp at any size; nothing is a photo. A game in a thick EA case (`bigCase`) gets `{ "style": "ea-pcgame" }` by default.
 
 - `style`: `ea-pcgame` (EA's thick PC cases of the early 2000s: black ends, the cover's own art squeezed and blurred down the middle), `white` (the plain white spine of the DVD-case years), `sims4` (a band in the pack's colour at each end round The Sims 4's logo, the pack's icon and name in the lower one) or `art` (the cover's art right down the spine, SimCity 2013).
-- `top`: the platform's logo: `pcgame`, `pccd` (white on a black strip), `pccd-tile` (PC on a red tile), `pcdvd`, `pcdvd-mac`, `pcdvd-mac-dl` (with DIGITAL DOWNLOAD) or `pcmac` (PC/MAC and the download arrow).
-- `title`: the words as printed, when they differ from the game's title. `*…*` is set smaller (`*expansion pack**`), `\n` breaks the line, `™` and `®` are set small. A long title is set smaller to fit. `caps: true` sets it in capitals throughout (THE SIMS™2 NIGHTLIFE); `font: "plain"` in a plain rounded type (MySims).
-- `logo`: the series logo instead of a title, from `logos/` (the logos are turned to read down the spine: the Sims Wiki's transparent pack logos, Wikimedia Commons' The Sims 4 logo). `sub` is the pack's name after it, `small` the smaller line beside it (EXPANSION PACK, LIMITED EDITION).
-- `stripe`: a thin line in that colour under the top (green for The Sims Stories, black for the Sims 2 DVDs, red for Pets). `color`: the band's own colour instead of white or the cover's art. `accent`, `label` and `icon` (`together`, `work`, `city`, `paw`, `seasons`, `famous`, `island`): the colour, the EXPANSION PACK line and the pack's icon of a Sims 4 spine. `band: "classics"`: EA Classics' blue band.
-- `foot`: the badges at the foot, top to bottom: ratings (`M`, `G`, `PG`, `MA15`, or a number such as `12` for a British one) and EA's logo as that year printed it (`ea` with its green ring, `ea-gold`, `ea-silver`, `ea-yellow`, `ea-red`, `ea-green`, `ea-games` the silver EA GAMES badge, `ea-mark` the plain letters).
+- `top`: the platform's logo: `pcgame`, `pccd` (white on a black strip), `pccd-tile` (PC on a red tile), `pcdvd`, `pcdvd-mac`, `pcdvd-mac-dl` (with DIGITAL DOWNLOAD), `pcmac` (PC/MAC and the download arrow), `pcdvd-block` and `pccdrom-block` (PC DVD-ROM or PC CD ROM in white on a dark block: Bully, Sold Out), or `gfw` and `gfw-live` (Games for Windows, with LIVE and its orange line). On a spine with its own `color` the PC CD and PC DVD-ROM strips take that colour. `head`: badges straight under the top, as `foot` (San Andreas' Rockstar logo).
+- `title`: the words as printed, when they differ from the game's title. `*…*` is set smaller (`*expansion pack**`), `\n` breaks the line, `™` and `®` are set small. A long title is set smaller to fit. `caps: true` sets it in capitals throughout (THE SIMS™2 NIGHTLIFE); `font: "plain"` in a plain rounded type (MySims), `"arial"` big in plain Arial (LucasArts' Grim Fandango) or `"copper"` in Copperplate capitals (Sold Out).
+- `logo`: the series logo instead of a title, from `logos/` (the logos are turned to read down the spine: the Sims Wiki's transparent pack logos, Wikimedia Commons' The Sims 4 logo). `sub` is the pack's name after it, `small` the smaller line beside it (EXPANSION PACK, LIMITED EDITION), and `subStyle` prints them another way: `gold` (Episodes From Liberty City) or `plaque` (Bully's SCHOLARSHIP·EDITION). `wide: true` sets a wordmark narrower and in the middle of the spine: the GTA ones (`logos/gta-*.webp`, each the stacked logo from Wikimedia Commons cut into its words and set on one line, as the spines print it) and Bully's.
+- `stripe`: a thin line in that colour under the top (green for The Sims Stories, black for the Sims 2 DVDs, red for Pets). `color`: the band's own colour instead of white or the cover's art. `accent`, `label` and `icon` (`together`, `work`, `city`, `paw`, `seasons`, `famous`, `island`): the colour, the EXPANSION PACK line and the pack's icon of a Sims 4 spine. `band: "classics"`: EA Classics' blue band. `deco: "soldout"`: Sold Out Software's logo, orange band and fine lines before the title.
+- `foot`: the badges at the foot, top to bottom: ratings (`M`, `G`, `PG`, `MA15`, or a number such as `12` for a British one) and EA's logo as that year printed it (`ea` with its green ring, `ea-gold`, `ea-silver`, `ea-yellow`, `ea-red`, `ea-green`, `ea-games` the silver EA GAMES badge, `ea-mark` the plain letters). For the Rockstar years: `rockstar` (its logo), `MA15R` (Australia's later MA15+ label, RESTRICTED under it), `bbfc15` and `bbfc18` (British ones), `pcdvd` or `pcdvd2` (PC DVD in the grey block at the foot, on one line or two) and `txt:` small print across the spine (`txtv:` to read down it: a catalogue number). The ratings are turned to read down the spine as the Sims boxes print them; a badge ending in `^` stands upright instead (`PG^`).
 
 ## Cases and cartridges
 
@@ -136,13 +175,15 @@ The script never replaces covers marked `manual`. A source with an API key, such
 - `js/consoles.js`: the consoles with their real case sizes, the regions and the PC launchers
 - `js/console-art.js`: the console drawings in the filter
 - `legacy/`: the console drawings and cartridges as they were before the PlayStation, Xbox and cartridge redraw (the in-between versions are in the git history) (`legacy/console-art.js`, `legacy/cases.js`), and `legacy/index.html`, which shows each old one beside the one on the site now. Nothing on the site loads them
-- `css/collection.css`, `js/collection.js`: what the collection pages' checklists share: the cases on their stretches of shelf, the meters, the want cards
-- `sims.html`, `css/sims.css`, `js/sims.js`: the Sims collection page
+- `css/collection.css`, `js/collection.js`: what the collections' checklists share: the cases on their stretches of shelf, the meters, the want cards
+- `css/sims.css`, `js/sims.js`, `assets/plumbob.svg`: the Sims collection and its look
 - `data/sims-wants.json`: the Sims want list
-- `gta.html`, `css/gta.css`, `js/gta.js`, `data/gta.json`: the Grand Theft Auto page
+- `css/gta.css`, `js/gta.js`, `data/gta.json`: the Grand Theft Auto collection and its look
 - `data/games.json`: the collection
+- `data/steam.json`, `tools/steam-sync.mjs`, `api/steam-exporter/`: the Steam library (above)
+- `data/psn.json`, `tools/psn-sync.mjs`, `api/psn-exporter/`: PlayStation Network (above)
 - `covers/`: box art, one folder per console
-- `tools/`: the cover fetcher, and `style-previews.mjs`, which builds the style prototype previews
-- `prototypes/`, `assets/`: the four design prototypes
+- `tools/`: the cover fetcher (and `palette.mjs`, the colours it takes from a cover), the Steam and PSN syncs, and `style-previews.mjs`, which builds the style prototype previews
+- `prototypes/`, `assets/`: the four design prototypes (and the plumbob)
 - `prototypes/styles/`: the style prototypes, their previews and their gallery
-- `fonts/`: the self-hosted fonts: Orbitron and Exo 2 for the site, Fraunces and Space Grotesk for what is printed on the cases
+- `fonts/`: the self-hosted fonts: Orbitron and Exo 2 for the site, Fredoka and Nunito for the Sims, Anton, Yellowtail and Manrope for GTA, Fraunces and Space Grotesk for what is printed on the cases

@@ -157,6 +157,12 @@
     'pcdvd-mac': '<span class="pt-box"><span class="pt-dvd"><b>PC</b><b class="dvd">DVD</b><small>ROM</small></span><em>Mac</em></span>',
     'pcdvd-mac-dl': '<span class="pt-box"><span class="pt-dvd"><b>PC</b><b class="dvd">DVD</b><small>ROM</small></span><em>MAC</em><small class="dl">DIGITAL DOWNLOAD</small></span>',
     pcmac: '<span class="pt-box pt-pcmac"><small>PC/MAC</small><i class="arrow"></i></span>',
+    // PC DVD-ROM, or PC CD ROM, in white on a dark block (Bully, the Sold Out budget range)
+    'pcdvd-block': '<span class="pt-dvd pt-light"><b>PC</b><b class="dvd">DVD</b><small>ROM</small></span>',
+    'pccdrom-block': '<span class="pt-pccd pt-cdrom"><b>PC</b><b>CD</b><small>ROM</small></span>',
+    // Games for Windows: the Windows orb over its name in a white band, LIVE under it (GTA IV) or an orange line (the Episodes)
+    gfw: '<span class="pt-gfw"><i class="orb"></i><span><b>Games</b><small>for Windows</small></span></span>',
+    'gfw-live': '<span class="pt-gfw"><i class="orb"></i><span><b>Games</b><small>for Windows</small><em>LIVE</em></span></span>',
   };
   // the pack's icon on a Sims 4 spine (white, on the pack's colour)
   const SIMS4_ICON = {
@@ -168,14 +174,30 @@
     famous: '<path d="M3 9h4l9-5v16l-9-5H3zm3 7h3l1 5H7z"/><path d="M18 8l3-2v12l-3-2z"/>',
     island: '<path d="M11 22c0-6 1-10 3-13-3-1-6 0-8 2 1-3 4-5 7-4-1-2-4-3-6-2 2-2 6-2 8 1 1-2 4-2 6-1-2 0-4 1-5 3 3 0 5 2 6 4-2-2-5-2-7-1-1 3-2 7-2 11z"/><path d="M3 22c3-2 15-2 18 0z"/>',
   };
+  // MA in its white hexagon, as Australia's MA15+ label prints it
+  const MA_HEX = '<svg viewBox="0 0 32 20" aria-hidden="true"><polygon points="7.5,1.2 24.5,1.2 30.8,10 24.5,18.8 7.5,18.8 1.2,10" fill="none" stroke="#fff" stroke-width="1.6"/><text x="16" y="14.2" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-weight="700" font-size="11.5">MA</text></svg>';
   // the badges at the foot: the age rating (Australia's, or another country's), then EA's logo as that year printed it
   function spineBadge(k) {
+    // a badge ending in ^ stands upright, across the spine, instead of turned to read down it (LucasArts' PG)
+    if (k.endsWith('^')) return spineBadge(k.slice(0, -1)).replace('class="sbg', 'class="sbg up');
     if (k === 'M' || k === 'G' || k === 'PG' || k === 'MA15') return `<i class="sbg rate rate-${k}"><b>${k === 'MA15' ? 'MA' : k}</b></i>`;
+    // Australia's later MA15+ label: MA in a white hexagon and 15+ on red, RESTRICTED under them
+    if (k === 'MA15R') return `<i class="sbg ma15r"><b>${MA_HEX}<span>15+</span></b><small>RESTRICTED</small></i>`;
+    // a British 18: white numbers on a red disc
+    if (k === 'bbfc18') return '<i class="sbg pegi bbfc18"><b>18</b></i>';
+    if (k === 'bbfc15') return '<i class="sbg pegi bbfc15"><b>15</b></i>';
+    // PC DVD in a grey block at the very foot (the Games for Windows years), on one line or two
+    if (k === 'pcdvd' || k === 'pcdvd2') return `<i class="sbg txt pcdvd">PC${k === 'pcdvd2' ? '<br>' : ' '}<b>DVD</b></i>`;
+    if (k === 'rockstar') return '<i class="sbg rockstar"><img src="logos/rockstar.webp" alt="" loading="lazy" decoding="async" draggable="false"></i>';
+    // small print across the spine (\n breaks it), or with txtv: turned to read down it (a catalogue number)
+    if (/^txtv?:/.test(k)) return `<i class="sbg txt${k[3] === 'v' ? ' down' : ''}">${esc(k.slice(k.indexOf(':') + 1)).replace(/\n/g, '<br>')}</i>`;
     if (/^\d+$/.test(k)) return `<i class="sbg pegi"><b>${k}</b></i>`;
     if (k === 'ea-games') return '<i class="sbg ea-games"><b>EA</b><small>GAMES</small></i>';
     if (k === 'ea-mark') return '<i class="sbg ea-mark">EA</i>';
     return `<i class="sbg ea ${k}"><b>EA</b></i>`;
   }
+  // Sold Out Software's budget spine: its logo, then the orange band and the fine lines before the title
+  const SOLDOUT = '<i class="so-logo"><b>$old</b><b class="out">Out</b><small>software</small></i><i class="so-band"></i><i class="so-lines"></i>';
   function printedSpineHTML(g, L, P) {
     const style = P.style || 'white';
     const solid = /^#[0-9a-f]{6}$/i.test(P.color || '') ? P.color : null;
@@ -184,8 +206,9 @@
     const text = P.title || g.title;
     const fit = Math.min(1, 22 / text.replace(/\*[^*]*\*/g, m => ' '.repeat(Math.ceil(m.length * .6))).replace(/\n.*/, '').length);
     const words = esc(text).replace(/\*([^*]+)\*/g, '<small>$1</small>').replace(/\n/g, '<br>').replace(/[™®]/g, '<sup>$&</sup>');
-    const logo = P.logo ? `<img class="slogo" src="${esc(P.logo)}" alt="" loading="lazy" decoding="async" draggable="false">` : '';
-    const sub = P.sub ? `<span class="ssub${P.sub.length > 14 ? ' long' : ''}"><b>${esc(P.sub)}</b>${P.small ? `<small>${esc(P.small)}</small>` : ''}</span>` : '';
+    const logo = P.logo ? `<img class="slogo${P.wide ? ' wide' : ''}" src="${esc(P.logo)}" alt="" loading="lazy" decoding="async" draggable="false">` : '';
+    // the pack's name after the logo; subStyle prints it another way (gold for the Episodes, a plaque for Bully)
+    const sub = P.sub ? `<span class="ssub${P.sub.length > 14 && !P.subStyle ? ' long' : ''}${P.subStyle ? ' ss-' + P.subStyle : ''}"><b>${esc(P.sub)}</b>${P.small ? `<small>${esc(P.small)}</small>` : ''}</span>` : '';
     const ttl = logo || P.sub ? `${logo}${sub}` : `<span class="stext${P.caps ? ' caps' : ''}${P.font ? ' f-' + P.font : ''}" style="--fit:${fit.toFixed(2)}">${words}</span>`;
     const top = SPINE_TOP[P.top || (style === 'ea-pcgame' ? 'pcgame' : 'pccd')] || '';
     const foot = (P.foot || (style === 'ea-pcgame' ? ['ea-games'] : ['ea'])).map(spineBadge).join('');
@@ -196,14 +219,19 @@
       <div class="s4-b">${logo}</div>
       <div class="s4-c">${P.icon && SIMS4_ICON[P.icon] ? `<svg class="s4-icon" viewBox="0 0 24 24" aria-hidden="true">${SIMS4_ICON[P.icon]}</svg>` : ''}<span class="s4-name">${esc(P.sub || '')}</span><div class="pfoot">${foot}</div></div>
     </div>`;
+    // badges straight under the top (San Andreas' Rockstar logo), and the budget label's own band before the title
+    const head = P.head ? `<div class="phead">${P.head.map(spineBadge).join('')}</div>` : '';
+    const deco = P.deco === 'soldout' ? SOLDOUT : '';
     return `<div class="${k}" style="${vs}">
-      <div class="ptop">${top}</div>${P.stripe ? '<i class="pstripe"></i>' : ''}
-      <div class="pmid">${P.band === 'classics' ? '<i class="pclassics"><b>CLASSICS</b></i>' : ''}<div class="pttl">${ttl}</div></div>
+      <div class="ptop">${top}</div>${P.stripe ? '<i class="pstripe"></i>' : ''}${head}
+      <div class="pmid">${P.band === 'classics' ? '<i class="pclassics"><b>CLASSICS</b></i>' : ''}${deco}<div class="pttl">${ttl}</div></div>
       <div class="pfoot">${foot}</div>
     </div>`;
   }
 
   function spineHTML(g, L) {
+    // a picture of the real side (a box whose side is printed in its own way: The Sims 3 Collector's Edition's)
+    if (g.cover && g.cover.spine && g.format !== 'digital') return `<div class="sp ${cls(g, L)} photo" style="${vars(g, L)}"><img class="scan" src="${esc(g.cover.spine)}" alt="" loading="lazy" decoding="async" draggable="false"></div>`;
     const P = spineOf(g);
     if (P && g.format !== 'digital') return printedSpineHTML(g, L, P);
     const Ln = g.launcher && window.LAUNCHERS[g.launcher];
@@ -226,7 +254,6 @@
         <div class="bkin">
           <div class="bkt">${esc(g.title)}</div>
           <div class="bkm"><b>Released</b> ${date(g.released, true)}<br>${[g.publisher, g.developer].filter(Boolean).map(esc).join(' · ')}<br>${esc(g.genre || '')}</div>
-          <div class="thumb">${img(g)}</div>
           <div class="bkf"><span class="rg">${esc(R.name)}</span><span class="bar"></span></div>
         </div>
       </div>
@@ -928,6 +955,160 @@
   const EXTRAS = { pokewalker: { h: 48, html: walkerHTML }, guitargrip: { h: GRIP.p, html: gripHTML } };
   const extrasOf = g => (g.extras || []).filter(k => EXTRAS[k]);
 
+  /* ---------- a box built from its parts (g.model) ----------
+     Most boxes are a block with a picture on each face; a few special editions are built from what they are made of.
+     sims3-ce, The Sims 3 Collector's Edition (USA), measured from photos of a real one: a clear plastic box 148 × 208
+     × 60 mm. A printed card sleeve wraps its lower 110 mm; the DVD's card holder stands 18 mm deep across its back, the
+     size of a DVD case, its front the green holographic panel and its sides printed (WIN MAC, EA) full height. In the
+     clear window above the sleeve the plumbob USB drive stands point down in front of the panel: a six-sided
+     bipyramid 72 mm tall, its lower half the cap over the USB plug, a ring at its top. Taking it out lifts the plumbob
+     out through the lid, takes its cap off the plug and turns it, as a disc spins in an open case.
+     The card faces are the photos straightened (cover.file the front, cover.back, cover.spine the left side,
+     cover.side the right), each cut to the part that is card; the clear parts are drawn as plastic. */
+  // a flat part w × h (px) with its middle at (x, y, z): x and y from the top left of the front, z from the middle of
+  // the depth, toward the front; rot turns it about its middle
+  const part = (k, w, h, [x, y, z], rot = '', st = '', html = '') =>
+    `<div class="mp ${k}" style="width:${px(w)};height:${px(h)};transform:translate3d(${px(x - w / 2)},${px(y - h / 2)},${px(z)}) ${rot};${st}">${html}</div>`;
+  // vectors
+  const sub = (a, b) => a.map((v, i) => v - b[i]), len = a => Math.hypot(...a), unit = a => a.map(v => v / len(a));
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const dot = (a, b) => a.reduce((t, v, i) => t + v * b[i], 0);
+  // the light, from above on the left and in front, as on the cartridges
+  const LIGHT = unit([-0.45, -0.7, 0.55]);
+  // a triangle with its point at A and its base from P to Q (px): a div laid on it with matrix3d
+  function facet(A, P, Q, col, alpha) {
+    const M = P.map((v, i) => (v + Q[i]) / 2), w = len(sub(Q, P)), h = len(sub(M, A));
+    const u = unit(sub(Q, P)), v = unit(sub(M, A)), n = cross(u, v), O = A.map((a, i) => a - u[i] * w / 2);
+    // its outward side, and how much of it the light falls on
+    const out = unit(cross(sub(P, A), sub(Q, A))), mid = [A, P, Q].reduce((t, p) => t.map((s, i) => s + p[i] / 3), [0, 0, 0]);
+    const lit = dot(dot(out, mid) < 0 ? out.map(x => -x) : out, LIGHT);
+    const f = shade(col, lit > 0 ? lit * 0.5 : lit * 0.55);
+    const m = [...u, 0, ...v, 0, ...n, 0, ...O, 1].map(x => +x.toFixed(4));
+    return `<div class="pf" style="width:${px(w)};height:${px(h)};transform:matrix3d(${m.join(',')})"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M50 0L100 100H0Z" fill="${f}" fill-opacity="${alpha}" stroke="${shade(col, .55)}" stroke-opacity=".5" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+      <path d="M50 0L62 100H38Z" fill="#eaffd8" fill-opacity="${(Math.max(0, lit) * .3).toFixed(2)}"/></svg></div>`;
+  }
+  const PB = { r: 21.5, up: 32, down: 40, col: '#24901c' };
+  // the plumbob, round its middle (where its two halves meet), its point down
+  function plumbobHTML(s) {
+    const { r, up, down, col } = PB;
+    // the six corners round its middle, a flat face to the front
+    const ring = Array.from({ length: 6 }, (_, k) => { const a = (k * 60 + 30) * Math.PI / 180; return [r * Math.sin(a) * s, 0, r * Math.cos(a) * s]; });
+    const top = ring.map((p, k) => facet([0, -up * s, 0], p, ring[(k + 1) % 6], col, .8)).join('');
+    const cap = ring.map((p, k) => facet([0, down * s, 0], ring[(k + 1) % 6], p, shade(col, -0.06), .86)).join('');
+    // inside: the circuit board in the top half, the USB plug standing down into the cap
+    const board = part('pb-board', 12 * s, 22 * s, [0, -9 * s, 0], '', '', '<i></i><i></i>');
+    const metal = 'background:linear-gradient(90deg,#8e9196,#e3e5e8 35%,#b4b7bb 60%,#7c7f84)';
+    const plug = [
+      part('pb-plug', 12 * s, 17 * s, [0, 12.5 * s, 2.25 * s], '', metal, '<i></i><i></i>'),
+      part('pb-plug', 12 * s, 17 * s, [0, 12.5 * s, -2.25 * s], 'rotateY(180deg)', metal, '<i></i><i></i>'),
+      part('pb-plug', 4.5 * s, 17 * s, [-6 * s, 12.5 * s, 0], 'rotateY(-90deg)', metal + ';filter:brightness(.8)'),
+      part('pb-plug', 4.5 * s, 17 * s, [6 * s, 12.5 * s, 0], 'rotateY(90deg)', metal + ';filter:brightness(.8)'),
+      part('pb-plug', 12 * s, 4.5 * s, [0, 21 * s, 0], 'rotateX(-90deg)', metal + ';filter:brightness(.65)'),
+    ].join('');
+    // the split ring through the hole at its top, seen as two crossing loops
+    const loop = [0, 90].map(a => part('pb-ring', 6.5 * s, 6.5 * s, [0, (-up - 2.4) * s, 0], `rotateY(${a}deg)`, `border-width:${px(.9 * s)}`)).join('');
+    return `<div class="pb-spin"><div class="pb-body">${board}${plug}${top}${loop}</div><div class="pb-cap">${cap}</div></div>`;
+  }
+  const MODELS = {
+    'sims3-ce': (g, L, s) => {
+      const { w: W, h: H, d: D } = L, C = g.cover;
+      // db: the card holder's depth at the back; hs: the sleeve's height; wy: the sleeve's top; cd: the clear part's depth
+      const db = 18 * s, hs = 110 * s, wy = H - hs, cd = D - db;
+      const bg = (f, w, pos) => `background:url('${esc(f)}') ${pos} / ${px(w)} ${px(H)} no-repeat`;
+      // the plumbob: its middle 52 mm down, halfway between the window and the panel, turned a little
+      const lift = 118 * s, os = 0.64;
+      const parts = [
+        part('m-back', W, H, [W / 2, H / 2, -D / 2], 'rotateY(180deg)', bg(C.back, W, '0 0')),
+        part('m-panel', W, H, [W / 2, H / 2, -D / 2 + db]),
+        part('m-card', W, db, [W / 2, 0, -D / 2 + db / 2], 'rotateX(90deg)'),
+        part('m-card m-bot', W, D, [W / 2, H, 0], 'rotateX(-90deg)'),
+        part('m-sleeve', W, hs, [W / 2, H - hs / 2, D / 2], '', bg(C.file, W, '0 100%')),
+        part('m-card m-ledge', W, cd, [W / 2, wy, D / 2 - cd / 2], 'rotateX(90deg)'),
+        // the left side (the back on its left as you look at it) and the right (the back on its right): the holder's
+        // side full height, the sleeve's below the window
+        part('m-side', db, H, [0, H / 2, -D / 2 + db / 2], 'rotateY(-90deg)', bg(C.spine, D, '0 0')),
+        part('m-side', cd, hs, [0, H - hs / 2, db / 2], 'rotateY(-90deg)', bg(C.spine, D, '100% 100%')),
+        part('m-side m-r', db, H, [W, H / 2, -D / 2 + db / 2], 'rotateY(90deg)', bg(C.side, D, '100% 0')),
+        part('m-side m-r', cd, hs, [W, H - hs / 2, db / 2], 'rotateY(90deg)', bg(C.side, D, '0 100%')),
+        `<div class="pb" style="transform:translate3d(${px(W / 2)},${px(52 * s)},${px(D / 2 - cd / 2)}) rotateY(12deg)">${plumbobHTML(s)}</div>`,
+        // the clear plastic: the window, the sides above the sleeve, and the lid, hinged at the holder
+        part('m-clear', W, wy, [W / 2, wy / 2, D / 2]),
+        part('m-clear', cd, wy, [0, wy / 2, db / 2], 'rotateY(-90deg)'),
+        part('m-clear', cd, wy, [W, wy / 2, db / 2], 'rotateY(90deg)'),
+        `<div class="m-hinge" style="transform:translate3d(${px(W / 2)},0,${px(-D / 2 + db)})"><div class="m-clear m-lid" style="width:${px(W)};height:${px(cd)};left:${px(-W / 2)}"></div></div>`,
+      ];
+      // taken out, the box shrinks to the bottom of its outline, as a cardboard box does, and the plumbob rises above it
+      return { html: parts.join(''), vars: `--os:${os};--oy:${px(H * (1 - os) / 2)};--ty:${px(lift)};--cap:${px(24 * s)}` };
+    },
+    /* medieval-ce, The Sims Medieval Collector's Edition (AUS), measured from photos of a real one: a gold book
+       146 × 206 × 30 mm in a card sleeve 148 × 207 × 32, open at the top and the bottom, so the book's gilt page
+       edges show at both ends (cover.parts.top and .bottom, photographed down the sleeve). The book's cover takes
+       its spine with it as it opens, hinged at the back: the kingdom's map is printed inside it, the spine is cream
+       inside. In the book lies the plumbob board, a strip of what is under it showing along the spine, and its
+       fore-edge is open on the DVD case's spine and the papers beside it. Taking it out slides the sleeve down off
+       the book and sets it aside behind, then the cover swings open. Only the cover's outside, never photographed,
+       is drawn: plain gold card. */
+    'medieval-ce': (g, L, s) => {
+      const { w: W, h: H, d: D } = L, C = g.cover, P = C.parts;
+      const t = 1 * s, bt = 2.2 * s;                        // the sleeve's card, the book's boards
+      const y0 = .5 * s, bh = H - s, ym = H / 2, bw = W - 2 * t, bd = D - 2 * t;
+      // the body between the boards, set in a little from their edges (not on the spine side)
+      const bx0 = t + .3 * s, bx1 = W - t - 1.5 * s, by0 = y0 + 1.5 * s, by1 = H - y0 - 1.5 * s, bz = bd / 2 - bt;
+      const img = (f, w, h, pos = '0 0') => `background:url('${esc(f)}') ${pos} / ${px(w)} ${px(h)} no-repeat`;
+      const gold = 'm-gold';
+      const sleeve = [
+        part('m-sl', W, H, [W / 2, ym, D / 2], '', img(C.file, W, H)),
+        part('m-sl', W, H, [W / 2, ym, -D / 2], 'rotateY(180deg)', img(C.back, W, H)),
+        part('m-sl', D, H, [0, ym, 0], 'rotateY(-90deg)', img(C.spine, D, H)),
+        part('m-sl m-r', D, H, [W, ym, 0], 'rotateY(90deg)', img(C.side, D, H)),
+        // its inside, plain card, for looking down it empty
+        part('m-sli', W, H, [W / 2, ym, D / 2 - .4 * s], 'rotateY(180deg)'),
+        part('m-sli', W, H, [W / 2, ym, -D / 2 + .4 * s]),
+        part('m-sli', D, H, [.4 * s, ym, 0], 'rotateY(90deg)'),
+        part('m-sli', D, H, [W - .4 * s, ym, 0], 'rotateY(-90deg)'),
+      ].join('');
+      // the cover and the spine, as one, from the hinge at the back of the spine: x right, z forward from there
+      const lid = [
+        part(gold, bd, bh, [0, ym, bd / 2], 'rotateY(-90deg)'),
+        part('m-band', bd, bh, [.6 * s, ym, bd / 2], 'rotateY(90deg)', img(P.band, bd, bh)),
+        part(gold + ' m-cover', bw, bh, [bw / 2, ym, bd]),
+        part('m-map', bw, bh, [bw / 2, ym, bd - bt], 'rotateY(180deg)', img(P.map, bw, bh)),
+        part(gold + ' m-r', bt, bh, [bw, ym, bd - bt / 2], 'rotateY(90deg)'),
+        part(gold + ' m-t', bw, bt, [bw / 2, y0, bd - bt / 2], 'rotateX(90deg)'),
+        part(gold + ' m-b', bw, bt, [bw / 2, H - y0, bd - bt / 2], 'rotateX(-90deg)'),
+      ].join('');
+      const book = [
+        // the back board
+        part(gold, bw, bh, [W / 2, ym, -bd / 2], 'rotateY(180deg)'),
+        part(gold + ' m-r', bt, bh, [W - t, ym, -bd / 2 + bt / 2], 'rotateY(90deg)'),
+        part(gold + ' m-t', bw, bt, [W / 2, y0, -bd / 2 + bt / 2], 'rotateX(90deg)'),
+        part(gold + ' m-b', bw, bt, [W / 2, H - y0, -bd / 2 + bt / 2], 'rotateX(-90deg)'),
+        // the body: the plumbob board, the open fore-edge, the page edges
+        part('m-in', bx1 - bx0, by1 - by0, [(bx0 + bx1) / 2, ym, bz], '', img(P.inside, bx1 - bx0, by1 - by0)),
+        part('m-in m-r', 2 * bz, by1 - by0, [bx1, ym, 0], 'rotateY(90deg)', img(P.edge, 2 * bz, by1 - by0)),
+        part('m-in m-t', bx1 - bx0, 2 * bz, [(bx0 + bx1) / 2, by0, 0], 'rotateX(90deg)', img(P.pages, bx1 - bx0, 2 * bz)),
+        part('m-in m-b', bx1 - bx0, 2 * bz, [(bx0 + bx1) / 2, by1, 0], 'rotateX(-90deg)', img(P.pages, bx1 - bx0, 2 * bz)),
+        part('m-sli', 2 * bz, by1 - by0, [bx0, ym, 0], 'rotateY(-90deg)'),
+        `<div class="m-hinge" style="transform:translate3d(${px(t)},0,${px(-bd / 2)})"><div class="m-leaf">${lid}</div></div>`,
+        // the ends as they show down the sleeve, the sleeve's edges round them; gone once it comes off
+        part('m-end', W, D, [W / 2, 0, 0], 'rotateX(90deg)', img(P.top, W, D)),
+        part('m-end m-b', W, D, [W / 2, H, 0], 'rotateX(-90deg)', img(P.bottom, W, D)),
+      ].join('');
+      // open, the whole shrinks a little and moves right, to make room for the cover swung out to the left
+      const os = .7;
+      return {
+        cls: 'm-book',
+        html: `<div class="m-sleeve">${sleeve}</div>${book}`,
+        vars: `--os:${os};--oy:0px;--ox:${px(40 * s * os)};--slide:${px(H * 1.06)};--aside:translate3d(${px(W * .38)},${px(-H * .99)},${px(-D * 2.3)}) rotateY(-10deg)`,
+      };
+    },
+  };
+  function modelBox(g, s) {
+    const L = layout(g, s), M = MODELS[g.model](g, L, s);
+    return el(`<div class="bx model ${M.cls || ''} ${cls(g, L)}" style="${vars(g, L)};--sd:${px(L.d)};${M.vars};width:${px(L.w)};height:${px(L.h)}">${M.html}</div>`);
+  }
+
 
   /* ---------- what is inside ---------- */
   // a PAL or Japanese SNES game comes in the Super Famicom's shell (CART.sfc)
@@ -1022,15 +1203,22 @@
   // just the front and the spine: a case turning as it goes between the shelf and the grid. solid: the edges
   // round it too, so it holds up seen from any side (the showcase), with its cover loaded only once it shows
   function slab(g, s, solid = false) {
+    // a box built from its parts is that model wherever it faces out, and as it flies between the views
+    if (MODELS[g.model]) return modelBox(g, s);
     const L = layout(g, s);
+    // a picture of the real right side, when there is one
+    const side = g.cover && g.cover.side ? ` style="background:url('${esc(g.cover.side)}') center / 100% 100%"` : '';
     return assemble(el(`<div class="bx slab ${cls(g, L)}" style="${vars(g, L)}">
       <div class="fc f-front">${frontHTML(g, L, solid)}</div>
       <div class="fc f-left">${spineHTML(g, L)}</div>
-      ${solid ? '<div class="fc f-right"><div class="edge"></div></div><div class="fc f-top"><div class="edge"></div></div><div class="fc f-bot"><div class="edge"></div></div>' : ''}
+      ${solid ? `<div class="fc f-right"><div class="edge"${side}></div></div><div class="fc f-top"><div class="edge"></div></div><div class="fc f-bot"><div class="edge"></div></div>` : ''}
     </div>`), L);
   }
 
+  // the manual's page of text: paragraphs of grey lines, the last line of each short
+  const MANUAL = [4, 3, 5, 2, 4, 3, 5, 4].map((n, i) => '<i></i>'.repeat(n - 1) + `<i style="width:${[60, 45, 72, 35][i % 4]}%"></i>`).join('<b></b>');
   function box(g, s) {
+    if (MODELS[g.model]) return modelBox(g, s);
     const L = layout(g, s);
     const H = L.h, W = L.w;
     // a plastic case opens in two halves, hinged at the seam in the middle: the lid takes the front half of the
@@ -1038,7 +1226,7 @@
     const split = L.kind !== 'box';
     const b = el(`<div class="bx ${cls(g, L)}" style="${vars(g, L)}">
       <div class="fc f-tray"><div class="tray">${mediaHTML(g, s)}</div></div>
-      <div class="fc f-front"><div class="leaf">${frontHTML(g, L, false)}<div class="inner"><div class="manual"><div class="mt">${esc(g.title)}</div><div class="ml"><i></i><i></i><i></i><i style="width:60%"></i></div><div class="mthumb">${img(g)}</div></div></div>${split ? `<div class="lsp">${spineHTML(g, L)}</div><i class="edge lw lw-l"></i><i class="edge lw lw-r"></i><i class="edge lw lw-t"></i><i class="edge lw lw-b"></i>` : ''}</div></div>
+      <div class="fc f-front"><div class="leaf">${frontHTML(g, L, false)}<div class="inner"><div class="manual"><div class="mt">${esc(g.title)}</div><div class="ml">${MANUAL}</div></div></div>${split ? `<div class="lsp">${spineHTML(g, L)}</div><i class="edge lw lw-l"></i><i class="edge lw lw-r"></i><i class="edge lw lw-t"></i><i class="edge lw lw-b"></i>` : ''}</div></div>
       <div class="fc f-back">${backHTML(g, L)}</div>
       <div class="fc f-left">${spineHTML(g, L)}</div>
       ${split ? '<div class="fc f-lin"><div class="edge"></div></div>' : ''}

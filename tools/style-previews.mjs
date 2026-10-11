@@ -1,6 +1,6 @@
 // style-previews.mjs — builds a preview of each style prototype in prototypes/styles/.
-// For every stylesheet listed below it writes prototypes/styles/<id>/index.html,
-// sims.html and gta.html: copies of the site's own pages with the prototype's fonts
+// For every stylesheet listed below it writes prototypes/styles/<id>/index.html:
+// a copy of the site's page (The Sims and GTA are ?sims and ?gta on it) with the prototype's fonts
 // and stylesheet added, so each style can be opened through the same web server as
 // the site. It also writes the gallery, prototypes/styles/index.html.
 // The site's pages are only read, never changed. Run it again after changing them:
@@ -29,7 +29,7 @@ const STYLES = [
   { id: 'datacore', url: 'https://claude.ai/artifact/Ucxqb8ao48GkY3P6ZqVaKj', blurb: 'A server rack in a data core: numbered rack units with status lights, a laser scan across the cases, a holographic projector pad.' },
 ];
 
-const PAGES = ['index.html', 'sims.html', 'gta.html'];
+const PAGES = ['index.html'];
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 // each page lives two folders down, so <base> points it back at the site root, where
@@ -76,8 +76,7 @@ for (const s of STYLES) {
     h = h.slice(0, at) + `<link rel="stylesheet" href="${esc(s.fonts)}">\n<link rel="stylesheet" href="prototypes/styles/${s.id}.css">\n` + h.slice(at);
     // the top bar stays inside this style
     h = h.replace(/href="\.\/"/g, `href="${self}"`)
-      .replace(/href="sims\.html"/g, `href="${self}sims.html"`)
-      .replace(/href="gta\.html"/g, `href="${self}gta.html"`);
+      .replace(/href="\?(\w+)"/g, `href="${self}?$1"`);
     // a way back to the gallery
     h = h.replace('</body>', `<a href="prototypes/styles/" style="position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:1050;padding:6px 12px;border-radius:99px;background:rgba(0,0,0,.72);color:#fff;font:600 12px/1.2 system-ui,sans-serif;text-decoration:none;backdrop-filter:blur(6px)">← ${esc(s.name)} · all styles</a>\n</body>`);
     writeFileSync(join(out, page), h);
@@ -92,8 +91,8 @@ const cards = STYLES.map(s => `
         <p>${esc(s.blurb)}</p>
         <div class="links">
           <a class="go" href="${s.id}/">Open the preview</a>
-          <a href="${s.id}/sims.html">The Sims</a>
-          <a href="${s.id}/gta.html">GTA</a>
+          <a href="${s.id}/?sims">The Sims</a>
+          <a href="${s.id}/?gta">GTA</a>
           <a href="${esc(s.url)}" target="_blank" rel="noopener">Published ↗</a>
         </div>
       </div>

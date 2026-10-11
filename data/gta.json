@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-03",
+  "updated": "2026-10-10",
   "eras": [
     {
       "id": "top-down",
@@ -10,7 +10,7 @@
           "title": "Grand Theft Auto",
           "released": "1997",
           "copies": [
-            "pc-grand-theft-auto"
+            "pc-grand-theft-auto-and-gta-london"
           ],
           "missing": [
             "gbc",
@@ -21,7 +21,7 @@
           "title": "Grand Theft Auto: London 1969",
           "released": "1999",
           "copies": [
-            "pc-grand-theft-auto-london-1969"
+            "pc-grand-theft-auto-and-gta-london"
           ],
           "missing": [
             "ps1"

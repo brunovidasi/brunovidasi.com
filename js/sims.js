@@ -1,5 +1,6 @@
-/* sims.js — the Sims collection page. Every game in data/games.json with a "series"
-   stands on the shelf (js/app.js), grouped by game: The Sims, The Sims 2… Its
+/* sims.js — the Sims collection (?sims). Every game in data/games.json with a "series"
+   stands on the shelf (js/app.js), grouped by game: The Sims, The Sims 2…, in the
+   look of css/sims.css, with a plumbob over the case the pointer is on. Its
    checklist view sorts them by game and then by pack, with how much of each is
    there, and the want list (data/sims-wants.json) of what is still missing. */
 
@@ -40,7 +41,8 @@
     return `
       <header class="hero">
         <div>
-          <h1>The Sims <em>Collection</em><i class="plumbob" aria-hidden="true"></i></h1>
+          <div class="eyebrow">Sul sul!</div>
+          <h1>The Sims <em>Collection</em><img class="bob" src="assets/plumbob.svg" alt="" width="30" height="60"></h1>
           <p>Every Sims game and pack I have, from the first one in 2000 to The Sims 4, with SimCity and MySims beside them. A solid case is on disc; an outline is in the EA app.</p>
         </div>
         <div class="stats">
@@ -107,8 +109,11 @@
 
   }
 
-  window.SHELF_PAGE = {
-    id: 'sims',
+  (window.COLLECTIONS = window.COLLECTIONS || {}).sims = {
+    name: 'The Sims',
+    title: 'The Sims Collection',
+    icon: 'favicon-sims.svg',
+    about: 'Bruno\'s The Sims collection: every game and pack, on disc and in the EA app, and the ones still to find.',
     data: ['data/sims-wants.json'],
     games(db, w) { wants = w.wants; return db.games.filter(g => g.series); },
     group(g) {

@@ -3,28 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bruno's Games</title>
+<title>Bruno's Game Shelf</title>
 <meta name="description" content="Bruno's video game collection, on the shelf.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/orbitron-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/exo2-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/site.css">
 <link rel="stylesheet" href="css/cases.css">
+<link rel="stylesheet" href="css/collection.css">
+<link rel="stylesheet" href="css/sims.css">
+<link rel="stylesheet" href="css/gta.css">
 </head>
 <body>
 
 <div class="topbar">
-  <a class="brand" href="./">Bruno's <span>Games</span></a>
-  <nav class="topnav" aria-label="Pages">
-    <a href="./" aria-current="page">The Shelf</a>
-    <a href="sims.html">The Sims</a>
-    <a href="gta.html">GTA</a>
+  <div class="brandbox">
+    <a class="brand" href="./">Bruno's <span>Game Shelf</span></a>
+    <div class="figures" id="figures" aria-label="The collection in figures"></div>
+  </div>
+  <nav class="topnav" aria-label="Collections">
+    <a href="./" data-col="" aria-current="page">The Shelf</a>
+    <a href="?sims" data-col="sims"><img class="nav-bob" src="assets/plumbob.svg" alt="" width="8" height="16">The Sims</a>
+    <a href="?gta" data-col="gta">GTA</a>
   </nav>
 </div>
 
 <div id="shell"></div>
 
 <div class="tools">
+  <div class="grp" id="libWrap" hidden>
+    <div class="pills" id="lib" role="group" aria-label="Filter PC games by library"></div>
+  </div>
   <div class="grp" id="modeWrap">
     <span class="lbl">Show</span>
     <div class="pills" id="mode" role="group" aria-label="How the cases stand">
@@ -44,6 +53,7 @@
 </div>
 
 <main class="case-wrap"><div class="bookcase" id="case"></div></main>
+<section id="checklist" aria-label="Checklist"></section>
 
 <footer>
   <span>© 2026</span>
@@ -53,6 +63,9 @@
 <script src="js/consoles.js"></script>
 <script src="js/console-art.js"></script>
 <script src="js/cases.js"></script>
+<script src="js/collection.js"></script>
+<script src="js/sims.js"></script>
+<script src="js/gta.js"></script>
 <script src="js/dropdown.js"></script>
 <script src="js/app.js"></script>
 </body>

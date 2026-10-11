@@ -1,0 +1,9 @@
+{
+  "name": "xbox-gaming-exporter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "auth": "node src/auth.js", "export": "node src/export.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "@xboxreplay/xboxlive-auth": "^5.1.0" }
+}

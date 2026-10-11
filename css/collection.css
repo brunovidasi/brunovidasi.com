@@ -1,6 +1,6 @@
-/* collection.css — what the collection pages (sims.html, gta.html) share: the pills
+/* collection.css — what the collections (?sims, ?gta: js/sims.js, js/gta.js) share: the pills
    that jump to each game, a section per game with its meter, the cases standing on
-   stretches of shelf, and the want list. Each page sets its own --acc colour. */
+   stretches of shelf, and the want list. Each sets its own --acc colour (css/sims.css, css/gta.css). */
 .collection { --acc: var(--gold); --acc-dk: #1f4fa8; --acc-glow: rgba(77,141,255,.4); }
 .collection .hero h1 em { font-style: normal; color: var(--acc); }
 
@@ -61,8 +61,6 @@ body[data-view="checklist"] :is(.case-wrap, .tools, .consoles-bar, .filters .sea
 .series.wantlist .shead h2 em { font-style: normal; color: var(--gold); }
 
 @media (max-width: 640px) {
-  .topbar { padding-left: 16px; padding-right: 10px; }
-  .topnav a { padding: 6px 9px; font-size: 12px; }
   .series { padding: 36px 16px 4px; }
   .series-nav .in { padding: 8px 16px; }
   .rack { --cell: 96px; --gap: 12px; padding: 18px 10px 20px; }

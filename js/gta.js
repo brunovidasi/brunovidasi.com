@@ -1,4 +1,4 @@
-/* gta.js — the Grand Theft Auto page. data/gta.json lists every game in the series,
+/* gta.js — the Grand Theft Auto collection (?gta), in the look of css/gta.css. data/gta.json lists every game in the series,
    era by era, with the copies on the shelf (ids from data/games.json) and the
    platforms it came out on that aren't here yet. The copies stand on the shelf
    (js/app.js) grouped by game. In the checklist view each game is a row: its copies
@@ -39,6 +39,7 @@
     return `
       <header class="hero">
         <div>
+          <div class="eyebrow">Vice City</div>
           <h1>Grand Theft <em>Auto</em></h1>
           <p>Every GTA I have, from the top-down original in ${Math.min(...years)} to The Definitive Edition, on every platform I have it on. A dashed outline is a version still to find.</p>
         </div>
@@ -93,16 +94,21 @@
     root.append(sec);
   }
 
-  window.SHELF_PAGE = {
-    id: 'gta',
+  (window.COLLECTIONS = window.COLLECTIONS || {}).gta = {
+    name: 'GTA',
+    title: 'Grand Theft Auto',
+    icon: 'favicon-gta.svg',
+    about: 'Bruno\'s Grand Theft Auto collection: every game on every platform I have it on, and the versions still to find.',
     data: ['data/gta.json'],
     games(db, d) {
       data = d;
       byId = new Map(db.games.map(g => [g.id, g]));
       all = data.eras.flatMap(e => e.games);
       wants = all.flatMap(g => g.missing.map(p => ({ g, p })));
-      all.forEach((g, i) => g.copies.forEach(id => gameOf.set(id, { ...g, order: i })));
-      return all.flatMap(g => g.copies.map(id => byId.get(id)).filter(Boolean));
+      // a copy with two games in it (Grand Theft Auto & GTA London) is listed under both, and stands on the
+      // shelf once, with the first
+      all.forEach((g, i) => g.copies.forEach(id => gameOf.has(id) || gameOf.set(id, { ...g, order: i })));
+      return [...new Set(all.flatMap(g => g.copies))].map(id => byId.get(id)).filter(Boolean);
     },
     group(c) {
       const g = gameOf.get(c.id);

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-09",
+  "updated": "2026-10-11",
   "games": [
     {
       "id": "ps5-avatar-frontiers-of-pandora",
@@ -23,7 +23,9 @@
         "#355d5a",
         "#739090",
         "#afc1c2"
-      ]
+      ],
+      "psnTitleId": "PPSA01575_00",
+      "psnTrophySet": "NPWR21143_00"
     },
     {
       "id": "ps5-grand-theft-auto-v",
@@ -48,7 +50,9 @@
         "#89755d",
         "#b3aea8",
         "#504035"
-      ]
+      ],
+      "psnTitleId": "PPSA04263_00",
+      "psnTrophySet": "NPWR21647_00"
     },
     {
       "id": "ps5-hogwarts-legacy",
@@ -74,7 +78,9 @@
         "#4d7c74",
         "#254544",
         "#83aca2"
-      ]
+      ],
+      "psnTitleId": "PPSA01603_00",
+      "psnTrophySet": "NPWR21175_00"
     },
     {
       "id": "ps5-mortal-kombat-11",
@@ -103,7 +109,9 @@
         "#c1ab76",
         "#9c785b",
         "#5b4339"
-      ]
+      ],
+      "psnTitleId": "PPSA01619_00",
+      "psnTrophySet": "NPWR21249_00"
     },
     {
       "id": "ps5-mortal-kombat-1",
@@ -127,7 +135,9 @@
         "#eef1f1",
         "#563e3a",
         "#b3b1b3"
-      ]
+      ],
+      "psnTitleId": "PPSA07571_00",
+      "psnTrophySet": "NPWR29323_00"
     },
     {
       "id": "ps4-agents-of-mayhem",
@@ -226,7 +236,9 @@
         "#86705b",
         "#3e322c",
         "#bfbab4"
-      ]
+      ],
+      "psnTitleId": "CUSA00411_00",
+      "psnTrophySet": "NPWR06221_00"
     },
     {
       "id": "ps4-grand-theft-auto-the-trilogy-the-definitive-edition",
@@ -251,6 +263,12 @@
         "#8e7459",
         "#cab19c",
         "#272522"
+      ],
+      "psnTitleId": [
+        "CUSA26613_00"
+      ],
+      "psnTrophySet": [
+        "NPWR21169_00"
       ]
     },
     {
@@ -276,7 +294,9 @@
         "#452c19",
         "#8c602d",
         "#d0a533"
-      ]
+      ],
+      "psnTitleId": "CUSA11379_00",
+      "psnTrophySet": "NPWR15142_00"
     },
     {
       "id": "ps4-need-for-speed",
@@ -300,7 +320,9 @@
         "#17212b",
         "#3680af",
         "#22506c"
-      ]
+      ],
+      "psnTitleId": "CUSA01866_00",
+      "psnTrophySet": "NPWR08538_00"
     },
     {
       "id": "ps4-rock-band-4",
@@ -324,7 +346,9 @@
         "#a74338",
         "#4e2223",
         "#e1af98"
-      ]
+      ],
+      "psnTitleId": "CUSA02901_00",
+      "psnTrophySet": "NPWR09522_00"
     },
     {
       "id": "ps4-singstar-ultimate-party",
@@ -348,7 +372,9 @@
         "#c17977",
         "#e3dedb",
         "#3a3560"
-      ]
+      ],
+      "psnTrophySet": "NPWR05198_00",
+      "psnTitleId": "CUSA00501_00"
     },
     {
       "id": "ps4-the-last-of-us-remastered",
@@ -399,7 +425,9 @@
         "#b5c4bb",
         "#3a84a5"
       ],
-      "series": "The Sims 4"
+      "series": "The Sims 4",
+      "psnTitleId": "CUSA09216_00",
+      "psnTrophySet": "NPWR13736_00"
     },
     {
       "id": "ps3-band-hero",
@@ -616,7 +644,8 @@
         "#8f877a",
         "#60564e",
         "#cac9bd"
-      ]
+      ],
+      "psnTrophySet": "NPWR10029_00"
     },
     {
       "id": "ps3-guitar-hero-5",
@@ -786,7 +815,8 @@
         "#4c5071",
         "#7c87aa",
         "#dbe3e8"
-      ]
+      ],
+      "psnTrophySet": "NPWR08716_00"
     },
     {
       "id": "ps3-hitman-absolution",
@@ -832,7 +862,8 @@
         "#a0aa9f",
         "#7b705e",
         "#d8e4e8"
-      ]
+      ],
+      "psnTrophySet": "NPWR00697_00"
     },
     {
       "id": "ps3-killzone-3",
@@ -880,7 +911,8 @@
         "#d0cfd1",
         "#aa8d86",
         "#765d62"
-      ]
+      ],
+      "psnTrophySet": "NPWR00856_00"
     },
     {
       "id": "ps3-lost-via-domus",
@@ -997,7 +1029,8 @@
         "#72473d",
         "#372929",
         "#0f090a"
-      ]
+      ],
+      "psnTrophySet": "NPWR01747_00"
     },
     {
       "id": "ps3-mortal-kombat-vs-dc-universe",
@@ -1190,7 +1223,9 @@
         "#a92d33",
         "#382629",
         "#a1869b"
-      ]
+      ],
+      "psnTrophySet": "NPWR03204_00",
+      "check": "PSN trophies: of the two SingStar trophy sets, NPWR03204_00 was taken as the PS3 one and NPWR05198_00 as the PS4 one, by their ids"
     },
     {
       "id": "ps3-singstar-chart-hits",
@@ -1334,7 +1369,8 @@
         "#919977",
         "#d5d5c7"
       ],
-      "series": "The Sims 3"
+      "series": "The Sims 3",
+      "psnTrophySet": "NPWR01305_00"
     },
     {
       "id": "ps2-canis-canem-edit",
@@ -4175,19 +4211,20 @@
       "dateSource": "manual",
       "publisher": "Activision",
       "developer": "FreeStyleGames",
+      "fav": true,
       "genre": "Rhythm",
       "format": "boxed",
       "note": "No guitar controller",
       "cover": {
         "file": "covers/xone/guitar-hero-live.jpg",
-        "ratio": 0.8615,
-        "source": "thegamesdb.net",
-        "ref": "Guitar Hero Live · NTSC-U (United States of America) · TheGamesDB #32702"
+        "source": "manual",
+        "ref": "Guitar Hero Live [Game Only] · PAL (United Kingdom) · TheGamesDB #119448, 3D box render flattened",
+        "ratio": 0.7788
       },
       "colors": [
-        "#364191",
-        "#383434",
-        "#d5e5f0"
+        "#4b5995",
+        "#c8d4e2",
+        "#6d844f"
       ]
     },
     {
@@ -4279,14 +4316,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/xone/tony-hawks-pro-skater-5.jpg",
-        "ratio": 0.8509,
-        "source": "en.wikipedia.org",
-        "ref": "Tony Hawk's Pro Skater 5 · THPS5_Box_Art.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "source": "manual",
+        "ref": "Tony Hawk's Pro Skater 5 · NTSC-U (United States of America) · TheGamesDB #32129 (front box is a .png)",
+        "ratio": 0.7769
       },
       "colors": [
-        "#615153",
-        "#cfe4f2",
-        "#988b8a"
+        "#687968",
+        "#b2aaa9",
+        "#cee2ef"
       ]
     },
     {
@@ -4730,14 +4767,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/xbox/ice-age-2-the-meltdown.jpg",
-        "ratio": 0.7143,
-        "source": "libretro-thumbnails",
-        "ref": "Ice Age 2 - The Meltdown (USA)"
+        "ratio": 0.7058,
+        "source": "manual",
+        "ref": "Ice Age 2: The Meltdown · NTSC · TheGamesDB #6081"
       },
       "colors": [
-        "#b9d7ec",
-        "#a8af98",
-        "#64725c"
+        "#9abdd3",
+        "#e4ebec",
+        "#8c8862"
       ]
     },
     {
@@ -4753,14 +4790,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/xbox/shrek-2.jpg",
-        "ratio": 0.7143,
-        "source": "libretro-thumbnails",
-        "ref": "Shrek 2 (USA)"
+        "ratio": 0.7096,
+        "source": "manual",
+        "ref": "Shrek 2 · PAL (United Kingdom) · TheGamesDB #124037"
       },
       "colors": [
-        "#957836",
-        "#595935",
-        "#c99833"
+        "#d8a331",
+        "#eedc49",
+        "#a1762d"
       ]
     },
     {
@@ -8516,6 +8553,7 @@
       "sortAs": "The Sims",
       "region": "PAL",
       "released": "2002-09-17",
+      "shelfDate": "2000-02-05",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
@@ -9684,6 +9722,46 @@
       ]
     },
     {
+      "id": "pc-the-sims-3-collectors-edition",
+      "console": "pc",
+      "title": "The Sims 3 Collector's Edition",
+      "sortAs": "The Sims 3",
+      "edition": "Collector's Edition",
+      "region": "USA",
+      "released": "2009-06-02",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "The Sims Studio",
+      "genre": "Life simulation",
+      "format": "boxed",
+      "fav": true,
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 3",
+      "pack": "Base game",
+      "model": "sims3-ce",
+      "box": {
+        "w": 148,
+        "h": 208,
+        "d": 60
+      },
+      "note": "With the plumbob 2 GB USB drive and its carabiner, the Prima Tips & Hints Guide, an exclusive European-styled sports car, new theme music and $10 of SimPoints",
+      "cover": {
+        "file": "covers/pc/the-sims-3-collectors-edition.jpg",
+        "back": "covers/pc/the-sims-3-collectors-edition-back.jpg",
+        "spine": "covers/pc/the-sims-3-collectors-edition-left.jpg",
+        "side": "covers/pc/the-sims-3-collectors-edition-right.jpg",
+        "source": "manual",
+        "ref": "Photos of my own copy (UPC 0 14633 19074 8), straightened",
+        "ratio": 0.7115
+      },
+      "colors": [
+        "#8cb83a",
+        "#4d8526",
+        "#dfe9b4"
+      ]
+    },
+    {
       "id": "pc-the-sims-3-world-adventures",
       "console": "pc",
       "title": "The Sims 3: World Adventures",
@@ -10407,17 +10485,46 @@
       "console": "pc",
       "title": "The Sims Medieval Collector's Edition",
       "edition": "Collector's Edition",
-      "region": "PAL",
+      "region": "AUS",
       "released": "2011-03-22",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "The Sims Studio",
       "genre": "Life simulation",
       "format": "boxed",
+      "mac": true,
       "series": "The Sims Medieval",
       "pack": "Base game",
-      "cover": null,
-      "colors": null
+      "model": "medieval-ce",
+      "box": {
+        "w": 148,
+        "h": 207,
+        "d": 32
+      },
+      "note": "A gold book in a card sleeve: the kingdom's map inside its cover, the plumbob board and, under it, the DVD case and what came with it",
+      "cover": {
+        "file": "covers/pc/the-sims-medieval-collectors-edition.jpg",
+        "back": "covers/pc/the-sims-medieval-collectors-edition-back.jpg",
+        "spine": "covers/pc/the-sims-medieval-collectors-edition-left.jpg",
+        "side": "covers/pc/the-sims-medieval-collectors-edition-right.jpg",
+        "parts": {
+          "top": "covers/pc/the-sims-medieval-collectors-edition-top.jpg",
+          "bottom": "covers/pc/the-sims-medieval-collectors-edition-bottom.jpg",
+          "map": "covers/pc/the-sims-medieval-collectors-edition-map.jpg",
+          "band": "covers/pc/the-sims-medieval-collectors-edition-band.jpg",
+          "inside": "covers/pc/the-sims-medieval-collectors-edition-inside.jpg",
+          "edge": "covers/pc/the-sims-medieval-collectors-edition-edge.jpg",
+          "pages": "covers/pc/the-sims-medieval-collectors-edition-pages.jpg"
+        },
+        "source": "manual",
+        "ref": "Photos of my own copy (EAN 5 030941 102414), straightened",
+        "ratio": 0.715
+      },
+      "colors": [
+        "#c4a54e",
+        "#4b2f5c",
+        "#b8b4ab"
+      ]
     },
     {
       "id": "pc-the-sims-medieval-limited-edition",
@@ -11719,53 +11826,41 @@
       ]
     },
     {
-      "id": "pc-grand-theft-auto",
+      "id": "pc-grand-theft-auto-and-gta-london",
       "console": "pc",
-      "title": "Grand Theft Auto",
+      "title": "Grand Theft Auto & GTA London",
       "sortAs": "Grand Theft Auto",
-      "region": "PAL",
+      "edition": "Sold Out Software",
+      "region": "UK",
       "released": "1997-11",
       "dateSource": "manual",
-      "publisher": "BMG Interactive",
+      "publisher": "Sold Out Software",
       "developer": "DMA Design",
       "genre": "Action",
       "format": "boxed",
-      "coverMatch": "Grand Theft Auto (1997)",
+      "clearCase": true,
+      "note": "Two games in one case: Grand Theft Auto and its mission pack, London 1969",
+      "spine": {
+        "style": "white",
+        "top": "pccdrom-block",
+        "deco": "soldout",
+        "title": "Grand Theft Auto™\n& GTA London",
+        "font": "copper",
+        "foot": [
+          "bbfc18",
+          "txtv:SOV.2.2"
+        ]
+      },
       "cover": {
-        "file": "covers/pc/grand-theft-auto.jpg",
-        "ratio": 0.7862,
-        "source": "libretro-thumbnails",
-        "ref": "Grand Theft Auto (1997)"
+        "file": "covers/pc/grand-theft-auto-and-gta-london.jpg",
+        "ratio": 0.7058,
+        "source": "manual",
+        "ref": "Grand Theft Auto & GTA London (Sold Out Software, UK, BBFC 18; the same print as TheGamesDB #79576), the insert flattened from a photo of this copy"
       },
       "colors": [
-        "#030517",
-        "#655747",
-        "#2d272f"
-      ]
-    },
-    {
-      "id": "pc-grand-theft-auto-london-1969",
-      "console": "pc",
-      "title": "Grand Theft Auto: London 1969",
-      "sortAs": "Grand Theft Auto",
-      "region": "PAL",
-      "released": "1999-03-31",
-      "dateSource": "manual",
-      "publisher": "Rockstar Games",
-      "developer": "Tarantula Studios",
-      "genre": "Action",
-      "format": "boxed",
-      "note": "An expansion: it needs Grand Theft Auto to play",
-      "cover": {
-        "file": "covers/pc/grand-theft-auto-london-1969.jpg",
-        "ratio": 0.8114,
-        "source": "en.wikipedia.org",
-        "ref": "Grand Theft Auto: London 1969 · Grand_Theft_Auto_London_1969.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
-      },
-      "colors": [
-        "#4c4c77",
-        "#e2d1d2",
-        "#d65549"
+        "#cecdc3",
+        "#9b9895",
+        "#503e3d"
       ]
     },
     {
@@ -11773,7 +11868,7 @@
       "console": "pc",
       "title": "Grand Theft Auto III",
       "sortAs": "Grand Theft Auto",
-      "region": "PAL",
+      "region": "AUS",
       "released": "2002-05-21",
       "dateSource": "manual",
       "publisher": "Rockstar Games",
@@ -11782,22 +11877,32 @@
       "format": "boxed",
       "cover": {
         "file": "covers/pc/grand-theft-auto-iii.jpg",
-        "ratio": 0.7735,
-        "source": "en.wikipedia.org",
-        "ref": "Grand Theft Auto III · GTA3boxcover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "ratio": 0.7096,
+        "source": "manual",
+        "ref": "Grand Theft Auto III (PAL, Australian print with the original red-car art, OFLC MA15+), the insert flattened from a photo of this copy"
       },
       "colors": [
-        "#b1b4b2",
-        "#2a1312",
-        "#6c6d69"
-      ]
+        "#9a867e",
+        "#cfc1ba",
+        "#6e4d46"
+      ],
+      "spine": {
+        "style": "white",
+        "color": "#141414",
+        "top": "pccd",
+        "logo": "logos/gta-iii.webp",
+        "wide": true,
+        "foot": [
+          "rockstar"
+        ]
+      }
     },
     {
       "id": "pc-grand-theft-auto-vice-city",
       "console": "pc",
       "title": "Grand Theft Auto: Vice City",
       "sortAs": "Grand Theft Auto",
-      "region": "PAL",
+      "region": "AUS",
       "released": "2003-05-16",
       "dateSource": "manual",
       "publisher": "Rockstar Games",
@@ -11806,22 +11911,33 @@
       "format": "boxed",
       "cover": {
         "file": "covers/pc/grand-theft-auto-vice-city.jpg",
-        "ratio": 0.7877,
-        "source": "en.wikipedia.org",
-        "ref": "Grand Theft Auto: Vice City · Vice-city-cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "ratio": 0.7,
+        "source": "manual",
+        "ref": "Grand Theft Auto: Vice City (PAL, Australian print, MA15+ Mature Themes), the insert flattened from a photo of this copy"
       },
       "colors": [
-        "#956d62",
-        "#37373c",
-        "#cdbfbe"
-      ]
+        "#908d86",
+        "#c9c4bd",
+        "#94674e"
+      ],
+      "spine": {
+        "style": "white",
+        "color": "#141414",
+        "top": "pccd",
+        "logo": "logos/gta-vice-city.webp",
+        "wide": true,
+        "foot": [
+          "MA15R",
+          "rockstar"
+        ]
+      }
     },
     {
       "id": "pc-grand-theft-auto-san-andreas",
       "console": "pc",
       "title": "Grand Theft Auto: San Andreas",
       "sortAs": "Grand Theft Auto",
-      "region": "PAL",
+      "region": "AUS",
       "released": "2005-06-10",
       "dateSource": "manual",
       "publisher": "Rockstar Games",
@@ -11830,22 +11946,37 @@
       "format": "boxed",
       "cover": {
         "file": "covers/pc/grand-theft-auto-san-andreas.jpg",
-        "ratio": 0.8091,
-        "source": "en.wikipedia.org",
-        "ref": "Grand Theft Auto: San Andreas · GTASABOX.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "ratio": 0.7077,
+        "source": "manual",
+        "ref": "Grand Theft Auto: San Andreas (PAL, Australian DVD-ROM print, MA15+), the insert flattened from a photo of this copy"
       },
       "colors": [
-        "#887c6e",
-        "#584e44",
-        "#cacbb3"
-      ]
+        "#999082",
+        "#c7c8bc",
+        "#705f57"
+      ],
+      "clearCase": true,
+      "spine": {
+        "style": "white",
+        "color": "#141414",
+        "top": "pcdvd-block",
+        "head": [
+          "rockstar"
+        ],
+        "logo": "logos/gta-san-andreas.webp",
+        "wide": true,
+        "foot": [
+          "MA15R",
+          "txt:WINDOWS\nXP / 2000 / VISTA\nDVD-ROM"
+        ]
+      }
     },
     {
       "id": "pc-grand-theft-auto-iv",
       "console": "pc",
       "title": "Grand Theft Auto IV",
       "sortAs": "Grand Theft Auto",
-      "region": "PAL",
+      "region": "AUS",
       "released": "2008-12-03",
       "dateSource": "manual",
       "publisher": "Rockstar Games",
@@ -11855,15 +11986,27 @@
       "launcher": "rockstar",
       "cover": {
         "file": "covers/pc/grand-theft-auto-iv.jpg",
-        "ratio": 0.8,
-        "source": "en.wikipedia.org",
-        "ref": "Grand Theft Auto IV · Grand_Theft_Auto_IV_cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "ratio": 0.7115,
+        "source": "manual",
+        "ref": "Grand Theft Auto IV (PAL, Australian Games for Windows print, MA15+), the insert flattened from a photo of this copy"
       },
       "colors": [
-        "#84776b",
-        "#564d49",
-        "#c1c1bb"
-      ]
+        "#7d6f60",
+        "#a69c8a",
+        "#cccfc7"
+      ],
+      "spine": {
+        "style": "white",
+        "color": "#141414",
+        "top": "gfw",
+        "logo": "logos/gta-iv.webp",
+        "wide": true,
+        "foot": [
+          "rockstar",
+          "MA15R",
+          "pcdvd"
+        ]
+      }
     },
     {
       "id": "pc-grand-theft-auto-episodes-from-liberty-city",
@@ -11871,7 +12014,7 @@
       "title": "Grand Theft Auto: Episodes from Liberty City",
       "listedAs": "Grand Theft Auto: Episodes From Liberty City",
       "sortAs": "Grand Theft Auto",
-      "region": "PAL",
+      "region": "AUS",
       "released": "2010-04-16",
       "dateSource": "manual",
       "publisher": "Rockstar Games",
@@ -11881,15 +12024,30 @@
       "launcher": "rockstar",
       "cover": {
         "file": "covers/pc/grand-theft-auto-episodes-from-liberty-city.jpg",
-        "ratio": 0.7096,
-        "source": "thegamesdb.net",
-        "ref": "Grand Theft Auto: Episodes from Liberty City · NTSC (United States of America) · TheGamesDB #2533"
+        "ratio": 0.7115,
+        "source": "manual",
+        "ref": "Grand Theft Auto: Episodes from Liberty City (PAL, Australian Games for Windows LIVE print, MA15+), the insert flattened from a photo of this copy"
       },
       "colors": [
-        "#cfcdc9",
-        "#8e817a",
-        "#554c46"
-      ]
+        "#9f9587",
+        "#cacbc1",
+        "#6c665e"
+      ],
+      "spine": {
+        "style": "white",
+        "color": "#141414",
+        "top": "gfw-live",
+        "logo": "logos/gta-wordmark.webp",
+        "wide": true,
+        "sub": "Liberty City",
+        "small": "Episodes From",
+        "subStyle": "gold",
+        "foot": [
+          "rockstar",
+          "MA15R",
+          "pcdvd2"
+        ]
+      }
     },
     {
       "id": "pc-grand-theft-auto-v",
@@ -11939,6 +12097,547 @@
         "#120e12",
         "#314050",
         "#823a22"
+      ]
+    },
+    {
+      "id": "pc-bully-scholarship-edition",
+      "console": "pc",
+      "title": "Bully: Scholarship Edition",
+      "region": "UK",
+      "released": "2008-10-24",
+      "dateSource": "manual",
+      "publisher": "Rockstar Games",
+      "developer": "Rockstar New England",
+      "genre": "Action-adventure",
+      "format": "boxed",
+      "clearCase": true,
+      "spine": {
+        "style": "white",
+        "top": "pcdvd-block",
+        "logo": "logos/bully.webp",
+        "wide": true,
+        "sub": "Scholarship·Edition",
+        "subStyle": "plaque",
+        "foot": [
+          "rockstar",
+          "bbfc15"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/bully-scholarship-edition.jpg",
+        "ratio": 0.7058,
+        "source": "manual",
+        "ref": "Bully: Scholarship Edition (PAL, UK print, BBFC 15), the insert flattened from a photo of this copy"
+      },
+      "colors": [
+        "#8a7068",
+        "#405085",
+        "#cfa993"
+      ]
+    },
+    {
+      "id": "pc-grim-fandango",
+      "console": "pc",
+      "title": "Grim Fandango",
+      "edition": "LucasArts Classic",
+      "region": "AUS",
+      "released": "1998-10-30",
+      "dateSource": "manual",
+      "publisher": "LucasArts",
+      "developer": "LucasArts",
+      "genre": "Adventure",
+      "format": "boxed",
+      "spine": {
+        "style": "white",
+        "color": "#3d2a80",
+        "top": "pccd",
+        "title": "Grim Fandango™",
+        "font": "arial",
+        "foot": [
+          "PG^"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/grim-fandango.jpg",
+        "ratio": 0.6942,
+        "source": "manual",
+        "ref": "Grim Fandango (LucasArts Classic, PAL, Australian print, OFLC PG), the insert flattened from a photo of this copy"
+      },
+      "colors": [
+        "#d7c9a7",
+        "#a79a8c",
+        "#6e6462"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-rollercoaster-tycoon-3",
+      "title": "RollerCoaster Tycoon 3",
+      "region": "AUS",
+      "released": "2004-10-26",
+      "dateSource": "manual",
+      "publisher": "Atari",
+      "developer": "Frontier Developments",
+      "genre": "Construction and management simulation",
+      "format": "boxed",
+      "bigCase": true,
+      "spine": {
+        "style": "white",
+        "color": "#2b2d5c",
+        "top": "pccdrom-block",
+        "title": "RollerCoaster Tycoon 3",
+        "foot": [
+          "G",
+          "txt:ATARI"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-3.jpg",
+        "source": "manual",
+        "ref": "RollerCoaster Tycoon 3 (PAL, Australian print, OFLC G), the insert flattened from a photo of this copy",
+        "ratio": 0.7019
+      },
+      "colors": [
+        "#96877a",
+        "#695d52",
+        "#493b31"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-rollercoaster-tycoon-3-best-of-atari",
+      "title": "RollerCoaster Tycoon 3",
+      "edition": "Best of Atari",
+      "region": "AUS",
+      "released": "2004-10-26",
+      "dateSource": "manual",
+      "publisher": "Atari",
+      "developer": "Frontier Developments",
+      "genre": "Construction and management simulation",
+      "format": "boxed",
+      "bigCase": true,
+      "caseColor": "#d42a2f",
+      "spine": {
+        "style": "white",
+        "top": "pccd-tile",
+        "head": [
+          "G"
+        ],
+        "title": "RollerCoaster Tycoon® 3",
+        "foot": [
+          "txt:BEST OF\nATARI"
+        ]
+      },
+      "check": "Release date: the first release's; the Best of Atari print is a later Australian budget one",
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-3-best-of-atari.jpg",
+        "source": "manual",
+        "ref": "RollerCoaster Tycoon 3 (Best of Atari, PAL, Australian print, OFLC G), the insert flattened from a photo of this copy",
+        "ratio": 0.7077
+      },
+      "colors": [
+        "#9b7a6d",
+        "#674d43",
+        "#ae9c96"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-rollercoaster-tycoon-2-triple-thrill-pack",
+      "title": "RollerCoaster Tycoon 2: Triple Thrill Pack",
+      "sortAs": "RollerCoaster Tycoon 2",
+      "edition": "Best of Atari",
+      "region": "AUS",
+      "released": "2004-10",
+      "dateSource": "manual",
+      "publisher": "Atari",
+      "developer": "Chris Sawyer Productions",
+      "genre": "Construction and management simulation",
+      "format": "boxed",
+      "bigCase": true,
+      "caseColor": "#d42a2f",
+      "note": "RollerCoaster Tycoon 2 with both its expansion packs, Wacky Worlds and Time Twister",
+      "spine": {
+        "style": "white",
+        "top": "pccd-tile",
+        "head": [
+          "G"
+        ],
+        "title": "RollerCoaster Tycoon 2®\n*Triple Thrill Pack*",
+        "foot": [
+          "txt:BEST OF\nATARI"
+        ]
+      },
+      "check": "Release date: the Triple Thrill Pack's; the Best of Atari print is a later Australian budget one",
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-2-triple-thrill-pack.jpg",
+        "source": "manual",
+        "ref": "RollerCoaster Tycoon 2: Triple Thrill Pack (Best of Atari, PAL, Australian print, OFLC G), the insert flattened from a photo of this copy",
+        "ratio": 0.7096
+      },
+      "colors": [
+        "#9a7969",
+        "#b0a99a",
+        "#824538"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-age-of-empires-iii",
+      "title": "Age of Empires III",
+      "region": "AUS",
+      "released": "2005-10-18",
+      "dateSource": "manual",
+      "publisher": "Microsoft Game Studios",
+      "developer": "Ensemble Studios",
+      "genre": "Real-time strategy",
+      "format": "boxed",
+      "box": {
+        "w": 137,
+        "h": 193,
+        "d": 33
+      },
+      "note": "In a cardboard box",
+      "spine": {
+        "style": "white",
+        "color": "#b9b4ab",
+        "top": "none",
+        "title": "Age of Empires® III",
+        "foot": [
+          "PG",
+          "txt:ENSEMBLE\nSTUDIOS",
+          "txt:Microsoft\ngame studios"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/age-of-empires-iii.jpg",
+        "source": "manual",
+        "ref": "Age of Empires III (PAL, Australian PC·CD Games box, OFLC PG), the box's front flattened from a photo of this copy",
+        "ratio": 0.701
+      },
+      "colors": [
+        "#847257",
+        "#b5aea9",
+        "#493a29"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-age-of-empires-iii-the-warchiefs",
+      "title": "Age of Empires III: The WarChiefs",
+      "sortAs": "Age of Empires III",
+      "region": "AUS",
+      "released": "2006-10-17",
+      "dateSource": "manual",
+      "publisher": "Microsoft Game Studios",
+      "developer": "Ensemble Studios",
+      "genre": "Real-time strategy",
+      "format": "boxed",
+      "box": {
+        "w": 137,
+        "h": 193,
+        "d": 33
+      },
+      "note": "Expansion pack, in a cardboard box: needs Age of Empires III to play",
+      "spine": {
+        "style": "white",
+        "color": "#b9783a",
+        "top": "gfw",
+        "title": "Age of Empires® III\n*The WarChiefs*",
+        "foot": [
+          "PG",
+          "txt:ENSEMBLE\nSTUDIOS",
+          "txt:PC CD"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/age-of-empires-iii-the-warchiefs.jpg",
+        "source": "manual",
+        "ref": "Age of Empires III: The WarChiefs (PAL, Australian Games for Windows box, OFLC PG), the box's front flattened from a photo of this copy",
+        "ratio": 0.7058
+      },
+      "colors": [
+        "#beac82",
+        "#784c30",
+        "#a18156"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-age-of-empires-iii-the-asian-dynasties",
+      "title": "Age of Empires III: The Asian Dynasties",
+      "sortAs": "Age of Empires III",
+      "region": "AUS",
+      "released": "2007-10-23",
+      "dateSource": "manual",
+      "publisher": "Microsoft Game Studios",
+      "developer": "Ensemble Studios, Big Huge Games",
+      "genre": "Real-time strategy",
+      "format": "boxed",
+      "bigCase": true,
+      "note": "Expansion pack: needs Age of Empires III to play",
+      "spine": {
+        "style": "white",
+        "color": "#c25a1c",
+        "top": "gfw",
+        "title": "Age of Empires® III\n*The Asian Dynasties*",
+        "foot": [
+          "PG",
+          "txt:Microsoft\ngame studios",
+          "txt:PC CD"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/age-of-empires-iii-the-asian-dynasties.jpg",
+        "source": "manual",
+        "ref": "Age of Empires III: The Asian Dynasties (PAL, Australian Games for Windows print, OFLC PG), the insert flattened from a photo of this copy",
+        "ratio": 0.6923
+      },
+      "colors": [
+        "#aa7847",
+        "#644b2f",
+        "#dab351"
+      ]
+    },
+    {
+      "console": "pc",
+      "id": "pc-age-of-empires-iii-complete-collection",
+      "title": "Age of Empires III: Complete Collection",
+      "sortAs": "Age of Empires III",
+      "region": "AUS",
+      "released": "2009-09-15",
+      "dateSource": "manual",
+      "publisher": "Microsoft Game Studios",
+      "developer": "Ensemble Studios, Big Huge Games",
+      "genre": "Real-time strategy",
+      "format": "boxed",
+      "bigCase": true,
+      "note": "Age of Empires III with both its expansion packs, The WarChiefs and The Asian Dynasties",
+      "spine": {
+        "style": "white",
+        "color": "#1f2a44",
+        "top": "gfw",
+        "title": "Age of Empires® III\n*Complete Collection*",
+        "foot": [
+          "PG",
+          "txt:Microsoft\ngame studios",
+          "txt:PC CD"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/age-of-empires-iii-complete-collection.jpg",
+        "source": "manual",
+        "ref": "Age of Empires III: Complete Collection (PAL, Australian Games for Windows print, OFLC PG), the insert flattened from a photo of this copy",
+        "ratio": 0.7077
+      },
+      "colors": [
+        "#82715f",
+        "#4c3f34",
+        "#d4aa5e"
+      ]
+    },
+    {
+      "id": "pc-cities-xl-platinum",
+      "console": "pc",
+      "title": "Cities XL Platinum",
+      "region": "AUS",
+      "released": "2013-02-06",
+      "dateSource": "steam",
+      "publisher": "Focus Entertainment",
+      "developer": "Focus Entertainment",
+      "genre": "Simulation",
+      "format": "digital",
+      "launcher": "steam",
+      "steamAppId": 231140,
+      "cover": {
+        "file": "covers/pc/cities-xl-platinum.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "Cities XL Platinum · Steam library art · app 231140"
+      },
+      "colors": [
+        "#544940",
+        "#8b806d",
+        "#7eb1d3"
+      ]
+    },
+    {
+      "id": "pc-cities-skylines",
+      "console": "pc",
+      "title": "Cities: Skylines",
+      "region": "AUS",
+      "released": "2015-03-10",
+      "dateSource": "steam",
+      "publisher": "Paradox Interactive",
+      "developer": "Colossal Order",
+      "genre": "Simulation",
+      "format": "digital",
+      "launcher": "steam",
+      "mac": true,
+      "steamAppId": 255710,
+      "cover": {
+        "file": "covers/pc/cities-skylines.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "Cities: Skylines · Steam library art · app 255710"
+      },
+      "colors": [
+        "#476242",
+        "#8eaeb4",
+        "#d2dbd1"
+      ]
+    },
+    {
+      "id": "pc-rollercoaster-tycoon-world",
+      "console": "pc",
+      "title": "RollerCoaster Tycoon World",
+      "region": "AUS",
+      "released": "2016-11-16",
+      "dateSource": "steam",
+      "publisher": "Atari, RCTO Productions",
+      "developer": "Nvizzio Creations",
+      "genre": "Simulation",
+      "format": "digital",
+      "launcher": "steam",
+      "steamAppId": 282560,
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-world.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "RollerCoaster Tycoon World · Steam library art · app 282560"
+      },
+      "colors": [
+        "#774b40",
+        "#3f3127",
+        "#ab8850"
+      ]
+    },
+    {
+      "id": "pc-rollercoaster-tycoon-classic",
+      "console": "pc",
+      "title": "RollerCoaster Tycoon Classic",
+      "region": "AUS",
+      "released": "2017-09-28",
+      "dateSource": "steam",
+      "publisher": "Atari",
+      "developer": "Origin8 Technologies Ltd.",
+      "genre": "Simulation",
+      "format": "digital",
+      "launcher": "steam",
+      "mac": true,
+      "steamAppId": 683900,
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-classic.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "RollerCoaster Tycoon Classic · Steam library art · app 683900"
+      },
+      "colors": [
+        "#616724",
+        "#bb941a",
+        "#e7cd54"
+      ]
+    },
+    {
+      "id": "pc-age-of-empires-definitive-edition",
+      "console": "pc",
+      "title": "Age of Empires: Definitive Edition",
+      "region": "AUS",
+      "released": "2019-08-19",
+      "dateSource": "steam",
+      "publisher": "Xbox Game Studios",
+      "developer": "World's Edge, Forgotten Empires, Tantalus",
+      "genre": "Strategy",
+      "format": "digital",
+      "launcher": "steam",
+      "steamAppId": 1017900,
+      "cover": {
+        "file": "covers/pc/age-of-empires-definitive-edition.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "Age of Empires: Definitive Edition · Steam library art · app 1017900"
+      },
+      "colors": [
+        "#2b2d2d",
+        "#554635",
+        "#8d7050"
+      ]
+    },
+    {
+      "id": "pc-rollercoaster-tycoon-3-complete-edition",
+      "console": "pc",
+      "title": "RollerCoaster Tycoon 3: Complete Edition",
+      "region": "AUS",
+      "released": "2020-09-24",
+      "dateSource": "steam",
+      "publisher": "Atari, Aspyr (Mac)",
+      "developer": "Frontier Developments, Aspyr (Mac)",
+      "genre": "Simulation",
+      "format": "digital",
+      "launcher": "steam",
+      "mac": true,
+      "steamAppId": 1368820,
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-3-complete-edition.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "RollerCoaster Tycoon 3: Complete Edition · Steam library art · app 1368820"
+      },
+      "colors": [
+        "#56552a",
+        "#a3b6be",
+        "#8a6f3e"
+      ]
+    },
+    {
+      "id": "pc-marvel-rivals",
+      "console": "pc",
+      "title": "Marvel Rivals",
+      "region": "AUS",
+      "released": "2024-12-05",
+      "dateSource": "steam",
+      "publisher": "NetEase Games",
+      "developer": "NetEase Games",
+      "genre": "Action",
+      "format": "digital",
+      "launcher": "steam",
+      "steamAppId": 2767030,
+      "cover": {
+        "file": "covers/pc/marvel-rivals.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "Marvel Rivals · Steam library art · app 2767030"
+      },
+      "colors": [
+        "#3e2947",
+        "#876662",
+        "#b39fb3"
+      ]
+    },
+    {
+      "id": "pc-rollercoaster-tycoon-2-triple-thrill-pack-steam",
+      "console": "pc",
+      "title": "RollerCoaster Tycoon 2: Triple Thrill Pack",
+      "sortAs": "RollerCoaster Tycoon 2",
+      "region": "AUS",
+      "released": "2014-05-21",
+      "dateSource": "steam",
+      "publisher": "Atari",
+      "developer": "Chris Sawyer Productions",
+      "genre": "Simulation",
+      "format": "digital",
+      "launcher": "steam",
+      "steamAppId": 285330,
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon-2-triple-thrill-pack-steam.jpg",
+        "ratio": 0.6667,
+        "source": "steam",
+        "ref": "RollerCoaster Tycoon 2: Triple Thrill Pack · Steam library art · app 285330"
+      },
+      "colors": [
+        "#b14f30",
+        "#765f61",
+        "#4e452f"
       ]
     }
   ]
