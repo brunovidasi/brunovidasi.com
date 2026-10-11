@@ -29,6 +29,7 @@
     if (g.format === 'cartridge-only') tile.append(Case.cart(g, s * 2));
     else {
       const face = Case.front(g, Math.min(s, (stageH() * 0.95) / Case.layout(g, 1).w));
+      if (g.format === 'digital') face.classList.add('ghosted');
       tile.append(face);
     }
     stage.append(tile);

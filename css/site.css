@@ -285,6 +285,8 @@ a { color: inherit; }
 .gt > * { display: block; }
 .gt .cv { box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 10px 20px rgba(0,0,0,.5); }
 .gt .cart { transform: rotate(-4deg); }
+/* a digital copy: its cover in full, inside a dashed outline */
+.cv.ghosted { outline: 1px dashed rgba(242,234,216,.5); outline-offset: 2px; }
 @media (hover: hover) { .cell:hover .gt { transform: translateY(-8px); } .cell:hover .cap b { color: var(--gold); } }
 .cap { margin-top: 14px; min-width: 0; }
 .cap b, .cap small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

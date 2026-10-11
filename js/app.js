@@ -626,6 +626,7 @@
       } else {
         const L = Case.layout(g, 1);
         const face = Case.front(g, Math.min(48 / L.h, 58 / L.w));
+        if (g.format === 'digital') face.classList.add('ghosted');
         thumb.append(face);
       }
       row.append(thumb);
@@ -663,6 +664,7 @@
       const L = Case.layout(g, 1);
       const k = Math.min(s, room / L.w, stage / L.h);
       const face = Case.front(g, k);
+      if (g.format === 'digital') face.classList.add('ghosted');
       tile.append(face);
       w = L.w * k;
     }
@@ -812,11 +814,11 @@
         w = w1 * k;
       } else {
         // a solid case, front, spine and edges, so turned to the side it shows its spine and depth;
-        // a digital copy, which has no case, stays a flat cover
+        // a digital copy, which has no case, stays a flat cover in a dashed outline
         const L = Case.layout(g, 1);
         const k = Math.min(scSize(), maxH / L.h, (innerWidth * 0.5) / L.w);
         let face;
-        if (g.format === 'digital') face = Case.front(g, k);
+        if (g.format === 'digital') { face = Case.front(g, k); face.classList.add('ghosted'); }
         else face = Case.slab(g, k, true);
         tile.append(face);
         // its reflection in the floor: a mirrored cover (a 3D case can't take the browser's own reflection)
@@ -1062,6 +1064,7 @@
         // it flies at the size it lands, so it is crisp when it gets there
         const s = cart ? unitOf(a.face, a.kind, g) : hOf(a.face) / Case.layout(g, 1).h;
         const fly = cart ? Case.cart(g, s) : Case.slab(g, s);
+        if (g.format === 'digital') $('.cv', fly)?.classList.add('ghosted');
         const [W, H] = cart ? Case.cartSize(g, s) : [Case.layout(g, s).w, hOf(a.face)];
         const cx = a.r.left + a.r.width / 2, cy = a.r.top + a.r.height / 2;
         const wrap = document.createElement('div');
@@ -1419,6 +1422,7 @@
       el.dataset.dir = dir;
       el.setAttribute('aria-label', `${dir < 0 ? 'Previous' : 'Next'}: ${g.title}`);
       const face = shape(g) === 'cart' ? Case.cart(g, P.k) : Case.front(g, P.k, false);
+      if (shape(g) === 'card') face.classList.add('ghosted');
       el.append(face);
       el.style.cssText = `left:${(P.cx - P.w / 2).toFixed(1)}px;top:${(P.cy - P.h / 2).toFixed(1)}px;width:${P.w.toFixed(1)}px;height:${P.h.toFixed(1)}px;--ry:${P.ry}deg`;
       el._pose = P;
