@@ -28,7 +28,9 @@
     const s = stageH() / 190;
     if (g.format === 'cartridge-only') tile.append(Case.cart(g, s * 2));
     else {
-      const face = Case.front(g, Math.min(s, (stageH() * 0.95) / Case.layout(g, 1).w));
+      // a box built from its parts (g.model) stands as that model, not a picture of its front
+      const k = Math.min(s, (stageH() * 0.95) / Case.layout(g, 1).w);
+      const face = g.model ? Case.slab(g, k, true) : Case.front(g, k);
       if (g.format === 'digital') face.classList.add('ghosted');
       tile.append(face);
     }
@@ -81,5 +83,22 @@
     </div>`;
   }
 
-  window.Collection = { card, group, meter, wantCard, stageH, byRelease, esc, $ };
+  /** In a game's drawer: the base game and its packs, a list for each kind of pack as on a checklist,
+      the game open in bold. Each opens in its place (js/app.js, data-go); `wants`, still to find, come last, faded.
+      `name` is what the list calls each one. */
+  const PACKS = ['Base game', 'Collection', 'Expansion Pack', 'Game Pack', 'Stuff Pack', 'Parts Pack', 'Kit', 'Free Pack', 'World', 'Extra'];
+  const plural = p => p.replace(/ Pack$/, ' pack') + 's'; // Expansion Pack → Expansion packs
+  function packList(g, gs, name, wants = []) {
+    const kind = x => x.pack || 'Base game';
+    const kinds = [...PACKS, ...new Set(gs.map(kind).filter(k => !PACKS.includes(k)))];
+    const code = x => x.packCode ? `<small>${esc(x.packCode)}</small>` : '';
+    const item = x => `<li${x === g ? ' class="on" aria-current="true"' : ''}><button type="button" data-go="${esc(x.id)}">${esc(name(x))}</button>${code(x)}</li>`;
+    const list = (title, lis, cls = '') => `<div${cls ? ` class="${cls}"` : ''}><p class="dw-sub">${esc(title)} <em>${lis.length}</em></p><ul>${lis.join('')}</ul></div>`;
+    return `<div class="dw-packs">${kinds.map(k => [k, gs.filter(x => kind(x) === k).sort(byRelease)]).filter(([, xs]) => xs.length)
+      .map(([k, xs]) => list(plural(k), xs.map(item))).join('')}`
+      + (wants.length ? list('Still to find', wants.map(w => `<li><span>${esc(name(w))}</span>${code(w)}</li>`), 'find') : '')
+      + '</div>';
+  }
+
+  window.Collection = { card, group, meter, wantCard, packList, stageH, byRelease, esc, $ };
 })();

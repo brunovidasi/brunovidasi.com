@@ -110,22 +110,12 @@
   }
 
   // in the drawer of a PC game: every game and pack of its series on PC, sorted as the checklist
-  // sorts them, the one open in bold; what is still to find comes last, faded
+  // sorts them; what is still to find comes last
   function drawer(g, all) {
     if (g.console !== 'pc' || !SERIES.some(s => s.key === g.series)) return null;
-    const pc = all.filter(x => x.console === 'pc' && x.series === g.series).sort(byRelease);
+    const pc = all.filter(x => x.console === 'pc' && x.series === g.series);
     const ws = wants.filter(w => w.series === g.series && !/DS|N64/.test(w.platform)).sort((a, b) => PACKS.indexOf(a.pack) - PACKS.indexOf(b.pack) || byRelease(a, b));
-    if (pc.length + ws.length < 2) return null;
-    const code = x => x.packCode ? `<small>${esc(x.packCode)}</small>` : '';
-    const item = x => `<li${x === g ? ' class="on" aria-current="true"' : ''}><button type="button" data-go="${esc(x.id)}">${esc(short(x))}</button>${code(x)}</li>`;
-    const list = (name, lis, cls = '') => `<div${cls ? ` class="${cls}"` : ''}><p class="dw-sub">${esc(name)} <em>${lis.length}</em></p><ul>${lis.join('')}</ul></div>`;
-    const groups = PACKS.map(p => [PACK_PLURAL[p], pc.filter(x => (x.pack || 'Base game') === p)]).filter(([, xs]) => xs.length);
-    return {
-      title: `${g.series} on PC`,
-      html: `<div class="dw-packs">${groups.map(([name, xs]) => list(name, xs.map(item))).join('')}`
-        + (ws.length ? list('Still to find', ws.map(w => `<li><span>${esc(short(w))}</span>${code(w)}</li>`), 'find') : '')
-        + '</div>',
-    };
+    return pc.length + ws.length < 2 ? null : { title: `${g.series} on PC`, html: Collection.packList(g, pc, short, ws) };
   }
 
   (window.COLLECTIONS = window.COLLECTIONS || {}).sims = {

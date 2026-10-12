@@ -3029,11 +3029,25 @@
       "genre": "Karaoke",
       "format": "boxed",
       "check": "Release date not confirmed.",
+      "edition": "2 Mic Pack",
+      "extras": [
+        "mic",
+        "mic"
+      ],
+      "box": {
+        "w": 136,
+        "h": 197,
+        "d": 66
+      },
       "cover": {
-        "file": "covers/switch/lets-sing-2024.jpg",
+        "file": "covers/switch/lets-sing-2024-bundle.jpg",
+        "back": "covers/switch/lets-sing-2024-bundle-back.jpg",
+        "spine": "covers/switch/lets-sing-2024-bundle-spine.jpg",
+        "side": "covers/switch/lets-sing-2024-bundle-side.jpg",
+        "top": "covers/switch/lets-sing-2024-bundle-top.jpg",
         "source": "manual",
-        "ref": "Let's Sing 2024 · PAL (Australia), G · EB Games Australia packshot",
-        "ratio": 0.6019,
+        "ref": "Let's Sing 2024 2 Mic Pack box · PAL (Australia), G · photos of my own copy, straightened; size from retail listings (19.7 × 13.6 cm) and the photos",
+        "ratio": 0.6904,
         "label": "covers/switch/lets-sing-2024-label.jpg",
         "labelRef": "Photo of my own card (LA-H-A8H6A-EUR)"
       },
@@ -4565,12 +4579,17 @@
       "developer": "Rockstar New England",
       "genre": "Action-adventure",
       "format": "boxed",
+      "edition": "Greatest Hits",
+      "note": "Xbox One & Xbox 360 release",
+      "alsoOn": [
+        "xone"
+      ],
       "wikiCover": false,
       "cover": {
         "file": "covers/x360/bully-scholarship-edition.jpg",
-        "ratio": 0.7115,
-        "source": "thegamesdb.net",
-        "ref": "Bully: Scholarship Edition · NTSC (United States of America) · TheGamesDB #7153"
+        "ratio": 0.71,
+        "source": "manual",
+        "ref": "thegamesdb.net · Bully: Scholarship Edition [Greatest Hits] (Plays on Xbox One & Xbox 360 print) · TheGamesDB #88854"
       },
       "colors": [
         "#333c7e",
@@ -4928,27 +4947,28 @@
       "xboxTitleId": "1297287369"
     },
     {
-      "id": "x360-mortal-kombat",
+      "id": "x360-mortal-kombat-komplete-edition",
       "console": "x360",
-      "title": "Mortal Kombat",
+      "title": "Mortal Kombat: Komplete Edition",
+      "listedAs": "Mortal Kombat",
       "sortAs": "Mortal Kombat",
       "region": "PAL",
-      "released": "2011-04-19",
+      "released": "2012-02-28",
       "dateSource": "manual",
       "publisher": "Warner Bros. Interactive",
       "developer": "NetherRealm Studios",
       "genre": "Fighting",
       "format": "boxed",
       "cover": {
-        "file": "covers/x360/mortal-kombat.jpg",
+        "file": "covers/x360/mortal-kombat-komplete-edition.jpg",
         "ratio": 0.7096,
         "source": "thegamesdb.net",
-        "ref": "Mortal Kombat · NTSC-U · TheGamesDB #17828"
+        "ref": "Mortal Kombat: Komplete Edition · PAL (United Kingdom of Great Britain and Northern Ireland) · TheGamesDB #117959"
       },
       "colors": [
-        "#2a1a1d",
-        "#616656",
-        "#cf8553"
+        "#161215",
+        "#593834",
+        "#9f8038"
       ],
       "xboxTitleId": "1464993789"
     },
@@ -4965,8 +4985,17 @@
       "format": "boxed",
       "kinect": true,
       "wikiCover": false,
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/x360/zumba-fitness.jpg",
+        "source": "manual",
+        "ref": "thegamesdb.net · Zumba Fitness: Join the Party · NTSC-U · TheGamesDB #7607",
+        "ratio": 0.7135
+      },
+      "colors": [
+        "#e0885e",
+        "#90535f",
+        "#2f1b1d"
+      ]
     },
     {
       "id": "x360-grand-theft-auto-iv",
@@ -4982,14 +5011,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/x360/grand-theft-auto-iv.jpg",
-        "ratio": 0.716,
-        "source": "thegamesdb.net",
-        "ref": "Grand Theft Auto IV · PAL (United Kingdom of Great Britain and Northern Ireland) · TheGamesDB #115918"
+        "source": "manual",
+        "ref": "Grand Theft Auto IV [Classics Bestsellers Edition] · PAL · TheGamesDB #113607, the insert cropped from the photo of the case",
+        "ratio": 0.7044
       },
       "colors": [
-        "#79685d",
-        "#a79787",
-        "#3d352d"
+        "#947d5e",
+        "#5c4a48",
+        "#beb5af"
       ]
     },
     {
@@ -8834,8 +8863,17 @@
       "eaSlug": "the-sims-1-complete-collection-ea-app",
       "series": "The Sims",
       "pack": "Collection",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/the-sims-legacy-collection.jpg",
+        "source": "manual",
+        "ref": "sims.fandom.com · File:The Sims Legacy Collection Boxart.png",
+        "ratio": 0.7077
+      },
+      "colors": [
+        "#b07e6b",
+        "#7994a3",
+        "#50686a"
+      ]
     },
     {
       "id": "pc-the-sims-livin-large",
@@ -9194,8 +9232,17 @@
       "eaSlug": "the-sims-2-ultimate-collection",
       "series": "The Sims 2",
       "pack": "Collection",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/the-sims-2-legacy-collection.jpg",
+        "source": "manual",
+        "ref": "sims.fandom.com · File:The Sims 2 Legacy Collection Boxart.png",
+        "ratio": 0.7077
+      },
+      "colors": [
+        "#2e3036",
+        "#8f694a",
+        "#33839b"
+      ]
     },
     {
       "id": "pc-the-sims-2-university",
@@ -10201,8 +10248,17 @@
       "mac": true,
       "series": "The Sims 3",
       "pack": "Expansion Pack",
-      "cover": null,
-      "colors": null,
+      "cover": {
+        "file": "covers/pc/the-sims-3-showtime-katy-perry-collectors-edition.jpg",
+        "source": "manual",
+        "ref": "sims.fandom.com · File:Showtimekatyperrycollectoredition.jpg",
+        "ratio": 0.7154
+      },
+      "colors": [
+        "#849db9",
+        "#b57c7e",
+        "#cdccd2"
+      ],
       "eaSlug": "the-sims-3-showtime-katy-perry-collectors-edition-legacy"
     },
     {
@@ -10814,8 +10870,17 @@
       },
       "series": "The Sims Medieval",
       "pack": "Base game",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/the-sims-medieval-limited-edition.jpg",
+        "source": "manual",
+        "ref": "sims.fandom.com · File:The Sims Medieval Limited Edition Cover.jpg",
+        "ratio": 0.7077
+      },
+      "colors": [
+        "#8a7a4d",
+        "#4e4238",
+        "#a69a73"
+      ]
     },
     {
       "id": "pc-the-sims-medieval-pirates-and-nobles",
@@ -11984,8 +12049,17 @@
       "alsoDigital": true,
       "series": "SimCity",
       "pack": "Collection",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/simcity-societies-deluxe-edition.jpg",
+        "source": "manual",
+        "ref": "simcity.fandom.com/es · File:SimCitySocietiesDeluxeEdition_Portada.jpg",
+        "ratio": 0.7058
+      },
+      "colors": [
+        "#6c6e68",
+        "#a29e8a",
+        "#c3cdd2"
+      ]
     },
     {
       "id": "pc-simcity-deluxe",
@@ -12001,8 +12075,17 @@
       "series": "SimCity",
       "pack": "Collection",
       "check": "Which SimCity this Deluxe box holds, and its exact release",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/simcity-deluxe.jpg",
+        "source": "manual",
+        "ref": "simcity.fandom.com/es · File:SimCity4Deluxe.jpg (SimCity 4 Deluxe Edition, PAL)",
+        "ratio": 0.704
+      },
+      "colors": [
+        "#428acc",
+        "#ac865b",
+        "#423f4c"
+      ]
     },
     {
       "id": "pc-simcity-2013",
@@ -12053,8 +12136,17 @@
       "format": "boxed",
       "series": "SimCity",
       "pack": "Collection",
-      "cover": null,
-      "colors": null,
+      "cover": {
+        "file": "covers/pc/simcity-complete-edition.jpg",
+        "source": "manual",
+        "ref": "simcity.fandom.com · File:SimCity Complete Edition cover.jpg",
+        "ratio": 0.7086
+      },
+      "colors": [
+        "#828d8e",
+        "#415160",
+        "#d8ceaf"
+      ],
       "eaSlug": "simcity"
     },
     {
@@ -12175,14 +12267,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/pc/grand-theft-auto-iii.jpg",
-        "ratio": 0.7096,
+        "ratio": 0.7077,
         "source": "manual",
-        "ref": "Grand Theft Auto III (PAL, Australian print with the original red-car art, OFLC MA15+), the insert flattened from a photo of this copy"
+        "ref": "gamesdb.launchbox-app.com · Grand Theft Auto III (PAL, Australian print with the original red-car art, OFLC MA15+) · LaunchBox Games Database #765, Box - Front (Australia)"
       },
       "colors": [
-        "#9a867e",
-        "#cfc1ba",
-        "#6e4d46"
+        "#0d0707",
+        "#764b4e",
+        "#66171b"
       ],
       "spine": {
         "style": "white",
@@ -12209,14 +12301,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/pc/grand-theft-auto-vice-city.jpg",
-        "ratio": 0.7,
+        "ratio": 0.7096,
         "source": "manual",
-        "ref": "Grand Theft Auto: Vice City (PAL, Australian print, MA15+ Mature Themes), the insert flattened from a photo of this copy"
+        "ref": "gamesdb.launchbox-app.com · Grand Theft Auto: Vice City (PAL PC CD-ROM print) · LaunchBox Games Database #766, Box - Front (Europe), with the MA15+ Mature Themes badge from a photo of this Australian copy"
       },
       "colors": [
-        "#908d86",
-        "#c9c4bd",
-        "#94674e"
+        "#966a5f",
+        "#3e3638",
+        "#c5b9b7"
       ],
       "spine": {
         "style": "white",
@@ -12244,14 +12336,14 @@
       "format": "boxed",
       "cover": {
         "file": "covers/pc/grand-theft-auto-san-andreas.jpg",
-        "ratio": 0.7077,
+        "ratio": 0.7,
         "source": "manual",
-        "ref": "Grand Theft Auto: San Andreas (PAL, Australian DVD-ROM print, MA15+), the insert flattened from a photo of this copy"
+        "ref": "gamesdb.launchbox-app.com · Grand Theft Auto: San Andreas (PAL PC DVD-ROM print) · LaunchBox Games Database #767, Box - Front (Europe), with the MA15+ badge from a photo of this Australian copy"
       },
       "colors": [
-        "#999082",
-        "#c7c8bc",
-        "#705f57"
+        "#8f8169",
+        "#5f4f42",
+        "#ced0b6"
       ],
       "clearCase": true,
       "spine": {
@@ -12284,14 +12376,14 @@
       "launcher": "rockstar",
       "cover": {
         "file": "covers/pc/grand-theft-auto-iv.jpg",
-        "ratio": 0.7115,
+        "ratio": 0.7058,
         "source": "manual",
-        "ref": "Grand Theft Auto IV (PAL, Australian Games for Windows print, MA15+), the insert flattened from a photo of this copy"
+        "ref": "archive.org · Grand Theft Auto IV (PAL Games for Windows print) · archive.org/details/gta-iv-, with the MA15+ badge from a photo of this Australian copy"
       },
       "colors": [
-        "#7d6f60",
-        "#a69c8a",
-        "#cccfc7"
+        "#968370",
+        "#cacecc",
+        "#61554b"
       ],
       "spine": {
         "style": "white",
@@ -12323,14 +12415,14 @@
       "launcher": "rockstar",
       "cover": {
         "file": "covers/pc/grand-theft-auto-episodes-from-liberty-city.jpg",
-        "ratio": 0.7115,
+        "ratio": 0.7096,
         "source": "manual",
-        "ref": "Grand Theft Auto: Episodes from Liberty City (PAL, Australian Games for Windows LIVE print, MA15+), the insert flattened from a photo of this copy"
+        "ref": "thegamesdb.net · Grand Theft Auto: Episodes from Liberty City (Games for Windows LIVE print) · TheGamesDB #2533, with the MA15+ badge from a photo of this Australian copy"
       },
       "colors": [
-        "#9f9587",
-        "#cacbc1",
-        "#6c665e"
+        "#d0cec9",
+        "#574f4a",
+        "#95857e"
       ],
       "spine": {
         "style": "white",
@@ -12428,12 +12520,12 @@
         "file": "covers/pc/bully-scholarship-edition.jpg",
         "ratio": 0.7058,
         "source": "manual",
-        "ref": "Bully: Scholarship Edition (PAL, UK print, BBFC 15), the insert flattened from a photo of this copy"
+        "ref": "thegamesdb.net · Bully: Scholarship Edition (PAL PC DVD print) · TheGamesDB #132291, with the BBFC 15 badge from a photo of this UK copy"
       },
       "colors": [
-        "#8a7068",
-        "#405085",
-        "#cfa993"
+        "#145c99",
+        "#d08c5d",
+        "#5a5e58"
       ],
       "rockstarTitle": "bully"
     },
@@ -12585,6 +12677,43 @@
     },
     {
       "console": "pc",
+      "id": "pc-rollercoaster-tycoon",
+      "title": "RollerCoaster Tycoon",
+      "listedAs": "Roller Coaster Tycoon",
+      "sortAs": "RollerCoaster Tycoon",
+      "region": "AUS",
+      "released": "1999-04-12",
+      "dateSource": "manual",
+      "publisher": "Infogrames",
+      "developer": "Chris Sawyer Productions",
+      "genre": "Construction and management simulation",
+      "format": "boxed",
+      "clearCase": true,
+      "note": "The Infogrames reprint, after Infogrames bought Hasbro Interactive and MicroProse in 2001",
+      "spine": {
+        "style": "white",
+        "color": "#4aa3e0",
+        "top": "pccdrom-block",
+        "title": "Roller Coaster Tycoon",
+        "foot": [
+          "txt:INFOGRAMES"
+        ]
+      },
+      "check": "Release date: the first Australian release's (Hasbro Interactive, April 1999); this Infogrames print came later",
+      "cover": {
+        "file": "covers/pc/rollercoaster-tycoon.jpg",
+        "source": "manual",
+        "ref": "RollerCoaster Tycoon (Infogrames / MicroProse, PAL, Australian print, OFLC G), the insert flattened from a photo of this copy",
+        "ratio": 0.7019
+      },
+      "colors": [
+        "#b88570",
+        "#72624f",
+        "#4b3c32"
+      ]
+    },
+    {
+      "console": "pc",
       "id": "pc-age-of-empires-iii",
       "title": "Age of Empires III",
       "region": "AUS",
@@ -12628,6 +12757,7 @@
       "id": "pc-age-of-empires-iii-the-warchiefs",
       "title": "Age of Empires III: The WarChiefs",
       "sortAs": "Age of Empires III",
+      "pack": "Expansion Pack",
       "region": "AUS",
       "released": "2006-10-17",
       "dateSource": "manual",
@@ -12669,6 +12799,7 @@
       "id": "pc-age-of-empires-iii-the-asian-dynasties",
       "title": "Age of Empires III: The Asian Dynasties",
       "sortAs": "Age of Empires III",
+      "pack": "Expansion Pack",
       "region": "AUS",
       "released": "2007-10-23",
       "dateSource": "manual",
@@ -12706,6 +12837,7 @@
       "id": "pc-age-of-empires-iii-complete-collection",
       "title": "Age of Empires III: Complete Collection",
       "sortAs": "Age of Empires III",
+      "pack": "Collection",
       "region": "AUS",
       "released": "2009-09-15",
       "dateSource": "manual",
@@ -13106,8 +13238,10 @@
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "Life simulation",
-      "format": "digital",
+      "format": "boxed",
       "launcher": "ea",
+      "alsoDigital": true,
+      "mac": true,
       "eaSlug": "spore",
       "cover": {
         "file": "covers/pc/spore.jpg",
@@ -13136,8 +13270,17 @@
       "series": "SimCity",
       "pack": "Expansion Pack",
       "eaSlug": "simcity-societies-destinations",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/simcity-societies-destinations.jpg",
+        "source": "manual",
+        "ref": "simcity.fandom.com · File:SimCity Societies Destinations cover-th.jpg",
+        "ratio": 0.7086
+      },
+      "colors": [
+        "#fdfdfe",
+        "#8d7e59",
+        "#91a5ae"
+      ]
     },
     {
       "id": "pc-spore-creepy-and-cute-parts-pack",
@@ -13149,12 +13292,23 @@
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "Life simulation",
-      "format": "digital",
+      "format": "boxed",
       "launcher": "ea",
+      "alsoDigital": true,
+      "mac": true,
       "pack": "Parts Pack",
       "eaSlug": "spore-creepy-and-cute-parts-pack",
-      "cover": null,
-      "colors": null
+      "cover": {
+        "file": "covers/pc/spore-creepy-and-cute-parts-pack.jpg",
+        "source": "manual",
+        "ref": "spore.fandom.com · File:BoxArt Creepy & Cute Parts Pack.jpg",
+        "ratio": 0.7038
+      },
+      "colors": [
+        "#f3f3f5",
+        "#a299a3",
+        "#d2d1d6"
+      ]
     },
     {
       "id": "pc-spore-galactic-adventures",
@@ -13166,8 +13320,10 @@
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "Life simulation",
-      "format": "digital",
+      "format": "boxed",
       "launcher": "ea",
+      "alsoDigital": true,
+      "mac": true,
       "pack": "Expansion Pack",
       "eaSlug": "spore-galactic-adventures",
       "cover": {

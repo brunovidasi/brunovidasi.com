@@ -285,6 +285,8 @@ a { color: inherit; }
 .gt > * { display: block; }
 .gt .cv { box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 10px 20px rgba(0,0,0,.5); }
 .gt .cart { transform: rotate(-4deg); }
+/* a box built from its parts stands as its model, seen from in front of its middle as it flies in */
+.gt:has(> .bx.model) { perspective: 900px; }
 /* a digital copy: its cover in full, inside a dashed outline */
 .cv.ghosted { outline: 1px dashed rgba(242,234,216,.5); outline-offset: 2px; }
 @media (hover: hover) { .cell:hover .gt { transform: translateY(-8px); } .cell:hover .cap b { color: var(--gold); } }
@@ -643,6 +645,16 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
 /* the PC's libraries, centred on a line of their own above the rest, each with its logo (js/consoles.js) */
 #libWrap { flex-basis: 100%; justify-content: center; }
 #lib { grid-column: 1 / -1; justify-content: safe center; }
+/* on a wide screen the count shares their line, at its right, the libraries still centred */
+@media (min-width: 821px) {
+  .tools:has(#libWrap:not([hidden])) { display: grid; grid-template-columns: 1fr auto 1fr; }
+  .tools:has(#libWrap:not([hidden])) #libWrap { grid-column: 2; }
+  .tools:has(#libWrap:not([hidden])) .count { grid-column: 3; justify-self: end; }
+}
 #lib svg, .lib-glyph { flex: none; width: 16px; height: 16px; margin-left: -3px; }
 .lib-glyph { display: grid; place-items: center; border-radius: 4px; background: var(--lb); color: var(--lf); font: 800 8px/1 var(--font-ui); font-style: normal; }
 #lib em:empty { display: none; }
+/* on a solid face like the console chips, so they read over the shelf's backdrop */
+#lib button { background: #141416; border-color: var(--line-strong); opacity: 1; transition: background .2s, border-color .2s; }
+#lib button:hover { background: #1c1c1f; border-color: var(--text); }
+#lib button.on { background: var(--gold); border-color: var(--gold); }

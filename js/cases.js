@@ -833,16 +833,16 @@
   // the front shell's colour at a height y (mm from the middle, down positive)
   const pwShell = y => y < -1 ? '#d3261f' : y > 1 ? '#ecebe7' : '#141416';
   // a ring of strips from radius r0 at depth z0 to radius r1 at z1 (a cylinder when r0 = r1, else a cone);
-  // col(y, i) colours each strip
-  function pwRing(s, r0, z0, r1, z1, col) {
+  // col(y, i) colours each strip; n strips round it, st more style on each (a texture)
+  function pwRing(s, r0, z0, r1, z1, col, n = PW_N, st = '') {
     const rm = (r0 + r1) / 2, zm = (z0 + z1) / 2, h = Math.hypot(r1 - r0, z1 - z0) * s;
-    const a = Math.atan2(z1 - z0, r0 - r1) * 180 / Math.PI, w = 2 * Math.PI * rm * s / PW_N + .6;
+    const a = Math.atan2(z1 - z0, r0 - r1) * 180 / Math.PI, w = 2 * Math.PI * rm * s / n + .6;
     let out = '';
-    for (let i = 0; i < PW_N; i++) {
-      const t = i * 360 / PW_N, c = Math.cos(t * Math.PI / 180), sn = Math.sin(t * Math.PI / 180);
+    for (let i = 0; i < n; i++) {
+      const t = i * 360 / n, c = Math.cos(t * Math.PI / 180), sn = Math.sin(t * Math.PI / 180);
       // lit from the top left, as the cartridges are
       const lit = 0.85 * c - 0.5 * sn;
-      out += `<i style="width:${px(w)};height:${px(h)};margin:${px(-h / 2)} 0 0 ${px(-w / 2)};transform:translateZ(${px(zm * s)}) rotateZ(${t}deg) translateY(${px(-rm * s)}) rotateX(${a.toFixed(2)}deg);background:${shade(col(-rm * c, i), lit > 0 ? lit * 0.18 : lit * 0.22)}"></i>`;
+      out += `<i style="width:${px(w)};height:${px(h)};margin:${px(-h / 2)} 0 0 ${px(-w / 2)};transform:translateZ(${px(zm * s)}) rotateZ(${t}deg) translateY(${px(-rm * s)}) rotateX(${a.toFixed(2)}deg);background:${shade(col(-rm * c, i), lit > 0 ? lit * 0.18 : lit * 0.22)}${st}"></i>`;
     }
     return out;
   }
@@ -951,8 +951,50 @@
     </div></div>`;
   }
 
-  // what else a game's box holds, beside its card: each extra's height (mm, for the room it needs coming out) and its model
-  const EXTRAS = { pokewalker: { h: 48, html: walkerHTML }, guitargrip: { h: GRIP.p, html: gripHTML } };
+  /* ---------- the microphone ----------
+     One of the two USB microphones Let's Sing 2024's 2 Mic Pack came with (g.extras: 'mic', once for each), from
+     the mic printed on the box's sides: about 182 mm long and slim, all black. From the bottom: the ribbed rubber
+     sleeve the cable comes out of, the end cap, the gloss handle widening from 24 mm across to 33, a chrome ring and
+     the mesh head 38 across, its top a dome. It stands up beside the card, a turned shape drawn as rings of strips
+     (pwRing) round its length, upright. */
+  const MIC_N = 36;
+  // a strip's angle round the mic, 0 facing front; the light is at the front left (as on the cartridges)
+  const micGlint = (i, p) => Math.max(0, Math.cos(i * 2 * Math.PI / MIC_N + 0.5)) ** p;
+  const mix = (a, b, k) => { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16);
+    return '#' + [16, 8, 0].map(o => Math.round(((A >> o) & 255) * (1 - k) + ((B >> o) & 255) * k).toString(16).padStart(2, '0')).join(''); };
+  // its outline from the bottom up: [radius, height] (mm), and how each band between two points is coloured
+  const MIC = [
+    [[2.3, 0], [3.6, 2.4], [3.3, 3], [3.7, 5.4], [3.4, 6], [3.9, 8.4], [3.6, 9], [4.1, 11.4], [4.4, 14], 'rubber'],
+    [[4.4, 14], [10.5, 15.2], [11.4, 17], 'cap'], [[11.4, 17], [11.4, 26], 'cap'], [[11.4, 26], [12, 27], 'seam'],
+    [[12, 27], [13.7, 70], [15.3, 110], [16.4, 134], 'gloss'], [[16.4, 134], [18.4, 136.4], 'gloss'],
+    [[18.4, 136.4], [19.2, 137.6], [19.2, 142.4], [18.6, 143.4], 'chrome'],
+    [[18.9, 143.4], [19.1, 150], [19.1, 160], [18.1, 167], [15.6, 173], [11.7, 177.6], [6.6, 180.8], [0, 182], 'mesh'],
+  ];
+  const MIC_COL = {
+    rubber: i => mix('#0c0c0d', '#2e2f33', micGlint(i, 6) * .8),
+    cap: i => mix('#0f1012', '#3c3f45', micGlint(i, 8) * .9),
+    seam: () => '#050506',
+    gloss: i => mix('#08090a', '#6a6f77', micGlint(i, 16) * .8),
+    // chrome: the room round it in bands, the light a hard white streak
+    chrome: i => { const g = micGlint(i, 1); return g > .93 ? '#ffffff' : mix('#3e434a', '#e8ebef', (Math.sin(g * 11) + 1) / 2 * .6 + g * .4); },
+    mesh: i => mix('#111214', '#3c3e43', micGlint(i, 3) * .7),
+  };
+  function micHTML(s) {
+    const H = 182, R = 19.2, d = px(Math.max(1.2, 1.1 * s));
+    // the mesh: a fine grid of holes over the head
+    const mesh = `;background-image:radial-gradient(circle,rgba(0,0,0,.75) 32%,transparent 44%);background-size:${d} ${d}`;
+    // (heights up are negative z once it is stood up; each band runs top to bottom so its strips face out)
+    const rings = MIC.map(b => {
+      const col = MIC_COL[b[b.length - 1]], pts = b.slice(0, -1);
+      return pts.slice(1).map((q, k) => pwRing(s, q[0], -q[1], pts[k][0], -pts[k][1], (y, i) => col(i), MIC_N, b[b.length - 1] === 'mesh' ? mesh : '')).join('');
+    }).join('');
+    return `<div class="mic xtra" style="--mw:${px(2 * R * s)};--mh:${px(H * s)}"><div class="mi">${rings}</div></div>`;
+  }
+
+  // what else a game's box holds, beside its card: each extra's height (mm, for the room it needs coming out), its
+  // model and how much of it comes out of the box (out, a share of its height: the mics only their heads, so the box
+  // needn't shrink far to make room)
+  const EXTRAS = { pokewalker: { h: 48, html: walkerHTML }, guitargrip: { h: GRIP.p, html: gripHTML }, mic: { h: 182, out: 0.4, html: micHTML } };
   const extrasOf = g => (g.extras || []).filter(k => EXTRAS[k]);
 
   /* ---------- a box built from its parts (g.model) ----------
@@ -988,7 +1030,7 @@
       <path d="M50 0L100 100H0Z" fill="${f}" fill-opacity="${alpha}" stroke="${shade(col, .55)}" stroke-opacity=".5" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
       <path d="M50 0L62 100H38Z" fill="#eaffd8" fill-opacity="${(Math.max(0, lit) * .3).toFixed(2)}"/></svg></div>`;
   }
-  const PB = { r: 21.5, up: 32, down: 40, col: '#24901c' };
+  const PB = { r: 21.5, up: 36, down: 36, col: '#24901c' };
   // the plumbob, round its middle (where its two halves meet), its point down
   function plumbobHTML(s) {
     const { r, up, down, col } = PB;
@@ -1224,14 +1266,16 @@
     // a plastic case opens in two halves, hinged at the seam in the middle: the lid takes the front half of the
     // spine and the walls round it with it, the back keeps the other half
     const split = L.kind !== 'box';
+    // a cardboard box photographed all round: its right side and its top printed as they are (cover.side, cover.top)
+    const pic = f => g.cover && g.cover[f] ? ` style="background:url('${esc(g.cover[f])}') center / 100% 100%"` : '';
     const b = el(`<div class="bx ${cls(g, L)}" style="${vars(g, L)}">
       <div class="fc f-tray"><div class="tray">${mediaHTML(g, s)}</div></div>
       <div class="fc f-front"><div class="leaf">${frontHTML(g, L, false)}<div class="inner"><div class="manual"><div class="mt">${esc(g.title)}</div><div class="ml">${MANUAL}</div></div></div>${split ? `<div class="lsp">${spineHTML(g, L)}</div><i class="edge lw lw-l"></i><i class="edge lw lw-r"></i><i class="edge lw lw-t"></i><i class="edge lw lw-b"></i>` : ''}</div></div>
       <div class="fc f-back">${backHTML(g, L)}</div>
       <div class="fc f-left">${spineHTML(g, L)}</div>
       ${split ? '<div class="fc f-lin"><div class="edge"></div></div>' : ''}
-      <div class="fc f-right"><div class="edge"></div></div>
-      <div class="fc f-top">${split ? '<div class="edge"></div>' : '<div class="flap"><div class="edge"></div><i class="fin"></i></div>'}</div>
+      <div class="fc f-right"><div class="edge"${pic('side')}></div></div>
+      <div class="fc f-top">${split ? '<div class="edge"></div>' : `<div class="flap"><div class="edge"${pic('top')}></div><i class="fin"></i></div>`}</div>
       <div class="fc f-bot"><div class="edge"></div></div>
     </div>`);
     assemble(b, L);
@@ -1258,9 +1302,11 @@
     // taking it out of a cardboard box: the box shrinks to the bottom of its outline and the
     // cartridge rises three quarters out of the top, so the open box needs no more room than the closed one
     if (L.kind === 'box') {
-      const T = CART[mediaType(g)], mh = Math.max(T ? T.h : 120, ...extrasOf(g).map(k => EXTRAS[k].h)) * s;
+      const T = CART[mediaType(g)], ch = (T ? T.h : 120) * s, ex = extrasOf(g), mh = Math.max(ch / s, ...ex.map(k => EXTRAS[k].h)) * s;
       // (what came with it comes all but out, so a Pokéwalker's or a Guitar Grip's buttons show over the box's edge)
-      const k = extrasOf(g).length ? 0.92 : 0.75, os = Math.min(0.85, H / (H + k * mh));
+      const k = ex.length ? Math.min(...ex.map(k => EXTRAS[k].out || 0.92)) : 0.75, os = Math.min(0.85, H / (H + k * mh));
+      // beside something that comes only part way out, the card is lifted to still come three quarters out
+      b.style.setProperty('--lift', px(Math.max(0, mh * (1 - k) - ch * 0.25)));
       b.style.setProperty('--os', os.toFixed(3));
       b.style.setProperty('--oy', px(H * (1 - os) / 2));
       b.style.setProperty('--ty', px(H / 2 + (k - 0.5) * mh));

@@ -522,9 +522,10 @@
 .ml i { display: block; flex: none; height: .16em; background: currentColor; opacity: .25; border-radius: 1px; }
 .ml b { display: block; flex: none; height: .3em; }
 .bx.open .leaf { transform: rotateY(-155deg); }
-.bx.kind-keep.open, .bx.kind-jewel.open { translate: calc(var(--w) * .42) 0; scale: .82; }
+/* (scaled in depth too, so what is in it stays round seen from the side) */
+.bx.kind-keep.open, .bx.kind-jewel.open { translate: calc(var(--w) * .42) 0; scale: .82 .82 .82; }
 /* a cardboard box sinks and shrinks while the cartridge rises out of the top, inside the closed box's outline (sizes from js/cases.js) */
-.bx.kind-box.open { translate: 0 var(--oy); scale: var(--os); }
+.bx.kind-box.open { translate: 0 var(--oy); scale: var(--os) var(--os) var(--os); }
 .bx.kind-box .f-front .leaf { transition: none; }
 .bx.kind-box.open .leaf { transform: none; }
 .bx .f-tray .tray { position: absolute; inset: 0; display: grid; place-items: center;
@@ -569,6 +570,8 @@
    Out of a HeartGold or SoulSilver box beside the card, bottoms level, a little askew; its sides are strips
    round the middle, its front and back two discs */
 .duo { display: flex; align-items: flex-end; gap: var(--gap); transform-style: preserve-3d; }
+/* the card lifted to come out of the box as far as ever beside something long that only comes part way (the mics) */
+.duo > :first-child { margin-bottom: var(--lift, 0); }
 .pw { position: relative; width: var(--pw); height: var(--pw); flex: none; transform-style: preserve-3d; rotate: -7deg; }
 .bx.kind-box .f-tray .xtra { transform: translateZ(calc(var(--d) * -.5)); }
 .pw > * { position: absolute; left: 50%; top: 50%; display: block; backface-visibility: hidden; }
@@ -585,6 +588,11 @@
 .gg .xc { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; }
 .gg .xf { position: absolute; left: 0; top: 0; backface-visibility: hidden; overflow: hidden; }
 .gg .xf > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* a microphone: rings of strips round its length (js/cases.js, micHTML), stood up on its end, the two a little apart in their lean */
+.mic { position: relative; width: var(--mw); height: var(--mh); flex: none; transform-style: preserve-3d; rotate: -3deg; }
+.mic + .mic { rotate: 4deg; }
+.mic .mi { position: absolute; left: 50%; top: 100%; transform-style: preserve-3d; transform: rotateX(-90deg); }
+.mic .mi > i { position: absolute; left: 0; top: 0; display: block; backface-visibility: hidden; }
 
 /* ---------- discs (drawn in js/cases.js) ----------
    The data side up, in rings out from the hole (as % of the radius): the clear hub to 27%, its stacking ring,

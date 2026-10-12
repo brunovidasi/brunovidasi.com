@@ -94,9 +94,9 @@
   const flat = v => v === 'checklist'; // views with no cases to carry across
   const state = {
     view: [...VIEWS, 'checklist'].includes(store.get('view')) ? store.get('view') : 'shelf', // checked again once a collection is picked
-    mode: ['mixed', 'spines', 'covers'].includes(store.get('mode')) ? store.get('mode') : 'mixed',
+    mode: 'mixed', // one cover per console faces out, the rest stand as spines
     sort: store.get('sort'), // checked once a collection is picked
-    sel: new Set(), q: '', covers: '', lib: '',
+    sel: new Set(), q: '', lib: '',
   };
   let ALL = [], games = [], DB = [];
   const byId = new Map(), LISTS = {}; // LISTS: each collection's games
@@ -112,7 +112,6 @@
   function base() {
     const words = fold(state.q).split(/\s+/).filter(Boolean);
     return ALL.filter(g =>
-      (!state.covers || (state.covers === 'with') === !!g.cover) &&
       (!words.length || words.every(w => g._hay.includes(w))));
   }
   // with only the PC picked, its games can be narrowed to the boxed ones or to one launcher's library
@@ -132,7 +131,7 @@
     if (figures) {
       const consoles = CONSOLES.filter(c => !c.hidden && DB.some(g => g.console === c.id));
       const years = DB.map(g => g.released).filter(Boolean).map(r => +r.slice(0, 4));
-      figures.innerHTML = `<span><b>${consoles.length}</b> Consoles</span><span><b>${DB.length}</b> Games</span>`;
+      figures.innerHTML = `<span><b>${consoles.length}</b> Consoles</span><span><b>${DB.filter(g => !g.twinOf).length}</b> Games</span>`;
       figures.hidden = !!CFG;
     }
     $('#hero').innerHTML = CFG ? CFG.hero(ALL) : `<header class="hero hero-figures"><h1 class="sr-only">Bruno's Game Shelf</h1></header>`;
@@ -241,8 +240,6 @@
       render(!before);
       Morph.play(before);
     }));
-    $$('#mode button').forEach(b => b.addEventListener('click', () => { state.mode = b.dataset.m; store.set('mode', state.mode); changed(); }));
-    $$('#covers button').forEach(b => b.addEventListener('click', () => { state.covers = b.dataset.cv; changed(); }));
     // the PC's libraries: its boxed copies, then each launcher, a logo on each (js/consoles.js)
     const libIcon = k => STORE_LOGOS[k] || `<i class="lib-glyph" style="--lb:${LAUNCHERS[k].bg};--lf:${LAUNCHERS[k].fg}">${LAUNCHERS[k].glyph}</i>`;
     $('#lib').innerHTML = `<button type="button" data-lib="">All</button>` +
@@ -297,10 +294,9 @@
     $$('.chip[data-c]').forEach(c => { c.hidden = !has.has(c.dataset.c); });
     $$('.fam').forEach(f => { f.hidden = !$$('.chip[data-c]', f).some(c => !c.hidden); });
     $('#view [data-view="checklist"]').hidden = !VIEWS.includes('checklist');
-    $('#mode [data-m="mixed"]').textContent = `One cover per ${CFG ? CFG.groupNoun : 'console'}`;
     $('#sort option[value="console"]').textContent = MENU.console.label;
     $$('[data-n]').forEach(i => {
-      const k = i.dataset.n, n = k === 'all' ? b.length : (counts[k] || 0);
+      const k = i.dataset.n, n = k === 'all' ? b.filter(g => !g.twinOf).length : (counts[k] || 0);
       i.textContent = n + (n === 1 ? ' game' : ' games');
       if (k !== 'all') i.closest('.chip').classList.toggle('empty', !n);
     });
@@ -311,12 +307,7 @@
       f.classList.toggle('on', ids.every(i => state.sel.has(i)));
     });
     $$('#view button').forEach(x => x.classList.toggle('on', x.dataset.view === state.view));
-    $$('#mode button').forEach(x => x.classList.toggle('on', x.dataset.m === state.mode));
-    $('#modeWrap').hidden = state.view !== 'shelf' && state.view !== 'rows';
     document.body.dataset.view = state.view;
-    $$('#covers button').forEach(x => x.classList.toggle('on', x.dataset.cv === state.covers));
-    $('#cv-with').textContent = ALL.filter(g => g.cover).length;
-    $('#cv-without').textContent = ALL.filter(g => !g.cover).length;
     // a library with no PC games on this page isn't offered
     $('#libWrap').hidden = !pcOnly();
     const pcs = ALL.filter(g => g.console === 'pc');
@@ -653,6 +644,9 @@
     host.replaceChildren(wrap);
   }
 
+  // its front as it stands face out: a box built from its parts (g.model) is that model, not a picture of its front
+  const faceArt = (g, k) => g.model ? Case.slab(g, k, true) : Case.front(g, k);
+
   /* ---------- a game standing face out with its name under it: in the grid and in the rows ----------
      It stands at scale s, no wider than room and no taller than the stage. */
   function cellOf(g, s, room, stage, animate, delay) {
@@ -674,7 +668,7 @@
     } else {
       const L = Case.layout(g, 1);
       const k = Math.min(s, room / L.w, stage / L.h);
-      const face = Case.front(g, k);
+      const face = faceArt(g, k);
       if (g.format === 'digital') face.classList.add('ghosted');
       tile.append(face);
       w = L.w * k;
@@ -756,7 +750,7 @@
         tile.className = 'gt';
         if (kind === 'loose') tile.append(Case.cart(g, s * cartK(g)));
         else if (kind === 'stack') tile.append(Case.top(g, s * cartK(g), true, R.spine * 1.2));
-        else if (kind === 'face') tile.append(Case.front(g, Math.min(s, (R.stage * 1.1) / Case.layout(g, 1).w)));
+        else if (kind === 'face') tile.append(faceArt(g, Math.min(s, (R.stage * 1.1) / Case.layout(g, 1).w)));
         else {
           const sp = Case.spine(g, s);
           sp.style.setProperty('--d', R.spine + 'px');
@@ -1389,11 +1383,24 @@
       ].filter(Boolean).join(''));
     }
 
-    // what a collection says of it besides: for a Sims game on PC, the rest of its series' packs (js/sims.js)
+    // what a collection says of it besides: for a Sims game on PC, the rest of its series' packs (js/sims.js);
+    // and for any other game sold with packs, the game and its packs on the same console
     const related = g => Object.entries(COLLECTIONS).map(([k, c]) => {
       const r = c.drawer && LISTS[k] && c.drawer(g, LISTS[k]);
       return r ? section(r.title, r.html) : '';
-    }).join('');
+    }).join('') || packsHtml(g);
+
+    // a game and its packs: the copies titled as the game, and the ones with a pack (data/games.json) titled
+    // "Game: Pack" or filed under it (sortAs) — Spore with Galactic Adventures, Age of Empires III with The WarChiefs
+    function packsHtml(g) {
+      if (g.series) return '';
+      const root = g.pack ? g.sortAs || g.title.split(': ')[0] : g.title;
+      const fam = DB.filter(x => x.console === g.console && !x.series
+        && (x.pack ? x.sortAs === root || x.title.startsWith(root + ': ') : x.title === root));
+      if (!fam.some(x => x.pack) || fam.length < 2) return '';
+      const name = x => x.title.startsWith(root + ': ') ? x.title.slice(root.length + 2) : x.title;
+      return section(`${root} on ${CONSOLE_BY_ID[g.console].short}`, Collection.packList(g, fam, name));
+    }
 
     function details(g) {
       const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.reproduction && 'Reproduction', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
@@ -1989,8 +1996,15 @@
         if (xbox) g.xbox = xboxOf(g, xbox);
         if (ea) g.ea = eaOf(g, ea);
         if (rockstar) g.rockstar = rockstarOf(g, rockstar);
-        g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, CONSOLE_BY_ID[g.console].name, CONSOLE_BY_ID[g.console].short, g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac', g.steam && 'Steam', g.format === 'digital' && STORE[g.console] && 'eShop', ...(g.steam?.store?.genres || []), g.psn?.trophies?.platinum && 'Platinum trophy', g.xbox && 'Xbox Live', inLib(g, 'ea') && 'EA app', g.rockstar && 'Rockstar Games Launcher', ...nicknames(g)].join(' | '));
+        g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, ...[g.console, ...(g.alsoOn || [])].flatMap(c => [CONSOLE_BY_ID[c].name, CONSOLE_BY_ID[c].short]), g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac', g.steam && 'Steam', g.format === 'digital' && STORE[g.console] && 'eShop', ...(g.steam?.store?.genres || []), g.psn?.trophies?.platinum && 'Platinum trophy', g.xbox && 'Xbox Live', inLib(g, 'ea') && 'EA app', g.rockstar && 'Rockstar Games Launcher', ...nicknames(g)].join(' | '));
       });
+      // a copy that plays on more than one console (alsoOn: an Xbox One & Xbox 360 release) stands under each of them,
+      // in its own case; it counts once
+      DB.filter(g => g.alsoOn).forEach(g => g.alsoOn.forEach(c => {
+        const twin = { ...g, id: g.id.replace(/^[^-]+/, c), console: c, caseStyle: g.caseStyle || g.console, twinOf: g.id };
+        byId.set(twin.id, twin);
+        DB.push(twin);
+      }));
       for (const [k, c] of Object.entries(COLLECTIONS)) LISTS[k] = c.games(db, ...(c.data || []).map(u => file[u]));
       shell();
       const h = location.hash.slice(1);
