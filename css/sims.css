@@ -114,6 +114,10 @@
 .sims :is(.views button.on, .views button.open-btn) { background: var(--green); color: #0b3a07; }
 .sims .spot-eyebrow { color: var(--acc); font-weight: 800; }
 .sims .spot-info h2 { font-weight: 600; }
+.sims .spot-drawer { border-color: rgba(150,210,255,.5); }
+.sims .dw-meter i::after { background: var(--green); }
+.sims .dw-glance b { font-weight: 600; }
+.sims .dw-packs li.on button { color: var(--acc); }
 .sims #tip { border-radius: 14px; background: var(--panel); color: #fff; border: 1.5px solid rgba(150,210,255,.6); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 8px 20px rgba(2,14,44,.5); }
 .sims #tip b { font-weight: 600; font-size: 15px; }
 

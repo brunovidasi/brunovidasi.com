@@ -110,6 +110,76 @@ The PlayStation games are discs already on the shelf, so the sync never adds a c
 
 On the site, a tied game shows under its details how long it was played, over how many sessions, when it was first and last played, and how many of its trophies were earned.
 
+## Nintendo Switch
+
+The Switch and Switch 2 play history comes in the same way, through `tools/nintendo-sync.mjs`, from an export made by `api/nintendo-exporter` (see its README: it signs in once to the Nintendo Account as the Nintendo Store app does, and keeps the session in `session.json`, which is never committed, and neither are its exports):
+
+```bash
+cd api/nintendo-exporter && php export.php login   # once
+php export.php                                     # a new export in exports/
+cd ../../tools && node nintendo-sync.mjs --dry     # show what it would change
+node nintendo-sync.mjs                             # bring it in
+```
+
+It writes `data/nintendo.json`, by Nintendo title id (`0100…`), written whole each time: every game played on the account, cartridge or download, with how long it was played, on how many days, when it was first and last played and which console it was played on. It lists games played, not games owned: one never started isn't in it. Nothing about the account goes in it.
+
+The sync ties a copy with `"nintendoTitleId"`, to the one Switch or Switch 2 copy with the same name (or `listedAs`), or with a name that starts with it (but not a sequel's: *Just Dance* isn't *Just Dance 2022*), leaving out *Nintendo Switch 2 Edition*; when there are several, the one on the console it was played on. When there are several, it only reports it, and it is tied by hand: *Moving Out* and *Pokémon: Let's Go, Pikachu!* are tied to both their copies. A copy with more than one game in it takes a list, and its numbers are added up: the *GTA* Trilogy cartridge has III's and San Andreas' (Vice City's joins once it has been played), the *MySims: Cozy Bundle* MySims' and MySims Kingdom's.
+
+A game played with no copy at all was bought or downloaded on the eShop, so it gets a new digital copy (`--no-add` stops that), with only its title filled in: give it its release date, publisher, developer and genre by hand, and its cover with `fetch-covers.mjs --only` (a free game with no box takes its eShop icon from `data/nintendo.json`, as `"plain": true`). After that the copy is yours. To keep one off the site, give it `"hidden": true` rather than deleting it, or the next sync adds it back. Apps and what comes with Nintendo Switch Online (YouTube, Pokémon HOME, the Nintendo Classics, Tetris 99) are never added.
+
+On the site, a tied game shows under its details how long it was played, on how many days and when it was first and last played, and a digital copy's licence has its playtime. A digital Switch or Switch 2 copy is a *Nintendo eShop* copy, in its details and its licence, and *eShop* finds them in the search.
+
+## Xbox
+
+What Xbox Live knows about the Xbox games comes in the same way, through `tools/xbox-sync.mjs`, from an export made by `api/xbox-exporter` (see its README: it signs in once to the Microsoft account as the Xbox app does, and keeps the session in `session.json`, which is never committed, and neither are its exports):
+
+```bash
+cd api/xbox-exporter && php export.php login   # once
+php export.php                                 # a new export in exports/
+cd ../../tools && node xbox-sync.mjs --dry     # show what it would change
+node xbox-sync.mjs                             # bring it in
+```
+
+It writes `data/xbox.json`, by Xbox title id, written whole each time: every game played on the profile (Xbox 360, Xbox One, Series X|S and Xbox on PC), when it was last played, the minutes played Xbox keeps for it (only some Xbox One, Series and PC games have them; Xbox 360 ones never do), its achievements (how many, how many unlocked, the gamerscore, and each one unlocked with its date) and whether it came with Game Pass, and the profile's gamerscore. It lists games played, not games owned. The gamertag and Xbox id stay out of it.
+
+The sync ties a copy with `"xboxTitleId"`, to the one copy with the same name (or `listedAs`), or with a name that starts with it, on a console it was played on: an Xbox 360 game to the `x360` copy, even when it was played on an Xbox One; an Xbox One or Series game to the `xone` copy; a game played in the Xbox app on PC to the `pc` copy. It reads Xbox's short names (*GTA V*, *Bully Scholarship Ed.*). When there is no copy or more than one, it only reports it, and it is tied by hand. It never adds a copy: Xbox lists the Game Pass and free games played too (*Fortnite*, *Call of Duty: Modern Warfare*), which aren't on the shelf. The Windows games the Xbox Game Bar noticed running (the EA *Sims* games) say only when they were last played, so they stay out.
+
+On the site, a tied game shows under its details how long it was played (when Xbox knows), when it was last played, how many achievements were unlocked, the gamerscore and the latest achievement, and *Xbox Live* finds them in the search.
+
+## EA app
+
+The EA app library comes in the same way, through `tools/ea-sync.mjs`, from an export made by `api/ea-exporter` (see its README: it signs in once to the EA account as the EA app does, and keeps the session in `session.json`, which is never committed, and neither are its exports):
+
+```bash
+cd api/ea-exporter && php export.php login   # once
+php export.php                               # a new export in exports/
+cd ../../tools && node ea-sync.mjs --dry     # show what it would change
+node ea-sync.mjs                             # bring it in
+```
+
+It writes `data/ea.json`, by EA game slug, written whole each time: every game and add-on (expansion, game, stuff pack, kit) the EA account owns on PC (bought, or a disc's code redeemed), the offers it is owned through and since when, and for a game the play time and last session the EA app keeps for it and its achievements with when each was unlocked. Unlike Xbox and Nintendo it lists games owned, played or not. The parts EA ships a game in (Battlefield 6's HD textures, multiplayer and single player), the free Battlefield REDSEC and the extras that aren't a pack (SimCity's city sets, the Sims 4 bonus items and bundles) stay out. Nothing about the account goes in it.
+
+The sync ties a copy with `"eaSlug"`, to the one PC copy with the same name (or `listedAs`; ™, a year in brackets and *Expansion Pack* at the end don't count: *The Sims™ 3 Late Night Expansion Pack* is *The Sims 3: Late Night*), and of several to the digital one or the disc that is `alsoDigital`. When there are still several, it only reports it, and it is tied by hand. EA names a few games its own way, so they are tied by hand: *The Sims™ + The Sims Packs* is *The Sims Legacy Collection*, *The Sims™ 2 + The Sims™ 2 Packs* the *Legacy Collection* of The Sims 2, *Sim City 3000™ Unlimited* SimCity 3000. A game with no copy at all was bought in the EA app, so it gets a new digital one (`"launcher": "ea"`; `--no-add` stops that), with only its title and region filled in (an add-on takes its game's name before its own, *The Sims 4: Grunge Revival Kit*, and its series, publisher, developer and genre, and a `pack` from its name): give it its release date, publisher, developer and genre by hand, and its cover with `fetch-covers.mjs --only`. After that the copy is yours. To keep one off the site, give it `"hidden": true` rather than deleting it, or the next sync adds it back.
+
+On the site, a tied game shows under its details how long it was played in the EA app, when it was last played and how many achievements were unlocked (a tied add-on, since when it is in the EA app), and a digital copy's licence has its playtime and the day it joined the account. With only the PC picked, the *EA app* library is exactly the copies tied to the export: the ones bought in the EA app and the discs whose code was redeemed in it (those are under *Physical* too). *EA app* finds them in the search.
+
+## Rockstar Games
+
+What Rockstar knows about the account comes in the same way, through `tools/rockstar-sync.mjs`, from an export made by `api/rockstar-exporter` (see its README: it signs in once from the site's sign-in check copied as cURL out of a signed-in rockstargames.com tab, and keeps it in `session.json`, which is never committed, and neither are its exports):
+
+```bash
+cd api/rockstar-exporter && pbpaste | php export.php login   # once
+php export.php                                     # a new export in exports/
+cd ../../tools && node rockstar-sync.mjs --dry     # show what it would change
+node rockstar-sync.mjs                             # bring it in
+```
+
+It writes `data/rockstar.json`, by Rockstar's short name for a game (`gtav`, `rdr2`, `lan`), written whole each time: every game the account has played, on which platforms and when it was last seen in each, and for a PC game the achievements unlocked, with when. Rockstar keeps no play time anyone can read (the launcher counts it but never shows it), and gives only the achievements unlocked, not how many there are. Nothing about the account goes in it.
+
+The sync ties a PC copy with `"rockstarTitle"`, to the one PC copy with the same name (or `listedAs`), and of several to the one on the Rockstar Games Launcher. When there are still several, it only reports it, and it is tied by hand. Rockstar names its games by short codes, which `TITLES` in the sync turns into the shelf's names; a code that isn't there is only reported, so add it. A PC game with no copy at all was bought in the launcher, so it gets a new digital one (`"launcher": "rockstar"`; `--no-add` stops that), with only its title and publisher filled in. The console games are left to PSN and Xbox. After that the copy is yours. To keep one off the site, give it `"hidden": true` rather than deleting it, or the next sync adds it back.
+
+On the site, a tied game shows under its details when it was last played on PC and how many achievements were unlocked, and *Rockstar Games Launcher* finds them in the search.
+
 **The Sims page** takes every game with a `"series"` (`"The Sims"`, `"The Sims 2"`, `"The Sims Stories"`, `"The Sims 3"`, `"The Sims Medieval"`, `"The Sims 4"`, `"SimCity"` or `"MySims"`), on any console. `"pack"` says what it is (`Base game`, `Collection`, `Expansion Pack`, `Game Pack`, `Stuff Pack`, `Kit`, `World` or `Extra`) and `"packCode"` gives The Sims 4's numbering (`EP01`, `GP04`, `SP12`). Serial keys are never kept here.
 
 **The GTA page** reads `data/gta.json`: the eras, and in each its games with `copies` (ids from `games.json`) and `missing` (console ids, plus `psp` and `xsx` for Xbox Series X|S). When a missing version comes home, add it to `games.json` and move its id from `missing` to `copies`. A copy with two games in it (Grand Theft Auto & GTA London) goes in both games' `copies`: it shows in both rows of the checklist and stands on the shelf once, with the first.
@@ -182,8 +252,11 @@ The script never replaces covers marked `manual`. A source with an API key, such
 - `data/games.json`: the collection
 - `data/steam.json`, `tools/steam-sync.mjs`, `api/steam-exporter/`: the Steam library (above)
 - `data/psn.json`, `tools/psn-sync.mjs`, `api/psn-exporter/`: PlayStation Network (above)
+- `data/nintendo.json`, `tools/nintendo-sync.mjs`, `api/nintendo-exporter/`: the Nintendo Switch play history (above)
+- `data/xbox.json`, `tools/xbox-sync.mjs`, `api/xbox-exporter/`: Xbox Live (above)
+- `data/ea.json`, `tools/ea-sync.mjs`, `api/ea-exporter/`: the EA app library (above)
 - `covers/`: box art, one folder per console
-- `tools/`: the cover fetcher (and `palette.mjs`, the colours it takes from a cover), the Steam and PSN syncs, and `style-previews.mjs`, which builds the style prototype previews
+- `tools/`: the cover fetcher (and `palette.mjs`, the colours it takes from a cover), the Steam, PSN, Nintendo, Xbox and EA app syncs, and `style-previews.mjs`, which builds the style prototype previews
 - `prototypes/`, `assets/`: the four design prototypes (and the plumbob)
 - `prototypes/styles/`: the style prototypes, their previews and their gallery
 - `fonts/`: the self-hosted fonts: Orbitron and Exo 2 for the site, Fredoka and Nunito for the Sims, Anton, Yellowtail and Manrope for GTA, Fraunces and Space Grotesk for what is printed on the cases

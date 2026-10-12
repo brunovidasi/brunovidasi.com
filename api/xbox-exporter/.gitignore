@@ -1,6 +1,4 @@
-node_modules/
-config.json
-tokens.json
-output/*
-!output/.gitkeep
+/session.json
+/exports/*
+!/exports/.gitkeep
 .DS_Store

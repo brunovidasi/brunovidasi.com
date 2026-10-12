@@ -61,7 +61,7 @@ html.gta {
 .gta :is(.ghead b, .shead h2, .tr-head h3, .empty-msg b, .spot-info h2) { font-family: var(--gta-display); font-weight: 400; text-transform: uppercase; letter-spacing: .01em; }
 .gta :is(.cap b, .ltitle, #tip b, .meter .nums b, .want b) { font-family: var(--gta-ui); font-weight: 800; }
 .gta .spot-info h2 { font-size: clamp(2.2rem, 4.8vw, 4.4rem); line-height: .95; }
-.gta .spot-note { font: 400 1.5rem/1.2 var(--gta-script); color: var(--peach); }
+.gta .dw-note { font: 400 1.4rem/1.2 var(--gta-script); color: var(--peach); border-left-color: var(--orange); }
 .gta :is(.search input, select.sort, .seg button, .pills button, .packs h3, .tag, .ghostbox b, .ghostbox i, .kc, .plate) { font-family: var(--gta-ui); }
 
 /* ---------- bars and controls: black with a sunset edge ---------- */
@@ -127,7 +127,11 @@ html.gta {
 .gta .views button.open-btn { background: var(--sunset); color: var(--ink); }
 .gta .spot-eyebrow { color: var(--peach); font-weight: 700; }
 .gta .stamp { border-radius: 0; border-color: var(--teal); color: var(--teal); background: rgba(10,6,16,.85); }
-.gta .spot-find { color: var(--orange); }
+.gta :is(.dw-link, .dw-more) { color: var(--orange); }
+.gta .spot-drawer { border-radius: 0; border-color: rgba(255,79,154,.4); }
+.gta .dw-glance, .gta .dw-unlocks li { border-radius: 0; }
+.gta .dw-meter i::after { background: var(--sunset); }
+.gta .dw-glance b { font-family: var(--gta-display); font-weight: 400; font-size: 1.35rem; }
 .gta #tip { border-radius: 0; background: #0a0710; color: var(--text); border-left: 3px solid var(--gold); }
 .gta #tip b { font-family: var(--gta-display); font-weight: 400; text-transform: uppercase; letter-spacing: .02em; font-size: 17px; }
 

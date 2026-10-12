@@ -1,60 +1,44 @@
-# Xbox Gaming Data Exporter (Node.js + PHP)
+# Xbox Exporter
 
-An experimental local exporter that attempts to use the XboxReplay community authentication package and Xbox Live endpoints, saving raw responses to JSON. The optional PHP script validates the resulting JSON files.
+Exports what Xbox Live knows about the games played on an Xbox profile: every game played on Xbox 360, Xbox One, Xbox Series X|S or Xbox on PC, with its gamerscore and achievement counts, when it was last played, its image and store details, the minutes played Xbox keeps for it, and each game's achievements (locked and unlocked, with unlock dates and rarity).
 
-## Important: this is not a guaranteed working sign-in path
-
-Xbox Live is not a general-purpose public API. Community libraries and endpoint access can change or be restricted. The XboxReplay OAuth/custom application docs warn that custom OAuth setup is intended for approved Microsoft partners. The library's simple username/password method does not support MFA, so this project tries an interactive OAuth flow instead, but the library's code exchange may still rely on its own default client settings. Microsoft may reject the app or Xbox token exchange. I cannot promise this works with a personal Microsoft account, or that it can retrieve every type of gaming data.
-
-References:
-- https://github.com/XboxReplay/xboxlive-auth
-- https://github.com/XboxReplay/xboxlive-auth/blob/master/docs/02-Custom_Azure_Application.md
-- https://github.com/XboxReplay/xboxlive-api
-- https://learn.microsoft.com/en-us/xbox/gdk/docs/reference/live/rest/uri/titlehistory/uri-titlehistoryusersxuidhistorytitlesgetv2?view=gdk-2604
+It signs in the way the Xbox app does (a Microsoft account, with the Xbox app's client id), so it needs no Azure app and no API key, and two-step verification happens in the browser as usual. The services it reads are the ones the Xbox app uses. They are undocumented for outside use and Microsoft can change them at any time. It only reads; it changes nothing on the account.
 
 ## Requirements
+- PHP 8+ with cURL
 
-- Node.js 20 or newer: https://nodejs.org/
-- PHP 8.1+ only for the optional JSON validator
+## Sign in (once)
+```bash
+php export.php login
+```
+1. Open the link it prints and sign in with the Microsoft account your Xbox profile uses.
+2. After you sign in, the page goes blank. Copy the whole address from the address bar. It starts with `https://login.live.com/oauth20_desktop.srf?code=`.
+3. Paste it into the terminal (it isn't shown). The code works once, for a few minutes.
 
-## Setup
+The session is saved in `session.json`. Each export renews it, so it lasts as long as you run an export every month or two. If it stops working, sign in again. You can also pass the refresh token as `XBOX_REFRESH_TOKEN` instead of keeping the file.
 
-1. Extract the ZIP.
-2. Open Terminal in this folder.
-3. Install dependencies:
+## Export
+```bash
+php export.php                    # everything
+php export.php --no-achievements  # skips the per-game achievement lists (one or two requests per game)
+```
+It writes to `exports/` (each file keeps Xbox's response as it is, under `data`):
 
-   ```bash
-   npm install
-   ```
+| File | What's in it |
+| --- | --- |
+| `title-history.json` | every title played: `titleId`, name, `devices`, `achievement` (current/total gamerscore and achievements, %), `titleHistory.lastTimePlayed`, `displayImage`, `detail` (publisher, developer, release date, genres), Game Pass, product ids |
+| `minutes-played.json` | `titleId` → minutes played |
+| `achievements.json` | `titleId` → its achievements (`contract: 2` for newer games; `contract: 1` for Xbox 360 games, with `earned` listed separately) |
+| `profile.json` | gamertag, gamerscore, picture |
 
-4. Edit `config.json`. The `clientId` placeholder must be replaced with a client ID configured for a compatible Microsoft OAuth application. The redirect URI is set to `http://localhost:3000/callback`. Whether this can be registered and used for Xbox token exchange depends on Microsoft's app policies and the library's implementation.
-5. Start interactive authentication:
+Game names are in `en-GB`; set `XBOX_LOCALE` (`en-US`, `pt-BR`, …) for another language.
 
-   ```bash
-   npm run auth
-   ```
-
-6. If authentication succeeds and `tokens.json` is created, run:
-
-   ```bash
-   npm run export
-   ```
-
-7. Optional PHP validation:
-
-   ```bash
-   php export.php
-   ```
-
-## Output
-
-The script attempts to create `profile.json`, `presence.json`, `friends.json`, `achievements.json`, `title_history.json`, and `export_summary.json` under `output/`. Each endpoint response is saved, including HTTP error responses, so you can see which routes failed.
-
-The sample endpoints are experimental and may return 401/403/404. Xbox title history is not a complete record of every game ever launched, and playtime across all console and PC games is not guaranteed to be available.
+## Limitations
+- It lists games **played**, not games **owned**: a game bought but never started isn't in it. Microsoft has no service that lists what an account owns.
+- Minutes played exist only for Xbox One, Series and PC games. Xbox 360 games have achievements but no play time.
+- Original Xbox games played on an Xbox 360 or Xbox One show up only if they were played through backward compatibility while signed in.
+- Xbox Live may ask the exporter to slow down on a big library; it waits and carries on.
 
 ## Security
-
-- `tokens.json` contains sensitive bearer/refresh tokens. Treat it like a password.
-- Never share `tokens.json`, `config.json`, or exported files publicly.
-- Do not put your Microsoft password in this project.
-- This tool only attempts read requests; it does not modify your Xbox profile or unlock achievements.
+- `session.json` is a login credential for the Microsoft account: never share or commit it (it is in `.gitignore`).
+- The exports hold the account's Xbox id (XUID) in places, so keep `exports/` out of Git.

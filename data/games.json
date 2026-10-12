@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11",
+  "updated": "2026-10-12",
   "games": [
     {
       "id": "ps5-avatar-frontiers-of-pandora",
@@ -2414,7 +2414,8 @@
         "#bd915c",
         "#6a4337",
         "#1b0d0d"
-      ]
+      ],
+      "nintendoTitleId": "040074a01bf12000"
     },
     {
       "id": "switch2-mario-kart-world",
@@ -2440,7 +2441,8 @@
         "#c49d73",
         "#96b8d7",
         "#685759"
-      ]
+      ],
+      "nintendoTitleId": "0400c3f00006e000"
     },
     {
       "id": "switch2-super-mario-party-jamboree-jamboree-tv",
@@ -2468,7 +2470,8 @@
         "#685c56",
         "#a9a69d",
         "#baa638"
-      ]
+      ],
+      "nintendoTitleId": "0100965017338000"
     },
     {
       "id": "switch2-pokemon-legends-z-a",
@@ -2497,7 +2500,8 @@
         "#2f374c",
         "#596778",
         "#a8a4a2"
-      ]
+      ],
+      "nintendoTitleId": "0100f43008c44000"
     },
     {
       "id": "switch-animal-crossing-new-horizons",
@@ -2522,7 +2526,8 @@
         "#c2a560",
         "#9dc3d3",
         "#578852"
-      ]
+      ],
+      "nintendoTitleId": "01006f8002326000"
     },
     {
       "id": "switch-crash-team-racing-nitro-fueled",
@@ -2548,7 +2553,8 @@
         "#399cc2",
         "#be814b",
         "#586159"
-      ]
+      ],
+      "nintendoTitleId": "0100f9f00c696000"
     },
     {
       "id": "switch-cuphead",
@@ -2574,7 +2580,8 @@
         "#f9ce19",
         "#c2c1b2",
         "#a36257"
-      ]
+      ],
+      "nintendoTitleId": "0100a5c00d162000"
     },
     {
       "id": "switch-donkey-kong-country-tropical-freeze",
@@ -2600,7 +2607,8 @@
         "#8d5d3d",
         "#c9a27d",
         "#aadce8"
-      ]
+      ],
+      "nintendoTitleId": "0100c1f0051b6000"
     },
     {
       "id": "switch-donkey-kong-country-returns-hd",
@@ -2629,7 +2637,8 @@
         "#503b1b",
         "#76833d",
         "#c5834c"
-      ]
+      ],
+      "nintendoTitleId": "01009d901bc56000"
     },
     {
       "id": "switch-grand-theft-auto-the-trilogy-the-definitive-edition",
@@ -2657,6 +2666,10 @@
         "#c39275",
         "#7d6352",
         "#c6c9c0"
+      ],
+      "nintendoTitleId": [
+        "0100c3c012718000",
+        "010065a014024000"
       ]
     },
     {
@@ -2682,7 +2695,8 @@
         "#374549",
         "#767f7e",
         "#c2bba6"
-      ]
+      ],
+      "nintendoTitleId": "0100f7e00c70e000"
     },
     {
       "id": "switch-it-takes-two",
@@ -2705,7 +2719,8 @@
         "#a18c73",
         "#6c5445",
         "#d28531"
-      ]
+      ],
+      "nintendoTitleId": "010092a0172e4000"
     },
     {
       "id": "switch-jumanji-the-video-game",
@@ -2756,7 +2771,8 @@
         "#c4c2c2",
         "#3f6dd2",
         "#8a697e"
-      ]
+      ],
+      "nintendoTitleId": "0100bce000598000"
     },
     {
       "id": "switch-just-dance-2018",
@@ -2807,7 +2823,8 @@
         "#e4e6e8",
         "#bdbaca",
         "#9986a2"
-      ]
+      ],
+      "nintendoTitleId": "010075600ae96000"
     },
     {
       "id": "switch-just-dance-2020",
@@ -2832,7 +2849,8 @@
         "#de7745",
         "#ae44d8",
         "#3471aa"
-      ]
+      ],
+      "nintendoTitleId": "0100ddb00db38000"
     },
     {
       "id": "switch-just-dance-2021",
@@ -2882,7 +2900,8 @@
         "#182576",
         "#4b7c99",
         "#aab7bc"
-      ]
+      ],
+      "nintendoTitleId": "0100ea6014bb8000"
     },
     {
       "id": "switch-kirby-star-allies",
@@ -2908,7 +2927,8 @@
         "#e2a7c8",
         "#c37675",
         "#7d92cb"
-      ]
+      ],
+      "nintendoTitleId": "01007e3006dda000"
     },
     {
       "id": "switch-la-noire",
@@ -2934,7 +2954,8 @@
         "#dddad1",
         "#a96b45",
         "#c6a68d"
-      ]
+      ],
+      "nintendoTitleId": "0100830004fb6000"
     },
     {
       "id": "switch-lego-dc-super-villains",
@@ -2963,7 +2984,8 @@
         "#2a1a34",
         "#503943",
         "#65675e"
-      ]
+      ],
+      "nintendoTitleId": "010070d009fec000"
     },
     {
       "id": "switch-lets-sing-queen",
@@ -2991,7 +3013,8 @@
         "#030302",
         "#241f18",
         "#4c412e"
-      ]
+      ],
+      "nintendoTitleId": "01003ce011a86000"
     },
     {
       "id": "switch-lets-sing-2024",
@@ -3018,7 +3041,8 @@
         "#8c6397",
         "#4e3e89",
         "#c296b1"
-      ]
+      ],
+      "nintendoTitleId": "0100aaf018058000"
     },
     {
       "id": "switch-lets-sing-2025",
@@ -3045,7 +3069,8 @@
         "#c253b6",
         "#5d3eb7",
         "#e5c5da"
-      ]
+      ],
+      "nintendoTitleId": "01001c101ed10000"
     },
     {
       "id": "switch-mario-kart-8-deluxe",
@@ -3072,7 +3097,8 @@
         "#908891",
         "#555359",
         "#d0b7ad"
-      ]
+      ],
+      "nintendoTitleId": "0100152000022000"
     },
     {
       "id": "switch-mario-kart-live-home-circuit",
@@ -3098,7 +3124,8 @@
         "#bf7d66",
         "#c2ada3",
         "#ece4dc"
-      ]
+      ],
+      "nintendoTitleId": "0100ed100ba3a000"
     },
     {
       "id": "switch-mario-party-superstars",
@@ -3125,7 +3152,8 @@
         "#849557",
         "#bcaf9d",
         "#425f84"
-      ]
+      ],
+      "nintendoTitleId": "01006fe013472000"
     },
     {
       "id": "switch-mario-rabbids-kingdom-battle",
@@ -3152,7 +3180,8 @@
         "#4d8891",
         "#c8ae75",
         "#c8d7dc"
-      ]
+      ],
+      "nintendoTitleId": "010067300059a000"
     },
     {
       "id": "switch-mario-rabbids-sparks-of-hope",
@@ -3179,7 +3208,8 @@
         "#617db8",
         "#a6c8d7",
         "#373076"
-      ]
+      ],
+      "nintendoTitleId": "0100317013770000"
     },
     {
       "id": "switch-mortal-kombat-11",
@@ -3205,7 +3235,8 @@
         "#f2cd5e",
         "#c68226",
         "#6b4419"
-      ]
+      ],
+      "nintendoTitleId": "0100f2200c984000"
     },
     {
       "id": "switch-moving-out",
@@ -3230,7 +3261,8 @@
         "#bcc7b7",
         "#b4866b",
         "#5d494c"
-      ]
+      ],
+      "nintendoTitleId": "0100c4c00e73e000"
     },
     {
       "id": "switch-moving-out-code",
@@ -3254,7 +3286,8 @@
         "#bb9c79",
         "#c2d2c6",
         "#71514f"
-      ]
+      ],
+      "nintendoTitleId": "0100c4c00e73e000"
     },
     {
       "id": "switch-moving-out-2",
@@ -3279,7 +3312,8 @@
         "#c4cec1",
         "#84a697",
         "#36628c"
-      ]
+      ],
+      "nintendoTitleId": "010065d018172000"
     },
     {
       "id": "switch-mysims-cozy-bundle",
@@ -3307,6 +3341,10 @@
         "#ceac92",
         "#a9c8e5",
         "#62895d"
+      ],
+      "nintendoTitleId": [
+        "010040601ffde000",
+        "010015401ffe0000"
       ]
     },
     {
@@ -3333,7 +3371,8 @@
         "#2a1d20",
         "#5e6060",
         "#a23f29"
-      ]
+      ],
+      "nintendoTitleId": "010029b0118e8000"
     },
     {
       "id": "switch-overcooked-special-edition",
@@ -3358,7 +3397,8 @@
         "#9c957e",
         "#6c5c4c",
         "#bcbdb8"
-      ]
+      ],
+      "nintendoTitleId": "01009b900401e000"
     },
     {
       "id": "switch-overcooked-2",
@@ -3385,7 +3425,8 @@
         "#ad8c5a",
         "#439ab8",
         "#524639"
-      ]
+      ],
+      "nintendoTitleId": "01006fd0080b2000"
     },
     {
       "id": "switch-overcooked-all-you-can-eat",
@@ -3412,7 +3453,8 @@
         "#7d7760",
         "#acb187",
         "#6393ba"
-      ]
+      ],
+      "nintendoTitleId": "0100f28011892000"
     },
     {
       "id": "switch-pac-man-world-re-pac",
@@ -3438,7 +3480,8 @@
         "#97b2d0",
         "#6d4e38",
         "#af987b"
-      ]
+      ],
+      "nintendoTitleId": "0100d4401565e000"
     },
     {
       "id": "switch-pokemon-lets-go-pikachu",
@@ -3465,7 +3508,8 @@
         "#e8ca4f",
         "#ac7e4a",
         "#b9bdc0"
-      ]
+      ],
+      "nintendoTitleId": "010003f003a34000"
     },
     {
       "id": "switch-pokemon-lets-go-pikachu-digital",
@@ -3490,7 +3534,8 @@
         "#e8ca4f",
         "#ac7e4a",
         "#b9bdc0"
-      ]
+      ],
+      "nintendoTitleId": "010003f003a34000"
     },
     {
       "id": "switch-pokemon-brilliant-diamond",
@@ -3517,7 +3562,8 @@
         "#2d5c8d",
         "#19243c",
         "#699ec3"
-      ]
+      ],
+      "nintendoTitleId": "0100000011d90000"
     },
     {
       "id": "switch-pokemon-sword",
@@ -3544,7 +3590,8 @@
         "#907e6c",
         "#dee2df",
         "#5190b8"
-      ]
+      ],
+      "nintendoTitleId": "0100abf008968000"
     },
     {
       "id": "switch-pokemon-violet",
@@ -3571,7 +3618,8 @@
         "#83438f",
         "#4c2b5f",
         "#b2b4c6"
-      ]
+      ],
+      "nintendoTitleId": "01008f6008c5e000"
     },
     {
       "id": "switch-pokemon-legends-arceus",
@@ -3598,7 +3646,8 @@
         "#939881",
         "#b1c7c5",
         "#55646a"
-      ]
+      ],
+      "nintendoTitleId": "01001f5010dfa000"
     },
     {
       "id": "switch-rayman-legends-definitive-edition",
@@ -3624,7 +3673,8 @@
         "#96773a",
         "#d2ba61",
         "#613619"
-      ]
+      ],
+      "nintendoTitleId": "01005ff002e2a000"
     },
     {
       "id": "switch-rollercoaster-tycoon-adventures",
@@ -3651,7 +3701,8 @@
         "#554f34",
         "#a67654",
         "#8598a6"
-      ]
+      ],
+      "nintendoTitleId": "0100e3900b598000"
     },
     {
       "id": "switch-rollercoaster-tycoon-adventures-deluxe",
@@ -3679,7 +3730,8 @@
         "#938570",
         "#627537",
         "#a4aeb3"
-      ]
+      ],
+      "nintendoTitleId": "0100c7801c038000"
     },
     {
       "id": "switch-rollercoaster-tycoon-classic",
@@ -3708,7 +3760,8 @@
         "#9e982d",
         "#6d6c41",
         "#e4bb34"
-      ]
+      ],
+      "nintendoTitleId": "01003d101ff0c000"
     },
     {
       "id": "switch-rollercoaster-tycoon-3-complete-edition",
@@ -3735,7 +3788,8 @@
         "#948a5a",
         "#645839",
         "#b9b7b4"
-      ]
+      ],
+      "nintendoTitleId": "01004900113f8000"
     },
     {
       "id": "switch-splatoon-2",
@@ -3760,7 +3814,8 @@
         "#7ca375",
         "#584a4c",
         "#c6c6d5"
-      ]
+      ],
+      "nintendoTitleId": "01003bc0000a0000"
     },
     {
       "id": "switch-super-bomberman-r",
@@ -3785,7 +3840,8 @@
         "#9b9286",
         "#a56a4f",
         "#4e4857"
-      ]
+      ],
+      "nintendoTitleId": "01007ad00013e000"
     },
     {
       "id": "switch-super-bomberman-r-2",
@@ -3837,7 +3893,8 @@
         "#ac8767",
         "#4a424d",
         "#ced0bd"
-      ]
+      ],
+      "nintendoTitleId": "010049900f546000"
     },
     {
       "id": "switch-super-mario-3d-world-bowsers-fury",
@@ -3863,7 +3920,8 @@
         "#9e9d94",
         "#e7e5de",
         "#b77630"
-      ]
+      ],
+      "nintendoTitleId": "010028600ebda000"
     },
     {
       "id": "switch-super-mario-bros-wonder",
@@ -3889,7 +3947,8 @@
         "#d9d6d4",
         "#647e6f",
         "#619ccd"
-      ]
+      ],
+      "nintendoTitleId": "010015100b514000"
     },
     {
       "id": "switch-new-super-mario-bros-u-deluxe",
@@ -3916,7 +3975,8 @@
         "#b3ac80",
         "#668760",
         "#dddaa6"
-      ]
+      ],
+      "nintendoTitleId": "0100ea80032ea000"
     },
     {
       "id": "switch-super-mario-galaxy-super-mario-galaxy-2",
@@ -3943,7 +4003,8 @@
         "#83bde2",
         "#212e51",
         "#877e7e"
-      ]
+      ],
+      "nintendoTitleId": "010099c022b96000"
     },
     {
       "id": "switch-super-mario-odyssey",
@@ -3969,7 +4030,8 @@
         "#5d6362",
         "#a2b5b0",
         "#b58e54"
-      ]
+      ],
+      "nintendoTitleId": "0100000000010000"
     },
     {
       "id": "switch-super-mario-maker-2",
@@ -3995,7 +4057,8 @@
         "#ccaa2e",
         "#bec0ac",
         "#9f6034"
-      ]
+      ],
+      "nintendoTitleId": "01009b90006dc000"
     },
     {
       "id": "switch-super-mario-party",
@@ -4022,7 +4085,8 @@
         "#a2a29b",
         "#e3dccb",
         "#4a6081"
-      ]
+      ],
+      "nintendoTitleId": "010036b0034e4000"
     },
     {
       "id": "switch-super-mario-rpg",
@@ -4049,7 +4113,8 @@
         "#fbf8f5",
         "#d96a25",
         "#e1b796"
-      ]
+      ],
+      "nintendoTitleId": "0100bc0018138000"
     },
     {
       "id": "switch-super-smash-bros-ultimate",
@@ -4074,7 +4139,8 @@
         "#7e96a0",
         "#bf815c",
         "#dedddd"
-      ]
+      ],
+      "nintendoTitleId": "01006a800016e000"
     },
     {
       "id": "switch-team-sonic-racing",
@@ -4099,7 +4165,8 @@
         "#5f97c6",
         "#b5ccde",
         "#a7836e"
-      ]
+      ],
+      "nintendoTitleId": "010084b00b36e000"
     },
     {
       "id": "switch-the-legend-of-zelda-breath-of-the-wild",
@@ -4125,7 +4192,8 @@
         "#628a46",
         "#288bc4",
         "#94d1c9"
-      ]
+      ],
+      "nintendoTitleId": "01007ef00011e000"
     },
     {
       "id": "switch-tony-hawks-pro-skater-1-2",
@@ -4150,7 +4218,8 @@
         "#393337",
         "#16161b",
         "#766160"
-      ]
+      ],
+      "nintendoTitleId": "0100cc00102b4000"
     },
     {
       "id": "switch-two-point-campus",
@@ -4175,6 +4244,162 @@
         "#74645d",
         "#abaca6",
         "#0bafd2"
+      ],
+      "nintendoTitleId": "0100d4a012ff2000"
+    },
+    {
+      "id": "switch-just-dance",
+      "console": "switch",
+      "title": "Just Dance",
+      "region": "PAL",
+      "released": "2022-11-22",
+      "dateSource": "manual",
+      "publisher": "Ubisoft",
+      "developer": "Ubisoft Paris",
+      "genre": "Dance",
+      "format": "digital",
+      "check": "The play history calls it only \"Just Dance\" (0100bee017fc0000): presumably the 2023 Edition, which became the yearly updated Just Dance. Confirm which.",
+      "nintendoTitleId": "0100bee017fc0000",
+      "cover": {
+        "file": "covers/switch/just-dance.jpg",
+        "source": "manual",
+        "plain": true,
+        "ref": "Just Dance · Nintendo eShop icon, from the play history",
+        "ratio": 1
+      },
+      "colors": [
+        "#f5e90e",
+        "#d0b563",
+        "#d6b5d1"
+      ]
+    },
+    {
+      "id": "switch-fire-emblem-warriors-three-hopes",
+      "console": "switch",
+      "title": "Fire Emblem Warriors: Three Hopes",
+      "region": "PAL",
+      "released": "2022-06-24",
+      "dateSource": "manual",
+      "publisher": "Nintendo",
+      "developer": "Omega Force",
+      "genre": "Hack and slash",
+      "format": "digital",
+      "nintendoTitleId": "010071f0143ea000",
+      "cover": {
+        "file": "covers/switch/fire-emblem-warriors-three-hopes.jpg",
+        "ratio": 0.6192,
+        "source": "thegamesdb.net",
+        "ref": "Fire Emblem Warriors: Three Hopes · PAL (Australia) · TheGamesDB #118834"
+      },
+      "colors": [
+        "#926076",
+        "#bd98a6",
+        "#483f55"
+      ]
+    },
+    {
+      "id": "switch-bravely-default-ii",
+      "console": "switch",
+      "title": "Bravely Default II",
+      "listedAs": "BRAVELY DEFAULT Ⅱ",
+      "region": "PAL",
+      "released": "2021-02-26",
+      "dateSource": "manual",
+      "publisher": "Nintendo",
+      "developer": "Claytechworks",
+      "genre": "Role-playing",
+      "format": "digital",
+      "nintendoTitleId": "01006dc010326000",
+      "cover": {
+        "file": "covers/switch/bravely-default-ii.jpg",
+        "ratio": 0.6173,
+        "source": "thegamesdb.net",
+        "ref": "Bravely Default II · PAL (United Kingdom of Great Britain and Northern Ireland) · TheGamesDB #103627"
+      },
+      "colors": [
+        "#0d0c0c",
+        "#544644",
+        "#878f91"
+      ]
+    },
+    {
+      "id": "switch-arena-of-valor",
+      "console": "switch",
+      "title": "Arena of Valor",
+      "region": "PAL",
+      "released": "2018-09-27",
+      "dateSource": "manual",
+      "publisher": "Tencent Games",
+      "developer": "TiMi Studio Group",
+      "genre": "MOBA",
+      "format": "digital",
+      "note": "Free-to-play",
+      "nintendoTitleId": "01008d8006a6a000",
+      "cover": {
+        "file": "covers/switch/arena-of-valor.jpg",
+        "source": "manual",
+        "plain": true,
+        "ref": "Arena of Valor · Nintendo eShop icon, from the play history",
+        "ratio": 1
+      },
+      "colors": [
+        "#34362f",
+        "#6c6656",
+        "#a4987f"
+      ]
+    },
+    {
+      "id": "switch-fortnite",
+      "console": "switch",
+      "title": "Fortnite",
+      "listedAs": "Fortnite for Nintendo Switch",
+      "region": "PAL",
+      "released": "2018-06-12",
+      "dateSource": "manual",
+      "publisher": "Epic Games",
+      "developer": "Epic Games",
+      "genre": "Battle royale",
+      "format": "digital",
+      "note": "Free-to-play",
+      "nintendoTitleId": "010025400aece000",
+      "cover": {
+        "file": "covers/switch/fortnite.jpg",
+        "source": "manual",
+        "plain": true,
+        "ref": "Fortnite for Nintendo Switch · Nintendo eShop icon, from the play history",
+        "ratio": 1
+      },
+      "colors": [
+        "#40102c",
+        "#77438f",
+        "#a12a3d"
+      ]
+    },
+    {
+      "id": "switch-pokemon-quest",
+      "console": "switch",
+      "title": "Pokémon Quest",
+      "sortAs": "Pokémon",
+      "region": "PAL",
+      "released": "2018-05-30",
+      "dateSource": "manual",
+      "publisher": "Nintendo",
+      "developer": "Game Freak",
+      "genre": "Action role-playing",
+      "format": "digital",
+      "note": "Free-to-start",
+      "nintendoTitleId": "01005d100807a000",
+      "cover": {
+        "file": "covers/switch/pokemon-quest.jpg",
+        "source": "manual",
+        "plain": true,
+        "ref": "Pokémon Quest · Nintendo eShop icon, from the play history",
+        "ratio": 1
+      },
+      "colors": [
+        "#b9ca57",
+        "#d1dbb1",
+        "#a0e3f5"
       ]
     },
     {
@@ -4225,7 +4450,8 @@
         "#4b5995",
         "#c8d4e2",
         "#6d844f"
-      ]
+      ],
+      "xboxTitleId": "453673951"
     },
     {
       "id": "xone-overcooked-gourmet-edition",
@@ -4275,7 +4501,8 @@
         "#b71212",
         "#2b1e0d",
         "#da9e4a"
-      ]
+      ],
+      "xboxTitleId": "591405932"
     },
     {
       "id": "xone-the-sims-4",
@@ -4349,7 +4576,8 @@
         "#333c7e",
         "#a56c4c",
         "#30222f"
-      ]
+      ],
+      "xboxTitleId": "1414793242"
     },
     {
       "id": "x360-dance-central",
@@ -4373,7 +4601,8 @@
         "#4d545c",
         "#242828",
         "#9b827e"
-      ]
+      ],
+      "xboxTitleId": "1414924243"
     },
     {
       "id": "x360-dance-central-2",
@@ -4397,7 +4626,8 @@
         "#87667b",
         "#aaa3b8",
         "#ece9ed"
-      ]
+      ],
+      "xboxTitleId": "926091218"
     },
     {
       "id": "x360-dance-paradise",
@@ -4421,7 +4651,8 @@
         "#a0a0a6",
         "#4a5ea9",
         "#e1e6e8"
-      ]
+      ],
+      "xboxTitleId": "1297156049"
     },
     {
       "id": "x360-grand-theft-auto-episodes-from-liberty-city",
@@ -4470,7 +4701,8 @@
         "#918772",
         "#625d46",
         "#cbd0ca"
-      ]
+      ],
+      "xboxTitleId": "1414793383"
     },
     {
       "id": "x360-guitar-hero-ii",
@@ -4495,7 +4727,8 @@
         "#32211f",
         "#aaa9a3",
         "#786865"
-      ]
+      ],
+      "xboxTitleId": "1096157159"
     },
     {
       "id": "x360-guitar-hero-iii-legends-of-rock",
@@ -4519,7 +4752,8 @@
         "#3c2820",
         "#7c6451",
         "#babbb1"
-      ]
+      ],
+      "xboxTitleId": "1096157175"
     },
     {
       "id": "x360-guitar-hero-metallica",
@@ -4592,7 +4826,8 @@
         "#0e1018",
         "#553b33",
         "#987d73"
-      ]
+      ],
+      "xboxTitleId": "1096157248"
     },
     {
       "id": "x360-halo-wars",
@@ -4640,7 +4875,8 @@
         "#a5692d",
         "#392f18",
         "#548b78"
-      ]
+      ],
+      "xboxTitleId": "1297287405"
     },
     {
       "id": "x360-kinect-joy-ride",
@@ -4688,7 +4924,8 @@
         "#664275",
         "#e7e3e8",
         "#c4b5c0"
-      ]
+      ],
+      "xboxTitleId": "1297287369"
     },
     {
       "id": "x360-mortal-kombat",
@@ -4712,7 +4949,8 @@
         "#2a1a1d",
         "#616656",
         "#cf8553"
-      ]
+      ],
+      "xboxTitleId": "1464993789"
     },
     {
       "id": "x360-zumba-fitness",
@@ -8593,6 +8831,7 @@
       "genre": "Life simulation",
       "format": "digital",
       "launcher": "ea",
+      "eaSlug": "the-sims-1-complete-collection-ea-app",
       "series": "The Sims",
       "pack": "Collection",
       "cover": null,
@@ -8952,6 +9191,7 @@
       "genre": "Life simulation",
       "format": "digital",
       "launcher": "ea",
+      "eaSlug": "the-sims-2-ultimate-collection",
       "series": "The Sims 2",
       "pack": "Collection",
       "cover": null,
@@ -9719,7 +9959,8 @@
         "#8e846e",
         "#a5a49d",
         "#66574d"
-      ]
+      ],
+      "eaSlug": "the-sims-3"
     },
     {
       "id": "pc-the-sims-3-collectors-edition",
@@ -9788,7 +10029,8 @@
         "#c29c7c",
         "#776151",
         "#d8cdc3"
-      ]
+      ],
+      "eaSlug": "the-sims-3-world-adventures-expansion-pack"
     },
     {
       "id": "pc-the-sims-3-ambitions",
@@ -9817,7 +10059,8 @@
         "#949693",
         "#616056",
         "#afb4bb"
-      ]
+      ],
+      "eaSlug": "the-sims-3-ambitions"
     },
     {
       "id": "pc-the-sims-3-late-night",
@@ -9846,7 +10089,8 @@
         "#8e7f8a",
         "#595a71",
         "#463949"
-      ]
+      ],
+      "eaSlug": "the-sims-3-late-night-expansion-pack"
     },
     {
       "id": "pc-the-sims-3-generations",
@@ -9875,7 +10119,8 @@
         "#859f98",
         "#60706e",
         "#a4c1c0"
-      ]
+      ],
+      "eaSlug": "the-sims-3-generations"
     },
     {
       "id": "pc-the-sims-3-pets",
@@ -9904,7 +10149,8 @@
         "#82887d",
         "#a4b1b1",
         "#5b5244"
-      ]
+      ],
+      "eaSlug": "the-sims-3-pets"
     },
     {
       "id": "pc-the-sims-3-showtime",
@@ -9933,7 +10179,8 @@
         "#3e5467",
         "#6790ab",
         "#b4c9d5"
-      ]
+      ],
+      "eaSlug": "the-sims-3-showtime"
     },
     {
       "id": "pc-the-sims-3-showtime-katy-perry-collectors-edition",
@@ -9955,7 +10202,8 @@
       "series": "The Sims 3",
       "pack": "Expansion Pack",
       "cover": null,
-      "colors": null
+      "colors": null,
+      "eaSlug": "the-sims-3-showtime-katy-perry-collectors-edition-legacy"
     },
     {
       "id": "pc-the-sims-3-supernatural",
@@ -9984,7 +10232,8 @@
         "#7e8a78",
         "#404a52",
         "#a2b0ac"
-      ]
+      ],
+      "eaSlug": "the-sims-3-supernatural"
     },
     {
       "id": "pc-the-sims-3-seasons",
@@ -10013,7 +10262,8 @@
         "#85939a",
         "#bfc7cb",
         "#675b50"
-      ]
+      ],
+      "eaSlug": "the-sims-3-seasons"
     },
     {
       "id": "pc-the-sims-3-university-life",
@@ -10042,7 +10292,8 @@
         "#908e83",
         "#5d5550",
         "#aab4b8"
-      ]
+      ],
+      "eaSlug": "the-sims-3-university-life"
     },
     {
       "id": "pc-the-sims-3-island-paradise",
@@ -10071,7 +10322,8 @@
         "#7fa0ad",
         "#c9cbcd",
         "#b89d65"
-      ]
+      ],
+      "eaSlug": "the-sims-3-island-paradise"
     },
     {
       "id": "pc-the-sims-3-into-the-future",
@@ -10100,7 +10352,8 @@
         "#808680",
         "#a5b0b4",
         "#465954"
-      ]
+      ],
+      "eaSlug": "the-sims-3-into-the-future"
     },
     {
       "id": "pc-the-sims-3-high-end-loft-stuff",
@@ -10129,7 +10382,8 @@
         "#8eae25",
         "#606755",
         "#a8b2a3"
-      ]
+      ],
+      "eaSlug": "the-sims-3-high-end-loft-stuff"
     },
     {
       "id": "pc-the-sims-3-fast-lane-stuff",
@@ -10158,7 +10412,8 @@
         "#a6b796",
         "#79b04d",
         "#dce6d4"
-      ]
+      ],
+      "eaSlug": "the-sims-3-fast-lane-stuff"
     },
     {
       "id": "pc-the-sims-3-outdoor-living-stuff",
@@ -10187,7 +10442,8 @@
         "#a9c489",
         "#dce4d2",
         "#73ae4a"
-      ]
+      ],
+      "eaSlug": "the-sims-3-outdoor-living-stuff"
     },
     {
       "id": "pc-the-sims-3-town-life-stuff",
@@ -10216,7 +10472,8 @@
         "#a7b998",
         "#88ab59",
         "#677178"
-      ]
+      ],
+      "eaSlug": "the-sims-3-town-life-stuff"
     },
     {
       "id": "pc-the-sims-3-master-suite-stuff",
@@ -10245,7 +10502,8 @@
         "#a9bc8e",
         "#7b6c79",
         "#76b354"
-      ]
+      ],
+      "eaSlug": "the-sims-3-master-suite-stuff"
     },
     {
       "id": "pc-the-sims-3-katy-perrys-sweet-treats",
@@ -10302,7 +10560,8 @@
         "#9cabb2",
         "#707f7d",
         "#e6e7e8"
-      ]
+      ],
+      "eaSlug": "the-sims-3-diesel-stuff"
     },
     {
       "id": "pc-the-sims-3-70s-80s-and-90s-stuff",
@@ -10331,7 +10590,8 @@
         "#94b56b",
         "#d4ddcb",
         "#5e6c52"
-      ]
+      ],
+      "eaSlug": "the-sims-3-70s-80s-and-90s-stuff"
     },
     {
       "id": "pc-the-sims-3-movie-stuff",
@@ -10360,7 +10620,8 @@
         "#627c45",
         "#9dba7b",
         "#dee4d4"
-      ]
+      ],
+      "eaSlug": "the-sims-3-movie-stuff"
     },
     {
       "id": "pc-the-sims-3-create-a-sim",
@@ -10478,7 +10739,8 @@
         "#97815d",
         "#564338",
         "#e4d7c4"
-      ]
+      ],
+      "eaSlug": "the-sims-medieval"
     },
     {
       "id": "pc-the-sims-medieval-collectors-edition",
@@ -10630,7 +10892,8 @@
         "#b08c7a",
         "#99d0dc",
         "#4b4739"
-      ]
+      ],
+      "eaSlug": "the-sims-4"
     },
     {
       "id": "pc-the-sims-4-get-to-work",
@@ -10673,7 +10936,8 @@
         "#4d4e4a",
         "#7fa7aa",
         "#ecf0ec"
-      ]
+      ],
+      "eaSlug": "the-sims-4-get-to-work"
     },
     {
       "id": "pc-the-sims-4-get-together",
@@ -10716,7 +10980,8 @@
         "#a0a9b3",
         "#8d7174",
         "#503c44"
-      ]
+      ],
+      "eaSlug": "the-sims-4-get-together"
     },
     {
       "id": "pc-the-sims-4-city-living",
@@ -10759,7 +11024,8 @@
         "#8a8e86",
         "#475360",
         "#b8c5ca"
-      ]
+      ],
+      "eaSlug": "the-sims-4-city-living"
     },
     {
       "id": "pc-the-sims-4-cats-and-dogs",
@@ -10801,7 +11067,8 @@
         "#cf4882",
         "#a91e6e",
         "#714645"
-      ]
+      ],
+      "eaSlug": "the-sims-4-cats-and-dogs"
     },
     {
       "id": "pc-the-sims-4-seasons",
@@ -10842,7 +11109,8 @@
         "#4daeeb",
         "#3188cd",
         "#99613c"
-      ]
+      ],
+      "eaSlug": "the-sims-4-seasons"
     },
     {
       "id": "pc-the-sims-4-get-famous",
@@ -10883,7 +11151,8 @@
         "#4a59c9",
         "#3a3c87",
         "#ba8c57"
-      ]
+      ],
+      "eaSlug": "the-sims-4-get-famous"
     },
     {
       "id": "pc-the-sims-4-island-living",
@@ -10925,7 +11194,8 @@
         "#54a649",
         "#1e683b",
         "#b4a983"
-      ]
+      ],
+      "eaSlug": "the-sims-4-island-living"
     },
     {
       "id": "pc-the-sims-4-cottage-living",
@@ -10954,7 +11224,8 @@
         "#9a7c57",
         "#31379a",
         "#4d5bca"
-      ]
+      ],
+      "eaSlug": "the-sims-4-cottage-living"
     },
     {
       "id": "pc-the-sims-4-horse-ranch",
@@ -10983,7 +11254,8 @@
         "#d6458a",
         "#982464",
         "#b53577"
-      ]
+      ],
+      "eaSlug": "the-sims-4-horse-ranch-expansion-pack"
     },
     {
       "id": "pc-the-sims-4-for-rent",
@@ -11012,7 +11284,8 @@
         "#4a5ad0",
         "#333a9d",
         "#676961"
-      ]
+      ],
+      "eaSlug": "the-sims-4-for-rent-expansion-pack"
     },
     {
       "id": "pc-the-sims-4-outdoor-retreat",
@@ -11041,7 +11314,8 @@
         "#57a847",
         "#226a32",
         "#ac7d3b"
-      ]
+      ],
+      "eaSlug": "the-sims-4-outdoor-retreat"
     },
     {
       "id": "pc-the-sims-4-spa-day",
@@ -11070,7 +11344,8 @@
         "#4dafec",
         "#2d8ad4",
         "#837663"
-      ]
+      ],
+      "eaSlug": "the-sims-4-spa-day"
     },
     {
       "id": "pc-the-sims-4-dine-out",
@@ -11099,7 +11374,8 @@
         "#58b2eb",
         "#2f8bd6",
         "#b7987f"
-      ]
+      ],
+      "eaSlug": "the-sims-4-dine-out"
     },
     {
       "id": "pc-the-sims-4-vampires",
@@ -11128,7 +11404,8 @@
         "#8c34a7",
         "#6e2c93",
         "#413330"
-      ]
+      ],
+      "eaSlug": "the-sims-4-vampires"
     },
     {
       "id": "pc-the-sims-4-parenthood",
@@ -11157,7 +11434,8 @@
         "#cd4480",
         "#a4206b",
         "#5c5950"
-      ]
+      ],
+      "eaSlug": "the-sims-4-parenthood"
     },
     {
       "id": "pc-the-sims-4-jungle-adventure",
@@ -11187,7 +11465,8 @@
         "#2c6832",
         "#59a248",
         "#b36152"
-      ]
+      ],
+      "eaSlug": "the-sims-4-jungle-adventure"
     },
     {
       "id": "pc-the-sims-4-luxury-party-stuff",
@@ -11216,7 +11495,8 @@
         "#4fc510",
         "#9b8361",
         "#cdd1c0"
-      ]
+      ],
+      "eaSlug": "the-sims-4-luxury-party-stuff"
     },
     {
       "id": "pc-the-sims-4-perfect-patio-stuff",
@@ -11245,7 +11525,8 @@
         "#6d4630",
         "#c2bcb1",
         "#3da01e"
-      ]
+      ],
+      "eaSlug": "the-sims-4-perfect-patio-stuff"
     },
     {
       "id": "pc-the-sims-4-cool-kitchen-stuff",
@@ -11274,7 +11555,8 @@
         "#3e502f",
         "#57ce0f",
         "#a47f69"
-      ]
+      ],
+      "eaSlug": "the-sims-4-cool-kitchen-stuff"
     },
     {
       "id": "pc-the-sims-4-spooky-stuff",
@@ -11303,7 +11585,8 @@
         "#41442f",
         "#55cb17",
         "#97bea1"
-      ]
+      ],
+      "eaSlug": "the-sims-4-spooky-stuff"
     },
     {
       "id": "pc-the-sims-4-movie-hangout-stuff",
@@ -11332,7 +11615,8 @@
         "#b2805c",
         "#53cb12",
         "#455843"
-      ]
+      ],
+      "eaSlug": "the-sims-4-movie-hangout-stuff"
     },
     {
       "id": "pc-the-sims-4-romantic-garden-stuff",
@@ -11361,7 +11645,8 @@
         "#374a21",
         "#a36a50",
         "#50cb0f"
-      ]
+      ],
+      "eaSlug": "the-sims-4-romantic-garden-stuff"
     },
     {
       "id": "pc-the-sims-4-kids-room-stuff",
@@ -11390,7 +11675,8 @@
         "#55d30f",
         "#546c3c",
         "#9ab1b3"
-      ]
+      ],
+      "eaSlug": "the-sims-4-kids-room-stuff"
     },
     {
       "id": "pc-the-sims-4-backyard-stuff",
@@ -11419,7 +11705,8 @@
         "#b1bfc8",
         "#638f34",
         "#58e007"
-      ]
+      ],
+      "eaSlug": "the-sims-4-backyard-stuff"
     },
     {
       "id": "pc-the-sims-4-vintage-glamour-stuff",
@@ -11448,7 +11735,8 @@
         "#512d1c",
         "#419a16",
         "#67e808"
-      ]
+      ],
+      "eaSlug": "the-sims-4-vintage-glamour-stuff"
     },
     {
       "id": "pc-the-sims-4-bowling-night-stuff",
@@ -11477,7 +11765,8 @@
         "#4f4746",
         "#b59e85",
         "#65e50b"
-      ]
+      ],
+      "eaSlug": "the-sims-4-bowling-night-stuff"
     },
     {
       "id": "pc-the-sims-4-fitness-stuff",
@@ -11506,7 +11795,8 @@
         "#433346",
         "#65e908",
         "#be645e"
-      ]
+      ],
+      "eaSlug": "the-sims-4-fitness-stuff"
     },
     {
       "id": "pc-the-sims-4-toddler-stuff",
@@ -11535,7 +11825,8 @@
         "#9c6b48",
         "#5cde0a",
         "#456529"
-      ]
+      ],
+      "eaSlug": "the-sims-4-toddler-stuff"
     },
     {
       "id": "pc-simcity-2000",
@@ -11561,7 +11852,8 @@
         "#5c575a",
         "#8c8679",
         "#efece3"
-      ]
+      ],
+      "eaSlug": "simcity-2000"
     },
     {
       "id": "pc-simcity-3000",
@@ -11575,6 +11867,7 @@
       "genre": "City-building",
       "format": "digital",
       "launcher": "ea",
+      "eaSlug": "sim-city-3000-unlimited",
       "series": "SimCity",
       "pack": "Base game",
       "cover": {
@@ -11625,7 +11918,8 @@
         "#555148",
         "#a57f64",
         "#a4b6bd"
-      ]
+      ],
+      "eaSlug": "simcity-4"
     },
     {
       "id": "pc-simcity-societies",
@@ -11662,7 +11956,8 @@
         "#ebf8fc",
         "#8f8154",
         "#d5e7f0"
-      ]
+      ],
+      "eaSlug": "simcity-societies"
     },
     {
       "id": "pc-simcity-societies-deluxe-edition",
@@ -11759,7 +12054,8 @@
       "series": "SimCity",
       "pack": "Collection",
       "cover": null,
-      "colors": null
+      "colors": null,
+      "eaSlug": "simcity"
     },
     {
       "id": "pc-simcity-cities-of-tomorrow",
@@ -11784,7 +12080,8 @@
         "#435058",
         "#c3cdcc",
         "#648795"
-      ]
+      ],
+      "eaSlug": "simcity-cities-of-tomorrow"
     },
     {
       "id": "pc-mysims",
@@ -11823,7 +12120,8 @@
         "#6e7653",
         "#b2a07c",
         "#d9dedd"
-      ]
+      ],
+      "eaSlug": "mysims"
     },
     {
       "id": "pc-grand-theft-auto-and-gta-london",
@@ -12006,7 +12304,8 @@
           "MA15R",
           "pcdvd"
         ]
-      }
+      },
+      "rockstarTitle": "gtaiv"
     },
     {
       "id": "pc-grand-theft-auto-episodes-from-liberty-city",
@@ -12072,7 +12371,8 @@
         "#887566",
         "#bebdb8",
         "#1b1512"
-      ]
+      ],
+      "rockstarTitle": "gtav"
     },
     {
       "id": "pc-la-noire",
@@ -12097,7 +12397,8 @@
         "#120e12",
         "#314050",
         "#823a22"
-      ]
+      ],
+      "rockstarTitle": "lan"
     },
     {
       "id": "pc-bully-scholarship-edition",
@@ -12133,7 +12434,8 @@
         "#8a7068",
         "#405085",
         "#cfa993"
-      ]
+      ],
+      "rockstarTitle": "bully"
     },
     {
       "id": "pc-grim-fandango",
@@ -12561,7 +12863,8 @@
         "#2b2d2d",
         "#554635",
         "#8d7050"
-      ]
+      ],
+      "xboxTitleId": "1755599316"
     },
     {
       "id": "pc-rollercoaster-tycoon-3-complete-edition",
@@ -12638,6 +12941,323 @@
         "#b14f30",
         "#765f61",
         "#4e452f"
+      ]
+    },
+    {
+      "id": "pc-battlefield-6",
+      "console": "pc",
+      "title": "Battlefield 6",
+      "region": "AUS",
+      "released": "2025-10-10",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Battlefield Studios",
+      "genre": "First-person shooter",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "glacier",
+      "cover": {
+        "file": "covers/pc/battlefield-6.jpg",
+        "ratio": 0.6667,
+        "source": "thegamesdb.net",
+        "ref": "Battlefield 6 · PAL · TheGamesDB #135396"
+      },
+      "colors": [
+        "#a29e92",
+        "#2d221c",
+        "#d3d4ca"
+      ]
+    },
+    {
+      "id": "pc-it-takes-two",
+      "console": "pc",
+      "title": "It Takes Two",
+      "region": "AUS",
+      "released": "2021-03-26",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Hazelight Studios",
+      "genre": "Action-adventure",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "it-takes-two",
+      "cover": {
+        "file": "covers/pc/it-takes-two.jpg",
+        "ratio": 0.6673,
+        "source": "thegamesdb.net",
+        "ref": "It Takes Two · no region · TheGamesDB #85017"
+      },
+      "colors": [
+        "#eed9af",
+        "#4f332b",
+        "#a29381"
+      ]
+    },
+    {
+      "id": "pc-need-for-speed-hot-pursuit-remastered",
+      "console": "pc",
+      "title": "Need for Speed Hot Pursuit Remastered",
+      "region": "AUS",
+      "released": "2020-11-06",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Stellar Entertainment",
+      "genre": "Racing",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "need-for-speed-hot-pursuit-remastered",
+      "cover": {
+        "file": "covers/pc/need-for-speed-hot-pursuit-remastered.jpg",
+        "ratio": 0.7096,
+        "source": "thegamesdb.net",
+        "ref": "Need for Speed: Hot Pursuit Remastered · NTSC · TheGamesDB #80511"
+      },
+      "colors": [
+        "#292224",
+        "#4f4e56",
+        "#964331"
+      ]
+    },
+    {
+      "id": "pc-need-for-speed-most-wanted",
+      "console": "pc",
+      "title": "Need for Speed Most Wanted",
+      "region": "AUS",
+      "released": "2012-10-30",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Criterion Games",
+      "genre": "Racing",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "need-for-speed-most-wanted",
+      "cover": {
+        "file": "covers/pc/need-for-speed-most-wanted.jpg",
+        "ratio": 0.8096,
+        "source": "thegamesdb.net",
+        "ref": "TheGamesDB #123449"
+      },
+      "colors": [
+        "#4e3232",
+        "#c8b9ba",
+        "#f6f4f4"
+      ],
+      "tgdbId": 123449
+    },
+    {
+      "id": "pc-need-for-speed",
+      "console": "pc",
+      "title": "Need for Speed",
+      "region": "AUS",
+      "released": "2016-03-15",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Ghost Games",
+      "genre": "Racing",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "need-for-speed",
+      "cover": {
+        "file": "covers/pc/need-for-speed.jpg",
+        "ratio": 0.9077,
+        "source": "thegamesdb.net",
+        "ref": "Need For Speed · no region · TheGamesDB #33628"
+      },
+      "colors": [
+        "#13181f",
+        "#294155",
+        "#57768f"
+      ],
+      "coverMatch": "Need for Speed (2015 video game)"
+    },
+    {
+      "id": "pc-skate",
+      "console": "pc",
+      "title": "skate.",
+      "region": "AUS",
+      "released": "2025-09-16",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Full Circle",
+      "genre": "Sports",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "skate",
+      "cover": {
+        "file": "covers/pc/skate.jpg",
+        "ratio": 0.6673,
+        "source": "thegamesdb.net",
+        "ref": "Skate. · Other (Canada) · TheGamesDB #135055"
+      },
+      "colors": [
+        "#2a2336",
+        "#5e4241",
+        "#d7cbae"
+      ],
+      "check": "Release date: the early access launch"
+    },
+    {
+      "id": "pc-spore",
+      "console": "pc",
+      "title": "Spore",
+      "region": "AUS",
+      "released": "2008-09-05",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "digital",
+      "launcher": "ea",
+      "eaSlug": "spore",
+      "cover": {
+        "file": "covers/pc/spore.jpg",
+        "ratio": 0.7077,
+        "source": "thegamesdb.net",
+        "ref": "Spore · PAL · TheGamesDB #106084"
+      },
+      "colors": [
+        "#7f7165",
+        "#2b354a",
+        "#ebeced"
+      ]
+    },
+    {
+      "id": "pc-simcity-societies-destinations",
+      "console": "pc",
+      "title": "SimCity Societies: Destinations",
+      "region": "AUS",
+      "released": "2008-06-24",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Tilted Mill Entertainment",
+      "genre": "City-building",
+      "format": "digital",
+      "launcher": "ea",
+      "series": "SimCity",
+      "pack": "Expansion Pack",
+      "eaSlug": "simcity-societies-destinations",
+      "cover": null,
+      "colors": null
+    },
+    {
+      "id": "pc-spore-creepy-and-cute-parts-pack",
+      "console": "pc",
+      "title": "Spore: Creepy & Cute Parts Pack",
+      "region": "AUS",
+      "released": "2008-11-18",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "digital",
+      "launcher": "ea",
+      "pack": "Parts Pack",
+      "eaSlug": "spore-creepy-and-cute-parts-pack",
+      "cover": null,
+      "colors": null
+    },
+    {
+      "id": "pc-spore-galactic-adventures",
+      "console": "pc",
+      "title": "Spore: Galactic Adventures",
+      "region": "AUS",
+      "released": "2009-06-23",
+      "dateSource": "manual",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "digital",
+      "launcher": "ea",
+      "pack": "Expansion Pack",
+      "eaSlug": "spore-galactic-adventures",
+      "cover": {
+        "file": "covers/pc/spore-galactic-adventures.jpg",
+        "ratio": 0.71,
+        "source": "thegamesdb.net",
+        "ref": "Spore Galactic Adventures · no region · TheGamesDB #10923"
+      },
+      "colors": [
+        "#455053",
+        "#628997",
+        "#b2a398"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-throwback-fit-kit",
+      "console": "pc",
+      "title": "The Sims 4: Throwback Fit Kit",
+      "region": "AUS",
+      "released": null,
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "digital",
+      "launcher": "ea",
+      "series": "The Sims 4",
+      "pack": "Kit",
+      "eaSlug": "the-sims-4-throwback-fit-kit",
+      "cover": {
+        "file": "covers/pc/the-sims-4-throwback-fit-kit.jpg",
+        "ratio": 0.75,
+        "source": "sims.fandom.com",
+        "ref": "Kits for The Sims 4 · Throwback_Fitness_Kit.png"
+      },
+      "colors": [
+        "#4db2b4",
+        "#4f5959",
+        "#f8f7fd"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-grunge-revival-kit",
+      "console": "pc",
+      "title": "The Sims 4: Grunge Revival Kit",
+      "region": "AUS",
+      "released": null,
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "digital",
+      "launcher": "ea",
+      "series": "The Sims 4",
+      "pack": "Kit",
+      "eaSlug": "the-sims-4-grunge-revival-kit",
+      "cover": {
+        "file": "covers/pc/the-sims-4-grunge-revival-kit.jpg",
+        "ratio": 0.75,
+        "source": "sims.fandom.com",
+        "ref": "Kits for The Sims 4 · Grunge_Revival_Kit_Boxart.png"
+      },
+      "colors": [
+        "#618ed1",
+        "#a7bce2",
+        "#f9f9fc"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-holiday-celebration-pack",
+      "console": "pc",
+      "title": "The Sims 4: Holiday Celebration Pack",
+      "region": "AUS",
+      "released": null,
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "digital",
+      "launcher": "ea",
+      "series": "The Sims 4",
+      "pack": "Extra",
+      "eaSlug": "holiday-celebration-pack",
+      "cover": {
+        "file": "covers/pc/the-sims-4-holiday-celebration-pack.jpg",
+        "ratio": 0.7086,
+        "source": "sims.fandom.com",
+        "ref": "The Sims 4: Holiday Celebration Pack · TS4HCP_Main.jpg"
+      },
+      "colors": [
+        "#ebd4e7",
+        "#a79789",
+        "#c935b1"
       ]
     }
   ]

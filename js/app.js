@@ -16,7 +16,9 @@
      group(g)    { key, label, name, order } — the game a copy belongs to
      groupNoun   what a group is called ("game")
      hero(games) the header's HTML
-     checklist(el, games)   draws the checklist view into el */
+     checklist(el, games)   draws the checklist view into el
+     drawer(g, games)       optional: { title, html } of a section for a game's drawer, or null
+                            (shown wherever the game is opened, the whole shelf too) */
 
 (function () {
   const esc = Case.esc;
@@ -53,6 +55,7 @@
   const byTitle = (a, b) => collator.compare(fileAs(a), fileAs(b))
     || ((a.sortAs || b.sortAs) && (a.shelfDate || a.released || '9999').localeCompare(b.shelfDate || b.released || '9999'))
     || collator.compare(a.title, b.title);
+  const minutesPlayed = g => (g.steam?.playtime?.total || 0) + (g.psn?.playtime || 0) + (g.nintendo?.playtime || 0) + (g.xbox?.playtime || 0) + (g.ea?.playtime || 0);
   const SORT_BY = {
     title:     { label: 'Title',     value: g => g.title, cmp: byTitle },
     console:   { label: 'Console',   value: g => String(ORDER[g.console]).padStart(2, '0'), plain: true },
@@ -60,6 +63,8 @@
     region:    { label: 'Region',    value: g => g.region },
     publisher: { label: 'Publisher', value: g => g.publisher || '' },
     genre:     { label: 'Genre',     value: g => g.genre || '' },
+    // minutes played, all told, by what Steam, PlayStation Network, Nintendo, Xbox and the EA app say: unplayed or untracked go last
+    played:    { label: 'Played',    value: g => { const m = minutesPlayed(g); return m ? String(m).padStart(8, '0') : ''; }, plain: true },
     // a collection's games, each in the order its copies came out
     // (a game can file under another date than its own, g.shelfDate: The Sims Deluxe Edition beside The Sims)
     group:     { label: 'Game',      value: g => String(groupOf(g).order).padStart(3, '0') + (g.shelfDate || g.released || '9999'), plain: true },
@@ -69,6 +74,7 @@
     title: { key: 'title', dir: 'asc', label: 'Title A–Z' },
     newest: { key: 'released', dir: 'desc', label: 'Newest release first', short: 'Newest first' },
     oldest: { key: 'released', dir: 'asc', label: 'Oldest release first', short: 'Oldest first' },
+    played: { key: 'played', dir: 'desc', label: 'Most played first', short: 'Most played' },
   };
   const validSort = s => s && SORT_BY[s.key] && (s.key !== 'group' || CFG) && (s.dir === 'asc' || s.dir === 'desc') ? { key: s.key, dir: s.dir } : { key: GROUP, dir: 'asc' };
   function sortList(list, { key, dir }) {
@@ -97,6 +103,9 @@
 
   /* ---------- filtering ---------- */
   const fold = s => String(s || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  // where a console's digital copies come from, when it isn't a PC launcher: on their licence and in their details
+  const ESHOP = { name: 'Nintendo eShop', bg: '#e60012', fg: '#ffffff', glyph: 'N' };
+  const STORE = { switch: ESHOP, switch2: ESHOP };
   // short names people search by, added to a game's search text when its title has the long one
   const NICKNAMES = [[/grand theft auto/i, 'GTA']];
   const nicknames = g => NICKNAMES.filter(([re]) => re.test(g.title) || re.test(g.listedAs || '')).map(([, nick]) => nick);
@@ -108,7 +117,9 @@
   }
   // with only the PC picked, its games can be narrowed to the boxed ones or to one launcher's library
   const pcOnly = () => state.sel.size === 1 && state.sel.has('pc');
-  const inLib = (g, k) => k === 'disc' ? g.format !== 'digital' : g.launcher === k;
+  // the EA app's are the copies its library lists (data/ea.json): bought in it, or a disc whose code was redeemed in it;
+  // Rockstar's, the copies on its launcher and the ones it says were played on PC (data/rockstar.json)
+  const inLib = (g, k) => k === 'disc' ? g.format !== 'digital' : k === 'ea' ? !!g.ea : k === 'rockstar' ? g.launcher === k || !!g.rockstar : g.launcher === k;
   const list = () => sortList(base().filter(g =>
     (!state.sel.size || state.sel.has(g.console)) &&
     (!state.lib || !pcOnly() || inLib(g, state.lib))), state.sort);
@@ -1126,10 +1137,11 @@
     return { capture, play, stop };
   })();
 
-  /* ---------- the spotlight: a game lifts off the page and comes to the middle ----------
+  /* ---------- the spotlight: a game lifts off the page and comes to the stage ----------
      Its place on the shelf (or in the grid or list) stays empty while it is out. It
-     stands in the middle with its name above and its details below, and can be
-     turned round and opened. Closing flies it back into its place. */
+     stands on the left with its name above, where it can be turned round and opened,
+     and everything known about it fills a drawer on the right (on a phone held
+     upright, a sheet along the bottom). Closing flies it back into its place. */
   const Detail = (() => {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -1138,16 +1150,20 @@
     ui.setAttribute('role', 'dialog');
     ui.setAttribute('aria-modal', 'true');
     ui.tabIndex = -1;
-    ui.innerHTML = `<button class="spot-close" type="button" aria-label="Close">✕</button>
-      <div class="spot-nav"><button type="button" data-step="-1" aria-label="Previous game">←</button><span class="spot-count"></span><button type="button" data-step="1" aria-label="Next game">→</button></div>`;
-    // on a big screen the games either side stand smaller to the left and right (see peeks)
-    const peeks = document.createElement('div');
-    peeks.className = 'spot-peeks';
-    document.body.append(overlay, peeks, ui);
+    ui.innerHTML = `<div class="spot-nav"><button type="button" data-step="-1" aria-label="Previous game">←</button><span class="spot-count"></span><button type="button" data-step="1" aria-label="Next game">→</button></div>
+      <aside class="spot-drawer" aria-label="Details"><button class="spot-close" type="button" aria-label="Close">✕</button><div class="dw-body"></div></aside>`;
+    const drawer = $('.spot-drawer', ui), body = $('.dw-body', ui);
+    document.body.append(overlay, ui);
     overlay.addEventListener('click', () => close());
-    peeks.addEventListener('click', e => { const p = e.target.closest('.peek'); if (p) step(+p.dataset.dir); });
     $('.spot-close', ui).addEventListener('click', () => close());
-    ui.addEventListener('click', e => { const s = e.target.closest('[data-step]'); if (s) step(+s.dataset.step); });
+    ui.addEventListener('click', e => {
+      const s = e.target.closest('[data-step]');
+      if (s) step(+s.dataset.step);
+      const more = e.target.closest('[data-more]');
+      const go = e.target.closest('[data-go]');
+      if (go) jump(byId.get(go.dataset.go));
+      if (more) { more.previousElementSibling.classList.toggle('all'); more.textContent = more.previousElementSibling.classList.contains('all') ? 'Show less' : 'Read more'; }
+    });
 
     const REST = { box: [-6, -24], flat: [-4, -14] };
     const NAV = 64; // the arrows along the bottom
@@ -1157,7 +1173,7 @@
     const isOpen = () => !!cur && !cur.closing;
     const shape = g => g.format === 'cartridge-only' ? 'cart' : g.format === 'digital' ? 'card' : 'box';
     // how it stood where it was picked from: a spine turned side on, a cartridge on its side with its top label out, or facing out
-    const fromPose = el => el && el.classList.contains('peek') ? [0, el._pose.ry, 0] : footed(el) ? [0, liveRy(el), 0] : el && el.classList.contains('sp') ? [0, 90, 0] : el && el.classList.contains('cside') ? [0, -90, 90]
+    const fromPose = el => footed(el) ? [0, liveRy(el), 0] : el && el.classList.contains('sp') ? [0, 90, 0] : el && el.classList.contains('cside') ? [0, -90, 90]
       : [0, el && el.closest('[data-ry]') ? +el.closest('[data-ry]').dataset.ry : 0, 0];
     const rot = ([x, y, z = 0]) => `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`;
 
@@ -1182,7 +1198,6 @@
     }
     /* A digital copy has no case to turn round, so its back is the licence it came as: a store receipt
        with the shop it activates in and what was bought. (Purchase details can join it once a store's API is wired in.) */
-    const STORE = { switch: { name: 'Nintendo eShop', bg: '#e60012', fg: '#ffffff', glyph: 'N' } };
     function receipt(g, k) {
       const c = CONSOLE_BY_ID[g.console];
       const L = (g.launcher && g.launcher !== 'none' && LAUNCHERS[g.launcher]) || STORE[g.console] || { name: 'Digital store', bg: '#3a3a3a', fg: '#ffffff', glyph: '↓' };
@@ -1193,7 +1208,8 @@
         ['Released', Case.date(g.released, true)],
         ['Publisher', g.publisher],
         ['Edition', g.edition],
-        ['Played', g.steam && played(g.steam.playtime.total)],
+        ['Played', g.steam ? played(g.steam.playtime.total) : g.nintendo?.playtime != null ? played(g.nintendo.playtime) : g.xbox?.playtime != null ? played(g.xbox.playtime) : g.ea?.playtime != null && played(g.ea.playtime)],
+        ['Owned since', g.ea?.since && Case.date(g.ea.since.slice(0, 10), true)],
         ['App ID', g.steam?.appid],
       ].filter(r => r[1]);
       // a barcode of uneven stripes, only for the look of it: the same for the same game
@@ -1212,80 +1228,228 @@
         <p class="rc-foot">Licence held in ${esc(L.name)} account</p>
       </div>`;
     }
-    /* What Steam or PlayStation Network says of a game tied to it (data/steam.json, data/psn.json): how long it
-       was played and when, its achievements or trophies, and for Steam what the store says it is and a link to it. */
+    /* ---------- the drawer: everything known about the game ----------
+       What the copy is, then what Steam, PlayStation Network, Nintendo, Xbox, the EA app or Rockstar says of a game
+       tied to it (data/steam.json, data/psn.json, data/nintendo.json, data/xbox.json, data/ea.json, data/rockstar.json):
+       how long it was played and when, its achievements or trophies, and for Steam what its store page says. */
     const played = m => !m ? 'Not yet' : m < 60 ? `${m} min` : `${+(m / 60).toFixed(m < 600 ? 1 : 0)} h`;
     const day = t => Case.date(t.slice(0, 10), true);
+    const num = n => Number(n).toLocaleString('en');
     const TROPHY = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c9a24a" d="M7 3h10v2h3v3a4 4 0 0 1-4.3 4A5 5 0 0 1 13 14.9V18h3v2H8v-2h3v-3.1A5 5 0 0 1 8.3 12 4 4 0 0 1 4 8V5h3zm0 4H6v1a2 2 0 0 0 1.2 1.8A6 6 0 0 1 7 8zm10 0v1a6 6 0 0 1-.2 1.8A2 2 0 0 0 18 8V7z"/></svg>`;
-    function onlineInfo(g, n) {
-      const line = (icon, facts) => `<p>${icon}<span>${facts.filter(Boolean).map(esc).join(' · ')}</span></p>`;
+    const SWITCH = `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#e60012"/><rect x="7.5" y="7" width="9" height="10" rx="1" fill="#fff"/><circle cx="4.9" cy="9.5" r="1.2" fill="#fff"/><circle cx="19.1" cy="14.5" r="1.2" fill="#fff"/></svg>`;
+    const XBOX = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11.5" fill="#107c10"/><path fill="#fff" d="M6.2 6.7C4.8 8.2 4 10 4 12a8 8 0 0 0 2.5 5.8c-.6-1.9 1.4-5.4 3.6-7.9-1.4-1.5-2.7-2.6-3.9-3.2zm11.6 0c-1.2.6-2.5 1.7-3.9 3.2 2.2 2.5 4.2 6 3.6 7.9A8 8 0 0 0 20 12c0-2-.8-3.8-2.2-5.3zM12 4c-1.5 0-2.9.4-4 1.1 1.3.2 2.7 1 4 2.1 1.3-1.1 2.7-1.9 4-2.1A8 8 0 0 0 12 4zm0 7.4c-2.1 2.2-4.4 5.7-3.9 7.5A8 8 0 0 0 12 20a8 8 0 0 0 3.9-1.1c.5-1.8-1.8-5.3-3.9-7.5z"/></svg>`;
+
+    // a label and its value (already escaped), left out when there is no value
+    const fact = (label, v) => v ? `<dt>${esc(label)}</dt><dd>${v}</dd>` : '';
+    const facts = rows => rows.join('') ? `<dl class="dw-facts">${rows.join('')}</dl>` : '';
+    const section = (title, html, icon = '') => html ? `<section class="dw-sec"><h4>${icon}<span>${esc(title)}</span></h4>${html}</section>` : '';
+    const tags = xs => xs.length ? `<div class="dw-tags">${xs.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : '';
+    const when = t => t ? esc(day(t)) : '';
+    const link = (href, text) => `<a class="dw-link" href="${esc(href)}" target="_blank" rel="noopener">${esc(text)} ↗</a>`;
+    // how far through its achievements or trophies: the count over a bar
+    const meter = (label, got, of, unit = '') => of ? `<div class="dw-meter"><p><span>${esc(label)}</span><b>${num(got)}${unit} <small>of ${num(of)}${unit}</small></b></p><i style="--p:${Math.min(100, got / of * 100).toFixed(1)}%"></i></div>` : '';
+    // the trophies earned of each grade
+    const grades = gs => gs?.some(([, , d]) => d) ? `<div class="dw-grades">${gs.filter(([, , d]) => d).map(([k, e, d]) => `<span class="tg-${k}"><i></i>${e}<small>/${d} ${k}</small></span>`).join('')}</div>` : '';
+    // the achievements unlocked last, newest first
+    const unlocks = xs => xs?.length ? `<p class="dw-sub">Latest unlocked</p><ul class="dw-unlocks">${xs.map(u => `<li><b>${esc(u.name)}</b>${u.description ? `<span>${esc(u.description)}</span>` : ''}${u.date || u.gamerscore ? `<small>${[u.date && day(u.date), u.gamerscore && `${u.gamerscore} G`].filter(Boolean).map(esc).join(' · ')}</small>` : ''}</li>`).join('')}</ul>` : '';
+
+    // three figures across the top: how long it was played everywhere, how much of it was unlocked, and when it was last played
+    function glance(g) {
+      const m = minutesPlayed(g);
+      const last = [g.steam?.lastPlayed, g.psn?.lastPlayed, g.nintendo?.lastPlayed, g.xbox?.lastPlayed, g.ea?.lastPlayed, g.rockstar?.lastPlayed].filter(Boolean).sort().at(-1);
+      const done = [
+        g.steam && g.steam.achievements.unlocked != null && [g.steam.achievements.unlocked, g.steam.achievements.total],
+        g.psn?.trophies && [g.psn.trophies.earned, g.psn.trophies.total],
+        g.xbox?.achievements && [g.xbox.achievements.earned, g.xbox.achievements.total],
+        g.ea?.achievements && [g.ea.achievements.earned, g.ea.achievements.total],
+      ].filter(x => x && x[1]);
+      const got = done.reduce((s, x) => s + x[0], 0), of = done.reduce((s, x) => s + x[1], 0);
+      const cells = [
+        m ? ['Played', played(m)] : null,
+        of ? [g.psn?.trophies && done.length === 1 ? 'Trophies' : 'Achievements', `${Math.round(got / of * 100)}%`] : null,
+        last ? ['Last played', Case.date(last.slice(0, 10))] : null,
+      ].filter(Boolean);
+      return cells.length ? `<div class="dw-glance">${cells.map(([k, v]) => `<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div>` : '';
+    }
+
+    function copyHtml(g) {
+      const c = CONSOLE_BY_ID[g.console];
+      const L = g.launcher && g.launcher !== 'none' && LAUNCHERS[g.launcher];
+      const pack = g.pack && g.pack !== 'Base game' ? [g.pack, g.packCode].filter(Boolean).join(' · ') : '';
+      const format = g.format === 'digital' && STORE[g.console] ? `${FORMATS.digital} · ${STORE[g.console].name}` : FORMATS[g.format];
+      return facts([
+        fact('Platform', esc(c.name + (g.mac ? ' / Mac' : ''))),
+        fact('Region', esc(REGIONS[g.region]?.long || g.region)),
+        fact('Released', g.released && esc(Case.date(g.released, true))),
+        fact('Publisher', esc(g.publisher)),
+        fact('Developer', esc(g.developer)),
+        fact('Genre', esc(g.genre)),
+        fact('Series', esc(g.series)),
+        fact('Edition', esc(g.edition)),
+        fact('Pack', esc(pack)),
+        fact('Format', esc(format)),
+        fact('Activates on', L && esc(L.name)),
+        fact('Also digital', g.alsoDigital && esc(g.launcher === 'ea' ? 'In the EA app' : `On ${LAUNCHERS[g.launcher]?.name || 'a launcher'}`)),
+      ]);
+    }
+
+    function playedHtml(g) {
       let html = '';
       if (g.steam) {
-        const s = g.steam, a = s.achievements;
-        html += line(STORE_LOGOS.steam, [
-          s.playtime.total ? `${played(s.playtime.total)} played` : 'Not played yet',
-          s.lastPlayed && `last on ${day(s.lastPlayed)}`,
-          a.total && (a.unlocked != null ? `${a.unlocked} of ${a.total} achievements` : `${a.total} achievements`),
-        ]);
-        if (s.store?.description) html += `<p class="spot-about">${esc(s.store.description)}</p>`;
-        html += `<a class="spot-find" href="${esc(s.storeUrl)}" target="_blank" rel="noopener">Steam store page ↗</a>`;
+        const s = g.steam, a = s.achievements, p = s.playtime;
+        const on = [['Windows', p.windows], ['Mac', p.mac], ['Linux', p.linux], ['Steam Deck', p.deck]].filter(x => x[1]);
+        html += section('Steam', facts([
+          fact('Played', esc(played(p.total))),
+          fact('Where', on.length > 1 && esc(on.map(([k, m]) => `${played(m)} on ${k}`).join(', '))),
+          fact('Past two weeks', p.lastTwoWeeks && esc(played(p.lastTwoWeeks))),
+          fact('Last played', when(s.lastPlayed)),
+          fact('Achievements', a.total && a.unlocked == null && esc(num(a.total))),
+        ]) + (a.unlocked != null ? meter('Achievements', a.unlocked, a.total) : ''), STORE_LOGOS.steam);
       }
       if (g.psn) {
         const p = g.psn, t = p.trophies;
-        html += line(TROPHY, [
-          p.playtime != null && (p.playtime ? `${played(p.playtime)} played` : 'Not played yet'),
-          p.playCount > 1 && `${p.playCount} sessions`,
-          p.firstPlayed && p.firstPlayed.slice(0, 10) !== p.lastPlayed?.slice(0, 10) && `first on ${day(p.firstPlayed)}`,
-          p.lastPlayed && `last on ${day(p.lastPlayed)}`,
-          t && `${t.earned} of ${t.total} trophies${t.platinum ? ', platinum' : ''}`,
-        ]);
+        html += section('PlayStation Network', facts([
+          fact('Played', p.playtime != null && esc(played(p.playtime))),
+          fact('Sessions', p.playCount > 1 && esc(num(p.playCount))),
+          fact('First played', when(p.firstPlayed)),
+          fact('Last played', when(p.lastPlayed)),
+        ]) + (t ? meter('Trophies', t.earned, t.total) + grades(t.grades) : ''), TROPHY);
       }
-      return `<div class="spot-online" style="--n:${n}">${html}</div>`;
+      if (g.nintendo) {
+        const p = g.nintendo;
+        html += section('Nintendo', facts([
+          fact('Played', esc(played(p.playtime))),
+          fact('Days played', p.playDays && esc(num(p.playDays))),
+          fact('First played', when(p.firstPlayed)),
+          fact('Last played', when(p.lastPlayed)),
+        ]), SWITCH);
+      }
+      if (g.xbox) {
+        const x = g.xbox, a = x.achievements;
+        html += section('Xbox', facts([
+          fact('Played', x.playtime != null && esc(played(x.playtime))),
+          fact('Last played', when(x.lastPlayed)),
+        ]) + (a ? meter('Achievements', a.earned, a.total) + meter('Gamerscore', a.gamerscore, a.gamerscoreTotal, ' G') + unlocks(a.recent) : ''), XBOX);
+      }
+      if (g.ea) {
+        const e = g.ea, a = e.achievements;
+        // an add-on has no play time of its own: it is played in its game
+        html += section('EA app', facts([
+          fact('Played', e.playtime != null && esc(e.playtime ? played(e.playtime) : 'Not yet')),
+          fact('Last played', when(e.lastPlayed)),
+          fact('Owned since', when(e.since)),
+        ]) + (a ? meter('Achievements', a.earned, a.total) + unlocks(a.recent) : ''), STORE_LOGOS.ea);
+      }
+      if (g.rockstar) {
+        const r = g.rockstar;
+        // Rockstar keeps no play time anyone can read: only when it was last played, and the achievements
+        html += section('Rockstar Games Launcher', facts([
+          fact('Last played', r.lastPlayed ? when(r.lastPlayed) : 'Not yet'),
+          fact('Achievements', r.achievements && esc(`${num(r.achievements)} unlocked`)),
+        ]), STORE_LOGOS.rockstar);
+      }
+      return html;
     }
+
+    // what its Steam store page says: what it is, pictures of it, its score, and the rest
+    function storeHtml(g) {
+      const st = g.steam?.store;
+      if (!st) return '';
+      const about = st.about || st.description;
+      const shots = (st.screenshots || []).slice(0, 12);
+      const ages = st.ageRatings ? [st.ageRatings.pegi && `PEGI ${st.ageRatings.pegi}`, st.ageRatings.esrb && `ESRB ${st.ageRatings.esrb.toUpperCase()}`].filter(Boolean).join(' · ') : '';
+      const price = st.free ? 'Free to play' : st.price ? `${st.price.currency} ${st.price.final.toFixed(2)}${st.price.discount ? ` (${st.price.discount}% off)` : ''}` : '';
+      const os = st.platforms ? Object.entries(st.platforms).filter(([, v]) => v).map(([k]) => ({ windows: 'Windows', mac: 'Mac', linux: 'Linux' }[k] || k)).join(', ') : '';
+      const langs = st.languages || [];
+      return section('About', about ? `<p class="dw-about">${esc(about)}</p>${about.length > 320 ? '<button type="button" class="dw-more" data-more>Read more</button>' : ''}` : '')
+        + (shots.length ? `<div class="dw-shots">${shots.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener" aria-label="Screenshot"><img src="${esc(u.replace('.1920x1080', '.600x338'))}" alt="" loading="lazy"></a>`).join('')}</div>` : '')
+        + section('On the Steam store', facts([
+          fact('Metacritic', st.metacritic?.score && `<span class="dw-score" style="--mc:${st.metacritic.score >= 75 ? '#6c3' : st.metacritic.score >= 50 ? '#fc3' : '#f44'}">${esc(st.metacritic.score)}</span>`),
+          fact('Reviews', st.recommendations && esc(num(st.recommendations))),
+          fact('On Steam since', st.released && esc(Case.date(st.released, true))),
+          fact('Developer', esc((st.developers || []).join(', '))),
+          fact('Publisher', esc((st.publishers || []).join(', '))),
+          fact('Genres', esc((st.genres || []).join(', '))),
+          fact('Systems', esc(os)),
+          fact('Controller', st.controllerSupport && esc(st.controllerSupport === 'full' ? 'Full support' : 'Partial support')),
+          fact('Rated', esc(ages)),
+          fact('Languages', langs.length && esc(langs.length > 6 ? `${langs.slice(0, 6).join(', ')} and ${langs.length - 6} more` : langs.join(', '))),
+          fact('Add-ons', st.dlc?.length && esc(`${st.dlc.length} DLC`)),
+          fact('Price now', esc(price)),
+        ]) + tags(st.categories || []));
+    }
+
+    function linksHtml(g) {
+      const c = CONSOLE_BY_ID[g.console];
+      const q = encodeURIComponent(`${g.title} ${c.name} ${REGIONS[g.region]?.name || g.region} box art`);
+      return section('Links', [
+        g.steam?.storeUrl && link(g.steam.storeUrl, 'Steam store page'),
+        g.steam?.store?.metacritic?.url && link(g.steam.store.metacritic.url, 'Metacritic'),
+        !g.cover && link(`https://www.google.com/search?tbm=isch&q=${q}`, 'Find the cover on Google Images'),
+      ].filter(Boolean).join(''));
+    }
+
+    // what a collection says of it besides: for a Sims game on PC, the rest of its series' packs (js/sims.js)
+    const related = g => Object.entries(COLLECTIONS).map(([k, c]) => {
+      const r = c.drawer && LISTS[k] && c.drawer(g, LISTS[k]);
+      return r ? section(r.title, r.html) : '';
+    }).join('');
+
+    function details(g) {
+      const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.reproduction && 'Reproduction', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
+      return glance(g) + tags(marks)
+        + (g.note ? `<p class="dw-note">${esc(g.note)}</p>` : '')
+        + section('The copy', copyHtml(g))
+        + related(g)
+        + playedHtml(g) + storeHtml(g) + linksHtml(g);
+    }
+
     function sizeOf(g, k) {
       if (shape(g) === 'cart') return Case.cartSize(g, k);
       const L = Case.layout(g, k);
       return [L.w, L.h];
     }
 
-    /* The game in the middle of the screen, as big as the text above and below leaves room for.
-       On a wide, short screen (a phone on its side) the game stands on the left and its text on the right. */
-    function layoutFor(g) {
+    /* Where the game stands: the screen left of the drawer, or above it on a phone held upright, where the drawer
+       is a sheet along the bottom. The arrows sit along the foot of it. */
+    function stage() {
       const vw = innerWidth, vh = innerHeight;
-      const [w1, h1] = sizeOf(g, 1);
-      const padX = clamp(vw * 0.06, 16, 96), margin = clamp(vh * 0.04, 12, 44);
-      const cap = shape(g) === 'cart' ? 7 : 3.2;
-      if (vw >= 600 && vh < 560 && vw > vh * 1.4) {
-        const k = Math.max(0.15, Math.min((vw * 0.5 - padX * 1.5) / (w1 * 1.15), (vh - margin * 2 - NAV) / h1, cap));
-        return { k, w: w1 * k, h: h1 * k, cx: (padX + vw * 0.5) / 2, cy: (vh - NAV) / 2, vw, vh, padX, margin, side: true };
-      }
-      const text = vw < 640 ? 200 : 250; // a first guess at the text; place() measures it
-      const k = Math.max(0.15, Math.min((vw - padX * 2) / (w1 * 1.2), Math.max(vh - margin * 2 - NAV - text, 140) / h1, (vh * 0.55) / h1, cap));
-      return { k, w: w1 * k, h: h1 * k, cx: vw / 2, cy: vh / 2, vw, vh, padX, margin };
+      const wide = vw >= 760 && vw >= vh * 0.9;
+      const S = wide ? { x: 0, y: 0, w: vw - Math.round(clamp(vw * 0.36, 340, 480)), h: vh } : { x: 0, y: 0, w: vw, h: Math.round(vh * 0.5) };
+      // on a short stage the arrows stand either side of the game instead of under it
+      S.edge = !wide || vh < 560;
+      S.nav = S.edge ? 0 : NAV;
+      ui.classList.toggle('sheet', !wide);
+      ui.classList.toggle('edge', S.edge);
+      ui.style.setProperty('--stage-w', S.w + 'px');
+      ui.style.setProperty('--stage-h', S.h + 'px');
+      return S;
     }
 
-    const infoAbove = g => {
+    /* The game in the middle of the stage, as big as the text above and the buttons below leave room for. */
+    function layoutFor(g) {
+      const S = stage();
+      const [w1, h1] = sizeOf(g, 1);
+      const padX = S.edge ? 58 : clamp(S.w * 0.06, 16, 72), margin = clamp(S.h * 0.04, 12, 40);
+      const cap = shape(g) === 'cart' ? 7 : 3.2;
+      const text = S.w < 640 ? 130 : 170; // a first guess at the text; place() measures it
+      const k = Math.max(0.15, Math.min((S.w - padX * 2) / (w1 * 1.15), Math.max(S.h - margin * 2 - S.nav - text, 110) / h1, (S.h * 0.66) / h1, cap));
+      return { k, w: w1 * k, h: h1 * k, cx: S.x + S.w / 2, cy: S.y + S.h / 2, vw: innerWidth, vh: innerHeight, S, padX, margin };
+    }
+
+    function infoAbove(g) {
       const c = CONSOLE_BY_ID[g.console];
-      return `<p class="spot-eyebrow" style="--n:0"><span class="spot-art">${CONSOLE_ART[g.console] || ''}</span>${esc(c.name)}${g.mac ? ' / Mac' : ''} · ${esc(REGIONS[g.region]?.name || g.region)}</p><h2 style="--n:1">${esc(g.title)}</h2>`;
-    };
+      const pack = g.pack && g.pack !== 'Base game' ? g.pack : '';
+      return `<p class="spot-eyebrow" style="--n:0"><span class="spot-art">${CONSOLE_ART[g.console] || ''}</span>${esc(c.name)}${g.mac ? ' / Mac' : ''} · ${esc(REGIONS[g.region]?.name || g.region)}</p><h2 style="--n:1">${esc(g.title)}</h2>
+        <p class="spot-who" style="--n:2">${[g.released && Case.date(g.released, true), g.publisher, pack].filter(Boolean).map(esc).join(' · ')}</p>`;
+    }
     function infoBelow(g) {
-      const c = CONSOLE_BY_ID[g.console];
-      const made = g.developer && g.developer !== g.publisher ? `Developed by ${g.developer}` : '';
-      const pack = g.pack && g.pack !== 'Base game' ? [g.pack, g.packCode].filter(Boolean).join(' ') : '';
-      const rest = [pack, g.genre, FORMATS[g.format], g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.alsoDigital && (g.launcher === 'ea' ? 'Also in the EA app' : `Also on ${LAUNCHERS[g.launcher]?.name || 'a launcher'}`), g.edition, made].filter(Boolean);
-      const q = encodeURIComponent(`${g.title} ${c.name} ${REGIONS[g.region]?.name || g.region} box art`);
-      let n = 2;
-      return `
-        <p class="spot-who" style="--n:${n++}">${[Case.date(g.released, true), g.publisher].filter(Boolean).map(esc).join(' · ')}</p>
-        ${rest.length ? `<p class="spot-rest" style="--n:${n++}">${rest.map(esc).join(' · ')}</p>` : ''}
-        ${g.note ? `<p class="spot-note" style="--n:${n++}">${esc(g.note)}</p>` : ''}
-        ${g.steam || g.psn ? onlineInfo(g, n++) : ''}
-        ${g.cover ? '' : `<a class="spot-find" style="--n:${n++}" href="https://www.google.com/search?tbm=isch&amp;q=${q}" target="_blank" rel="noopener">Find the cover on Google Images ↗</a>`}
-        ${shape(g) === 'box' ? `<div class="views" style="--n:${n++}">
+      const n = 3;
+      return shape(g) === 'box' ? `<div class="views" style="--n:${n}">
           <button type="button" data-v="front">Front</button><button type="button" data-v="spine">Spine</button><button type="button" data-v="back">Back</button>
           <button type="button" class="open-btn" data-v="open">${Case.layout(g, 1).kind === 'box' ? 'Take it out' : 'Open case'}</button></div>`
         // a digital copy has only its cover and, on the back, its licence
-        : shape(g) === 'card' ? `<div class="views" style="--n:${n++}"><button type="button" data-v="front">Cover</button><button type="button" data-v="back">Licence</button></div>` : ''}`;
+        : shape(g) === 'card' ? `<div class="views" style="--n:${n}"><button type="button" data-v="front">Cover</button><button type="button" data-v="back">Licence</button></div>` : '';
     }
 
     /* ---------- turning it round ---------- */
@@ -1354,7 +1518,7 @@
       return item ? faceOf(item) : null;
     }
     // what a flight scales against: a spine is matched by height, anything else by its size
-    const scaleFrom = (el, p, w, h) => el.closest('.sc-it') ? p.h / h : el.classList.contains('peek') ? el._pose.h / h : el.classList.contains('sp') ? p.h / h : el.classList.contains('cside') ? p.h / w : Math.min(p.w / w, p.h / h);
+    const scaleFrom = (el, p, w, h) => el.closest('.sc-it') ? p.h / h : el.classList.contains('sp') ? p.h / h : el.classList.contains('cside') ? p.h / w : Math.min(p.w / w, p.h / h);
     // (z: tipped over that far, as a game leaning on the shelf)
     const piecePose = (L, cx, cy, s, z = 0) => `translate(${(cx - L.w / 2).toFixed(1)}px,${(cy - L.h / 2).toFixed(1)}px) scale(${s.toFixed(4)}) rotate(${z.toFixed(2)}deg)`;
     // a place just off the screen on the way to (x, y)
@@ -1394,72 +1558,6 @@
     }
     function unhide(a) { a.hidden.forEach(el => { el.style.visibility = ''; }); a.hidden = []; }
 
-    /* ---------- the games either side ----------
-       On a big screen the previous game stands to the left and the next to the right, smaller and turned in
-       towards the middle, on the same floor as the game in the middle. A click on one steps to it. Stepping,
-       the one in the middle moves aside into the place beside it and the next one comes in from its own. */
-    const PEEK_TURN = 24;
-    // where a game stands beside the one in the middle (a, its layout L), on side dir: or null if there is no room
-    function peekPose(g, dir, a) {
-      const L = a.L;
-      if (L.side || L.vw < 1000) return null;
-      const [w1, h1] = sizeOf(g, 1);
-      const H = L.h * 0.62;
-      const k = Math.min(H / h1, (L.vw * 0.18) / w1, shape(g) === 'cart' ? (H / 190) * 1.6 : Infinity);
-      const w = w1 * k, h = h1 * k;
-      // clear of the text above and below the game in the middle
-      const text = Math.min(Math.max(L.w * 1.6, 360), L.vw - L.padX * 2) / 2;
-      const near = Math.max(L.w / 2, text) + 48 + w / 2, far = L.vw / 2 - w / 2 - 24;
-      if (far < near) return null;
-      const floor = L.cy + L.h / 2;
-      return { g, k, w, h, cx: L.vw / 2 + dir * clamp(L.vw * 0.31, near, far), cy: floor - h / 2, ry: -dir * PEEK_TURN };
-    }
-    function peekEl(P, dir) {
-      const { g } = P;
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.className = 'peek';
-      el.dataset.dir = dir;
-      el.setAttribute('aria-label', `${dir < 0 ? 'Previous' : 'Next'}: ${g.title}`);
-      const face = shape(g) === 'cart' ? Case.cart(g, P.k) : Case.front(g, P.k, false);
-      if (shape(g) === 'card') face.classList.add('ghosted');
-      el.append(face);
-      el.style.cssText = `left:${(P.cx - P.w / 2).toFixed(1)}px;top:${(P.cy - P.h / 2).toFixed(1)}px;width:${P.w.toFixed(1)}px;height:${P.h.toFixed(1)}px;--ry:${P.ry}deg`;
-      el._pose = P;
-      return el;
-    }
-    const peekAt = dir => peeks.querySelector(`.peek[data-dir="${dir}"]:not(.gone)`);
-    // Stands the games either side of a. Coming after a step of n, the one on side -n (the game that was in the
-    // middle) waits hidden until that game lands there, and the one on side n slides in from the edge.
-    function setPeeks(a, n = 0, still = false) {
-      clearPeeks(n);
-      const i = games.indexOf(a.g);
-      if (i < 0) return;
-      for (const dir of [-1, 1]) {
-        const g = games[i + dir], P = g && peekPose(g, dir, a);
-        if (!P) continue;
-        const el = peekEl(P, dir);
-        peeks.append(el);
-        if (still || reduced()) continue;
-        if (n && dir === -n) el.style.visibility = 'hidden';
-        else if (n) el.animate([{ transform: `translateX(${dir * 140}px)`, opacity: 0 }, { transform: 'none', opacity: .5 }], { duration: 650, delay: 120, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
-        else el.animate([{ opacity: 0 }, { opacity: .5 }], { duration: 500, delay: 380, easing: 'ease-out', fill: 'backwards' });
-      }
-    }
-    // Takes the games either side away: after a step of n, the one on side -n slides out past the edge
-    function clearPeeks(n = 0) {
-      for (const el of [...peeks.children]) {
-        if (el.classList.contains('gone')) continue;
-        el.classList.add('gone');
-        // a game on its way into this place goes with it
-        leaving.forEach(x => { if (x.peek === el) x.layer.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: 'forwards' }); });
-        const dir = +el.dataset.dir;
-        if (reduced() || el.style.visibility === 'hidden' || (n && dir === n)) { el.remove(); continue; }
-        const out = el.animate([{ opacity: getComputedStyle(el).opacity }, { transform: `translateX(${(n ? dir : 0) * 140}px)`, opacity: 0 }], { duration: n ? 450 : 300, easing: 'ease-in', fill: 'forwards' });
-        out.finished.then(() => el.remove(), () => el.remove());
-      }
-    }
-
     /* ---------- opening ---------- */
     function open(g, source, fromHash) {
       if (!g) return;
@@ -1469,7 +1567,6 @@
       overlay.classList.add('open');
       ui.classList.add('open');
       show(g, source && source.isConnected ? source : homeOf(g), 0);
-      setPeeks(cur);
       setTimeout(() => ui.focus({ preventScroll: true }), 60);
     }
 
@@ -1487,7 +1584,6 @@
       const { turn, obj, sh } = build(g, L.k);
       piece.append(turn);
       layer.append(piece);
-      layer.classList.toggle('side', !!L.side);
       if (still) layer.classList.add('still');
       ui.before(layer);
       Object.assign(a, { layer, piece, turn, obj, sh });
@@ -1495,6 +1591,7 @@
       grab(piece);
       place(a);
       count(g);
+      fill(g, side && !still);
       ui.setAttribute('aria-label', g.title);
       document.body.style.setProperty('--spot-x', L.cx.toFixed(0) + 'px');
       document.body.style.setProperty('--spot-y', L.cy.toFixed(0) + 'px');
@@ -1507,16 +1604,13 @@
 
       const from = a.source ? poseOf(a.source) : null;
       hide(a, a.source); // its place stays empty while it is out
-      if (a.source && a.source.classList.contains('peek')) hide(a, homeOf(g)); // and so does its place on the page
       if (still || reduced()) return;
       if (from && from.seen && !side) {
         // off the page: it lifts from its place and flies over, turning and growing as it goes
-        // (from beside the game that was in the middle it simply moves across)
         const s0 = scaleFrom(a.source, from, L.w, L.h);
         const dist = Math.hypot(from.cx - L.cx, from.cy - L.cy);
-        const beside = a.source.classList.contains('peek');
-        const lift = beside ? 0 : 50 + Math.min(110, dist * 0.12);
-        const duration = beside ? 720 : 820 + Math.min(320, dist * 0.25);
+        const lift = 50 + Math.min(110, dist * 0.12);
+        const duration = 820 + Math.min(320, dist * 0.25);
         a.flight = piece.animate([
           { transform: piecePose(L, from.cx, from.cy, s0, from.z) },
           { transform: piecePose(L, (from.cx + L.cx) / 2, (from.cy + L.cy) / 2 - lift, (s0 + 1) / 2, from.z * 0.4), offset: 0.45 },
@@ -1543,39 +1637,17 @@
       }
     }
 
-    // the text above and below, kept on the screen: the game shrinks if the text needs the room
+    // the text above and the buttons below, kept on the stage: the game shrinks if they need the room
     function place(a) {
-      const { L, layer } = a;
+      const { L, layer } = a, S = L.S;
       const above = $('.spot-info.above', layer), below = $('.spot-info.below', layer);
-      if (L.side) {
-        // the text in one column on the right, the game in the middle of the left
-        const x0 = L.vw * 0.52, width = L.vw - L.padX - x0;
-        for (const info of [above, below]) {
-          info.style.left = x0.toFixed(1) + 'px';
-          info.style.width = width.toFixed(1) + 'px';
-        }
-        const ah = above.offsetHeight, bh = below.offsetHeight;
-        const top = Math.max(L.margin, (L.vh - NAV - ah - 12 - bh) / 2);
-        above.style.top = top.toFixed(1) + 'px';
-        below.style.top = (top + ah + 12).toFixed(1) + 'px';
-        L.cy = Math.max(L.margin + L.h / 2, (L.vh - NAV) / 2);
-      } else layOut(a, above, below);
-      a.piece.style.width = L.w.toFixed(1) + 'px';
-      a.piece.style.height = L.h.toFixed(1) + 'px';
-      const floor = $('.spot-floor', layer);
-      floor.style.left = (L.cx - L.w * 0.7).toFixed(1) + 'px';
-      floor.style.width = (L.w * 1.4).toFixed(1) + 'px';
-      floor.style.top = (L.cy + L.h / 2 - 12).toFixed(1) + 'px';
-    }
-    function layOut(a, above, below) {
-      const L = a.L;
-      const width = Math.min(Math.max(L.w * 1.6, 360), L.vw - L.padX * 2);
+      const width = Math.min(Math.max(L.w * 1.6, 360), S.w - (S.edge ? 32 : L.padX * 2));
       for (const info of [above, below]) {
-        info.style.left = ((L.vw - width) / 2).toFixed(1) + 'px';
+        info.style.left = (S.x + (S.w - width) / 2).toFixed(1) + 'px';
         info.style.width = width.toFixed(1) + 'px';
       }
-      const ah = above.offsetHeight, bh = below.offsetHeight, gapA = 22, gapB = 26;
-      const room = L.vh - L.margin * 2 - NAV - ah - bh - gapA - gapB;
+      const ah = above.offsetHeight, bh = below.offsetHeight, gapA = 22, gapB = bh ? 26 : 0;
+      const room = S.h - L.margin * 2 - S.nav - ah - bh - gapA - gapB;
       if (L.h > room && room > 50) {
         const f = room / L.h;
         Object.assign(L, { k: L.k * f, w: L.w * f, h: L.h * f });
@@ -1583,10 +1655,26 @@
         a.piece.replaceChildren(turn);
         Object.assign(a, { turn, obj, sh });
       }
-      const top = L.margin + Math.max(0, (L.vh - NAV - L.margin * 2 - (ah + gapA + L.h + gapB + bh)) / 2);
+      const top = S.y + L.margin + Math.max(0, (S.h - S.nav - L.margin * 2 - (ah + gapA + L.h + gapB + bh)) / 2);
       L.cy = top + ah + gapA + L.h / 2;
       above.style.top = top.toFixed(1) + 'px';
       below.style.top = (L.cy + L.h / 2 + gapB).toFixed(1) + 'px';
+      a.piece.style.width = L.w.toFixed(1) + 'px';
+      a.piece.style.height = L.h.toFixed(1) + 'px';
+      const floor = $('.spot-floor', layer);
+      floor.style.left = (L.cx - L.w * 0.7).toFixed(1) + 'px';
+      floor.style.width = (L.w * 1.4).toFixed(1) + 'px';
+      floor.style.top = (L.cy + L.h / 2 - 12).toFixed(1) + 'px';
+    }
+
+    // the drawer takes the game's details, back at the top; stepping (fade), they come in afresh
+    function fill(g, fade) {
+      if (body._g === g) return; // drawn again for a resize: it keeps its place
+      body._g = g;
+      body.innerHTML = details(g);
+      drawer.scrollTop = body.scrollTop = 0;
+      drawer.setAttribute('aria-label', `Details of ${g.title}`);
+      if (fade && !reduced()) body.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.8,.25,1)' });
     }
 
     function count(g) {
@@ -1602,7 +1690,7 @@
       if (!a || a.closing) return;
       overlay.classList.remove('open');
       ui.classList.remove('open');
-      clearPeeks();
+      body._g = null;
       if (!fromHash) setHash(state.sel.size === 1 ? [...state.sel][0] : '', false, a.g.id);
       if (state.view === 'showcase') scJump(a.g); // the showcase turns to it, so it flies home to the middle
       const back = homeOf(a.g);
@@ -1612,9 +1700,8 @@
     }
 
     // Sends a game back: into its place if that is on screen, else off the screen towards it,
-    // or out of the side it is leaving by when stepping through (side -1 left, 1 right),
-    // or, on a big screen, into the place beside the next game (peek, standing hidden until it lands).
-    function leave(a, side, peek) {
+    // or out of the side it is leaving by when stepping through (side -1 left, 1 right).
+    function leave(a, side) {
       a.closing = true;
       if (cur === a) cur = null;
       leaving.add(a);
@@ -1633,21 +1720,6 @@
       a.turn.getAnimations().forEach(x => x.cancel());
       a.obj.getAnimations().forEach(x => { if (x.effect?.getKeyframes?.()[0]?.['--sd'] !== undefined) x.cancel(); });
       a.piece.style.transform = piecePose(L, from.cx, from.cy, from.s, from.z);
-
-      if (peek) {
-        const P = peek._pose;
-        a.peek = peek;
-        a.turn.style.transition = 'transform .72s cubic-bezier(.4,0,.2,1)';
-        a.turn.style.transform = rot([0, P.ry]);
-        a.flight = a.piece.animate([
-          { transform: piecePose(L, from.cx, from.cy, from.s, from.z) },
-          { transform: piecePose(L, P.cx, P.cy, P.h / L.h) },
-        ], { duration: 720, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-        const land = () => { if (peek.isConnected && !peek.classList.contains('gone')) peek.style.visibility = ''; finish(a); };
-        a.flight.finished.then(land, () => {});
-        a.timer = setTimeout(land, 1100);
-        return;
-      }
 
       // the page may have been drawn again since it came out
       const home = homeOf(a.g);
@@ -1709,23 +1781,24 @@
       if (cur === a) cur = null;
     }
 
-    // the next or previous game: this one goes back as that one comes out
-    // (on a big screen the next one comes in from its place beside this one, and this one moves into the place beside it)
+    // the next or previous game: this one goes out one side as that one comes in from the other
     function step(n) {
       if (!cur || cur.closing) return;
       const g = games[games.indexOf(cur.g) + n];
       if (!g || games.indexOf(cur.g) < 0) return;
       setHash(g.id, false);
-      const old = cur, via = peekAt(n);
-      if (via) {
-        show(g, via, 0);
-        setPeeks(cur, n);
-        leave(old, -n, peekAt(-n));
-        return;
-      }
-      leave(old, -n);
+      leave(cur, -n);
       show(g, homeOf(g), n);
-      setPeeks(cur, 0, true);
+    }
+
+    // straight to another game picked in the drawer: it comes in from the side it stands on in the list
+    function jump(g) {
+      if (!g || !cur || cur.closing || g === cur.g) return;
+      const i = games.indexOf(cur.g), j = games.indexOf(g);
+      const n = i >= 0 && j >= 0 && j < i ? -1 : 1;
+      setHash(g.id, false);
+      leave(cur, -n);
+      show(g, homeOf(g), n);
     }
 
     // the page was drawn again: the game in the middle belongs to its new place
@@ -1735,7 +1808,6 @@
       cur.source = homeOf(cur.g);
       hide(cur, cur.source);
       count(cur.g);
-      if (!cur.closing) setPeeks(cur, 0, true);
     }
 
     let rt = 0;
@@ -1746,7 +1818,6 @@
         const g = cur.g;
         finish(cur);
         show(g, homeOf(g), 0, true);
-        setPeeks(cur, 0, true);
       }, 200);
     });
     document.addEventListener('keydown', e => {
@@ -1836,19 +1907,76 @@
       playCount: ts.length ? sum(ts, t => t.playCount) : null,
       firstPlayed: times('firstPlayed')[0] || null,
       lastPlayed: times('lastPlayed').at(-1) || null,
-      trophies: ss.length ? { total: sum(ss, s => s.total), earned: sum(ss, s => s.earnedTotal), platinum: ss.some(s => s.earned.platinum) } : null,
+      trophies: ss.length ? {
+        total: sum(ss, s => s.total), earned: sum(ss, s => s.earnedTotal), platinum: ss.some(s => s.earned.platinum),
+        grades: ['platinum', 'gold', 'silver', 'bronze'].map(k => [k, sum(ss, s => s.earned[k]), sum(ss, s => s.defined[k])]),
+      } : null,
     };
+  }
+
+  /* A copy's Nintendo play history. A copy with more than one game in it is tied to each one's, added up. */
+  function nintendoOf(g, nin) {
+    const ts = [g.nintendoTitleId || []].flat().map(id => nin.titles[id]).filter(Boolean);
+    if (!ts.length) return null;
+    const times = k => ts.map(t => t[k]).filter(Boolean).sort();
+    return {
+      playtime: ts.reduce((a, t) => a + (t.playtime || 0), 0),
+      playDays: ts.reduce((a, t) => a + (t.playDays || 0), 0),
+      firstPlayed: times('firstPlayed')[0] || null,
+      lastPlayed: times('lastPlayed').at(-1) || null,
+    };
+  }
+
+  /* A copy's Xbox history and achievements. A copy with more than one game in it is tied to each one's, added up. */
+  function xboxOf(g, xbl) {
+    const ts = [g.xboxTitleId || []].flat().map(id => xbl.titles[id]).filter(Boolean);
+    if (!ts.length) return null;
+    const sum = (xs, f) => xs.reduce((a, x) => a + (f(x) || 0), 0);
+    const as = ts.map(t => t.achievements).filter(Boolean);
+    const timed = ts.filter(t => t.playtime != null);
+    return {
+      playtime: timed.length ? sum(timed, t => t.playtime) : null,
+      lastPlayed: ts.map(t => t.lastPlayed).filter(Boolean).sort().at(-1) || null,
+      achievements: as.length ? {
+        total: sum(as, a => a.total), earned: sum(as, a => a.earned),
+        gamerscore: sum(as, a => a.gamerscore), gamerscoreTotal: sum(as, a => a.gamerscoreTotal),
+        recent: as.flatMap(a => a.unlocked).sort((x, y) => (y.date || '').localeCompare(x.date || '')).slice(0, 5),
+      } : null,
+    };
+  }
+
+  /* A copy's EA app library entry: its play time, when it was last played and first owned, and its achievements
+     (an add-on has only when it was first owned). */
+  function eaOf(g, lib) {
+    const e = g.eaSlug && lib.games[g.eaSlug];
+    if (!e) return null;
+    const a = e.achievements;
+    return {
+      playtime: e.playtime,
+      lastPlayed: e.lastPlayed,
+      since: e.offers.map(o => o.since).filter(Boolean).sort()[0] || null,
+      achievements: a && { total: a.total, earned: a.earned, recent: a.unlocked.slice(0, 5) },
+    };
+  }
+
+  /* A PC copy's Rockstar Games entry: when it was last played on PC and how many achievements were unlocked. */
+  function rockstarOf(g, lib) {
+    const r = g.rockstarTitle && lib.games[g.rockstarTitle];
+    if (!r) return null;
+    return { lastPlayed: r.platforms.pc || r.lastPlayed, achievements: r.achievements?.earned || 0 };
   }
 
   /* ---------- start ---------- */
   const json = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
   const EXTRA = [...new Set(Object.values(COLLECTIONS).flatMap(c => c.data || []))];
   // what Steam says about the games tied to it (steamAppId), written by tools/steam-sync.mjs; the shelf does without it
-  // and what PlayStation Network says about the ones tied to it (psnTitleId, psnTrophySet), from tools/psn-sync.mjs
-  const ONLINE = ['data/steam.json', 'data/psn.json'].map(u => json(u).catch(() => null));
+  // and what PlayStation Network says about the ones tied to it (psnTitleId, psnTrophySet), from tools/psn-sync.mjs,
+  // and Nintendo about the Switch ones (nintendoTitleId), from tools/nintendo-sync.mjs, and Xbox Live about the Xbox ones (xboxTitleId), from tools/xbox-sync.mjs,
+  // and the EA app about the PC ones in its library (eaSlug), from tools/ea-sync.mjs, and Rockstar about the PC ones played (rockstarTitle), from tools/rockstar-sync.mjs
+  const ONLINE = ['data/steam.json', 'data/psn.json', 'data/nintendo.json', 'data/xbox.json', 'data/ea.json', 'data/rockstar.json'].map(u => json(u).catch(() => null));
   Promise.all([...['data/games.json', ...EXTRA].map(json), ...ONLINE])
     .then(([db, ...more]) => {
-      const [steam, psn] = more.splice(-2);
+      const [steam, psn, nintendo, xbox, ea, rockstar] = more.splice(-6);
       const file = Object.fromEntries(EXTRA.map((u, i) => [u, more[i]]));
       // games marked hidden stay in the list, but off every shelf and count
       db.games = db.games.filter(g => !g.hidden);
@@ -1857,7 +1985,11 @@
         byId.set(g.id, g);
         if (g.steamAppId && steam?.games[g.steamAppId]) g.steam = steam.games[g.steamAppId];
         if (psn) g.psn = psnOf(g, psn);
-        g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, CONSOLE_BY_ID[g.console].name, CONSOLE_BY_ID[g.console].short, g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac', g.steam && 'Steam', ...(g.steam?.store?.genres || []), g.psn?.trophies?.platinum && 'Platinum trophy', ...nicknames(g)].join(' | '));
+        if (nintendo) g.nintendo = nintendoOf(g, nintendo);
+        if (xbox) g.xbox = xboxOf(g, xbox);
+        if (ea) g.ea = eaOf(g, ea);
+        if (rockstar) g.rockstar = rockstarOf(g, rockstar);
+        g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, CONSOLE_BY_ID[g.console].name, CONSOLE_BY_ID[g.console].short, g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac', g.steam && 'Steam', g.format === 'digital' && STORE[g.console] && 'eShop', ...(g.steam?.store?.genres || []), g.psn?.trophies?.platinum && 'Platinum trophy', g.xbox && 'Xbox Live', inLib(g, 'ea') && 'EA app', g.rockstar && 'Rockstar Games Launcher', ...nicknames(g)].join(' | '));
       });
       for (const [k, c] of Object.entries(COLLECTIONS)) LISTS[k] = c.games(db, ...(c.data || []).map(u => file[u]));
       shell();
