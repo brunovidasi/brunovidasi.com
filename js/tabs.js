@@ -5,12 +5,12 @@
 import { files } from './config.js';
 import { state, resetWebsiteDetailIds } from './state.js';
 import { tabIconHtml } from './icons.js';
-import { positionFloatingMenu } from './utils.js';
 import { updatePath, urlForTabId } from './router.js';
 import { renderExplorer } from './explorer.js';
 import { showActivePanel } from './panels.js';
 import { removeToolTabFrame } from './tool-tabs.js';
 import { closeMobileNav, toggleExplorer, isSidebarHidden } from './shell.js';
+import { isMobileViewport, positionFloatingMenu } from './utils.js';
 
 /**
  * Repaints everything that depends on which tabs exist and which is active,
@@ -31,11 +31,46 @@ export function setActive(id){
   syncWorkspace();
 }
 
-export function openFile(id){
+/**
+ * Puts `id` in the tab bar. With `preview` (an explorer single-click on
+ * desktop) it takes over the existing preview tab's slot instead of adding a
+ * tab, like an editor's italic preview tab. Opening a tab without `preview`
+ * keeps it, which also pins it if it was the preview.
+ */
+export function placeTab(id, preview = false){
+  preview = preview && !isMobileViewport();
+  if(state.openTabs.includes(id)){
+    if(!preview && state.previewTabId === id) state.previewTabId = null;
+    return;
+  }
+  const oldPreviewId = state.previewTabId;
+  const slot = oldPreviewId ? state.openTabs.indexOf(oldPreviewId) : -1;
+  if(preview && slot !== -1){
+    state.openTabs[slot] = id;
+    removeToolTabFrame(oldPreviewId);
+  } else {
+    state.openTabs.push(id);
+  }
+  if(preview) state.previewTabId = id;
+}
+
+export function openFile(id, { preview = false } = {}){
   if(files[id].folder) state.openFolders[files[id].folder] = true;
-  if(!state.openTabs.includes(id)) state.openTabs.push(id);
+  placeTab(id, preview);
   setActive(id);
   closeMobileNav();
+}
+
+/** Turns the preview tab into a regular one, if `id` is it. */
+export function pinTab(id){
+  if(!id || state.previewTabId !== id) return;
+  state.previewTabId = null;
+  renderTabs();
+}
+
+/** Clicking or scrolling inside the editor keeps the tab being looked at. */
+export function pinActivePreviewTab(){
+  pinTab(state.activeId);
 }
 
 export function closeTab(id){
@@ -149,6 +184,8 @@ function wireTabDragAndDrop(tab, id){
 export function renderTabs(){
   const bar = document.getElementById('tabBar');
   bar.innerHTML = '';
+  // Every close path ends here, so drop a preview id whose tab is gone.
+  if(!state.openTabs.includes(state.previewTabId)) state.previewTabId = null;
 
   if(state.openTabs.length === 0){
     // With no tabs there is nothing to look at, so never leave the visitor
@@ -163,11 +200,12 @@ export function renderTabs(){
 
   state.openTabs.forEach(id => {
     const tab = document.createElement('div');
-    tab.className = 'tab' + (state.activeId === id ? ' active' : '');
+    tab.className = 'tab' + (state.activeId === id ? ' active' : '') + (state.previewTabId === id ? ' preview' : '');
     tab.draggable = true;
     tab.innerHTML = tabIconHtml(files[id]) + files[id].label + '<span class="close-x">✕</span>';
     tab.addEventListener('click', (e)=>{
       if(e.target.classList.contains('close-x')) closeTab(id);
+      else if(e.detail === 2) pinTab(id);
       else setActive(id);
     });
     tab.addEventListener('contextmenu', (e)=>{
@@ -248,4 +286,8 @@ function initTabContextMenu(){
 
 export function initTabs(){
   initTabContextMenu();
+  // Mobile has no preview tabs, so placeTab never sets one there.
+  const editor = document.getElementById('editorArea');
+  editor.addEventListener('pointerdown', pinActivePreviewTab);
+  editor.addEventListener('wheel', pinActivePreviewTab, { passive: true });
 }

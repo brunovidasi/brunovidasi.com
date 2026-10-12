@@ -13,6 +13,8 @@ export const state = {
   openTabs: DEFAULT_OPEN_TABS.slice(),
   /** Id of the focused tab, or null when every tab is closed. */
   activeId: 'intro',
+  /** Id of the single italic "preview" tab (explorer single-click), or null. */
+  previewTabId: null,
   /** Folder id -> expanded. */
   openFolders: { about: true },
   /** Tool route that could not be opened yet because the project JSON was still loading. */

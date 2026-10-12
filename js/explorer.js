@@ -46,9 +46,9 @@ function leafDisplay(id){
   return { label: file.label, iconHtml: fileIconHtml(file.icon) };
 }
 
-function openTreeItem(id){
-  if(TOOL_TAB_REGISTRY[id]) openToolTab(id);
-  else openFile(id);
+function openTreeItem(id, options){
+  if(TOOL_TAB_REGISTRY[id]) openToolTab(id, options);
+  else openFile(id, options);
 }
 
 // ---- Rendering ------------------------------------------------------------
@@ -69,7 +69,7 @@ function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
       state.openFolders[key] = nextOpen;
       // On desktop, expanding a folder also opens its readme; on mobile that
       // would close the drawer the visitor is still navigating.
-      if(openable && nextOpen && !isMobileViewport()) openFile(defaultFile);
+      if(openable && nextOpen && !isMobileViewport()) openFile(defaultFile, { preview: true });
       else renderExplorer();
     };
     container.appendChild(head);
@@ -86,7 +86,8 @@ function renderTreeNode(key, depth, container, highlightId, activeFolderIds){
   if(depth > 0) item.style.paddingLeft = (depth * 20) + 'px';
   item.className = 'tree-item' + (highlightId === key ? ' active' : '');
   item.innerHTML = `<span class="left">${iconHtml}${label}</span>`;
-  item.onclick = ()=> openTreeItem(key);
+  // A single click previews the file; a double click keeps its tab open.
+  item.onclick = (e)=> openTreeItem(key, { preview: e.detail < 2 });
   item.addEventListener('contextmenu', (e)=>{
     e.preventDefault();
     e.stopPropagation();

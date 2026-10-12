@@ -934,6 +934,14 @@ h2.sect .brk {
   padding-top: 7px;
 }
 
+.tab.preview {
+  font-style: italic;
+}
+
+.tab.preview .close-x {
+  font-style: normal;
+}
+
 .tab.dragging {
   opacity: .4;
 }

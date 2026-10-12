@@ -11,7 +11,7 @@ import { files, MINI_TOOL_CATEGORY_IDS } from './config.js';
 import { state, TOOL_TAB_REGISTRY } from './state.js';
 import { escapeHtml } from './utils.js';
 import { typingDelay } from './typing.js';
-import { setActive } from './tabs.js';
+import { setActive, placeTab, pinActivePreviewTab } from './tabs.js';
 import { closeMobileNav } from './shell.js';
 import { GAME_DESKTOP_LOCK_HTML } from './icons.js';
 
@@ -37,7 +37,7 @@ export function registerToolFile(id){
 }
 
 /** Opens a tool by route without touching the URL. Returns false if unknown. */
-export function tryOpenToolTabRoute(id){
+export function tryOpenToolTabRoute(id, preview = false){
   if(!TOOL_TAB_REGISTRY[id]) return false;
   registerToolFile(id);
   const parentId = files[id].parentId;
@@ -46,13 +46,13 @@ export function tryOpenToolTabRoute(id){
     const parent = files[parentId];
     if(parent && parent.folder) state.openFolders[parent.folder] = true;
   }
-  if(!state.openTabs.includes(id)) state.openTabs.push(id);
+  placeTab(id, preview);
   state.activeId = id;
   return true;
 }
 
-export function openToolTab(id){
-  if(!tryOpenToolTabRoute(id)) return;
+export function openToolTab(id, { preview = false } = {}){
+  if(!tryOpenToolTabRoute(id, preview)) return;
   setActive(id);
   closeMobileNav();
 }
@@ -202,6 +202,20 @@ function wireToolTabMask(frame){
   });
 }
 
+/**
+ * Events inside the iframe never reach the editor's own listeners, so pin a
+ * preview tab from the tool's (same-origin) window instead. Re-wired on every
+ * load because each navigation brings a fresh window.
+ */
+function wireToolFramePinning(iframe){
+  iframe.addEventListener('load', ()=>{
+    try {
+      iframe.contentWindow.addEventListener('pointerdown', pinActivePreviewTab);
+      iframe.contentWindow.addEventListener('wheel', pinActivePreviewTab, { passive: true });
+    } catch(e){}
+  });
+}
+
 function ensureToolTabFrame(id){
   let frame = document.getElementById('toolTabFrame-' + id);
   if(frame) return frame;
@@ -222,6 +236,7 @@ function ensureToolTabFrame(id){
   wireToolTabMask(frame);
   const iframe = frame.querySelector('iframe');
   wireToolFrameSelfHeal(iframe, id, info.toolPath);
+  wireToolFramePinning(iframe);
   loadFrameWithoutHistory(iframe, info.toolPath);
   return frame;
 }
