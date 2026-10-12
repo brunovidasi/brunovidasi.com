@@ -20,13 +20,15 @@ function notify($topic, $page, $message) {
 
 if (isset($_GET['test'])) { notify($topic, $page, 'Test: notifications are working'); exit('Test sent'); }
 
-$ch = curl_init($page . '.js');
+// Force AUD, otherwise Shopify picks the currency from the server's location
+$ch = curl_init($page . '.js?currency=AUD');
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_TIMEOUT        => 15,
     CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
     CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+    CURLOPT_COOKIE         => 'localization=AU; cart_currency=AUD',
 ]);
 $body   = curl_exec($ch);
 $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
