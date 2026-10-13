@@ -10775,15 +10775,6 @@
       "developer": null,
       "genre": "Life simulation",
       "format": "boxed",
-      "spine": {
-        "style": "white",
-        "top": "pcdvd-mac",
-        "logo": "logos/the-sims-3-monte-vista.webp",
-        "foot": [
-          "M",
-          "ea-yellow"
-        ]
-      },
       "mac": true,
       "series": "The Sims 3",
       "pack": "World",
