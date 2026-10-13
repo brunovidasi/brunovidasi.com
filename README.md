@@ -39,6 +39,7 @@ One entry per copy on the shelf:
 | `title` | `"Final Fantasy X"` | the official title |
 | `listedAs` | `"Nárnia"` | how it was written on the original list, when different |
 | `sortAs` | `"Rock Band"` | optional: where it files when sorted by title, when that isn't its title. Titles already file without a leading The, A or An (The Sims under S), so this is only for the rest: LEGO Rock Band and The Beatles: Rock Band with the Rock Band games, Disney's Tarzan under T. Games that file under the same name stand in the order they came out |
+| `sameAs` | `"Bully: Scholarship Edition"` | optional: the title of the game this copy is the same game as, when its own title differs (Canis Canem Edit, Bully's European name). Copies with the same title already find each other, on other consoles or on the same one in another format: the drawer lists them all together. `false` keeps a copy apart from a different game of the same title (Just Dance on the Switch) |
 | `edition` | `"Nintendo Switch 2 Edition"` | optional |
 | `region` | `"AUS"` | the region code on the box: `AUS`, `EUR`, `HOL` (Netherlands), `UK`, `USA` or `JPN`. When it isn't known, just `PAL`, `NTSC-U` or `NTSC-J` |
 | `released` | `"2001-07-19"` | first release on that console. Can be `"2001-07"` or `"2001"` |

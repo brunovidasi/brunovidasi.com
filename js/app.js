@@ -1402,11 +1402,37 @@
       return section(`${root} on ${CONSOLE_BY_ID[g.console].short}`, Collection.packList(g, fam, name));
     }
 
+    // the other copies of the same game: on other consoles, and on the same one in another format (Moving Out boxed and
+    // as a code in a box). Copies match by title (Grand Theft Auto IV on PS3, Xbox 360 and PC), or are filed with
+    // one by sameAs (Canis Canem Edit with Bully: Scholarship Edition); sameAs false keeps one apart (Just Dance on the
+    // Switch isn't the Wii's). A copy that plays on more than one console (alsoOn) is listed once, the game open in bold
+    const gameKey = g => g.sameAs === false ? '' : (g.sameAs || g.title).normalize('NFD').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, ' ').trim();
+    function elsewhereHtml(g) {
+      const own = byId.get(g.twinOf) || g, key = gameKey(own);
+      if (!key) return '';
+      const on = x => [x.console, ...(x.alsoOn || [])];
+      const fam = DB.filter(x => !x.twinOf && gameKey(x) === key);
+      if (fam.length < 2) return '';
+      fam.sort((a, b) => ORDER[a.console] - ORDER[b.console] || (a.released || '').localeCompare(b.released || ''));
+      // what tells the copies apart: the format, region or launcher only where they differ
+      const differs = f => new Set(fam.map(f)).size > 1;
+      const how = x => x.format === 'digital' && x.launcher && x.launcher !== 'none' ? LAUNCHERS[x.launcher]?.name : FORMATS[x.format];
+      const showHow = differs(how), showRegion = differs(x => x.region);
+      const item = x => {
+        const where = on(x).map(c => CONSOLE_BY_ID[c].name).join(' / ') + (x.mac ? ' / Mac' : '');
+        const what = [x.title !== own.title && x.title, x.edition, showHow && how(x), showRegion && x.region, Case.year(x)].filter(Boolean).join(' · ');
+        return `<li${x === own ? ' class="on" aria-current="true"' : ''}><button type="button" data-go="${esc(x === own ? g.id : x.id)}">${esc(where)}</button><small>${esc(what)}</small></li>`;
+      };
+      const others = fam.some(x => on(x).some(c => !on(own).includes(c))), same = fam.some(x => x !== own && x.console === own.console);
+      return section(others && same ? 'Other copies and platforms' : others ? 'On other platforms' : 'Other copies', `<div class="dw-packs"><ul>${fam.map(item).join('')}</ul></div>`);
+    }
+
     function details(g) {
       const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.reproduction && 'Reproduction', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
       return glance(g) + tags(marks)
         + (g.note ? `<p class="dw-note">${esc(g.note)}</p>` : '')
         + section('The copy', copyHtml(g))
+        + elsewhereHtml(g)
         + related(g)
         + playedHtml(g) + storeHtml(g) + linksHtml(g);
     }
