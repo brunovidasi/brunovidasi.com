@@ -111,14 +111,14 @@
   const nicknames = g => NICKNAMES.filter(([re]) => re.test(g.title) || re.test(g.listedAs || '')).map(([, nick]) => nick);
   function base() {
     const words = fold(state.q).split(/\s+/).filter(Boolean);
-    return ALL.filter(g =>
+    return ALL.filter(g => !g.bundle &&
       (!words.length || words.every(w => g._hay.includes(w))));
   }
   // with only the PC picked, its games can be narrowed to the boxed ones or to one launcher's library
   const pcOnly = () => state.sel.size === 1 && state.sel.has('pc');
   // the EA app's are the copies its library lists (data/ea.json): bought in it, or a disc whose code was redeemed in it;
   // Rockstar's, the copies on its launcher and the ones it says were played on PC (data/rockstar.json)
-  const inLib = (g, k) => k === 'disc' ? g.format !== 'digital' : k === 'ea' ? !!g.ea : k === 'rockstar' ? g.launcher === k || !!g.rockstar : g.launcher === k;
+  const inLib = (g, k) => k === 'disc' ? g.format !== 'digital' : k === 'ea' ? !!g.ea && g.ea.owned !== false : k === 'rockstar' ? g.launcher === k || !!g.rockstar : g.launcher === k;
   const list = () => sortList(base().filter(g =>
     (!state.sel.size || state.sel.has(g.console)) &&
     (!state.lib || !pcOnly() || inLib(g, state.lib))), state.sort);
@@ -1327,8 +1327,9 @@
       }
       if (g.ea) {
         const e = g.ea, a = e.achievements;
-        // an add-on has no play time of its own: it is played in its game
+        // an add-on has no play time of its own: it is played in its game, whose figures it shows
         html += section('EA app', facts([
+          fact('Played in', e.via && esc(e.via.listedAs || e.via.title)),
           fact('Played', e.playtime != null && esc(e.playtime ? played(e.playtime) : 'Not yet')),
           fact('Last played', when(e.lastPlayed)),
           fact('Owned since', when(e.since)),
@@ -1427,12 +1428,22 @@
       return section(others && same ? 'Other copies and platforms' : others ? 'On other platforms' : 'Other copies', `<div class="dw-packs"><ul>${fam.map(item).join('')}</ul></div>`);
     }
 
+    // a bundle and the packs it came with (contains): the bundle lists them, each pack names its bundle
+    function bundleHtml(g) {
+      // the packs in a bundle aren't links: each would only open the bundle again
+      const item = x => `<li>${x.bundle === g ? `<span>${esc(x.title)}</span>` : `<button type="button" data-go="${esc(x.id)}">${esc(x.title)}</button>`}<small>${esc([x.pack, x.packCode].filter(Boolean).join(' · '))}</small></li>`;
+      const list = xs => `<div class="dw-packs"><ul>${xs.map(item).join('')}</ul></div>`;
+      if (g.packs) return section('In this bundle', list(g.packs));
+      return g.bundle ? section('Came in', list([g.bundle])) : '';
+    }
+
     function details(g) {
       const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.reproduction && 'Reproduction', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
       return glance(g) + tags(marks)
         + (g.note ? `<p class="dw-note">${esc(g.note)}</p>` : '')
         + section('The copy', copyHtml(g))
         + elsewhereHtml(g)
+        + bundleHtml(g)
         + related(g)
         + playedHtml(g) + storeHtml(g) + linksHtml(g);
     }
@@ -1593,6 +1604,7 @@
 
     /* ---------- opening ---------- */
     function open(g, source, fromHash) {
+      if (g?.bundle) { g = g.bundle; source = null; fromHash = false; } // a pack opens the bundle it came in
       if (!g) return;
       if (cur) finish(cur);
       tipEl.classList.remove('vis');
@@ -1606,7 +1618,14 @@
     // Stands a game in the middle. It lifts off its place when that is on screen; otherwise it
     // comes in from the side it is on (side: 1 from the right, -1 from the left, 0 from its place).
     function show(g, src, side, still) {
-      leaving.forEach(x => { if (x.g === g) finish(x); }); // already on its way back: it comes straight out again
+      // already on its way back: it comes straight out again, from where it has got to
+      let back = null;
+      leaving.forEach(x => {
+        if (x.g !== g) return;
+        if (side) back = nowAt(x);
+        if (back) back.turn = getComputedStyle(x.turn).transform;
+        finish(x);
+      });
       const L = layoutFor(g);
       const a = cur = { g, source: src || null, L, rx: 0, ry: 0, open: false, closing: false, hidden: [], raf: 0, timer: 0 };
       const layer = document.createElement('div');
@@ -1618,6 +1637,7 @@
       piece.append(turn);
       layer.append(piece);
       if (still) layer.classList.add('still');
+      else if (side) layer.classList.add('step');
       ui.before(layer);
       Object.assign(a, { layer, piece, turn, obj, sh });
       layer.addEventListener('click', e => { const v = e.target.closest('[data-v]'); if (v) view(v.dataset.v); });
@@ -1657,16 +1677,18 @@
         depth(a, a.source, s0, duration * 0.9, 'backwards', true);
       } else {
         // its place is off the screen (or it has none): it comes in from that side
-        const start = side ? [L.cx + side * (L.vw / 2 + L.w * 0.8), L.cy]
+        const start = back ? [back.cx, back.cy]
+          : side ? [L.cx + side * (L.vw / 2 + L.w * 0.8), L.cy]
           : from ? offscreen(L, from.cx, from.cy)
           : [L.cx, L.vh + L.h * 0.75];
-        const s0 = from && !side ? Math.max(0.3, scaleFrom(a.source, from, L.w, L.h)) : 0.9;
+        const s0 = back ? back.s : from && !side ? Math.max(0.3, scaleFrom(a.source, from, L.w, L.h)) : 0.9;
         a.flight = piece.animate([
-          { transform: piecePose(L, start[0], start[1], s0) },
+          { transform: piecePose(L, start[0], start[1], s0, back ? back.z : 0) },
           { transform: rest },
-        ], { duration: 820, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
-        turn.animate([{ transform: rot(from && !side ? fromPose(a.source) : [restPose[0], restPose[1] + (side || -1) * 40]) }, { transform: rot(restPose) }],
-          { duration: 820, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
+        ], { duration: side ? 620 : 820, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
+        const turnFrom = back && back.turn !== 'none' ? back.turn : rot(from && !side ? fromPose(a.source) : [restPose[0], restPose[1] + (side || -1) * 40]);
+        turn.animate([{ transform: turnFrom }, { transform: rot(restPose) }],
+          { duration: side ? 620 : 820, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
       }
     }
 
@@ -1744,15 +1766,19 @@
       a.obj.classList.remove('open');
       const L = a.L;
       // where it is right now, which is not its resting place if it was still flying in
-      let from = { cx: L.cx, cy: L.cy, s: 1, z: 0 };
-      if (a.flight && a.flight.playState === 'running') {
-        const m = new DOMMatrix(getComputedStyle(a.piece).transform);
-        from = { cx: m.e + L.w / 2, cy: m.f + L.h / 2, s: Math.hypot(m.a, m.b), z: Math.atan2(m.b, m.a) * 180 / Math.PI };
-      }
+      const from = nowAt(a) || { cx: L.cx, cy: L.cy, s: 1, z: 0 };
+      // and how it is turned: still turning in, it turns on from there instead of jumping to its rest
+      const turning = a.turn.getAnimations().some(x => x.playState === 'running');
+      const turnNow = turning && getComputedStyle(a.turn).transform;
       a.piece.getAnimations().forEach(x => x.cancel());
       a.turn.getAnimations().forEach(x => x.cancel());
       a.obj.getAnimations().forEach(x => { if (x.effect?.getKeyframes?.()[0]?.['--sd'] !== undefined) x.cancel(); });
       a.piece.style.transform = piecePose(L, from.cx, from.cy, from.s, from.z);
+      if (turnNow && turnNow !== 'none') {
+        a.turn.style.transition = 'none';
+        a.turn.style.transform = turnNow;
+        void a.turn.offsetWidth; // so the turn below starts from here
+      }
 
       // the page may have been drawn again since it came out
       const home = homeOf(a.g);
@@ -1793,14 +1819,22 @@
         : to ? offscreen(L, to.cx, to.cy)
         : [from.cx, L.vh + L.h * 0.75];
       const s1 = to && !side ? Math.max(0.3, scaleFrom(home, to, L.w, L.h)) : 0.9;
-      a.turn.style.transition = 'transform .6s cubic-bezier(.4,0,.2,1)';
+      // stepping through, it is already on its way the moment the next one is asked for, never hanging about in the middle
+      a.turn.style.transition = side ? 'transform .5s cubic-bezier(.3,.5,.4,1)' : 'transform .6s cubic-bezier(.4,0,.2,1)';
       a.turn.style.transform = rot(to && !side ? fromPose(home) : [a.rx, a.ry + (side || 1) * 40]);
       a.flight = a.piece.animate([
         { transform: piecePose(L, from.cx, from.cy, from.s, from.z) },
         { transform: piecePose(L, end[0], end[1], s1) },
-      ], { duration: 650, easing: 'cubic-bezier(.5,0,.75,.4)', fill: 'forwards' });
+      ], side ? { duration: 500, easing: 'cubic-bezier(.3,.5,.4,1)', fill: 'forwards' } : { duration: 650, easing: 'cubic-bezier(.5,0,.75,.4)', fill: 'forwards' });
       a.flight.finished.then(() => finish(a), () => {});
       a.timer = setTimeout(() => finish(a), 1000);
+    }
+
+    // where a game is on the screen while it is still flying in or out, else null
+    function nowAt(a) {
+      if (!a.flight || a.flight.playState !== 'running') return null;
+      const L = a.L, m = new DOMMatrix(getComputedStyle(a.piece).transform);
+      return { cx: m.e + L.w / 2, cy: m.f + L.h / 2, s: Math.hypot(m.a, m.b), z: Math.atan2(m.b, m.a) * 180 / Math.PI };
     }
 
     function finish(a) {
@@ -1820,12 +1854,15 @@
       const g = games[games.indexOf(cur.g) + n];
       if (!g || games.indexOf(cur.g) < 0) return;
       setHash(g.id, false);
+      // held down, the games go by quickly: the oldest on their way out, all but off the screen by now, go at once
+      [...leaving].slice(0, -3).forEach(finish);
       leave(cur, -n);
       show(g, homeOf(g), n);
     }
 
     // straight to another game picked in the drawer: it comes in from the side it stands on in the list
     function jump(g) {
+      g = g?.bundle || g; // a pack that came in a bundle opens the bundle it stands in
       if (!g || !cur || cur.closing || g === cur.g) return;
       const i = games.indexOf(cur.g), j = games.indexOf(g);
       const n = i >= 0 && j >= 0 && j < i ? -1 : 1;
@@ -1979,12 +2016,13 @@
   }
 
   /* A copy's EA app library entry: its play time, when it was last played and first owned, and its achievements
-     (an add-on has only when it was first owned). */
+     (an add-on has only when it was first owned, until it borrows the rest from its base game, below). */
   function eaOf(g, lib) {
     const e = g.eaSlug && lib.games[g.eaSlug];
     if (!e) return null;
     const a = e.achievements;
     return {
+      game: e.kind === 'game',
       playtime: e.playtime,
       lastPlayed: e.lastPlayed,
       since: e.offers.map(o => o.since).filter(Boolean).sort()[0] || null,
@@ -2023,6 +2061,23 @@
         if (ea) g.ea = eaOf(g, ea);
         if (rockstar) g.rockstar = rockstarOf(g, rockstar);
         g._hay = fold([g.title, g.listedAs, g.publisher, g.developer, g.genre, g.released, g.region, REGIONS[g.region]?.std !== g.region && REGIONS[g.region]?.long, ...[g.console, ...(g.alsoOn || [])].flatMap(c => [CONSOLE_BY_ID[c].name, CONSOLE_BY_ID[c].short]), g.note, g.edition, g.platinum && 'Platinum', g.steelbook && 'SteelBook tin', g.series, g.pack, g.packCode, g.mac && 'Mac', g.steam && 'Steam', g.format === 'digital' && STORE[g.console] && 'eShop', ...(g.steam?.store?.genres || []), g.psn?.trophies?.platinum && 'Platinum trophy', g.xbox && 'Xbox Live', inLib(g, 'ea') && 'EA app', g.rockstar && 'Rockstar Games Launcher', ...nicknames(g)].join(' | '));
+      });
+      // an add-on is played in its game, so every pack of a series (and its other base game copies) shows the play time,
+      // last played and achievements of the series' base game in the EA app (or the collection that holds it: The Sims,
+      // The Sims 2); it keeps its own owned since, and stays out of the EA app library unless it is in it itself
+      const eaBase = new Map();
+      DB.filter(g => /^The Sims/.test(g.series) && g.ea?.game).sort((a, b) => (b.pack === 'Base game') - (a.pack === 'Base game'))
+        .forEach(g => eaBase.has(g.series) || eaBase.set(g.series, g));
+      DB.filter(g => g.pack && eaBase.has(g.series) && !g.ea?.game).forEach(g => {
+        const b = eaBase.get(g.series);
+        g.ea = { ...b.ea, game: false, since: g.ea?.since || null, owned: !!g.ea, via: b };
+      });
+      // a bundle holds the copies it came with (contains): they stand inside it, not on the shelf of their own,
+      // but the checklist and the counts still have them
+      DB.filter(g => g.contains).forEach(g => {
+        g.packs = g.contains.map(id => byId.get(id)).filter(Boolean);
+        g.packs.forEach(p => { p.bundle = g; });
+        g._hay += ' | ' + fold(g.packs.map(p => p.title).join(' | ')); // a search for a pack finds its bundle
       });
       // a copy that plays on more than one console (alsoOn: an Xbox One & Xbox 360 release) stands under each of them,
       // in its own case; it counts once

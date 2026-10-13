@@ -47,7 +47,7 @@
       tags.push(`<span class="tag dl"${L ? ` style="--lb:${L.bg};--lf:${L.fg}"` : ''}>${esc(L && g.launcher !== 'none' ? L.name : 'Digital')}</span>`);
     }
     if (g.mac) tags.push('<span class="tag mac">Mac</span>');
-    a.insertAdjacentHTML('beforeend', `<span class="cap"><b title="${esc(g.title)}">${esc(name)}</b><small>${Case.year(g)}${g.edition ? ' · ' + esc(g.edition) : ''}</small><span class="tags">${tags.join('')}</span></span>`);
+    a.insertAdjacentHTML('beforeend', `<span class="cap"><b title="${esc(g.title)}">${esc(name)}</b><small>${Case.year(g)}${g.edition ? ' · ' + esc(g.edition) : ''}${g.bundle ? ' · in ' + esc(g.bundle.title) : ''}</small><span class="tags">${tags.join('')}</span></span>`);
     return a;
   }
 

@@ -149,6 +149,7 @@
                   down the middle under the logo and the pack's name (the default for g.bigCase)
        white      the plain white spine of the DVD-case years: the title in small capitals
        sims4      The Sims 4: a coloured band at each end round the logo, the pack's icon and name below
+       sims4-bundle  a Sims 4 bundle: light grey, the packs' round icons, the logo and BUNDLE
        art        the cover's art right down the spine under the title */
   const spineOf = g => g.spine || (g.bigCase ? { style: 'ea-pcgame' } : null);
   const SPINE_TOP = {
@@ -220,6 +221,14 @@
       <div class="s4-a"><div class="ptop">${top}</div>${P.label ? `<span class="s4-label">${esc(P.label)}</span>` : ''}</div>
       <div class="s4-b">${logo}</div>
       <div class="s4-c">${P.icon && SIMS4_ICON[P.icon] ? `<svg class="s4-icon" viewBox="0 0 24 24" aria-hidden="true">${SIMS4_ICON[P.icon]}</svg>` : ''}<span class="s4-name">${esc(P.sub || '')}</span><div class="pfoot">${foot}</div></div>
+    </div>`;
+    // a Sims 4 bundle: the packs' round icons under the top, the logo, then BUNDLE over the foot
+    if (style === 'sims4-bundle') return `<div class="${k}" style="${vs}">
+      <div class="ptop">${top}</div>
+      <div class="s4b-icons">${(P.icons || []).map(src => `<img src="${esc(src)}" alt="" loading="lazy" decoding="async" draggable="false">`).join('')}</div>
+      <div class="s4-b">${logo}</div>
+      <span class="s4b-name">${esc(P.sub || '')}</span>
+      <div class="pfoot">${foot}</div>
     </div>`;
     // badges straight under the top (San Andreas' Rockstar logo), and the budget label's own band before the title
     const head = P.head ? `<div class="phead">${P.head.map(spineBadge).join('')}</div>` : '';
@@ -1164,6 +1173,13 @@
   const isCart = g => !!CART[mediaType(g)];
   function mediaHTML(g, s) {
     const type = mediaType(g);
+    // a bundle's download code: one slip in the empty case, the packs it unlocks listed on it with their icons
+    if (g.packs && g.format === 'code-in-box') {
+      const icons = g.spine?.icons || [];
+      const name = p => g.series && p.title.startsWith(g.series + ': ') ? p.title.slice(g.series.length + 2) : p.title;
+      return `<div class="bundleslip" style="font-size:${px(4.2 * s)}"><b>Download code</b><i class="bs-code"></i>
+        <ul>${g.packs.map((p, i) => `<li>${icons[i] ? `<img src="${esc(icons[i])}" alt="" draggable="false">` : ''}<span>${esc(name(p))}<small>${esc(p.pack || '')}</small></span></li>`).join('')}</ul></div>`;
+    }
     if (!CART[type]) return discHTML(g, s, type);
     // in a plastic case the card sits in the moulded holder low down inside (css/cases.css);
     // out of a cardboard box it stands on its own

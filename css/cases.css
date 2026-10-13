@@ -285,6 +285,8 @@
 .pt-dvd small { margin-top: .12em; font: 700 .2em/1 'Exo 2', sans-serif; letter-spacing: .15em; }
 /* a white box round the logos (PC DVD and Mac; PC/MAC with the download arrow) */
 .pt-box { display: flex; flex-direction: column; align-items: center; gap: .18em; padding: .25em .15em; border: max(1px, .06em) solid #9a9a9a; border-radius: .12em; background: #fff; color: #555; }
+/* the boxed PC DVD and Mac stands taller than the top's strip: let the strip grow round it */
+.ps-white.top-pcdvd-mac .ptop { height: auto; padding: calc(var(--d) * .14) 0 calc(var(--d) * .08); }
 .pt-box em { font: 700 .4em/1 'Exo 2', sans-serif; font-style: normal; color: #6f6f6f; }
 .pt-box .dl { font: 700 .17em/1.1 'Exo 2', sans-serif; text-align: center; max-width: 5em; color: #6f6f6f; }
 .pt-pcmac small { font: 900 .24em/1 'Arial Black', 'Exo 2', sans-serif; color: #444; letter-spacing: -.02em; }
@@ -410,6 +412,14 @@
 .s4-c .sbg { width: calc(var(--d) * .56); }
 .s4-c .ea-green { box-shadow: 0 0 0 max(1px, calc(var(--d) * .03)) #fff; }
 .s4-short .s4-a { height: 13%; }
+
+/* a Sims 4 bundle: light grey, the packs' round icons under the download code, the logo and BUNDLE */
+.sp.ps-sims4-bundle { --band: #e8e9eb; background: linear-gradient(90deg, #d9dbde, #f2f3f4 45%, #e1e3e5); }
+.ps-sims4-bundle .ptop { height: auto; padding-top: calc(var(--d) * .14); }
+.s4b-icons { position: relative; z-index: 1; flex: none; display: flex; flex-direction: column; align-items: center; gap: calc(var(--d) * .14); padding: calc(var(--d) * .22) 0 calc(var(--d) * .1); }
+.s4b-icons img { width: calc(var(--d) * .6); height: auto; display: block; }
+.s4b-name { position: relative; z-index: 1; flex: none; writing-mode: vertical-rl; font: 600 .38em/1 'Exo 2', sans-serif; letter-spacing: .3em; color: #444; white-space: nowrap; padding: .4em 0; }
+.ps-sims4-bundle .sbg { width: calc(var(--d) * .56); }
 
 /* a SteelBook's spine: metal tinted with the cover's colour, the console's name pressed into it */
 .sp.steel { background: var(--metal), color-mix(in srgb, var(--sb) 60%, #8b9197); border-radius: 2px;
@@ -553,6 +563,16 @@
 .codeslip b { font: 700 clamp(4px, .5em, 11px)/1 'Space Grotesk', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .codeslip i { display: block; height: 14%; background: repeating-linear-gradient(90deg, #555 0 6%, transparent 6% 9%); opacity: .6; }
 .codeslip i + i { width: 60%; }
+/* a bundle's slip: the code, then the packs it unlocks, each with its round icon */
+.bundleslip { width: 72%; padding: 1.4em 1.3em; box-sizing: border-box; display: flex; flex-direction: column; gap: 1em;
+  background: #f4f2ec; color: #222; border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.45); transform: translateZ(1px) rotate(-1.5deg); }
+.bundleslip b { font: 700 1em/1 'Space Grotesk', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+.bundleslip .bs-code { display: block; height: .9em; background: repeating-linear-gradient(90deg, #555 0 .5em, transparent .5em .8em); opacity: .6; }
+.bundleslip ul { list-style: none; margin: .4em 0 0; padding: 0; display: flex; flex-direction: column; gap: .9em; }
+.bundleslip li { display: flex; align-items: center; gap: .8em; }
+.bundleslip img { width: 3em; height: 3em; flex: none; }
+.bundleslip span { display: flex; flex-direction: column; gap: .25em; font: 700 1.05em/1.1 'Exo 2', sans-serif; }
+.bundleslip small { font: 600 .7em/1 'Exo 2', sans-serif; color: #777; text-transform: uppercase; letter-spacing: .08em; }
 .bx.kind-box.open .f-tray .tray > * { translate: 0 calc(var(--ty) * -1); }
 /* its top is a flap hinged on the back edge: opened, it swings up and leans back, its grey inside facing forward */
 .bx.kind-box .flap { position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 50% 0; transition: transform .9s cubic-bezier(.3,.9,.3,1); }

@@ -7449,6 +7449,7 @@
       "id": "ds-simcity-ds",
       "console": "ds",
       "title": "SimCity DS",
+      "sortAs": "SimCity",
       "region": "USA",
       "released": "2006-02-23",
       "dateSource": "manual",
@@ -7475,6 +7476,7 @@
       "id": "ds-simcity-creator",
       "console": "ds",
       "title": "SimCity Creator",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2008",
       "dateSource": "manual",
@@ -8796,6 +8798,7 @@
       "developer": "Maxis",
       "genre": "Life simulation",
       "format": "boxed",
+      "fav": true,
       "bigCase": true,
       "spine": {
         "style": "ea-pcgame",
@@ -10377,8 +10380,10 @@
     {
       "id": "pc-the-sims-3-island-paradise",
       "console": "pc",
-      "title": "The Sims 3: Island Paradise",
+      "title": "The Sims 3: Island Paradise Limited Edition",
+      "listedAs": "The Sims 3: Island Paradise",
       "sortAs": "The Sims 3",
+      "edition": "Limited Edition",
       "region": "PAL",
       "released": "2013-06-25",
       "dateSource": "manual",
@@ -10392,17 +10397,17 @@
       "series": "The Sims 3",
       "pack": "Expansion Pack",
       "cover": {
-        "file": "covers/pc/the-sims-3-island-paradise.jpg",
-        "ratio": 0.7096,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 3: Island Paradise · The Sims 3 Island Paradise Cover.jpg"
+        "file": "covers/pc/the-sims-3-island-paradise-limited-edition.jpg",
+        "source": "manual",
+        "ref": "The Sims 3: Island Paradise Limited Edition (PAL, UK), a seller's photo with the case rim cropped off, eBay UK listing on product #1822458749",
+        "ratio": 0.7098
       },
+      "eaSlug": "the-sims-3-island-paradise",
       "colors": [
-        "#7fa0ad",
-        "#c9cbcd",
-        "#b89d65"
-      ],
-      "eaSlug": "the-sims-3-island-paradise"
+        "#766655",
+        "#7f8b9e",
+        "#b2b7b9"
+      ]
     },
     {
       "id": "pc-the-sims-3-into-the-future",
@@ -10795,9 +10800,12 @@
       ]
     },
     {
-      "id": "pc-the-sims-medieval",
+      "id": "pc-the-sims-medieval-limited-edition",
       "console": "pc",
-      "title": "The Sims Medieval",
+      "title": "The Sims Medieval Limited Edition",
+      "listedAs": "The Sims Medieval",
+      "sortAs": "The Sims 3 Medieval",
+      "edition": "Limited Edition",
       "region": "PAL",
       "released": "2011-03-22",
       "dateSource": "manual",
@@ -10807,18 +10815,30 @@
       "format": "boxed",
       "launcher": "ea",
       "alsoDigital": true,
+      "spine": {
+        "style": "white",
+        "top": "pcdvd-mac",
+        "color": "#ece4d0",
+        "logo": "logos/the-sims-medieval.webp",
+        "sub": " ",
+        "small": "LIMITED EDITION",
+        "foot": [
+          "M",
+          "ea-gold"
+        ]
+      },
       "series": "The Sims Medieval",
       "pack": "Base game",
       "cover": {
-        "file": "covers/pc/the-sims-medieval.jpg",
-        "ratio": 0.7143,
-        "source": "en.wikipedia.org",
-        "ref": "The Sims Medieval · The_Sims_Medieval.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "file": "covers/pc/the-sims-medieval-limited-edition.jpg",
+        "source": "manual",
+        "ref": "sims.fandom.com · File:The Sims Medieval Limited Edition Cover.jpg",
+        "ratio": 0.7077
       },
       "colors": [
-        "#97815d",
-        "#564338",
-        "#e4d7c4"
+        "#8a7a4d",
+        "#4e4238",
+        "#a69a73"
       ],
       "eaSlug": "the-sims-medieval"
     },
@@ -10826,7 +10846,7 @@
       "id": "pc-the-sims-medieval-collectors-edition",
       "console": "pc",
       "title": "The Sims Medieval Collector's Edition",
-      "sortAs": "The Sims Medieval",
+      "sortAs": "The Sims 3 Medieval",
       "edition": "Collector's Edition",
       "region": "AUS",
       "released": "2011-03-22",
@@ -10835,6 +10855,7 @@
       "developer": "The Sims Studio",
       "genre": "Life simulation",
       "format": "boxed",
+      "fav": true,
       "mac": true,
       "series": "The Sims Medieval",
       "pack": "Base game",
@@ -10870,49 +10891,10 @@
       ]
     },
     {
-      "id": "pc-the-sims-medieval-limited-edition",
-      "console": "pc",
-      "title": "The Sims Medieval Limited Edition",
-      "sortAs": "The Sims Medieval",
-      "edition": "Limited Edition",
-      "region": "PAL",
-      "released": "2011-03-22",
-      "dateSource": "manual",
-      "publisher": "Electronic Arts",
-      "developer": "The Sims Studio",
-      "genre": "Life simulation",
-      "format": "boxed",
-      "spine": {
-        "style": "white",
-        "top": "pcdvd-mac",
-        "color": "#ece4d0",
-        "logo": "logos/the-sims-medieval.webp",
-        "sub": " ",
-        "small": "LIMITED EDITION",
-        "foot": [
-          "M",
-          "ea-gold"
-        ]
-      },
-      "series": "The Sims Medieval",
-      "pack": "Base game",
-      "cover": {
-        "file": "covers/pc/the-sims-medieval-limited-edition.jpg",
-        "source": "manual",
-        "ref": "sims.fandom.com · File:The Sims Medieval Limited Edition Cover.jpg",
-        "ratio": 0.7077
-      },
-      "colors": [
-        "#8a7a4d",
-        "#4e4238",
-        "#a69a73"
-      ]
-    },
-    {
       "id": "pc-the-sims-medieval-pirates-and-nobles",
       "console": "pc",
       "title": "The Sims Medieval: Pirates & Nobles",
-      "sortAs": "The Sims Medieval",
+      "sortAs": "The Sims 3 Medieval",
       "region": "PAL",
       "released": "2011-08-30",
       "dateSource": "manual",
@@ -10949,8 +10931,11 @@
     {
       "id": "pc-the-sims-4",
       "console": "pc",
-      "title": "The Sims 4",
+      "title": "The Sims 4 Limited Edition",
+      "listedAs": "The Sims 4",
+      "sameAs": "The Sims 4",
       "sortAs": "The Sims 4",
+      "edition": "Limited Edition",
       "region": "PAL",
       "released": "2014-09-02",
       "dateSource": "manual",
@@ -10975,15 +10960,15 @@
       "series": "The Sims 4",
       "pack": "Base game",
       "cover": {
-        "file": "covers/pc/the-sims-4.jpg",
-        "ratio": 0.6667,
-        "source": "en.wikipedia.org",
-        "ref": "The Sims 4 · Sims4_Rebrand.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "file": "covers/pc/the-sims-4-limited-edition.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Limited Edition · PC DVD-ROM keepcase, scan supplied by Bruno",
+        "ratio": 0.6929
       },
       "colors": [
-        "#b08c7a",
-        "#99d0dc",
-        "#4b4739"
+        "#ae9f48",
+        "#93a6af",
+        "#6a6447"
       ],
       "eaSlug": "the-sims-4"
     },
@@ -11151,14 +11136,14 @@
       "packCode": "EP04",
       "cover": {
         "file": "covers/pc/the-sims-4-cats-and-dogs.jpg",
-        "ratio": 1,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 4: Cats & Dogs · The_Sims_4_Cats_&_Dogs_Cover_2.png"
+        "source": "manual",
+        "ref": "The Sims 4: Cats & Dogs · PC box art supplied by Bruno",
+        "ratio": 0.7082
       },
       "colors": [
-        "#cf4882",
-        "#a91e6e",
-        "#714645"
+        "#9c5245",
+        "#7f9695",
+        "#f5f7f7"
       ],
       "eaSlug": "the-sims-4-cats-and-dogs"
     },
@@ -11193,14 +11178,14 @@
       "packCode": "EP05",
       "cover": {
         "file": "covers/pc/the-sims-4-seasons.jpg",
-        "ratio": 1,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 4: Seasons · The Sims 4 Seasons Cover 2.png"
+        "source": "manual",
+        "ref": "The Sims 4: Seasons · NTSC (US), ESRB T · PC box art supplied by Bruno",
+        "ratio": 0.7088
       },
       "colors": [
-        "#4daeeb",
-        "#3188cd",
-        "#99613c"
+        "#705a44",
+        "#989680",
+        "#f6f7f6"
       ],
       "eaSlug": "the-sims-4-seasons"
     },
@@ -11235,14 +11220,14 @@
       "packCode": "EP06",
       "cover": {
         "file": "covers/pc/the-sims-4-get-famous.jpg",
-        "ratio": 1,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 4: Get Famous · The Sims 4 Get Famous Cover 2.png"
+        "source": "manual",
+        "ref": "The Sims 4: Get Famous · NTSC (US), ESRB T · PC box art supplied by Bruno",
+        "ratio": 0.7081
       },
       "colors": [
-        "#4a59c9",
-        "#3a3c87",
-        "#ba8c57"
+        "#caaa86",
+        "#557277",
+        "#e3ebec"
       ],
       "eaSlug": "the-sims-4-get-famous"
     },
@@ -11278,14 +11263,14 @@
       "packCode": "EP07",
       "cover": {
         "file": "covers/pc/the-sims-4-island-living.jpg",
-        "ratio": 1,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 4: Island Living · The Sims 4 Island Living Cover 2.png"
+        "source": "manual",
+        "ref": "The Sims 4: Island Living · PC box art (no rating or platform marks) supplied by Bruno",
+        "ratio": 0.7088
       },
       "colors": [
-        "#54a649",
-        "#1e683b",
-        "#b4a983"
+        "#52595f",
+        "#dbab4e",
+        "#f5f5ec"
       ],
       "eaSlug": "the-sims-4-island-living"
     },
@@ -11924,6 +11909,7 @@
       "id": "pc-simcity-2000",
       "console": "pc",
       "title": "SimCity 2000",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "1993",
       "dateSource": "manual",
@@ -11951,6 +11937,7 @@
       "id": "pc-simcity-3000",
       "console": "pc",
       "title": "SimCity 3000",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "1999-01-31",
       "dateSource": "manual",
@@ -11978,6 +11965,7 @@
       "id": "pc-simcity-4",
       "console": "pc",
       "title": "SimCity 4",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2003-01-14",
       "dateSource": "manual",
@@ -12002,14 +11990,14 @@
       "pack": "Base game",
       "cover": {
         "file": "covers/pc/simcity-4.jpg",
-        "ratio": 0.6939,
-        "source": "en.wikipedia.org",
-        "ref": "SimCity 4 · SimCity_4_cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM EA Classics keepcase (G), scan supplied by Bruno",
+        "ratio": 0.7037
       },
       "colors": [
-        "#555148",
-        "#a57f64",
-        "#a4b6bd"
+        "#63706f",
+        "#4e3c32",
+        "#97a7b8"
       ],
       "eaSlug": "simcity-4"
     },
@@ -12017,6 +12005,7 @@
       "id": "pc-simcity-societies",
       "console": "pc",
       "title": "SimCity Societies",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2007-11-13",
       "dateSource": "manual",
@@ -12040,14 +12029,14 @@
       "pack": "Base game",
       "cover": {
         "file": "covers/pc/simcity-societies.jpg",
-        "ratio": 0.7158,
-        "source": "en.wikipedia.org",
-        "ref": "SimCity Societies · SimCity_Societies_Coverart.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "source": "manual",
+        "ref": "Australian PC DVD-ROM keepcase (G), scan supplied by Bruno",
+        "ratio": 0.7113
       },
       "colors": [
-        "#ebf8fc",
-        "#8f8154",
-        "#d5e7f0"
+        "#8c7d5a",
+        "#ebeae8",
+        "#d9d9d7"
       ],
       "eaSlug": "simcity-societies"
     },
@@ -12055,6 +12044,7 @@
       "id": "pc-simcity-societies-deluxe-edition",
       "console": "pc",
       "title": "SimCity Societies Deluxe Edition",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2008",
       "dateSource": "manual",
@@ -12089,35 +12079,10 @@
       ]
     },
     {
-      "id": "pc-simcity-deluxe",
-      "console": "pc",
-      "title": "SimCity Deluxe",
-      "region": "PAL",
-      "released": "2010",
-      "dateSource": "manual",
-      "publisher": "Electronic Arts",
-      "developer": "Maxis",
-      "genre": "City-building",
-      "format": "boxed",
-      "series": "SimCity",
-      "pack": "Collection",
-      "check": "Which SimCity this Deluxe box holds, and its exact release",
-      "cover": {
-        "file": "covers/pc/simcity-deluxe.jpg",
-        "source": "manual",
-        "ref": "simcity.fandom.com/es · File:SimCity4Deluxe.jpg (SimCity 4 Deluxe Edition, PAL)",
-        "ratio": 0.704
-      },
-      "colors": [
-        "#428acc",
-        "#ac865b",
-        "#423f4c"
-      ]
-    },
-    {
       "id": "pc-simcity-2013",
       "console": "pc",
       "title": "SimCity",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2013-03-05",
       "dateSource": "manual",
@@ -12154,13 +12119,15 @@
       "id": "pc-simcity-complete-edition",
       "console": "pc",
       "title": "SimCity Complete Edition",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2014",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "City-building",
-      "format": "boxed",
+      "format": "digital",
+      "launcher": "ea",
       "series": "SimCity",
       "pack": "Collection",
       "cover": {
@@ -12187,7 +12154,8 @@
       "publisher": "Electronic Arts",
       "developer": null,
       "genre": "City-building",
-      "format": "boxed",
+      "format": "digital",
+      "launcher": "ea",
       "series": "SimCity",
       "pack": "Expansion Pack",
       "cover": {
@@ -12232,14 +12200,14 @@
       "pack": "Base game",
       "cover": {
         "file": "covers/pc/mysims.jpg",
-        "ratio": 0.75,
-        "source": "en.wikipedia.org",
-        "ref": "MySims · Mysims_artbox.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "source": "manual",
+        "ref": "MySims · PAL (UK), PEGI 3 · PC DVD-ROM packshot supplied by Bruno",
+        "ratio": 0.706
       },
       "colors": [
-        "#6e7653",
-        "#b2a07c",
-        "#d9dedd"
+        "#b8ae91",
+        "#bbe7ed",
+        "#865850"
       ],
       "eaSlug": "mysims"
     },
@@ -12293,6 +12261,7 @@
       "developer": "DMA Design",
       "genre": "Action-adventure",
       "format": "boxed",
+      "fav": true,
       "cover": {
         "file": "covers/pc/grand-theft-auto-iii.jpg",
         "ratio": 0.7077,
@@ -12531,6 +12500,7 @@
       "developer": "Rockstar New England",
       "genre": "Action-adventure",
       "format": "boxed",
+      "fav": true,
       "clearCase": true,
       "spine": {
         "style": "white",
@@ -12569,6 +12539,7 @@
       "developer": "LucasArts",
       "genre": "Adventure",
       "format": "boxed",
+      "fav": true,
       "spine": {
         "style": "white",
         "color": "#3d2a80",
@@ -12716,6 +12687,7 @@
       "developer": "Chris Sawyer Productions",
       "genre": "Construction and management simulation",
       "format": "boxed",
+      "fav": true,
       "clearCase": true,
       "note": "The Infogrames reprint, after Infogrames bought Hasbro Interactive and MicroProse in 2001",
       "spine": {
@@ -12751,6 +12723,7 @@
       "developer": "Ensemble Studios",
       "genre": "Real-time strategy",
       "format": "boxed",
+      "fav": true,
       "box": {
         "w": 137,
         "h": 193,
@@ -13288,7 +13261,7 @@
       "id": "pc-simcity-societies-destinations",
       "console": "pc",
       "title": "SimCity Societies: Destinations",
-      "sortAs": "SimCity Societies",
+      "sortAs": "SimCity",
       "region": "AUS",
       "released": "2008-06-24",
       "dateSource": "manual",
@@ -13450,6 +13423,305 @@
         "#ebd4e7",
         "#a79789",
         "#c935b1"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-bundle-1",
+      "console": "pc",
+      "title": "The Sims 4 Bundle 1",
+      "sortAs": "The Sims 4",
+      "edition": "Spa Day, Perfect Patio Stuff, Luxury Party Stuff",
+      "region": "AUS",
+      "released": "2015",
+      "dateSource": "manual",
+      "check": "The month this bundle came out in Australia",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "code-in-box",
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 4",
+      "pack": "Collection",
+      "contains": [
+        "pc-the-sims-4-perfect-patio-stuff",
+        "pc-the-sims-4-spa-day",
+        "pc-the-sims-4-luxury-party-stuff"
+      ],
+      "spine": {
+        "style": "sims4-bundle",
+        "top": "pcmac",
+        "logo": "logos/the-sims-4.webp",
+        "icons": [
+          "logos/sims4-icons/perfect-patio-stuff.webp",
+          "logos/sims4-icons/spa-day.webp",
+          "logos/sims4-icons/luxury-party-stuff.webp"
+        ],
+        "sub": "BUNDLE",
+        "foot": [
+          "M",
+          "ea-green"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/the-sims-4-bundle-1.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Bundle 1 · PAL (Australia), M · retailer packshot supplied by Bruno",
+        "ratio": 0.7105
+      },
+      "colors": [
+        "#c7cdca",
+        "#8fa3a3",
+        "#f3f4f5"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-bundle-2",
+      "console": "pc",
+      "title": "The Sims 4 Bundle 2",
+      "sortAs": "The Sims 4",
+      "edition": "Outdoor Retreat, Cool Kitchen Stuff, Spooky Stuff",
+      "region": "AUS",
+      "released": "2015",
+      "dateSource": "manual",
+      "check": "The month this bundle came out in Australia",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "code-in-box",
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 4",
+      "pack": "Collection",
+      "contains": [
+        "pc-the-sims-4-cool-kitchen-stuff",
+        "pc-the-sims-4-outdoor-retreat",
+        "pc-the-sims-4-spooky-stuff"
+      ],
+      "spine": {
+        "style": "sims4-bundle",
+        "top": "pcmac",
+        "logo": "logos/the-sims-4.webp",
+        "icons": [
+          "logos/sims4-icons/cool-kitchen-stuff.webp",
+          "logos/sims4-icons/outdoor-retreat.webp",
+          "logos/sims4-icons/spooky-stuff.webp"
+        ],
+        "sub": "BUNDLE",
+        "foot": [
+          "M",
+          "ea-green"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/the-sims-4-bundle-2.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Bundle 2 · PAL (Europe), PEGI 12 · retailer packshot supplied by Bruno",
+        "ratio": 0.7062
+      },
+      "colors": [
+        "#ebeeee",
+        "#b4c8c4",
+        "#66868b"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-bundle-3",
+      "console": "pc",
+      "title": "The Sims 4 Bundle 3",
+      "sortAs": "The Sims 4",
+      "edition": "Dine Out, Movie Hangout Stuff, Romantic Garden Stuff",
+      "region": "AUS",
+      "released": "2016",
+      "dateSource": "manual",
+      "check": "The month this bundle came out in Australia",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "code-in-box",
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 4",
+      "pack": "Collection",
+      "contains": [
+        "pc-the-sims-4-movie-hangout-stuff",
+        "pc-the-sims-4-dine-out",
+        "pc-the-sims-4-romantic-garden-stuff"
+      ],
+      "spine": {
+        "style": "sims4-bundle",
+        "top": "pcmac",
+        "logo": "logos/the-sims-4.webp",
+        "icons": [
+          "logos/sims4-icons/movie-hangout-stuff.webp",
+          "logos/sims4-icons/dine-out.webp",
+          "logos/sims4-icons/romantic-garden-stuff.webp"
+        ],
+        "sub": "BUNDLE",
+        "foot": [
+          "M",
+          "ea-green"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/the-sims-4-bundle-3.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Bundle 3 · PAL (Australia), M · retailer packshot supplied by Bruno",
+        "ratio": 0.7105
+      },
+      "colors": [
+        "#c4cbc9",
+        "#8b9d95",
+        "#f3f4f4"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-bundle-4",
+      "console": "pc",
+      "title": "The Sims 4 Bundle 4",
+      "sortAs": "The Sims 4",
+      "edition": "Vampires, Kids Room Stuff, Backyard Stuff",
+      "region": "AUS",
+      "released": "2017",
+      "dateSource": "manual",
+      "check": "The month this bundle came out in Australia",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "code-in-box",
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 4",
+      "pack": "Collection",
+      "contains": [
+        "pc-the-sims-4-kids-room-stuff",
+        "pc-the-sims-4-vampires",
+        "pc-the-sims-4-backyard-stuff"
+      ],
+      "spine": {
+        "style": "sims4-bundle",
+        "top": "pcmac",
+        "logo": "logos/the-sims-4.webp",
+        "icons": [
+          "logos/sims4-icons/kids-room-stuff.webp",
+          "logos/sims4-icons/vampires.webp",
+          "logos/sims4-icons/backyard-stuff.webp"
+        ],
+        "sub": "BUNDLE",
+        "foot": [
+          "M",
+          "ea-green"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/the-sims-4-bundle-4.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Bundle 4 · PAL (Europe), PEGI 12 · scan of the sleeve supplied by Bruno, front cut from it",
+        "ratio": 0.7056
+      },
+      "colors": [
+        "#eff3f2",
+        "#c8d4b9",
+        "#80a7c0"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-bundle-5",
+      "console": "pc",
+      "title": "The Sims 4 Bundle 5",
+      "sortAs": "The Sims 4",
+      "edition": "Parenthood, Vintage Glamour Stuff, Bowling Night Stuff",
+      "region": "AUS",
+      "released": "2017",
+      "dateSource": "manual",
+      "check": "The month this bundle came out in Australia",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "code-in-box",
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 4",
+      "pack": "Collection",
+      "contains": [
+        "pc-the-sims-4-vintage-glamour-stuff",
+        "pc-the-sims-4-parenthood",
+        "pc-the-sims-4-bowling-night-stuff"
+      ],
+      "spine": {
+        "style": "sims4-bundle",
+        "top": "pcmac",
+        "logo": "logos/the-sims-4.webp",
+        "icons": [
+          "logos/sims4-icons/vintage-glamour-stuff.webp",
+          "logos/sims4-icons/parenthood.webp",
+          "logos/sims4-icons/bowling-night-stuff.webp"
+        ],
+        "sub": "BUNDLE",
+        "foot": [
+          "M",
+          "ea-green"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/the-sims-4-bundle-5.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Bundle 5 · PAL (Europe), PEGI 12 · scan of the sleeve supplied by Bruno, front cut from it",
+        "ratio": 0.706
+      },
+      "colors": [
+        "#e8efea",
+        "#a0b7cd",
+        "#bdd06a"
+      ]
+    },
+    {
+      "id": "pc-the-sims-4-bundle-6",
+      "console": "pc",
+      "title": "The Sims 4 Bundle 6",
+      "sortAs": "The Sims 4",
+      "edition": "Jungle Adventure, Fitness Stuff, Toddler Stuff",
+      "region": "AUS",
+      "released": "2018",
+      "dateSource": "manual",
+      "check": "The month this bundle came out in Australia",
+      "publisher": "Electronic Arts",
+      "developer": "Maxis",
+      "genre": "Life simulation",
+      "format": "code-in-box",
+      "launcher": "ea",
+      "mac": true,
+      "series": "The Sims 4",
+      "pack": "Collection",
+      "contains": [
+        "pc-the-sims-4-fitness-stuff",
+        "pc-the-sims-4-jungle-adventure",
+        "pc-the-sims-4-toddler-stuff"
+      ],
+      "spine": {
+        "style": "sims4-bundle",
+        "top": "pcmac",
+        "logo": "logos/the-sims-4.webp",
+        "icons": [
+          "logos/sims4-icons/fitness-stuff.webp",
+          "logos/sims4-icons/jungle-adventure.webp",
+          "logos/sims4-icons/toddler-stuff.webp"
+        ],
+        "foot": [
+          "M",
+          "ea-green"
+        ]
+      },
+      "cover": {
+        "file": "covers/pc/the-sims-4-bundle-6.jpg",
+        "source": "manual",
+        "ref": "The Sims 4 Bundle 6 · PAL (Europe), PEGI 12 · retailer packshot supplied by Bruno",
+        "ratio": 0.7093
+      },
+      "colors": [
+        "#c9d2c7",
+        "#f2f4f4",
+        "#8b8a5b"
       ]
     }
   ]

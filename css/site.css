@@ -478,6 +478,8 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
 .spot.leaving .spot-info { opacity: 0; }
 .spot-info > * { margin: 0; animation: spotUp .85s cubic-bezier(.2,.8,.25,1) backwards; animation-delay: calc(.3s + var(--n, 0) * 90ms); }
 .spot.still .spot-info > *, .spot.still .spot-floor { animation: none; }
+.spot.step .spot-info > * { animation-duration: .5s; animation-delay: calc(.08s + var(--n, 0) * 50ms); }
+.spot.step .spot-floor { animation-duration: .5s; animation-delay: .1s; }
 .spot-ui:focus { outline: none; }
 .spot-info .views { pointer-events: auto; margin-top: 14px; text-shadow: none; }
 @keyframes spotUp { from { opacity: 0; transform: translateY(22px); } }
