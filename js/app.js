@@ -114,6 +114,8 @@
     return ALL.filter(g => !g.bundle &&
       (!words.length || words.every(w => g._hay.includes(w))));
   }
+  // how many games: a bundle is the packs in it (not a game of its own), and a copy on two consoles is one
+  const tally = xs => xs.reduce((n, g) => n + (g.twinOf || g.bundle ? 0 : g.packs ? g.packs.length : 1), 0);
   // with only the PC picked, its games can be narrowed to the boxed ones or to one launcher's library
   const pcOnly = () => state.sel.size === 1 && state.sel.has('pc');
   // the EA app's are the copies its library lists (data/ea.json): bought in it, or a disc whose code was redeemed in it;
@@ -131,7 +133,7 @@
     if (figures) {
       const consoles = CONSOLES.filter(c => !c.hidden && DB.some(g => g.console === c.id));
       const years = DB.map(g => g.released).filter(Boolean).map(r => +r.slice(0, 4));
-      figures.innerHTML = `<span><b>${consoles.length}</b> Consoles</span><span><b>${DB.filter(g => !g.twinOf).length}</b> Games</span>`;
+      figures.innerHTML = `<span><b>${consoles.length}</b> Consoles</span><span><b>${tally(DB)}</b> Games</span>`;
       figures.hidden = !!CFG;
     }
     $('#hero').innerHTML = CFG ? CFG.hero(ALL) : `<header class="hero hero-figures"><h1 class="sr-only">Bruno's Game Shelf</h1></header>`;
@@ -288,7 +290,7 @@
   function sync() {
     const b = base();
     const counts = {};
-    b.forEach(g => counts[g.console] = (counts[g.console] || 0) + 1);
+    b.forEach(g => counts[g.console] = (counts[g.console] || 0) + (g.packs ? g.packs.length : 1));
     // a collection shows only the consoles it has games on, and its own view and words
     const has = new Set(ALL.map(g => g.console));
     $$('.chip[data-c]').forEach(c => { c.hidden = !has.has(c.dataset.c); });
@@ -296,7 +298,7 @@
     $('#view [data-view="checklist"]').hidden = !VIEWS.includes('checklist');
     $('#sort option[value="console"]').textContent = MENU.console.label;
     $$('[data-n]').forEach(i => {
-      const k = i.dataset.n, n = k === 'all' ? b.filter(g => !g.twinOf).length : (counts[k] || 0);
+      const k = i.dataset.n, n = k === 'all' ? tally(b) : (counts[k] || 0);
       i.textContent = n + (n === 1 ? ' game' : ' games');
       if (k !== 'all') i.closest('.chip').classList.toggle('empty', !n);
     });
@@ -324,7 +326,7 @@
     custom.textContent = `Sorted by ${SORT_BY[state.sort.key].label} ${state.sort.dir === 'asc' ? '↑' : '↓'}`;
     $('#sort').value = choice || 'custom';
     dropdownSync($('#sort'));
-    $('#count').textContent = `${games.length} of ${ALL.length} games`;
+    $('#count').textContent = `${tally(games)} of ${tally(ALL)} games`;
   }
 
   function changed() {

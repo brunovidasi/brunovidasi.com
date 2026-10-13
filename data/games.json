@@ -9980,6 +9980,7 @@
       "developer": "Maxis",
       "genre": "Life simulation",
       "format": "boxed",
+      "fav": true,
       "spine": {
         "style": "white",
         "top": "pcdvd",
