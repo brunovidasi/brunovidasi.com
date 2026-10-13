@@ -88,7 +88,9 @@
       const c = g.caseColor, f = ink(c);
       // a PS2 spine is the white paper sleeve, so only the plastic takes the colour
       if (styleOf(g) === 'ps2') return v + `;--pl:${c}`;
-      return v + `;--pl:${c};--sb:${c};--sf:${f};--st:${c};--stf:${f}`;
+      // so does a case with EA's printed PC GAME spine (the Sims' grey ones), whose spine goes on taking the cover's colours below
+      if (spineOf(g)?.style !== 'ea-pcgame') return v + `;--pl:${c};--sb:${c};--sf:${f};--st:${c};--stf:${f}`;
+      v += `;--pl:${c}`;
     }
     // a spine printed in its own colour (a SteelBook's black spine)
     // (on a cardboard box the colour runs right up the spine, the console's name on it too)

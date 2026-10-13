@@ -1732,8 +1732,8 @@
       setTimeout(() => back?.closest('[data-id]')?.focus({ preventScroll: true }), 30);
     }
 
-    // Sends a game back: into its place if that is on screen, else off the screen towards it,
-    // or out of the side it is leaving by when stepping through (side -1 left, 1 right).
+    // Sends a game back: into its place if that is on screen, else off the screen towards it;
+    // stepping through, always out of the side it is leaving by (side -1 left, 1 right).
     function leave(a, side) {
       a.closing = true;
       if (cur === a) cur = null;
@@ -1759,7 +1759,7 @@
       if (home !== a.source) { unhide(a); a.source = home; hide(a, home); }
       const to = home ? poseOf(home) : null;
 
-      if (to && to.seen) {
+      if (to && to.seen && !side) {
         const dist = Math.hypot(to.cx - from.cx, to.cy - from.cy);
         const lift = 40 + Math.min(100, dist * 0.1);
         const duration = 760 + Math.min(300, dist * 0.22);

@@ -8727,6 +8727,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims.webp"
@@ -8736,13 +8737,13 @@
       "cover": {
         "file": "covers/pc/the-sims.jpg",
         "source": "manual",
-        "ref": "sims.fandom.com · The Sims Cover Alternate.jpeg",
-        "ratio": 0.7051
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, G8+), straightened",
+        "ratio": 0.708
       },
       "colors": [
-        "#ae806e",
-        "#7492a3",
-        "#4c5560"
+        "#957f6f",
+        "#62544c",
+        "#262422"
       ]
     },
     {
@@ -8773,13 +8774,13 @@
       "cover": {
         "file": "covers/pc/the-sims-complete-collection.jpg",
         "source": "manual",
-        "ref": "LaunchBox · North America front (reconstructed)",
-        "ratio": 0.6981
+        "ref": "Photo of Bruno's own sleeve (red cover, PC CD keepcase, ESRB T), straightened",
+        "ratio": 0.7034
       },
       "colors": [
-        "#b04c28",
-        "#bc8368",
-        "#453839"
+        "#8b5041",
+        "#432019",
+        "#5e4035"
       ]
     },
     {
@@ -8834,6 +8835,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims.webp",
@@ -8844,13 +8846,13 @@
       "cover": {
         "file": "covers/pc/the-sims-deluxe-edition.jpg",
         "source": "manual",
-        "ref": "sims.fandom.com · TheSimsDeluxeEdition-1-.jpg",
-        "ratio": 0.6706
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, M15+), straightened",
+        "ratio": 0.7052
       },
       "colors": [
-        "#9d9eb6",
-        "#966a58",
-        "#e5e5e8"
+        "#8e807b",
+        "#bebdb9",
+        "#4e5359"
       ]
     },
     {
@@ -8895,6 +8897,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-livin-large.webp",
@@ -8906,13 +8909,13 @@
       "cover": {
         "file": "covers/pc/the-sims-livin-large.jpg",
         "source": "manual",
-        "ref": "LaunchBox · front",
-        "ratio": 0.6924
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, M15+), straightened",
+        "ratio": 0.7016
       },
       "colors": [
-        "#94a4b9",
-        "#796b7b",
-        "#d49757"
+        "#7e7273",
+        "#5a4943",
+        "#b1a987"
       ]
     },
     {
@@ -8928,6 +8931,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-house-party.webp",
@@ -8939,13 +8943,13 @@
       "cover": {
         "file": "covers/pc/the-sims-house-party.jpg",
         "source": "manual",
-        "ref": "LaunchBox · United Kingdom front (purple)",
-        "ratio": 0.705
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, M15+), straightened",
+        "ratio": 0.7016
       },
       "colors": [
-        "#59396b",
-        "#7f6692",
-        "#3d1f42"
+        "#352c48",
+        "#5a5671",
+        "#1c1523"
       ]
     },
     {
@@ -8961,6 +8965,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-hot-date.webp",
@@ -8972,13 +8977,13 @@
       "cover": {
         "file": "covers/pc/the-sims-hot-date.jpg",
         "source": "manual",
-        "ref": "LaunchBox · North America front",
-        "ratio": 0.6924
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, M15+), straightened",
+        "ratio": 0.7007
       },
       "colors": [
-        "#bc3732",
-        "#6d2b2f",
-        "#4d6d89"
+        "#8e322a",
+        "#221314",
+        "#51383a"
       ]
     },
     {
@@ -8994,6 +8999,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-vacation.webp",
@@ -9005,13 +9011,13 @@
       "cover": {
         "file": "covers/pc/the-sims-vacation.jpg",
         "source": "manual",
-        "ref": "LaunchBox · Australia front",
-        "ratio": 0.7086
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, M15+), straightened",
+        "ratio": 0.7025
       },
       "colors": [
-        "#e7a34c",
-        "#e1d0b8",
-        "#a4795a"
+        "#967a49",
+        "#b5a687",
+        "#494f60"
       ]
     },
     {
@@ -9027,6 +9033,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-unleashed.webp",
@@ -9038,13 +9045,13 @@
       "cover": {
         "file": "covers/pc/the-sims-unleashed.jpg",
         "source": "manual",
-        "ref": "LaunchBox · United Kingdom front",
-        "ratio": 0.705
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, G8+), straightened",
+        "ratio": 0.7025
       },
       "colors": [
-        "#2cbad1",
-        "#94d0e0",
-        "#5b8fa3"
+        "#677e89",
+        "#a2a9ac",
+        "#3f4951"
       ]
     },
     {
@@ -9060,6 +9067,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-superstar.webp",
@@ -9071,13 +9079,13 @@
       "cover": {
         "file": "covers/pc/the-sims-superstar.jpg",
         "source": "manual",
-        "ref": "LaunchBox · United Kingdom front",
-        "ratio": 0.7042
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, M15+), straightened",
+        "ratio": 0.7016
       },
       "colors": [
-        "#f08f52",
-        "#e8bea3",
-        "#787e8c"
+        "#a65a20",
+        "#58493b",
+        "#141d26"
       ]
     },
     {
@@ -9093,6 +9101,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "bigCase": true,
+      "caseColor": "#8a8f96",
       "spine": {
         "style": "ea-pcgame",
         "logo": "logos/the-sims-makin-magic.webp",
@@ -9104,13 +9113,13 @@
       "cover": {
         "file": "covers/pc/the-sims-makin-magic.jpg",
         "source": "manual",
-        "ref": "LaunchBox · Australia front",
-        "ratio": 0.6969
+        "ref": "Photo of Bruno's own sleeve (Australian PC GAME keepcase, ESRB T and M15+), straightened",
+        "ratio": 0.7007
       },
       "colors": [
-        "#212a4a",
-        "#1b4594",
-        "#63677a"
+        "#28304a",
+        "#3d5577",
+        "#181722"
       ]
     },
     {
@@ -9140,14 +9149,14 @@
       "pack": "Base game",
       "cover": {
         "file": "covers/pc/the-sims-2.jpg",
-        "ratio": 0.7022,
-        "source": "en.wikipedia.org",
-        "ref": "The Sims 2 · The_sims_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "source": "manual",
+        "ref": "Australian PC DVD-ROM keepcase (\"Only DVD compatible\", M), scan supplied by Bruno",
+        "ratio": 0.7025
       },
       "colors": [
-        "#2e2b30",
-        "#9e7c5d",
-        "#4f6974"
+        "#849198",
+        "#765647",
+        "#332733"
       ]
     },
     {
@@ -9157,6 +9166,7 @@
       "sortAs": "The Sims 2",
       "region": "PAL",
       "released": "2006",
+      "shelfDate": "2004-09-15",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
@@ -9176,14 +9186,14 @@
       "pack": "Collection",
       "cover": {
         "file": "covers/pc/the-sims-2-deluxe.jpg",
-        "ratio": 0.7077,
-        "source": "thegamesdb.net",
-        "ref": "The Sims 2: Deluxe · no region · TheGamesDB #48571"
+        "source": "manual",
+        "ref": "UK PC DVD-ROM keepcase (\"Only DVD compatible\", BBFC 12), scan supplied by Bruno; stands in for the Australian M print",
+        "ratio": 0.71
       },
       "colors": [
-        "#51607c",
-        "#ae725e",
-        "#bbafb8"
+        "#4a687a",
+        "#997862",
+        "#22262f"
       ]
     },
     {
@@ -9193,6 +9203,7 @@
       "sortAs": "The Sims 2",
       "region": "PAL",
       "released": "2009",
+      "shelfDate": "2004-09-16",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
@@ -9275,14 +9286,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-university.jpg",
-        "ratio": 0.6984,
-        "source": "en.wikipedia.org",
-        "ref": "The Sims 2: University · TS2U_cover_art.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.6987
       },
       "colors": [
-        "#6b5e54",
-        "#5ea45a",
-        "#85b67a"
+        "#81a366",
+        "#a9c9b6",
+        "#554432"
       ]
     },
     {
@@ -9311,14 +9322,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-nightlife.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Nightlife · The Sims 2 Nightlife Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7087
       },
       "colors": [
-        "#5e3565",
-        "#877477",
-        "#2a3a4e"
+        "#472a54",
+        "#7b6b72",
+        "#26102e"
       ]
     },
     {
@@ -9347,14 +9358,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-open-for-business.jpg",
-        "ratio": 0.7077,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Open for Business · Openforbusiness2.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7037
       },
       "colors": [
-        "#e46224",
-        "#9b735d",
-        "#5d463d"
+        "#de4e34",
+        "#83665e",
+        "#b3bac8"
       ]
     },
     {
@@ -9382,14 +9393,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-pets.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Pets · The Sims 2 Pets Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC DVD-ROM keepcase (\"Only DVD compatible\", M), scan supplied by Bruno",
+        "ratio": 0.7013
       },
       "colors": [
-        "#4f8db1",
-        "#4b605c",
-        "#99816d"
+        "#5d96ca",
+        "#4b4a48",
+        "#9b7c63"
       ]
     },
     {
@@ -9417,14 +9428,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-seasons.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Seasons · The Sims 2 Seasons Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7
       },
       "colors": [
-        "#833541",
-        "#6f6e6f",
-        "#ac9c99"
+        "#4b202e",
+        "#7b303f",
+        "#827a83"
       ]
     },
     {
@@ -9452,14 +9463,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-bon-voyage.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Bon Voyage · The Sims 2 Bon Voyage Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7075
       },
       "colors": [
-        "#8cb5b1",
-        "#726d5c",
-        "#529d9a"
+        "#7bb3b5",
+        "#888c7d",
+        "#b9c9ca"
       ]
     },
     {
@@ -9524,14 +9535,14 @@
       "pack": "Expansion Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-apartment-life.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Apartment Life · The Sims 2 Apartment Life Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC DVD-ROM keepcase (\"Only DVD compatible\", M), scan supplied by Bruno",
+        "ratio": 0.71
       },
       "colors": [
-        "#6d6161",
-        "#146595",
-        "#569dc3"
+        "#2d5f9e",
+        "#463038",
+        "#529edb"
       ]
     },
     {
@@ -9559,14 +9570,14 @@
       "pack": "Stuff Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-christmas-party-pack.jpg",
-        "ratio": 1,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Holiday Party Pack · The_Sims_2_Holiday_Party_Pack_Case_Front.jpg"
+        "source": "manual",
+        "ref": "European PC CD-ROM keepcase (PEGI 12+), scan supplied by Bruno (SimsNetwork watermark, bottom right)",
+        "ratio": 0.7056
       },
       "colors": [
-        "#4f7b4a",
-        "#ba4f42",
-        "#b4afaa"
+        "#e5f1f5",
+        "#94796e",
+        "#903b38"
       ]
     },
     {
@@ -9595,14 +9606,14 @@
       "pack": "Stuff Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-family-fun-stuff.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Family Fun Stuff · The Sims 2 Family Fun Stuff Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7037
       },
       "colors": [
-        "#f0e799",
-        "#d7b26f",
-        "#868d77"
+        "#f1e67d",
+        "#d0a755",
+        "#837059"
       ]
     },
     {
@@ -9631,14 +9642,14 @@
       "pack": "Stuff Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-glamour-life-stuff.jpg",
-        "ratio": 0.7096,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Glamour Life Stuff · 250px-GlamourLifeStuffF.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7013
       },
       "colors": [
-        "#edde8f",
-        "#855b6c",
-        "#b1a37d"
+        "#f0e790",
+        "#a3a58a",
+        "#865f6a"
       ]
     },
     {
@@ -9693,14 +9704,14 @@
       "pack": "Stuff Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-celebration-stuff.jpg",
-        "ratio": 0.7058,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Celebration! Stuff · 210px-Sims2celebrationbox.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7013
       },
       "colors": [
-        "#f0e190",
-        "#7a9895",
-        "#b3beb2"
+        "#e9dd69",
+        "#879177",
+        "#a8c1ca"
       ]
     },
     {
@@ -9833,14 +9844,14 @@
       "pack": "Stuff Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-ikea-home-stuff.jpg",
-        "ratio": 0.694,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: IKEA Home Stuff · IKEA boxart.jpg"
+        "source": "manual",
+        "ref": "Australian PC CD-ROM keepcase (M), scan supplied by Bruno",
+        "ratio": 0.7075
       },
       "colors": [
-        "#f0e49e",
-        "#bab186",
-        "#759080"
+        "#efebae",
+        "#aaaf99",
+        "#568eb6"
       ]
     },
     {
@@ -9869,14 +9880,14 @@
       "pack": "Stuff Pack",
       "cover": {
         "file": "covers/pc/the-sims-2-mansion-and-garden-stuff.jpg",
-        "ratio": 0.7115,
-        "source": "sims.fandom.com",
-        "ref": "The Sims 2: Mansion & Garden Stuff · The Sims 2 Mansion & Garden Stuff Cover.jpg"
+        "source": "manual",
+        "ref": "Australian PC DVD-ROM keepcase (\"Only DVD compatible\", M), scan supplied by Bruno",
+        "ratio": 0.7037
       },
       "colors": [
-        "#f7eb9e",
-        "#8d8c9a",
-        "#c2bb90"
+        "#f2eca0",
+        "#695f75",
+        "#a9a481"
       ]
     },
     {
@@ -9884,6 +9895,7 @@
       "console": "pc",
       "title": "The Sims Life Stories",
       "listedAs": "The Sims: Life Stories",
+      "sortAs": "The Sims 2 Stories",
       "region": "PAL",
       "released": "2007-02-06",
       "dateSource": "manual",
@@ -9919,6 +9931,7 @@
       "console": "pc",
       "title": "The Sims Pet Stories",
       "listedAs": "The Sims: Pet Stories",
+      "sortAs": "The Sims 2 Stories",
       "region": "PAL",
       "released": "2007-06-19",
       "dateSource": "manual",
@@ -9954,7 +9967,9 @@
       "id": "pc-the-sims-castaway-stories",
       "console": "pc",
       "title": "The Sims Castaway Stories",
+      "sameAs": "The Sims 2: Castaway",
       "listedAs": "The Sims: Castaway Stories",
+      "sortAs": "The Sims 2 Stories",
       "region": "PAL",
       "released": "2008-01-29",
       "dateSource": "manual",
@@ -10024,6 +10039,7 @@
       "edition": "Collector's Edition",
       "region": "USA",
       "released": "2009-06-02",
+      "shelfDate": "2009-06-04",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "The Sims Studio",
@@ -10693,6 +10709,7 @@
       "sortAs": "The Sims 3",
       "region": "PAL",
       "released": "2009",
+      "shelfDate": "2009-06-03",
       "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": null,
@@ -10809,6 +10826,7 @@
       "id": "pc-the-sims-medieval-collectors-edition",
       "console": "pc",
       "title": "The Sims Medieval Collector's Edition",
+      "sortAs": "The Sims Medieval",
       "edition": "Collector's Edition",
       "region": "AUS",
       "released": "2011-03-22",
@@ -10855,6 +10873,7 @@
       "id": "pc-the-sims-medieval-limited-edition",
       "console": "pc",
       "title": "The Sims Medieval Limited Edition",
+      "sortAs": "The Sims Medieval",
       "edition": "Limited Edition",
       "region": "PAL",
       "released": "2011-03-22",
@@ -10893,6 +10912,7 @@
       "id": "pc-the-sims-medieval-pirates-and-nobles",
       "console": "pc",
       "title": "The Sims Medieval: Pirates & Nobles",
+      "sortAs": "The Sims Medieval",
       "region": "PAL",
       "released": "2011-08-30",
       "dateSource": "manual",
@@ -12160,6 +12180,7 @@
       "id": "pc-simcity-cities-of-tomorrow",
       "console": "pc",
       "title": "SimCity: Cities of Tomorrow",
+      "sortAs": "SimCity",
       "region": "PAL",
       "released": "2013-11-12",
       "dateSource": "manual",
@@ -13267,6 +13288,7 @@
       "id": "pc-simcity-societies-destinations",
       "console": "pc",
       "title": "SimCity Societies: Destinations",
+      "sortAs": "SimCity Societies",
       "region": "AUS",
       "released": "2008-06-24",
       "dateSource": "manual",
@@ -13350,8 +13372,10 @@
       "id": "pc-the-sims-4-throwback-fit-kit",
       "console": "pc",
       "title": "The Sims 4: Throwback Fit Kit",
+      "sortAs": "The Sims 4",
       "region": "AUS",
-      "released": null,
+      "released": "2021-03-02",
+      "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "Life simulation",
@@ -13376,8 +13400,10 @@
       "id": "pc-the-sims-4-grunge-revival-kit",
       "console": "pc",
       "title": "The Sims 4: Grunge Revival Kit",
+      "sortAs": "The Sims 4",
       "region": "AUS",
-      "released": null,
+      "released": "2023-06-01",
+      "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "Life simulation",
@@ -13402,8 +13428,10 @@
       "id": "pc-the-sims-4-holiday-celebration-pack",
       "console": "pc",
       "title": "The Sims 4: Holiday Celebration Pack",
+      "sortAs": "The Sims 4",
       "region": "AUS",
-      "released": null,
+      "released": "2014-12-16",
+      "dateSource": "manual",
       "publisher": "Electronic Arts",
       "developer": "Maxis",
       "genre": "Life simulation",
