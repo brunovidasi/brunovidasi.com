@@ -129,7 +129,9 @@ final class PsnSync extends PlatformSync
 
         $titles = [];
         for ($offset = 0; ; ) {
-            $page = $this->get('/gamelist/v2/users/me/titles', ['categories' => 'ps4_game,ps5_native_game,pspc_game,unknown', 'limit' => 200, 'offset' => $offset]);
+            // every category, as the old exporter asked: a game PSN no longer sells comes back as "not_found"
+            // (SingStar), and the apps that aren't games are left out by normalize()
+            $page = $this->get('/gamelist/v2/users/me/titles', ['limit' => 200, 'offset' => $offset]);
             array_push($titles, ...($page['titles'] ?? []));
             if (empty($page['nextOffset']) || $page['nextOffset'] <= $offset) {
                 break;
