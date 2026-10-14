@@ -168,6 +168,17 @@ final class PsnSync extends PlatformSync
         return trim(preg_replace('/\s+/u', ' ', $s));
     }
 
+    /** A trophy set's consoles, as the shelf names them. */
+    private static function setConsoles(array $s): array
+    {
+        $named = array_values(array_intersect(['ps5', 'ps4', 'ps3'], array_map('strtolower', array_map('trim', explode(',', (string) ($s['trophyTitlePlatform'] ?? ''))))));
+        if ($named) {
+            return $named;
+        }
+
+        return ($s['npServiceName'] ?? '') === 'trophy2' ? ['ps5'] : ['ps4', 'ps3'];
+    }
+
     /** "PT26H12M11S" → 1572 (minutes) */
     private static function minutes(?string $d): ?int
     {
@@ -211,7 +222,9 @@ final class PsnSync extends PlatformSync
                 'name' => self::clean($s['trophyTitleName'] ?? ''),
                 'detail' => ($s['trophyTitleDetail'] ?? '') ?: null,
                 // the newer trophy service is the PS5's; the older one serves the PS3, PS4 and Vita
-                'consoles' => ($s['npServiceName'] ?? '') === 'trophy2' ? ['ps5'] : ['ps4', 'ps3'],
+                // PSN names a set's platforms ("PS3", "PS4", "PS3,PS4", "PS5"); without that, the newer trophy service
+                // is the PS5's and the older one the PS3's, PS4's and Vita's
+                'consoles' => self::setConsoles($s),
                 'version' => $s['trophySetVersion'] ?? null,
                 'icon' => $s['trophyTitleIconUrl'] ?? null,
                 'total' => array_sum($defined),

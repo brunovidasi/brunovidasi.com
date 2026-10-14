@@ -11,7 +11,8 @@ $fig = collection_figures($games);
 
 // what needs a look
 $unmatched = db()->query('SELECT * FROM sync_unmatched WHERE dismissed = 0 ORDER BY platform, reason, name')->fetchAll();
-$checks = array_filter($games, fn ($g) => !empty($g['check']));
+// a hidden copy is off the site, so what is still to check about it can wait
+$checks = array_filter($games, fn ($g) => !empty($g['check']) && empty($g['hidden']));
 $noCover = array_filter($games, fn ($g) => empty($g['cover']['file']) && empty($g['hidden']));
 $coverFiles = array_filter(array_map(fn ($g) => $g['cover']['file'] ?? null, $games));
 $missingFiles = array_filter($coverFiles, fn ($f) => !is_file(public_dir() . '/' . $f));
