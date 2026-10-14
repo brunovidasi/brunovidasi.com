@@ -60,6 +60,7 @@
 .sims .topbar { background: linear-gradient(rgba(23,84,176,.97), rgba(10,52,128,.97)); border-bottom: 1.5px solid rgba(140,205,255,.5); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 6px 20px rgba(2,14,44,.4); }
 .sims .topnav a { font-weight: 800; }
 .sims .topnav a[aria-current="page"] { background: var(--green); color: #0b3a07; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 2px 6px rgba(0,0,0,.25); }
+.sims .addme a:is(:hover, :focus-visible) { background: var(--green); border-color: var(--green); color: #0b3a07; }
 .sims .figures { border-left-color: var(--line-strong); }
 .sims .filters { background: linear-gradient(rgba(11,52,124,.94), rgba(8,40,100,.94)); border-color: rgba(140,205,255,.35); }
 .sims .chip { border-radius: 16px; background: var(--panel); border: 1.5px solid rgba(150,210,255,.45); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 3px 8px rgba(2,14,44,.35); }
