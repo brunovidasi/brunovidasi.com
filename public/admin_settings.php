@@ -45,6 +45,63 @@ function connect_url(string $platform): string
     };
 }
 
+/**
+ * The "Send to my shelf" bookmark: on Sony's NPSSO page it takes the token, on
+ * Nintendo's "Select this person" page the button's link, and brings it to
+ * admin_connect in the address's #fragment, which no server ever sees. Anywhere
+ * else it offers to open Sony's page.
+ */
+function shelf_bookmarklet(): string
+{
+    $js = <<<'JS'
+(function(){var B=%s,h=location.hostname;
+if(h==='ca.account.sony.com'){var t;try{t=JSON.parse(document.body.innerText).npsso}catch(e){}
+if(t){location.href=B+'#psn='+encodeURIComponent(t);return}alert('Sign in at playstation.com first, then open this page again and click the bookmark.');return}
+var a=document.querySelector('a[href^="npf5c38e31cd085304b://auth#"]');if(a){location.href=B+'#nintendo='+encodeURIComponent(a.getAttribute('href'));return}
+if(/nintendo\.com$/.test(h)){alert('Click it on the "Select this person" page, after signing in.');return}
+if(confirm('Send your PlayStation sign-in to your game shelf? This opens Sony\'s page for it: click the bookmark again there.'))location.href='https://ca.account.sony.com/api/v1/ssocookie';})();
+JS;
+
+    return 'javascript:' . rawurlencode(sprintf(str_replace("\n", '', $js), json_encode(base_url() . '/admin_connect')));
+}
+
+/* ---------- coming back from Microsoft's "Connect Xbox" and "Sign in through Steam" (through admin_connect) ---------- */
+
+$oauth = query('oauth') ?: ((isset($_GET['code']) || isset($_GET['error'])) && isset($_GET['state']) ? 'xbox' : '');
+if (!is_post() && $tab === 'connections' && in_array($oauth, ['xbox', 'steam'], true)) {
+    $expected = $_SESSION['connect'][$oauth . '_return']['state'] ?? null;
+    unset($_SESSION['connect'][$oauth . '_return']);
+    try {
+        if (!$expected || !hash_equals($expected, query('state'))) {
+            throw new RuntimeException('That sign-in was started somewhere else, or was already used: start it again here.');
+        }
+        if (!secrets_ready()) {
+            throw new RuntimeException('Set app_key in the config first: sign-ins are kept encrypted with it.');
+        }
+        if ($oauth === 'xbox') {
+            if (query('error') !== '') {
+                throw new RuntimeException('Microsoft said: ' . query('error_description', query('error')));
+            }
+            $account = XboxSync::connectApp(query('code'));
+            set_connection_status('xbox', 'ok', null, $account, true);
+            flash('Xbox is connected' . ($account ? " as $account" : '') . '. Sync it from the dashboard.');
+        } else {
+            $steamId = SteamSync::verifySignIn($_GET);
+            set_credential('steam', 'steam_id', $steamId);
+            if (credential('steam', 'api_key') !== null) {
+                $account = SteamSync::check();
+                set_connection_status('steam', 'ok', null, $account, true);
+                flash('Signed in through Steam' . ($account ? " as $account" : '') . '. Steam is connected.');
+            } else {
+                flash("Signed in through Steam: your SteamID ($steamId) is filled in. Add the Web API key to finish.");
+            }
+        }
+    } catch (Throwable $e) {
+        flash(platform_name($oauth) . ': ' . $e->getMessage(), 'error');
+    }
+    redirect('admin_settings?tab=connections#' . $oauth);
+}
+
 /* ---------- saving ---------- */
 
 if (is_post()) {
@@ -138,6 +195,28 @@ if (is_post()) {
             } catch (Throwable $e) {
                 $errors[] = platform_name($platform) . ': ' . $e->getMessage();
                 $_GET['open'] = $platform;
+            }
+            break;
+
+        case 'xbox_app':
+            // your own Microsoft app, for the "Connect Xbox" button
+            try {
+                if (!secrets_ready()) {
+                    throw new RuntimeException('Set app_key in the config first.');
+                }
+                if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', post('app_id'))) {
+                    throw new RuntimeException('The Application (client) ID looks like 1a2b3c4d-…, 36 letters, digits and dashes.');
+                }
+                set_credential('xbox', 'app_id', strtolower(post('app_id')));
+                if (post('app_secret') !== '') {
+                    set_credential('xbox', 'app_secret', post('app_secret'));
+                }
+                if (credential('xbox', 'app_secret') === null) {
+                    throw new RuntimeException('Add the client secret too (its Value, not its Secret ID).');
+                }
+                flash('Your Microsoft app is saved. Now press Connect Xbox.');
+            } catch (Throwable $e) {
+                $errors[] = 'Xbox: ' . $e->getMessage();
             }
             break;
 
@@ -281,7 +360,15 @@ foreach ($errors as $error) {
   <?php if (!secrets_ready()): ?>
     <?= flash_box('There is no app_key in the config, so no sign-in can be saved. Add one (config.example.php says how) and reload.', 'error') ?>
   <?php endif; ?>
-  <p class="muted">What each sync needs to sign in. Everything here is kept in the database, encrypted, and never shown again once saved. Renewed sign-ins are saved by the syncs themselves.</p>
+  <p class="muted">What each sync needs to sign in. Everything here is kept in the database, encrypted, and never shown again once saved. Renewed sign-ins are saved by the syncs themselves, so most of this is done once.</p>
+
+  <section class="card bookmark-card">
+    <div>
+      <h2>The "Send to my shelf" bookmark</h2>
+      <p class="muted small">For PlayStation and Nintendo, which have no sign-in for other sites. Drag the button to your browser's bookmarks bar, once. Then, on Sony's or Nintendo's sign-in page, click it, and the sign-in comes straight here, without copying anything. It only ever sends to <?= e(base_url()) ?><?= is_production() ? '' : ' (drag it again from the site once it is online)' ?>.</p>
+    </div>
+    <a class="button primary bookmarklet" href="<?= e(shelf_bookmarklet()) ?>" title="Drag me to the bookmarks bar" onclick="alert('Drag this button to your bookmarks bar, then use it on Sony\'s or Nintendo\'s page.'); return false;">★ Send to my shelf</a>
+  </section>
 
   <?php foreach (PLATFORMS as $platform => $p):
       $conn = connection_info($platform);
@@ -304,8 +391,43 @@ foreach ($errors as $error) {
         </p>
       <?php endif; ?>
 
-      <details <?= $open ? 'open' : '' ?>>
-        <summary><?= $connected ? 'Connect again' : 'Connect' ?></summary>
+      <?php if ($platform === 'steam'): ?>
+        <p class="quick">
+          <a class="button" href="<?= e(SteamSync::signInUrl(base_url() . '/admin_connect?oauth=steam&state=' . connect_state('steam_return')['state'])) ?>">Sign in through Steam</a>
+          <span class="muted small">Fills in your SteamID. The Web API key is still pasted once below: Steam has no way to hand it over.</span>
+        </p>
+      <?php elseif ($platform === 'xbox'): ?>
+        <?php if (XboxSync::hasApp()): ?>
+          <p class="quick">
+            <a class="button primary" href="<?= e(XboxSync::appSignInUrl(connect_state('xbox_return')['state'])) ?>"><?= $connected ? 'Connect Xbox again' : 'Connect Xbox' ?></a>
+            <span class="muted small">Signs in with Microsoft and comes straight back here.</span>
+          </p>
+        <?php endif; ?>
+        <details class="app-setup" <?= XboxSync::hasApp() ? '' : 'open' ?>>
+          <summary><?= XboxSync::hasApp() ? 'Your Microsoft app' : 'For a "Connect Xbox" button: register a Microsoft app, once' ?></summary>
+          <ol class="steps">
+            <li>Open <a href="https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank" rel="noopener">App registrations</a> in the Azure portal, signed in with any Microsoft account (it is free, and needs no subscription), and choose <i>New registration</i>.</li>
+            <li>Name it anything (<i><?= e(site_settings()['name']) ?></i>). Under <i>Supported account types</i> pick <b>Personal Microsoft accounts only</b>.</li>
+            <li>Under <i>Redirect URI</i> pick <b>Web</b> and give it:
+              <div class="copy-row"><input type="text" readonly value="<?= e(XboxSync::appRedirectUri()) ?>" id="xboxRedirect" aria-label="Redirect URI"><button type="button" data-copy="xboxRedirect">Copy</button></div>
+              <?php if (!is_production()): ?><span class="muted small">When the site is online, add <code>https://brunovida.si/games/admin_connect</code> too (<i>Authentication</i> → <i>Add URI</i>).</span><?php endif; ?></li>
+            <li><i>Register</i>, and copy the <b>Application (client) ID</b> from its page.</li>
+            <li>In <i>Certificates &amp; secrets</i>, make a <i>New client secret</i> (24 months is the longest) and copy its <b>Value</b>. When it runs out, make a new one and save it here.</li>
+          </ol>
+          <form method="post" class="connect-form" autocomplete="off">
+            <?= csrf_field() ?>
+            <input type="hidden" name="tab" value="connections">
+            <div class="fields">
+              <div class="field"><label for="app_id">Application (client) ID</label><input type="text" id="app_id" name="app_id" value="<?= e(credential('xbox', 'app_id')) ?>" placeholder="1a2b3c4d-…" spellcheck="false"></div>
+              <div class="field"><label for="app_secret">Client secret (its Value)</label><input type="password" id="app_secret" name="app_secret" placeholder="<?= credential('xbox', 'app_secret') !== null ? 'saved; leave empty to keep it' : '' ?>"></div>
+            </div>
+            <div class="form-actions"><button type="submit" name="action" value="xbox_app"<?= secrets_ready() ? '' : ' disabled' ?>>Save the app</button></div>
+          </form>
+        </details>
+      <?php endif; ?>
+
+      <details <?= $open && !($platform === 'xbox' && XboxSync::hasApp()) ? 'open' : '' ?>>
+        <summary><?= $platform === 'xbox' ? 'Or without an app of your own' : ($connected ? 'Connect again' : 'Connect') ?></summary>
         <form method="post" class="connect-form" autocomplete="off">
           <?= csrf_field() ?>
           <input type="hidden" name="tab" value="connections">
@@ -326,8 +448,9 @@ foreach ($errors as $error) {
             <ol class="steps">
               <li>Sign in at <a href="https://www.playstation.com" target="_blank" rel="noopener">playstation.com</a>.</li>
               <li>In the same browser, open <a href="https://ca.account.sony.com/api/v1/ssocookie" target="_blank" rel="noopener">ca.account.sony.com/api/v1/ssocookie</a>.</li>
-              <li>Copy the <code>npsso</code> value (64 letters and digits) and paste it here. It is traded at once for a sign-in that lasts about two months; the token itself isn't kept.</li>
+              <li>Click <b>Send to my shelf</b> in your bookmarks bar (above). Or copy the <code>npsso</code> value (64 letters and digits) and paste it here.</li>
             </ol>
+            <p class="muted small">It is traded at once for a sign-in that lasts about two months; the token itself isn't kept.</p>
             <div class="field"><label for="npsso">NPSSO token</label><input type="password" id="npsso" name="npsso" required></div>
 
           <?php elseif ($platform === 'xbox'): ?>
@@ -340,7 +463,7 @@ foreach ($errors as $error) {
           <?php elseif ($platform === 'nintendo'): ?>
             <ol class="steps">
               <li><a href="<?= e(connect_url('nintendo')) ?>" target="_blank" rel="noopener">Open the Nintendo Account sign-in</a> and sign in (it says it is linking to <i>Nintendo Store</i>).</li>
-              <li>On the <i>Select this person</i> page, don't click the button: right-click it and <i>Copy Link Address</i>. It starts with <code>npf5c38e31cd085304b://auth#</code>.</li>
+              <li>On the <i>Select this person</i> page, don't click the button: click <b>Send to my shelf</b> in your bookmarks bar (above). Or right-click the button, <i>Copy Link Address</i> (it starts with <code>npf5c38e31cd085304b://auth#</code>) and paste it here.</li>
             </ol>
             <div class="field"><label for="nin-link">The link</label><input type="password" id="nin-link" name="link" required></div>
 

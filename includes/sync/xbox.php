@@ -6,18 +6,27 @@
  * X|S or PC, the minutes Xbox keeps for each, and their achievements. Was
  * api/xbox-exporter + tools/xbox-sync.mjs.
  *
- * It signs in as the Xbox app does: Settings → Connections opens Microsoft's
- * sign-in, and the address it ends on is pasted back. That gives a refresh
- * token, which every sync renews (Microsoft hands a new one back each time).
+ * Two ways to sign in, both giving a refresh token that every sync renews
+ * (Microsoft hands a new one back each time):
+ *
+ *   - with a Microsoft app of your own (registered once in Azure, Settings →
+ *     Connections says how): a "Connect Xbox" button, and Microsoft sends you
+ *     straight back to admin_connect, signed in. Its id and secret are kept as
+ *     credentials, and 'via' = 'app' says the refresh token is the app's.
+ *   - as the Xbox app does, with no app of your own: Microsoft's sign-in ends on
+ *     a blank page whose address is pasted back.
  *
  * A game is tied to the one copy on a console it was played on with the same
  * name, else a name that starts with it. No copy is ever added.
  */
 final class XboxSync extends PlatformSync
 {
+    // the Xbox app's own sign-in, for the way without an app of your own
     private const CLIENT_ID = '000000004C12AE6F';
     private const REDIRECT_URI = 'https://login.live.com/oauth20_desktop.srf';
     private const SCOPE = 'service::user.auth.xboxlive.com::MBI_SSL';
+    // what a registered app asks for
+    private const APP_SCOPE = 'Xboxlive.signin Xboxlive.offline_access';
     private const LIVE = 'https://login.live.com';
     private const LOCALE = 'en-GB';
 
@@ -28,7 +37,42 @@ final class XboxSync extends PlatformSync
         return credential('xbox', 'refresh_token') !== null;
     }
 
-    /** Settings → Connections, step 1: the sign-in page, and the state to check the pasted address against. */
+    /** Whether a Microsoft app of your own is saved, for the "Connect Xbox" button. */
+    public static function hasApp(): bool
+    {
+        return credential('xbox', 'app_id') !== null && credential('xbox', 'app_secret') !== null;
+    }
+
+    /** Where Microsoft sends you back to; registered as the app's redirect URI. */
+    public static function appRedirectUri(): string
+    {
+        return base_url() . '/admin_connect';
+    }
+
+    /** The "Connect Xbox" button's address: Microsoft's sign-in for your own app. */
+    public static function appSignInUrl(string $state): string
+    {
+        return self::LIVE . '/oauth20_authorize.srf?' . http_build_query([
+            'client_id' => credential('xbox', 'app_id'), 'redirect_uri' => self::appRedirectUri(), 'response_type' => 'code',
+            'scope' => self::APP_SCOPE, 'state' => $state, 'prompt' => 'select_account',
+        ], '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /** Microsoft sent you back with a code: trade it for the sign-in. Returns the gamertag. */
+    public static function connectApp(string $code): ?string
+    {
+        $tok = self::liveToken(['grant_type' => 'authorization_code', 'code' => $code], true);
+        if (empty($tok['refresh_token'])) {
+            throw new RuntimeException('Microsoft gave no refresh token, so the sign-in can\'t be kept (does the app ask for Xboxlive.offline_access?).');
+        }
+        $xbl = self::xboxAuth($tok['access_token'], true);
+        set_credential('xbox', 'refresh_token', $tok['refresh_token']);
+        set_credential('xbox', 'via', 'app');
+
+        return $xbl['gamertag'];
+    }
+
+    /** Without an app of your own, step 1: the sign-in page, and the state to check the pasted address against. */
     public static function signInUrl(string $state): string
     {
         return self::LIVE . '/oauth20_authorize.srf?' . http_build_query([
@@ -52,36 +96,44 @@ final class XboxSync extends PlatformSync
         if (($q['state'] ?? null) !== $state) {
             throw new RuntimeException('That address is from another sign-in: open the sign-in link again.');
         }
-        $tok = self::liveToken(['grant_type' => 'authorization_code', 'code' => $q['code'] ?? '']);
+        $tok = self::liveToken(['grant_type' => 'authorization_code', 'code' => $q['code'] ?? ''], false);
         if (empty($tok['refresh_token'])) {
             throw new RuntimeException('Microsoft gave no refresh token, so the sign-in can\'t be kept.');
         }
-        $xbl = self::xboxAuth($tok['access_token']);
+        $xbl = self::xboxAuth($tok['access_token'], false);
         set_credential('xbox', 'refresh_token', $tok['refresh_token']);
+        set_credential('xbox', 'via', null);
 
         return $xbl['gamertag'];
     }
 
-    /** A Microsoft account token, from a sign-in code or the saved refresh token. */
-    private static function liveToken(array $grant): array
+    /** A Microsoft account token, from a sign-in code or the saved refresh token, for your app or the Xbox app's. */
+    private static function liveToken(array $grant, bool $app): array
     {
+        $client = $app
+            ? ['client_id' => credential('xbox', 'app_id'), 'client_secret' => credential('xbox', 'app_secret'), 'redirect_uri' => self::appRedirectUri(), 'scope' => self::APP_SCOPE]
+            : ['client_id' => self::CLIENT_ID, 'redirect_uri' => self::REDIRECT_URI, 'scope' => self::SCOPE];
         $r = Http::request('POST', self::LIVE . '/oauth20_token.srf', ['Content-Type: application/x-www-form-urlencoded'],
-            http_build_query(['client_id' => self::CLIENT_ID, 'redirect_uri' => self::REDIRECT_URI, 'scope' => self::SCOPE] + $grant), ['retries' => 1]);
+            http_build_query($client + $grant), ['retries' => 1]);
         $data = $r->json();
         if ($r->status !== 200 || empty($data['access_token'])) {
-            throw new AuthError('Microsoft sign-in failed (HTTP ' . $r->status . ' ' . $r->excerpt(150) . '). Connect Xbox again.');
+            $why = $data['error_description'] ?? $r->excerpt(150);
+            throw new AuthError('Microsoft sign-in failed (HTTP ' . $r->status . ': ' . $why . '). Connect Xbox again.');
         }
 
         return $data;
     }
 
-    /** Microsoft account token → Xbox Live user token → XSTS token for the Xbox Live services. */
-    private static function xboxAuth(string $msaToken): array
+    /**
+     * Microsoft account token → Xbox Live user token → XSTS token for the Xbox Live
+     * services. A registered app's token goes as "d=", the Xbox app's as "t=".
+     */
+    private static function xboxAuth(string $msaToken, bool $app): array
     {
         $json = ['Content-Type: application/json', 'Accept: application/json', 'x-xbl-contract-version: 1'];
         $r = Http::request('POST', 'https://user.auth.xboxlive.com/user/authenticate', $json, json_encode([
             'RelyingParty' => 'http://auth.xboxlive.com', 'TokenType' => 'JWT',
-            'Properties' => ['AuthMethod' => 'RPS', 'SiteName' => 'user.auth.xboxlive.com', 'RpsTicket' => 't=' . $msaToken],
+            'Properties' => ['AuthMethod' => 'RPS', 'SiteName' => 'user.auth.xboxlive.com', 'RpsTicket' => ($app ? 'd=' : 't=') . $msaToken],
         ]));
         $user = $r->json()['Token'] ?? null;
         if ($r->status !== 200 || !$user) {
@@ -104,12 +156,16 @@ final class XboxSync extends PlatformSync
     private function signIn(): array
     {
         if ($this->xbl === null) {
-            $tok = self::liveToken(['grant_type' => 'refresh_token', 'refresh_token' => credential('xbox', 'refresh_token')]);
+            $app = credential('xbox', 'via') === 'app';
+            if ($app && !self::hasApp()) {
+                throw new AuthError('The Xbox sign-in belongs to your Microsoft app, whose id or secret is gone: save them again in Settings → Connections.');
+            }
+            $tok = self::liveToken(['grant_type' => 'refresh_token', 'refresh_token' => credential('xbox', 'refresh_token')], $app);
             // the newest refresh token, kept at once, so the sign-in lasts as long as it keeps being used
             if (!empty($tok['refresh_token'])) {
                 set_credential('xbox', 'refresh_token', $tok['refresh_token']);
             }
-            $this->xbl = self::xboxAuth($tok['access_token']);
+            $this->xbl = self::xboxAuth($tok['access_token'], $app);
             if (!$this->xbl['xuid']) {
                 throw new AuthError('Xbox Live didn\'t say which profile this is.');
             }

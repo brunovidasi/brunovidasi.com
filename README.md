@@ -73,14 +73,16 @@ Each platform is a client in `includes/sync/` (`steam.php`, `psn.php`, `xbox.php
 
 What a sync never does: delete a copy, or change a field you typed. It adds a copy (a game bought in a launcher or on the eShop), ties one to a platform id, and fills a field that is still empty, or one it filled itself that you haven't changed. A game it can't tie to exactly one copy goes on the dashboard to tie by hand (or dismiss: a game played but not owned). To keep a synced game off the site, hide it: deleted, the next sync adds it back. A record the platform stops listing is kept and marked.
 
-| Platform | What it needs (Settings → Connections) | Lasts |
+| Platform | Connecting (Settings → Connections) | Lasts |
 |---|---|---|
-| Steam | the Web API key and the SteamID64 (official API) | until the key is revoked |
-| PlayStation Network | an NPSSO token, traded at once for a refresh token | about two months, renewed by each sync |
-| Xbox | Microsoft's sign-in, as the Xbox app does it: the address it ends on is pasted back | renewed by each sync |
-| Nintendo | the Nintendo Account sign-in, as the Nintendo Store app does it | about two years |
-| EA app | EA's sign-in, as the EA app does it: the `location` of its last request is pasted back | renewed by each sync |
-| Rockstar | the site's sign-in check, copied as cURL | as long as the rockstargames.com sign-in |
+| Steam | the Web API key, pasted once; **Sign in through Steam** fills in the SteamID64 (official API) | until the key is revoked |
+| Xbox | **Connect Xbox**: sign in with Microsoft and come straight back, through a Microsoft app of your own registered once in Azure (the page has the steps; free). Without one, Microsoft's sign-in as the Xbox app does it, its last address pasted back | renewed by each sync (the app's client secret lasts up to 24 months) |
+| PlayStation Network | the **Send to my shelf** bookmark on Sony's NPSSO page (or the token pasted), traded at once for a refresh token | about two months, renewed by each sync |
+| Nintendo | the Nintendo Account sign-in as the Nintendo Store app does it, then the **Send to my shelf** bookmark on its *Select this person* page (or its button's link pasted) | about two years |
+| EA app | EA's sign-in as the EA app does it: the `location` of its last request, from the browser's developer tools | renewed by each sync |
+| Rockstar | the site's sign-in check, copied as cURL from the developer tools | as long as the rockstargames.com sign-in |
+
+Only Microsoft and Steam let other sites sign you in and send you back: Sony, Nintendo, EA and Rockstar send a sign-in to their own apps, so it is carried here by hand or by the bookmark. EA's code is in a redirect no page can read, and Rockstar's sign-in cookies are hidden from scripts, so those two stay manual; both are done once. The returns land on `admin_connect`, which hands them on to Settings from the site itself (the admin's cookie is `SameSite=Strict`, so it is left off a page another site sends you to), where they are checked against the session that started them; the bookmark brings its sign-in in the address's `#fragment`, which no server sees.
 
 Everything but Steam is undocumented and can change without warning, which is why every sync keeps its before-and-after and can be undone. A renewed sign-in is saved the moment it arrives.
 

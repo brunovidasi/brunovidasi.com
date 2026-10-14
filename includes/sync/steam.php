@@ -28,6 +28,51 @@ final class SteamSync extends PlatformSync
         return credential('steam', 'api_key') !== null && credential('steam', 'steam_id') !== null;
     }
 
+    /**
+     * "Sign in through Steam" (Steam's OpenID 2.0), which only says whose
+     * profile it is: it fills in the SteamID64. Steam sends you back to
+     * $returnTo with the answer, which verifySignIn() checks with Steam itself.
+     */
+    public static function signInUrl(string $returnTo): string
+    {
+        return 'https://steamcommunity.com/openid/login?' . http_build_query([
+            'openid.ns' => 'http://specs.openid.net/auth/2.0',
+            'openid.mode' => 'checkid_setup',
+            'openid.return_to' => $returnTo,
+            'openid.realm' => base_url() . '/',
+            'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
+            'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
+        ]);
+    }
+
+    /** The SteamID64 from Steam's answer, once Steam has said the answer is its own. */
+    public static function verifySignIn(array $query): string
+    {
+        // PHP turns the dots in openid.* into underscores
+        $params = [];
+        foreach ($query as $k => $v) {
+            if (str_starts_with($k, 'openid_') && is_string($v)) {
+                $params['openid.' . substr($k, 7)] = $v;
+            }
+        }
+        if (($params['openid.mode'] ?? '') !== 'id_res') {
+            throw new RuntimeException('Steam didn\'t sign you in' . (($params['openid.mode'] ?? '') === 'cancel' ? ' (cancelled).' : '.'));
+        }
+        if (!str_starts_with($params['openid.return_to'] ?? '', base_url() . '/')) {
+            throw new RuntimeException('Steam\'s answer was meant for another site.');
+        }
+        $params['openid.mode'] = 'check_authentication';
+        $r = Http::request('POST', 'https://steamcommunity.com/openid/login', ['Content-Type: application/x-www-form-urlencoded'], http_build_query($params), ['retries' => 1]);
+        if (!str_contains($r->body, 'is_valid:true')) {
+            throw new RuntimeException('Steam didn\'t confirm the sign-in. Try again.');
+        }
+        if (!preg_match('#^https://steamcommunity\.com/openid/id/(\d{17})$#', $params['openid.claimed_id'] ?? '', $m)) {
+            throw new RuntimeException('Steam\'s answer had no SteamID.');
+        }
+
+        return $m[1];
+    }
+
     /** Settings → Connections: whether the key and the SteamID work. Returns the profile's name. */
     public static function check(): ?string
     {

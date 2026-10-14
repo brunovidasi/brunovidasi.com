@@ -65,6 +65,23 @@
     setTimeout(() => { b.textContent = 'Copy'; }, 1600);
   }));
 
+  /* ---------- the "Send to my shelf" bookmark's sign-in, brought here in the address's #fragment ---------- */
+  const sent = location.hash.match(/^#(psn|nintendo)=(.+)$/);
+  if (sent) {
+    // out of the address at once, so it stays in no history or bookmark
+    history.replaceState(null, '', location.pathname + location.search + '#' + sent[1]);
+    const section = document.getElementById(sent[1]);
+    const input = section && $(sent[1] === 'psn' ? 'input[name="npsso"]' : 'input[name="link"]', section);
+    if (input) {
+      input.value = decodeURIComponent(sent[2]);
+      const details = input.closest('details');
+      if (details) details.open = true;
+      section.scrollIntoView({ block: 'center' });
+      const form = input.closest('form');
+      form.requestSubmit($('button[value="connect"]', form));
+    }
+  }
+
   /* ---------- a game's edit page ---------- */
   const form = $('#gameForm');
   if (form) {

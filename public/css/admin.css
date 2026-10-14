@@ -301,3 +301,14 @@ a.stat { color: var(--text); text-decoration: none; transition: border-color .15
 a.stat:hover { border-color: var(--accent); background: rgba(31,31,34,.95); transform: translateY(-2px); text-decoration: none; }
 a.stat:hover span { color: var(--text); }
 @media (prefers-reduced-motion: reduce) { a.stat:hover { transform: none; } }
+
+/* Settings → Connections: the quick buttons, the bookmark, and registering a Microsoft app */
+.quick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 4px 0 10px; }
+.bookmark-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; }
+.bookmark-card > div { flex: 1 1 320px; }
+.bookmark-card h2 { margin-bottom: 6px; }
+.bookmarklet { cursor: grab; }
+.app-setup { margin: 4px 0 10px; }
+.app-setup > summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.app-setup[open] > summary { margin-bottom: 12px; }
+.steps .copy-row { margin: 8px 0 4px; }
