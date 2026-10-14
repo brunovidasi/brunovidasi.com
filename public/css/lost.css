@@ -1,0 +1,85 @@
+/* lost.css — the 404's console screens (includes/templates/console_error.php): the
+   error a console would show, on an old TV with faint scanlines, the page's accent
+   (--c) taken from the console's family. */
+
+.tv { width: min(620px, 100%); margin: 0 auto; padding: 12px; border-radius: 20px;
+  background: linear-gradient(#1b1b1e, #0c0c0d); border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow), 0 0 60px color-mix(in srgb, var(--c) 18%, transparent); }
+/* a 16:10 screen that grows if a phone's narrow width needs more room for the text */
+.screen { position: relative; aspect-ratio: 16 / 10; border-radius: 10px; display: grid; place-content: center;
+  justify-items: center; gap: .7em; padding: 6% 8%; text-align: center; color: #fff; background: #000;
+  font: 500 clamp(12px, 2.6vw, 17px) / 1.4 var(--font-ui); }
+.screen::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.55)),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px); }
+.screen p { margin: 0; }
+.screen small { opacity: .7; font-size: .85em; }
+.screen .sub { opacity: .85; font-size: .92em; }
+.caption { margin: -4px 0 0; font: 600 11px var(--font-display); letter-spacing: .18em; text-transform: uppercase; opacity: .45; }
+
+/* PS1 and PS2: the black screen asking for a disc, one turning slowly */
+.screen-disc { background: radial-gradient(ellipse at 50% 120%, #10224a, #000 70%); }
+.screen-disc .disc { width: 3.4em; height: 3.4em; border-radius: 50%; animation: lost-spin 2.4s linear infinite;
+  background: radial-gradient(circle, #000 0 13%, #9aa 14% 18%, transparent 19%),
+    conic-gradient(from 20deg, #cfd8e6, #6f87b8, #e9e1f5, #8fb0d8, #cfd8e6); }
+.screen-ps1 .disc { background: radial-gradient(circle, #000 0 13%, #9aa 14% 18%, transparent 19%), conic-gradient(#222, #444, #222, #555, #222); }
+
+/* PS3, PS4, PS5: the blue system screen with its warning */
+.screen-ps { background: linear-gradient(160deg, #0a2a6b, #04122f 60%, #000); }
+.screen-ps3 { background: linear-gradient(180deg, #1a1a1f, #3a2a40 55%, #0d0d10); }
+.screen-ps .alert { width: 2.2em; height: 2.2em; display: grid; place-content: center; border-radius: 50%;
+  border: 2px solid #fff; font-weight: 700; }
+
+/* Wii and Wii U: the rounded box, bright blue on black */
+.screen-wii .panel, .screen-switch .panel { display: grid; gap: .7em; padding: 1.4em 1.6em; border-radius: 1em; }
+.screen-wii .panel { border: 2px solid #39c3ef; box-shadow: 0 0 18px rgba(57,195,239,.35) inset; }
+.screen-wiiu { background: linear-gradient(#0b1f2a, #000); }
+
+/* Switch, 3DS, DS: the plain grey dialogue */
+.screen-switch { background: #2d2d2d; }
+.screen-switch .panel { background: #464646; border-radius: .5em; max-width: 26em; }
+.screen-3ds, .screen-ds { background: #000; }
+
+/* Game Boy, Game Boy Color, GBA, SNES: the boot logo scrolls down garbled */
+.screen-cart { background: #9bbc0f; color: #0f380f; }
+.screen-gbc { background: #b5c99a; }
+.screen-gba { background: #2b2b6b; color: #fff; }
+.screen-snes { background: #111; color: #d9d4e8; }
+.screen-cart .boot { overflow: clip; padding: .2em 0; }
+.screen-cart .logo { display: inline-block; position: relative; font: 800 2em var(--font-display); letter-spacing: .02em;
+  animation: lost-boot 2.6s steps(14) both; }
+/* the dirty contacts: a black bar where half the logo should be */
+.screen-cart .logo::after { content: ""; position: absolute; left: 38%; right: 8%; top: 12%; bottom: 18%;
+  background: currentColor; animation: lost-flicker 1.6s steps(2) 2.6s infinite; }
+.screen-cart .logo sup { font-size: .35em; }
+
+/* Xbox 360: the red ring, three of its four lights */
+.screen-rrod { background: radial-gradient(circle at 50% 40%, #1a0505, #000 70%); }
+.screen-rrod .ring { width: 4.4em; height: 4.4em; border-radius: 50%; display: grid; place-content: center;
+  background: conic-gradient(#ff2a2a 0 87deg, transparent 87deg 93deg, #ff2a2a 93deg 177deg, transparent 177deg 183deg,
+    #ff2a2a 183deg 267deg, transparent 267deg 273deg, #333 273deg 357deg, transparent 357deg);
+  filter: drop-shadow(0 0 10px rgba(255,42,42,.7)); animation: lost-pulse 1.6s ease-in-out infinite; }
+.screen-rrod .ring span { width: 3.2em; height: 3.2em; border-radius: 50%; background: #0b0b0b; }
+
+/* Xbox and Xbox One: the green screen */
+.screen-xbox { background: #107c10; }
+.screen-xbox .big { font: 300 1.7em var(--font-ui); }
+
+/* PC: the blue screen */
+.screen-bsod { background: #0078d7; place-content: center start; justify-items: start; text-align: left; }
+.screen-bsod .bsod { display: grid; gap: .7em; }
+.screen-bsod .face { font-size: 3.4em; line-height: 1; }
+
+@keyframes lost-spin { to { transform: rotate(1turn); } }
+@keyframes lost-boot { from { transform: translateY(-160%); } }
+@keyframes lost-flicker { 50% { opacity: .55; } }
+@keyframes lost-pulse { 50% { filter: drop-shadow(0 0 3px rgba(255,42,42,.4)); opacity: .75; } }
+@media (prefers-reduced-motion: reduce) {
+  .screen *, .screen *::after { animation: none !important; }
+}
+
+.lost .home { display: inline-block; padding: 12px 26px; border-radius: 999px; background: var(--c); color: var(--c-ink);
+  font: 700 14px var(--font-display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+  transition: transform .15s, box-shadow .15s; }
+.lost .home:hover, .lost .home:focus-visible { transform: translateY(-2px); box-shadow: 0 8px 22px color-mix(in srgb, var(--c) 45%, transparent); }

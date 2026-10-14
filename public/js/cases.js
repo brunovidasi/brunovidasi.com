@@ -145,12 +145,12 @@
      g.spine says how a copy's spine is printed (README, "Printed spines"). Every part is drawn, so it
      stays sharp at any size: the platform's logo at the top, the title (or the series logo, logos/*.webp,
      turned to read down the spine) and the badges at the foot, each turned to read the same way.
-       ea-pcgame  EA's thick PC cases of the early 2000s: black ends, the cover's art squeezed and blurred
-                  down the middle under the logo and the pack's name (the default for g.bigCase)
+       ea-pcgame  EA's thick PC cases of the early 2000s: black ends, the cover's colour down the middle
+                  under the logo and the pack's name (the default for g.bigCase)
        white      the plain white spine of the DVD-case years: the title in small capitals
        sims4      The Sims 4: a coloured band at each end round the logo, the pack's icon and name below
        sims4-bundle  a Sims 4 bundle: light grey, the packs' round icons, the logo and BUNDLE
-       art        the cover's art right down the spine under the title */
+       art        SimCity 2013's: the title in white, in its logo's red shadow, on the white spine */
   const spineOf = g => g.spine || (g.bigCase ? { style: 'ea-pcgame' } : null);
   const SPINE_TOP = {
     pcgame: '<span class="pt-pcgame"><b>P<i>C</i></b><small>GAME</small></span>',
@@ -204,7 +204,6 @@
   function printedSpineHTML(g, L, P) {
     const style = P.style || 'white';
     const solid = /^#[0-9a-f]{6}$/i.test(P.color || '') ? P.color : null;
-    const art = (style === 'ea-pcgame' || style === 'art') && !solid && g.cover && g.cover.file ? `--cv:url('${esc(g.cover.file)}');` : '';
     // the title as printed: \n breaks a line, *…* is set smaller (EXPANSION PACK*)
     const text = P.title || g.title;
     const fit = Math.min(1, 22 / text.replace(/\*[^*]*\*/g, m => ' '.repeat(Math.ceil(m.length * .6))).replace(/\n.*/, '').length);
@@ -215,8 +214,8 @@
     const ttl = logo || P.sub ? `${logo}${sub}` : `<span class="stext${P.caps ? ' caps' : ''}${P.font ? ' f-' + P.font : ''}" style="--fit:${fit.toFixed(2)}">${words}</span>`;
     const top = SPINE_TOP[P.top || (style === 'ea-pcgame' ? 'pcgame' : 'pccd')] || '';
     const foot = (P.foot || (style === 'ea-pcgame' ? ['ea-games'] : ['ea'])).map(spineBadge).join('');
-    const vs = `${vars(g, L)};${art}${solid ? `--band:${solid};--bandf:${ink(solid)};` : ''}${P.accent ? `--acc:${P.accent};` : ''}${P.stripe ? `--stripe:${P.stripe};` : ''}`;
-    const k = `sp ${cls(g, L)} printed ps-${style} top-${P.top || 'default'}${style === 'sims4' && !P.label ? ' s4-short' : ''}${art ? ' art' : ''}${solid ? ' solid' : ''}`;
+    const vs = `${vars(g, L)};${solid ? `--band:${solid};--bandf:${ink(solid)};` : ''}${P.accent ? `--acc:${P.accent};` : ''}${P.stripe ? `--stripe:${P.stripe};` : ''}`;
+    const k = `sp ${cls(g, L)} printed ps-${style} top-${P.top || 'default'}${style === 'sims4' && !P.label ? ' s4-short' : ''}${solid ? ' solid' : ''}`;
     if (style === 'sims4') return `<div class="${k}" style="${vs}">
       <div class="s4-a"><div class="ptop">${top}</div>${P.label ? `<span class="s4-label">${esc(P.label)}</span>` : ''}</div>
       <div class="s4-b">${logo}</div>

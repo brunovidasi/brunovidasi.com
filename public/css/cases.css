@@ -247,7 +247,7 @@
 .ps-white .ssub small { text-shadow: none; }
 .ps-white .ssub.f-serif small, .ps-white .ssub small { font-family: 'Trajan Pro', 'Fraunces', serif; letter-spacing: .3em; font-size: .42em; }
 
-/* EA's thick PC cases: black ends, the cover's art squeezed down the middle and blurred to its colours */
+/* EA's thick PC cases: black ends, the cover's colour down the middle */
 .sp.ps-ea-pcgame { --band: #121212; color: #fff; }
 .ps-ea-pcgame .ptop { height: 11%; background: linear-gradient(#0b0b0b, #1b1b1b); }
 .ps-ea-pcgame .pfoot { height: 15%; padding: 0; background: linear-gradient(#1b1b1b, #0b0b0b); }
@@ -256,13 +256,9 @@
 .ps-ea-pcgame.solid .pfoot { background: var(--band); color: var(--bandf); }
 .ps-ea-pcgame .slogo { width: var(--d); filter: none; flex-shrink: 0; }
 .ps-ea-pcgame .stext { font-size: .72em; }
-.art .pmid::before, .ps-art.art::before { content: ""; position: absolute; inset: -15%; background: var(--cv) center / 100% 100% no-repeat; filter: blur(calc(var(--d) * .035)) saturate(1.25); }
-.art .pmid::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.28), rgba(0,0,0,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,.32)); }
 
-/* the cover's art right down the spine (SimCity, 2013), the title over it in white */
+/* SimCity (2013): the title in white over the white spine, in the logo's red shadow */
 .sp.ps-art { color: #fff; }
-.ps-art.art::before { inset: -6%; filter: blur(calc(var(--d) * .02)) saturate(1.15); }
-.ps-art .pmid::before, .ps-art .pmid::after { content: none; }
 .ps-art .stext { color: #fff; font: 900 calc(1.05em * var(--fit, 1))/1 'Arial Black', 'Exo 2', sans-serif; letter-spacing: .02em; font-variant: normal;
   text-shadow: 0 0 .25em rgba(0,0,0,.6), .04em .06em 0 #b3121b; }
 .ps-art .ptop { padding-top: calc(var(--d) * .15); }

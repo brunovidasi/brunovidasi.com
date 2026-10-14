@@ -123,8 +123,10 @@
   // with only the PC picked, its games can be narrowed to the boxed ones or to one launcher's library
   const pcOnly = () => state.sel.size === 1 && state.sel.has('pc');
   // the EA app's are the copies its library lists (data/ea.json): bought in it, or a disc whose code was redeemed in it;
-  // Rockstar's, the copies on its launcher and the ones it says were played on PC (data/rockstar.json)
-  const inLib = (g, k) => k === 'disc' ? g.format !== 'digital' : k === 'ea' ? !!g.ea && g.ea.owned !== false : k === 'rockstar' ? g.launcher === k || !!g.rockstar : g.launcher === k;
+  // Rockstar's, the copies on its launcher and the ones it says were played on PC (data/rockstar.json);
+  // a bundle is in a library when any pack in it is (the EA app lists a Sims 4 bundle's packs, not the bundle)
+  const inLib = (g, k) => g.packs?.some(p => inLib(p, k)) ||
+    (k === 'disc' ? g.format !== 'digital' : k === 'ea' ? !!g.ea && g.ea.owned !== false : k === 'rockstar' ? g.launcher === k || !!g.rockstar : g.launcher === k);
   const list = () => sortList(base().filter(g =>
     (!state.sel.size || state.sel.has(g.console)) &&
     (!state.lib || !pcOnly() || inLib(g, state.lib))), state.sort);
@@ -2042,12 +2044,18 @@
     $$('.topnav [data-col]').forEach(a => a.dataset.col === COL ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     hero();
   }
-  // a click on the top bar's links changes the collection where it stands, fading from one look to the other
-  $$('.topnav [data-col], .brand').forEach(a => a.addEventListener('click', e => {
+  // a click on the top bar's links changes the collection where it stands, fading from one look to the other;
+  // the collection showing goes back to the top of it with no console picked (/sims from /sims/pc).
+  // The site's name is a plain link: it loads the whole shelf afresh
+  $$('.topnav [data-col]').forEach(a => a.addEventListener('click', e => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button || !DB.length) return; // a new tab or window
     e.preventDefault();
     const col = a.dataset.col || '';
-    if (col === COL) return;
+    if (col === COL) {
+      if (state.sel.size) { state.sel = new Set(); changed(); }
+      scrollTo(0, 0);
+      return;
+    }
     const go = () => {
       setCollection(col);
       changed(); // a step in the history: /sims
@@ -2176,6 +2184,7 @@
         g.packs = g.contains.map(id => byId.get(id)).filter(Boolean);
         g.packs.forEach(p => { p.bundle = g; });
         g._hay += ' | ' + fold(g.packs.map(p => p.title).join(' | ')); // a search for a pack finds its bundle
+        if (!g._hay.includes('ea app') && inLib(g, 'ea')) g._hay += ' | ea app'; // and one for the EA app, a bundle whose packs are in it
       });
       // a copy that plays on more than one console (alsoOn: an Xbox One & Xbox 360 release) stands under each of them,
       // in its own case; it counts once
