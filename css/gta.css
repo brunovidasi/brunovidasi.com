@@ -95,6 +95,8 @@ html.gta {
 .gta #case > div:nth-child(4n+2) .bay { --panel: linear-gradient(#1f9fb0, #1b6f8f 55%, #13324d); }
 .gta #case > div:nth-child(4n+3) .bay { --panel: linear-gradient(#ffb36b, #ff7a59 45%, #b8336a); }
 .gta #case > div:nth-child(4n+4) .bay { --panel: linear-gradient(#2a1650, #6b2c8f 60%, #d0457a); }
+/* a digital copy on the sky: smoked glass in white, not the cream outline that fades on the sunset */
+.gta .bay { --ghost-bg: rgba(10,7,16,.38); --ghost-ink: rgba(255,255,255,.9); --ghost-line: rgba(255,255,255,.7); }
 /* the black gutter between panels */
 .gta .board { height: 22px; background: #0a0710; box-shadow: none; }
 .gta .plate { top: 3px; border-radius: 0; background: transparent; color: #fff; font: 400 13px/14px var(--gta-display); letter-spacing: .08em; padding: 1px 2px; box-shadow: none; }

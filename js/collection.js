@@ -86,7 +86,7 @@
   /** In a game's drawer: the base game and its packs, a list for each kind of pack as on a checklist,
       the game open in bold. Each opens in its place (js/app.js, data-go); `wants`, still to find, come last, faded.
       `name` is what the list calls each one. */
-  const PACKS = ['Base game', 'Collection', 'Expansion Pack', 'Game Pack', 'Stuff Pack', 'Parts Pack', 'Kit', 'Free Pack', 'World', 'Extra'];
+  const PACKS = ['Base game', 'Expansion Pack', 'Game Pack', 'Stuff Pack', 'Parts Pack', 'Kit', 'Free Pack', 'World', 'Extra', 'Collection'];
   const plural = p => p.replace(/ Pack$/, ' pack') + 's'; // Expansion Pack → Expansion packs
   function packList(g, gs, name, wants = []) {
     const kind = x => x.pack || 'Base game';

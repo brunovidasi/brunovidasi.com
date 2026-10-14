@@ -1742,9 +1742,22 @@
     }
 
     /* ---------- closing: back to its place ---------- */
+    // a book taken out of its sleeve (The Sims Medieval Collector's Edition) goes back in, quickly, before it
+    // flies anywhere; then fn. False when there is nothing to put back
+    function putBack(fn) {
+      const a = cur;
+      if (!a || !a.open || !a.obj.classList.contains('m-book') || reduced()) return false;
+      if (a.settling) return true;
+      a.settling = true;
+      a.obj.classList.add('quick');
+      view('close');
+      setTimeout(() => { a.settling = false; a.obj.classList.remove('quick'); if (cur === a) fn(); }, 800);
+      return true;
+    }
     function close(fromHash) {
       const a = cur;
       if (!a || a.closing) return;
+      if (putBack(() => close(fromHash))) return;
       overlay.classList.remove('open');
       ui.classList.remove('open');
       body._g = null;
@@ -1853,6 +1866,7 @@
     // the next or previous game: this one goes out one side as that one comes in from the other
     function step(n) {
       if (!cur || cur.closing) return;
+      if (putBack(() => step(n))) return;
       const g = games[games.indexOf(cur.g) + n];
       if (!g || games.indexOf(cur.g) < 0) return;
       setHash(g.id, false);
@@ -1866,6 +1880,7 @@
     function jump(g) {
       g = g?.bundle || g; // a pack that came in a bundle opens the bundle it stands in
       if (!g || !cur || cur.closing || g === cur.g) return;
+      if (putBack(() => jump(g))) return;
       const i = games.indexOf(cur.g), j = games.indexOf(g);
       const n = i >= 0 && j >= 0 && j < i ? -1 : 1;
       setHash(g.id, false);

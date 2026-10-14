@@ -437,9 +437,9 @@
 .k-ps3.platinum.kind-keep:not(.steel):not(.ghost).sp::before { background: linear-gradient(90deg, #d9dce0, #b3b8be 50%, #8f959c); }
 
 /* a digital copy: no case, just its outline */
-.ghost { background: transparent; color: rgba(242,234,216,.7); box-shadow: none; border: 1.5px dashed rgba(242,234,216,.45); border-radius: 3px; }
+.ghost { background: var(--ghost-bg, transparent); color: var(--ghost-ink, rgba(242,234,216,.7)); box-shadow: none; border: 1.5px dashed var(--ghost-line, rgba(242,234,216,.45)); border-radius: 3px; }
 .ghost::after { display: none; }
-.ghost .stop { background: transparent; color: rgba(242,234,216,.6); }
+.ghost .stop { background: transparent; color: var(--ghost-ink, rgba(242,234,216,.6)); }
 .ghost .sbot { opacity: 1; }
 
 /* ---------- back cover ---------- */
@@ -780,3 +780,7 @@
 .bx.model .m-end { transition: opacity .2s 1.9s; }
 .bx.model.open .m-end { opacity: 0; transition-delay: 0s; }
 .bx.model.m-book.open { translate: var(--ox) 0; }
+/* put back before it flies anywhere (js/app.js, putBack): the same steps, quickly, the book in its sleeve within .8s */
+.bx.model.quick .m-leaf { transition: transform .3s cubic-bezier(.4,0,.2,1); }
+.bx.model.quick .m-sleeve { transition: transform .25s cubic-bezier(.4,0,.2,1) .2s, translate .3s cubic-bezier(.4,0,.2,1) .45s; }
+.bx.model.quick .m-end { transition: opacity .1s .7s; }

@@ -85,6 +85,8 @@
     repeating-linear-gradient(90deg, #efe3c4 0 16px, #e6d6b0 16px 18px, #efe3c4 18px 34px, #f4ead1 34px 36px);
   box-shadow: inset 0 14px 18px -10px rgba(40,24,6,.6), inset 10px 0 14px -10px rgba(40,24,6,.5), inset -10px 0 14px -10px rgba(40,24,6,.5); }
 .sims .plate { --pc: #3d9a20; border-radius: 99px; font-family: var(--font-display); font-weight: 600; letter-spacing: .02em; }
+/* a digital copy on the wallpaper: a frosted pane in dark ink, not the cream outline that vanishes on it */
+.sims .bay { --ghost-bg: rgba(255,255,255,.35); --ghost-ink: rgba(60,40,10,.75); --ghost-line: rgba(60,40,10,.45); }
 /* the cases cast a warmer shadow on the wallpaper */
 .sims .item:hover, .sims .item:focus-visible { filter: brightness(1.08) drop-shadow(0 10px 14px rgba(40,24,6,.45)); }
 
