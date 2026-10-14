@@ -33,6 +33,10 @@ if (preg_match('#^api/([A-Za-z0-9_]+)$#', $name, $m) && is_file("$public/api/$m[
     header('Content-Type: text/html; charset=utf-8');
     readfile("$public/$name/index.html");
     return true;
+} elseif (preg_match('#^[A-Za-z0-9-]+(/[A-Za-z0-9-]+)?$#', $name) && !is_dir("$public/$name")) {
+    // the shelf's own addresses (/wiiu, /sims/wiiu): index.php draws them, or 404s
+    $script = "$public/index.php";
+    $name = 'index';
 } else {
     http_response_code(404);
     $script = "$public/404.php";

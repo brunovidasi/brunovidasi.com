@@ -144,7 +144,7 @@ if (is_post()) {
             $friends = [];
             foreach (FRIEND_DEFAULTS as $key => $defaults) {
                 $url = trim((string) ($_POST['friends'][$key]['url'] ?? ''));
-                if ($url !== '' && !safe_http_url($url)) {
+                if ($url !== '' && empty($defaults['copy']) && !safe_http_url($url)) {
                     $errors[] = FRIEND_NAMES[$key] . ': the link must start with https://';
                     continue;
                 }
@@ -343,9 +343,9 @@ foreach ($errors as $error) {
       <p class="muted small">The buttons in the top bar (and the strip under it on phones) that let people add you as a friend.</p>
       <?php foreach ($friends as $key => $f): ?>
         <div class="friend-row">
-          <span class="friend-icon"><?= FRIEND_ICONS[$key] ?></span>
+          <span class="friend-icon <?= $key ?>"><?= FRIEND_ICONS[$key] ?></span>
           <div class="fields">
-            <div class="field wide"><label for="fr-<?= $key ?>"><?= e(FRIEND_NAMES[$key]) ?> link</label><input type="url" id="fr-<?= $key ?>" name="friends[<?= $key ?>][url]" value="<?= e($f['url']) ?>" placeholder="https://"></div>
+            <div class="field wide"><?php if ($f['copy']): ?><label for="fr-<?= $key ?>"><?= e(FRIEND_NAMES[$key]) ?> ID <span class="muted">(there is no link to add a friend, so the button copies it)</span></label><input type="text" id="fr-<?= $key ?>" name="friends[<?= $key ?>][url]" value="<?= e($f['url']) ?>"><?php else: ?><label for="fr-<?= $key ?>"><?= e(FRIEND_NAMES[$key]) ?> link</label><input type="url" id="fr-<?= $key ?>" name="friends[<?= $key ?>][url]" value="<?= e($f['url']) ?>" placeholder="https://"><?php endif; ?></div>
             <div class="field"><label>Its words</label><input type="text" name="friends[<?= $key ?>][long]" value="<?= e($f['long']) ?>"></div>
             <div class="field"><label>On a phone</label><input type="text" name="friends[<?= $key ?>][label]" value="<?= e($f['label']) ?>"></div>
             <?= check_box("friends[$key][show]", $f['show'], 'Show it') ?>

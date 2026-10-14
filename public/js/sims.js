@@ -1,4 +1,4 @@
-/* sims.js — the Sims collection (?sims). Every game in data/games.json with a "series"
+/* sims.js — the Sims collection (/sims). Every game in data/games.json with a "series"
    stands on the shelf (js/app.js), grouped by game: The Sims, The Sims 2…, in the
    look of css/sims.css, with a plumbob over the case the pointer is on. Its
    checklist view sorts them by game and then by pack, with how much of each is
@@ -48,7 +48,7 @@
       <header class="hero">
         <div>
           <div class="eyebrow">${esc(PAGE.eyebrow)}</div>
-          <h1>${esc(PAGE.heading)} <em>${esc(PAGE.accent)}</em><img class="bob" src="assets/plumbob.svg" alt="" width="30" height="60"></h1>
+          <h1>${esc(PAGE.heading)} <em>${esc(PAGE.accent)}</em><img class="bob" src="${window.SITE?.base || ''}assets/plumbob.svg" alt="" width="30" height="60"></h1>
           <p>${esc(PAGE.intro)}</p>
         </div>
         <div class="stats">
@@ -69,9 +69,9 @@
 
     root.innerHTML = `
       <nav class="series-nav" aria-label="Jump to"><div class="in">
-        ${sections.map(s => `<a href="#${s.id}">${esc(s.name)} <em>${s.games.length}</em></a>`).join('')}
-        ${consoles.length ? `<a href="#consoles">On consoles <em>${consoles.length}</em></a>` : ''}
-        <a class="want" href="#want-list">Want list <em>${wants.length}</em></a>
+        ${sections.map(s => `<a href="${Collection.href(s.id)}" data-section="${s.id}">${esc(s.name)} <em>${s.games.length}</em></a>`).join('')}
+        ${consoles.length ? `<a href="${Collection.href('consoles')}" data-section="consoles">On consoles <em>${consoles.length}</em></a>` : ''}
+        <a class="want" href="${Collection.href('want-list')}" data-section="want-list">Want list <em>${wants.length}</em></a>
       </div></nav>`;
 
     sections.forEach(s => {
@@ -127,7 +127,7 @@
   (window.COLLECTIONS = window.COLLECTIONS || {}).sims = {
     name: PAGE.nav,
     title: PAGE.title,
-    icon: 'favicon-sims.svg',
+    icon: (window.SITE?.base || '') + 'favicon-sims.svg',
     about: PAGE.description,
     data: ['data/sims-wants.json'],
     games(db, w) { wants = w.wants; return db.games.filter(g => g.series); },

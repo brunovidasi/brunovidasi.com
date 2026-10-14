@@ -1,12 +1,23 @@
 <?php
 
 /**
- * The shelf: every page of the site (?sims and ?gta are the same page in other
- * clothes, js/app.js). The texts, the views and the "Add me" links come from
- * Settings; the games from the API (api/games and the platforms beside it).
+ * The shelf: every page of the site (/sims and /gta are the same page in other
+ * clothes, and /wiiu, /ps2-final-fantasy-x, /sims/wiiu are it with a console
+ * picked or a game open, js/app.js). The texts, the views and the "Add me" links
+ * come from Settings; the games from the API (api/games and the platforms beside it).
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
+
+// the address under the shelf: what isn't one of its pages is a 404
+$route = trim(substr(rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/'), strlen(rtrim(app_path(), '/'))), '/');
+if ($route === 'index' || $route === 'index.php') {
+    $route = '';
+}
+if (!shelf_route_exists($route)) {
+    require __DIR__ . '/404.php';
+    exit;
+}
 
 $site = site_settings();
 $shelf = page_settings('shelf');
@@ -29,9 +40,9 @@ header('Content-Type: text/html; charset=utf-8');
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($shelf['title']) ?></title>
 <meta name="description" content="<?= e($shelf['description']) ?>">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/orbitron-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/exo2-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="<?= e(url('favicon.svg')) ?>" type="image/svg+xml">
+<link rel="preload" href="<?= e(url('fonts/orbitron-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="<?= e(url('fonts/exo2-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset_url('css/site.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset_url('css/cases.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset_url('css/collection.css')) ?>">
@@ -47,13 +58,17 @@ header('Content-Type: text/html; charset=utf-8');
   </div>
   <nav class="topnav" aria-label="Collections">
     <a href="<?= e(url('')) ?>" data-col="" aria-current="page"><?= e($pages['shelf']['nav']) ?></a>
-    <a href="?sims" data-col="sims"><img class="nav-bob" src="assets/plumbob.svg" alt="" width="8" height="16"><?= e($pages['sims']['nav']) ?></a>
-    <a href="?gta" data-col="gta"><?= e($pages['gta']['nav']) ?></a>
+    <a href="<?= e(url('sims')) ?>" data-col="sims"><img class="nav-bob" src="<?= e(url('assets/plumbob.svg')) ?>" alt="" width="8" height="16"><?= e($pages['sims']['nav']) ?></a>
+    <a href="<?= e(url('gta')) ?>" data-col="gta"><?= e($pages['gta']['nav']) ?></a>
   </nav>
 <?php if ($friends): ?>
-  <nav class="addme" aria-label="Add me">
+  <nav class="addme" aria-label="Add me" style="--n: <?= count($friends) ?>">
 <?php foreach ($friends as $key => $f): ?>
-    <a href="<?= e($f['url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['long']) ?></span><?= FRIEND_ICONS[$key] ?></a>
+<?php if ($f['copy']): ?>
+    <button type="button" class="<?= $key ?>" data-copy="<?= e($f['url']) ?>" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['long']) ?></span><?= FRIEND_ICONS[$key] ?></button>
+<?php else: ?>
+    <a class="<?= $key ?>" href="<?= e($f['url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['long']) ?></span><?= FRIEND_ICONS[$key] ?></a>
+<?php endif; ?>
 <?php endforeach; ?>
   </nav>
 <?php endif; ?>
@@ -62,7 +77,11 @@ header('Content-Type: text/html; charset=utf-8');
   <nav class="addme addme-strip" aria-label="Add me">
     <span>Add me on</span>
 <?php foreach ($friends as $key => $f): ?>
-    <a href="<?= e($f['url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['label']) ?></span><?= FRIEND_ICONS[$key] ?></a>
+<?php if ($f['copy']): ?>
+    <button type="button" class="<?= $key ?>" data-copy="<?= e($f['url']) ?>" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['label']) ?></span><?= FRIEND_ICONS[$key] ?></button>
+<?php else: ?>
+    <a class="<?= $key ?>" href="<?= e($f['url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['label']) ?></span><?= FRIEND_ICONS[$key] ?></a>
+<?php endif; ?>
 <?php endforeach; ?>
   </nav>
 <?php endif; ?>
@@ -84,6 +103,16 @@ header('Content-Type: text/html; charset=utf-8');
 </footer>
 
 <script>window.SITE = <?= json_encode(site_script_config(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>;</script>
+<script>
+// an "Add me" with no link (the EA app) copies the ID to search for, and says so for a moment
+document.querySelectorAll('.addme [data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const lbl = b.querySelector('.lbl'), was = lbl.textContent;
+  try { await navigator.clipboard.writeText(b.dataset.copy); lbl.textContent = 'Copied: ' + b.dataset.copy; }
+  catch (e) { lbl.textContent = 'EA ID: ' + b.dataset.copy; }
+  b.classList.add('copied');
+  setTimeout(() => { lbl.textContent = was; b.classList.remove('copied'); }, 2500);
+}));
+</script>
 <script src="<?= e(asset_url('js/consoles.js')) ?>"></script>
 <script src="<?= e(asset_url('js/console-art.js')) ?>"></script>
 <script src="<?= e(asset_url('js/cases.js')) ?>"></script>

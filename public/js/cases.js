@@ -191,7 +191,7 @@
     if (k === 'bbfc15') return '<i class="sbg pegi bbfc15"><b>15</b></i>';
     // PC DVD in a grey block at the very foot (the Games for Windows years), on one line or two
     if (k === 'pcdvd' || k === 'pcdvd2') return `<i class="sbg txt pcdvd">PC${k === 'pcdvd2' ? '<br>' : ' '}<b>DVD</b></i>`;
-    if (k === 'rockstar') return '<i class="sbg rockstar"><img src="logos/rockstar.webp" alt="" loading="lazy" decoding="async" draggable="false"></i>';
+    if (k === 'rockstar') return `<i class="sbg rockstar"><img src="${window.SITE?.base || ''}logos/rockstar.webp" alt="" loading="lazy" decoding="async" draggable="false"></i>`;
     // small print across the spine (\n breaks it), or with txtv: turned to read down it (a catalogue number)
     if (/^txtv?:/.test(k)) return `<i class="sbg txt${k[3] === 'v' ? ' down' : ''}">${esc(k.slice(k.indexOf(':') + 1)).replace(/\n/g, '<br>')}</i>`;
     if (/^\d+$/.test(k)) return `<i class="sbg pegi"><b>${k}</b></i>`;

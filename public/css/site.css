@@ -58,19 +58,22 @@ a { color: inherit; }
 .topnav a { text-decoration: none; font-size: 13px; padding: 6px 12px; border-radius: 99px; opacity: .7; }
 .topnav a:hover { opacity: 1; background: rgba(242,234,216,.08); }
 .topnav a[aria-current="page"] { opacity: 1; color: var(--ink); background: var(--gold); }
-/* add me: a round button for each console's friends list, at the far right */
+/* add me: a round button for each console's friends list, at the far right, its mark in the console's colour.
+   The EA app's is a button that copies the EA ID, as it has no link to add a friend */
 .addme { display: flex; gap: 6px; }
-.addme a { display: flex; align-items: center; justify-content: center; height: 30px; min-width: 30px; box-sizing: border-box; padding: 0 7px; border-radius: 99px; border: 1px solid var(--line-strong); white-space: nowrap; text-decoration: none; opacity: .7; transition: opacity .15s, background .15s, color .15s, border-color .15s; }
-.addme svg { flex: none; fill: currentColor; }
+.addme .psn { --brand: #3b7be0; } .addme .nintendo { --brand: #e8303a; } .addme .xbox { --brand: #3aa64a; } .addme .ea { --brand: #f56c2d; }
+.addme :is(a, button) { font: inherit; color: inherit; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 30px; min-width: 30px; box-sizing: border-box; padding: 0 7px; border-radius: 99px; border: 1px solid var(--line-strong); white-space: nowrap; text-decoration: none; opacity: .85; transition: opacity .15s, background .15s, color .15s, border-color .15s; }
+.addme svg { flex: none; fill: var(--brand, currentColor); transition: fill .15s; }
 .addme .lbl { font-size: 12px; font-weight: 600; }
-.addme a:is(:hover, :focus-visible) { opacity: 1; color: var(--ink); background: var(--gold); border-color: var(--gold); }
+.addme :is(a, button):is(:hover, :focus-visible, .copied) { opacity: 1; color: #fff; background: var(--brand, var(--gold)); border-color: var(--brand, var(--gold)); }
+.addme :is(a, button):is(:hover, :focus-visible, .copied) svg { fill: #fff; }
 /* in the top bar, hovering them opens room on their left for the hovered one's name: the buttons never move
    under the pointer, and the name keeps its button hovered while the pointer crosses it. The name stays beside the
-   buttons (three of 30px, two gaps of 6px, 8px apart) and the group clips it, so it shows as the room opens */
+   buttons (--n of 30px, set by the page, with 6px gaps, 8px apart) and the group clips it, so it shows as the room opens */
 .topbar .addme { position: relative; clip-path: inset(-4px); margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); transition: padding-left .25s ease; }
-.topbar .addme:is(:hover, :focus-within) { padding-left: 140px; }
-.topbar .addme .lbl { position: absolute; right: calc(3 * 30px + 2 * 6px + 8px); top: 0; width: 118px; line-height: 30px; text-align: right; color: var(--text); opacity: 0; pointer-events: none; transition: opacity .15s; }
-.topbar .addme a:is(:hover, :focus-visible) .lbl { opacity: 1; pointer-events: auto; }
+.topbar .addme:is(:hover, :focus-within) { padding-left: 156px; }
+.topbar .addme .lbl { position: absolute; right: calc(var(--n, 4) * 36px + 2px); top: 0; width: 134px; line-height: 30px; text-align: right; color: var(--text); opacity: 0; pointer-events: none; transition: opacity .15s; }
+.topbar .addme :is(a, button):is(:hover, :focus-visible, .copied) .lbl { opacity: 1; pointer-events: auto; }
 /* on phones, a strip of them under the top bar, their names always showing */
 .addme-strip { display: none; }
 
@@ -654,7 +657,7 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
   .topbar .addme { display: none; }
   .addme-strip { display: flex; align-items: center; margin: 0; padding: calc(62px + var(--top-inset)) 16px 0; border: 0; font-size: 12px; }
   .addme-strip > span { opacity: .55; margin-right: 2px; }
-  .addme-strip a { flex-direction: row-reverse; }
+  .addme-strip :is(a, button) { flex-direction: row-reverse; }
   .addme-strip .lbl { margin: 0 2px 0 6px; }
   .grid { gap: 26px var(--gap); }
   .cap { text-align: center; margin-top: 12px; }

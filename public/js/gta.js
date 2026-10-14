@@ -1,4 +1,4 @@
-/* gta.js — the Grand Theft Auto collection (?gta), in the look of css/gta.css. data/gta.json lists every game in the series,
+/* gta.js — the Grand Theft Auto collection (/gta), in the look of css/gta.css. data/gta.json lists every game in the series,
    era by era, with the copies on the shelf (ids from data/games.json) and the
    platforms it came out on that aren't here yet. The copies stand on the shelf
    (js/app.js) grouped by game. In the checklist view each game is a row: its copies
@@ -61,8 +61,8 @@
   function checklist(root, copies) {
     root.innerHTML = `
       <nav class="series-nav" aria-label="Jump to"><div class="in">
-        ${data.eras.map(e => `<a href="#${e.id}">${esc(e.name)} <em>${e.games.length}</em></a>`).join('')}
-        <a class="want" href="#want-list">Want list <em>${wants.length}</em></a>
+        ${data.eras.map(e => `<a href="${Collection.href(e.id)}" data-section="${e.id}">${esc(e.name)} <em>${e.games.length}</em></a>`).join('')}
+        <a class="want" href="${Collection.href('want-list')}" data-section="want-list">Want list <em>${wants.length}</em></a>
       </div></nav>`;
 
     data.eras.forEach(e => {
@@ -103,7 +103,7 @@
   (window.COLLECTIONS = window.COLLECTIONS || {}).gta = {
     name: PAGE.nav,
     title: PAGE.title,
-    icon: 'favicon-gta.svg',
+    icon: (window.SITE?.base || '') + 'favicon-gta.svg',
     about: PAGE.description,
     data: ['data/gta.json'],
     games(db, d) {

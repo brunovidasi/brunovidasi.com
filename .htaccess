@@ -47,6 +47,12 @@ DirectoryIndex index.php index.html
     RewriteCond %{REQUEST_METHOD} =GET
     RewriteRule ^(?!cron_sync)([A-Za-z0-9_]+)\.php$ /games/$1 [L,R=301,NE]
 
+    # The shelf's own addresses, /wiiu, /sims, /sims/wiiu, /ps2-final-fantasy-x:
+    # index.php draws them (and 404s what isn't one). A real file or folder wins.
+    RewriteCond %{DOCUMENT_ROOT}/games/public/$1 !-f
+    RewriteCond %{DOCUMENT_ROOT}/games/public/$1 !-d
+    RewriteRule ^([A-Za-z0-9-]+(?:/[A-Za-z0-9-]+)?)/?$ public/index.php [L]
+
     # Everything else (css, js, fonts, covers, prototypes) is served from public/.
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>

@@ -6,8 +6,8 @@
    opened; closing flies it back into its place.
 
    The collections (js/sims.js, js/gta.js) are filters at the top of the same page:
-   each adds itself to window.COLLECTIONS before this script, and picking one (?sims,
-   ?gta in the address) shows only its games, grouped by game rather than by console,
+   each adds itself to window.COLLECTIONS before this script, and picking one (/sims,
+   /gta in the address) shows only its games, grouped by game rather than by console,
    with its own header, its own look (a class on <html>) and one more view, its checklist:
      name        what the top bar calls it ("The Sims")
      title, icon the page's title and favicon while it is picked
@@ -337,7 +337,7 @@
     games = list();
     sync();
     render(true);
-    if (!Detail.isOpen()) setHash(state.sel.size === 1 ? [...state.sel][0] : '');
+    if (!Detail.isOpen()) setPath(here(), true);
   }
 
   /* ---------- tooltip ---------- */
@@ -1621,7 +1621,7 @@
       if (!g) return;
       if (cur) finish(cur);
       tipEl.classList.remove('vis');
-      if (!fromHash) setHash(g.id, true);
+      if (!fromHash) setPath(g.id, true);
       overlay.classList.add('open');
       ui.classList.add('open');
       show(g, source && source.isConnected ? source : homeOf(g), 0);
@@ -1772,7 +1772,7 @@
       overlay.classList.remove('open');
       ui.classList.remove('open');
       body._g = null;
-      if (!fromHash) setHash(state.sel.size === 1 ? [...state.sel][0] : '', false, a.g.id);
+      if (!fromHash) setPath(here(), false, true);
       if (state.view === 'showcase') scJump(a.g); // the showcase turns to it, so it flies home to the middle
       const back = homeOf(a.g);
       if (back && state.view === 'rows') back.closest('[data-id]').scrollIntoView({ block: 'nearest', inline: 'center' });
@@ -1880,7 +1880,7 @@
       if (putBack(() => step(n))) return;
       const g = games[games.indexOf(cur.g) + n];
       if (!g || games.indexOf(cur.g) < 0) return;
-      setHash(g.id, false);
+      setPath(g.id, false);
       // held down, the games go by quickly: the oldest on their way out, all but off the screen by now, go at once
       [...leaving].slice(0, -3).forEach(finish);
       leave(cur, -n);
@@ -1894,7 +1894,7 @@
       if (putBack(() => jump(g))) return;
       const i = games.indexOf(cur.g), j = games.indexOf(g);
       const n = i >= 0 && j >= 0 && j < i ? -1 : 1;
-      setHash(g.id, false);
+      setPath(g.id, false);
       leave(cur, -n);
       show(g, homeOf(g), n);
     }
@@ -1928,28 +1928,94 @@
     return { open, close, isOpen, rehome, current: () => cur && cur.g };
   })();
 
-  /* ---------- the address: #ps2 for a console, #ps2-final-fantasy-x for a game ---------- */
-  // Opening a game adds a step to the history, so Back closes it again.
-  function setHash(h, push, closing) {
+  /* ---------- the address: /ps2 for a console, /ps2-final-fantasy-x for a game, /sims/ps2 in a collection ---------- */
+  // Every change is a step in the browser's history, so Back and Forward go through them: opening a game,
+  // picking a console or a collection, jumping to a checklist's section. Going from game to game in the
+  // middle doesn't add steps, and closing a game opened here goes Back to where it was opened.
+  const BASE = SITE.base || '/';
+  const pathOf = (col, id) => BASE + [col, id].filter(Boolean).map(encodeURIComponent).join('/');
+  // the collection in the address, and the console, game or checklist section after it
+  function readPath() {
+    const path = location.pathname.startsWith(BASE) ? location.pathname.slice(BASE.length) : '';
+    const parts = path.split('/').filter(Boolean).map(p => { try { return decodeURIComponent(p); } catch (e) { return p; } });
+    const col = COLLECTIONS[parts[0]] ? parts.shift() : '';
+    return { col, id: parts[0] || '' };
+  }
+  // the old addresses, ?sims#ps2-final-fantasy-x, #wiiu, go to the new ones
+  function upgradeOldPath() {
+    const q = new URLSearchParams(location.search), h = location.hash.slice(1);
+    const col = Object.keys(COLLECTIONS).find(k => q.has(k));
+    if (!col && !h) return;
+    try { history.replaceState(null, '', pathOf(col || readPath().col, decodeURIComponent(h) || readPath().id)); } catch (e) { /* some viewers refuse it */ }
+  }
+  // what the address says with nothing open: the one console picked, if one is
+  const here = () => state.sel.size === 1 ? [...state.sel][0] : '';
+  // a game or a checklist section in the collection showing (js/collection.js links its cases with it)
+  Collection.href = id => pathOf(COL, id);
+  let quiet = false; // going Back or Forward: the address is already right
+  // push adds a step, else this one is rewritten; a game opened by a step of its own is marked, so closing
+  // it can go Back (one the address opened isn't)
+  function setPath(id, push, closing) {
+    if (quiet) return;
     try {
-      const url = h ? '#' + h : location.pathname + location.search;
-      const st = byId.has(h) ? { game: h } : null;
-      if (push) history.pushState(st, '', url);
-      else if (closing && history.state && history.state.game) history.back();
-      else if (location.hash !== (h ? '#' + h : '')) history.replaceState(st, '', url);
+      const url = pathOf(COL, id);
+      const st = { sel: [...state.sel], game: byId.has(id) && (push || !!history.state?.game) };
+      if (closing && history.state && history.state.game) history.back();
+      else if (push && url !== location.pathname) history.pushState(st, '', url);
+      else history.replaceState(st, '', url);
     } catch (e) { /* some viewers refuse it */ }
   }
-  addEventListener('popstate', () => {
-    const h = location.hash.slice(1);
-    if (byId.has(h)) { if (Detail.current()?.id !== h) Detail.open(byId.get(h), null, true); return; }
+  // a checklist section: the collection's checklist, scrolled to it
+  function showSection(id) {
+    if (!VIEWS.includes('checklist') || !id) return false;
+    const was = state.view;
+    if (was !== 'checklist') { state.view = 'checklist'; sync(); render(false); }
+    const sec = document.getElementById(id);
+    if (!sec || !sec.closest('#checklist')) {
+      if (was !== 'checklist') { state.view = was; sync(); render(false); } // not one of its sections
+      return false;
+    }
+    sec.scrollIntoView();
+    return true;
+  }
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[data-section]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    e.preventDefault();
+    if (showSection(a.dataset.section)) setPath(a.dataset.section, true);
+  });
+  const sameSel = ids => ids.length === state.sel.size && ids.every(id => state.sel.has(id));
+  // Back or Forward: the page shows what that step's address says
+  addEventListener('popstate', e => {
+    if (!DB.length) return;
+    const { col, id } = readPath();
+    const g = byId.get(id);
+    if (col === COL && g) { if (Detail.current()?.id !== id) Detail.open(g, null, true); return; }
     if (Detail.isOpen()) Detail.close(true);
-    // a console typed into the address, or a link to one: the shelf shows that console
-    if (CONSOLE_BY_ID[h] && !(state.sel.size === 1 && state.sel.has(h))) { state.sel = new Set([h]); changed(); showPicked(); }
+    // the consoles picked then, or the one in the address
+    const sel = e.state?.sel || (CONSOLE_BY_ID[id] ? [id] : []);
+    const go = () => { quiet = true; try { show(); } finally { quiet = false; } };
+    const show = () => {
+      const moved = col !== COL;
+      if (moved) setCollection(col);
+      const ids = sel.filter(c => ALL.some(x => x.console === c));
+      if (moved || !sameSel(ids)) {
+        state.sel = new Set(ids);
+        changed();
+        showPicked();
+      }
+      if (moved) scrollTo(0, 0);
+      if (g) {
+        // a game in the collection gone back to
+        if (!games.includes(g)) { state.sel = new Set(); changed(); }
+        setTimeout(() => Detail.open(g, null, true), moved ? 300 : 0);
+      } else if (id && !CONSOLE_BY_ID[id]) showSection(id);
+    };
+    if (col !== COL && document.startViewTransition && !reduced()) document.startViewTransition(go); else go();
   });
 
   /* ---------- the collections: the whole shelf, or one series in its own look ---------- */
-  // ?sims or ?gta in the address picks one; the top bar's links pick one in place
-  const colInUrl = () => { const q = new URLSearchParams(location.search); return Object.keys(COLLECTIONS).find(k => q.has(k)) || ''; };
+  // /sims or /gta in the address picks one; the top bar's links pick one in place
   const SHELF = { title: document.title, icon: $('link[rel="icon"]')?.getAttribute('href'), about: $('meta[name="description"]')?.content };
   function setCollection(col) {
     const root = document.documentElement;
@@ -1982,10 +2048,9 @@
     e.preventDefault();
     const col = a.dataset.col || '';
     if (col === COL) return;
-    try { history.replaceState(null, '', location.pathname + (col ? '?' + col : '')); } catch (err) { /* some viewers refuse it */ }
     const go = () => {
       setCollection(col);
-      changed();
+      changed(); // a step in the history: /sims
       showPicked();
       scrollTo(0, 0);
     };
@@ -2068,8 +2133,10 @@
   /* ---------- start ---------- */
   // the data comes from the site's API (data/games.json is api/games, data/sims-wants.json api/sims_wants…),
   // with the data's version on it so a browser never keeps a stale copy; without one, from the files themselves
-  const src = u => SITE.api ? SITE.api + u.replace(/^data\//, '').replace(/\.json$/, '').replace(/-/g, '_') + '?v=' + (SITE.version || '') : u;
-  const json = u => fetch(src(u)).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
+  const src = u => SITE.api ? SITE.api + u.replace(/^data\//, '').replace(/\.json$/, '').replace(/-/g, '_') + '?v=' + (SITE.version || '') : BASE + u;
+  // the covers and logos it names are under the site's root, wherever in it the address is (/sims/wiiu)
+  const rooted = (k, v) => typeof v === 'string' && /^(covers|logos|assets)\//.test(v) ? BASE + v : v;
+  const json = u => fetch(src(u)).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.text(); }).then(t => JSON.parse(t, rooted));
   const EXTRA = [...new Set(Object.values(COLLECTIONS).flatMap(c => c.data || []))];
   // what Steam says about the games tied to it (steamAppId), written by tools/steam-sync.mjs; the shelf does without it
   // and what PlayStation Network says about the ones tied to it (psnTitleId, psnTrophySet), from tools/psn-sync.mjs,
@@ -2119,26 +2186,20 @@
       }));
       for (const [k, c] of Object.entries(COLLECTIONS)) LISTS[k] = c.games(db, ...(c.data || []).map(u => file[u]));
       shell();
-      const h = location.hash.slice(1);
+      upgradeOldPath();
+      let { col, id: h } = readPath();
       // a game that isn't in the collection in the address opens on the whole shelf
-      let col = colInUrl();
-      if (col && byId.has(h) && !LISTS[col].includes(byId.get(h))) {
-        col = '';
-        try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* some viewers refuse it */ }
-      }
+      if (col && byId.has(h) && !LISTS[col].includes(byId.get(h))) col = '';
       setCollection(col);
       if (CONSOLE_BY_ID[h]) state.sel = new Set([h]);
       games = list();
       sync();
       showPicked();
       render(true);
-      // a collection's link to one of its checklist's sections (?gta#want-list) opens the checklist there
-      if (h && VIEWS.includes('checklist') && !byId.has(h) && !CONSOLE_BY_ID[h]) {
-        state.view = 'checklist';
-        sync();
-        render(false);
-        try { $('#' + CSS.escape(h))?.scrollIntoView(); } catch (e) { /* not a section */ }
-      }
+      // a collection's link to one of its checklist's sections (/gta/want-list) opens the checklist there;
+      // anything else the address has that isn't a console or a game goes
+      const section = h && !byId.has(h) && !CONSOLE_BY_ID[h] && showSection(h);
+      setPath(byId.has(h) || section ? h : here(), false);
       if (byId.has(h)) {
         const g = byId.get(h);
         if (!games.includes(g)) { state.sel = new Set(); games = list(); sync(); render(false); }

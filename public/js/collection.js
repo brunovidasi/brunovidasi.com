@@ -11,6 +11,10 @@
   // a DVD case stands the height of the stage, and the rest keep their real size beside it
   const stageH = () => innerWidth < 640 ? 130 : 168;
 
+  /** The address of a game or a checklist section in the collection showing, /sims/pc-the-sims-2
+      (js/app.js sets it once it knows the collection). */
+  let href = id => '#' + encodeURIComponent(id);
+
   /** A game's case and caption, linking to it in the collection. `name` is what the caption calls it.
       A console copy is tagged with its console; `platformTag` false leaves that off, where the
       caption already names the platform. */
@@ -18,7 +22,7 @@
     const c = CONSOLE_BY_ID[g.console];
     const a = document.createElement('a');
     a.className = 'cell';
-    a.href = '#' + encodeURIComponent(g.id);
+    a.href = Collection.href(g.id);
     a.dataset.id = g.id; // the shelf opens it in place (js/app.js)
     a.setAttribute('aria-label', `${g.title}, ${c.name}${g.mac ? ' and Mac' : ''}, ${Case.year(g)}`);
     const stage = document.createElement('span');
@@ -100,5 +104,5 @@
       + '</div>';
   }
 
-  window.Collection = { card, group, meter, wantCard, packList, stageH, byRelease, esc, $ };
+  window.Collection = { card, group, meter, wantCard, packList, stageH, byRelease, esc, $, href };
 })();
