@@ -77,7 +77,7 @@ final class SteamSync extends PlatformSync
     public static function check(): ?string
     {
         $self = new self('steam');
-        $profile = $self->api('ISteamUser/GetPlayerSummaries', ['steamids' => credential('steam', 'steam_id')])['response']['players'][0] ?? null;
+        $profile = $self->api('ISteamUser/GetPlayerSummaries', ['steamids' => credential('steam', 'steam_id')], 2)['response']['players'][0] ?? null;
         if (!$profile) {
             throw new RuntimeException('The key works, but Steam knows no profile with that SteamID64.');
         }
@@ -85,11 +85,12 @@ final class SteamSync extends PlatformSync
         return $profile['personaname'] ?? null;
     }
 
-    private function api(string $path, array $params): array
+    /** A Web API call. Most are on version 1; GetPlayerSummaries is asked for on 2, whose answer lists the players directly. */
+    private function api(string $path, array $params, int $version = 1): array
     {
         $params['key'] = credential('steam', 'api_key');
         $params['format'] = 'json';
-        $r = Http::get(self::API . "/$path/v1/?" . http_build_query($params), ['Accept: application/json']);
+        $r = Http::get(self::API . "/$path/v$version/?" . http_build_query($params), ['Accept: application/json']);
         if ($r->status === 401 || $r->status === 403) {
             throw new AuthError('Steam refused the API key (HTTP ' . $r->status . '). Check it in Settings → Connections.');
         }
@@ -106,14 +107,14 @@ final class SteamSync extends PlatformSync
         $sid = (string) credential('steam', 'steam_id');
         $out = ['exported_at_utc' => gmdate('c'), 'data' => []];
 
-        $profile = $this->api('ISteamUser/GetPlayerSummaries', ['steamids' => $sid])['response']['players'][0] ?? null;
+        $profile = $this->api('ISteamUser/GetPlayerSummaries', ['steamids' => $sid], 2)['response']['players'][0] ?? null;
         if (!$profile) {
             throw new AuthError('Steam knows no profile with that SteamID64.');
         }
         $run->account = $profile['personaname'] ?? null;
 
         $games = $this->api('IPlayerService/GetOwnedGames', [
-            'steamid' => $sid, 'include_appinfo' => 1, 'include_played_free_games' => 0, 'include_free_sub' => 1, 'include_extended_appinfo' => 1,
+            'steamid' => $sid, 'include_appinfo' => 1, 'include_played_free_games' => 1, 'include_free_sub' => 1, 'include_extended_appinfo' => 1,
         ])['response']['games'] ?? null;
         if ($games === null) {
             throw new RuntimeException('Steam returned no library: is the profile\'s "Game details" set to public?');
