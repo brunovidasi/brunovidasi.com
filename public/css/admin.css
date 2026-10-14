@@ -133,7 +133,7 @@ form.inline { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wr
 .form-actions { margin-top: 14px; }
 
 /* ---------- the dashboard ---------- */
-.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 12px; margin-bottom: 18px; }
 .stat { background: rgba(22,22,24,.92); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
 .stat b { font: 700 26px var(--font-display); font-variant-numeric: tabular-nums; }
 .stat.big b { color: var(--accent); }
@@ -312,3 +312,9 @@ a.stat:hover span { color: var(--text); }
 .app-setup > summary { cursor: pointer; font-weight: 600; color: var(--accent); }
 .app-setup[open] > summary { margin-bottom: 12px; }
 .steps .copy-row { margin: 8px 0 4px; }
+
+/* the last of the figures: a new game */
+a.stat.add { border-style: dashed; border-color: var(--line-strong); background: rgba(77,141,255,.06); }
+a.stat.add b { color: var(--accent); }
+a.stat.add:hover { border-style: solid; background: var(--accent-soft); }
+@media (max-width: 600px) { a.stat.add { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 10px; } a.stat.add b { font-size: 22px; } }

@@ -35,7 +35,7 @@ $lastCron = db()->query("SELECT * FROM sync_runs WHERE trigger_source = 'cron' O
 
 $familyNames = ['playstation' => 'PlayStation', 'nintendo' => 'Nintendo', 'pc' => 'PC', 'xbox' => 'Xbox'];
 
-admin_header('Dashboard', 'Everything on the shelf, as the site counts it.', '<a class="button" href="' . e(url('admin_game')) . '">+ Add a game</a>');
+admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
 ?>
 
 <section class="stats" aria-label="The collection in figures">
@@ -46,38 +46,8 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.', '<a
   <?php foreach ($fig['families'] as $family => $n): ?>
     <a class="stat fam-<?= e($family) ?>" href="<?= e(url('admin_games?console=' . rawurlencode('@' . $family) . '&flag=onsite')) ?>"><b><?= $n ?></b><span><?= e($familyNames[$family] ?? $family) ?></span></a>
   <?php endforeach; ?>
+  <a class="stat add" href="<?= e(url('admin_game')) ?>"><b aria-hidden="true">+</b><span>Add a game</span></a>
 </section>
-
-<div class="grid-2">
-  <section class="card" id="byConsole">
-    <h2>By console</h2>
-    <ul class="bars">
-      <?php $max = max($fig['consoles'] ?: [1]); ?>
-      <?php foreach ($fig['consoles'] as $console => $n): ?>
-        <li>
-          <a href="<?= e(url('admin_games?console=' . rawurlencode($console) . '&flag=onsite')) ?>"><?= e(console_name($console)) ?></a>
-          <span class="bar fam-<?= e(console_family($console)) ?>" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
-          <b><?= $n ?></b>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-  </section>
-
-  <section class="card">
-    <h2>PC launchers</h2>
-    <ul class="bars">
-      <?php $max = max($fig['launchers'] ?: [1]); ?>
-      <?php foreach ($fig['launchers'] as $launcher => $n): ?>
-        <li>
-          <a href="<?= e(url('admin_games?launcher=' . rawurlencode($launcher) . '&flag=onsite')) ?>"><?= e(LAUNCHERS[$launcher] ?? $launcher) ?></a>
-          <span class="bar" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
-          <b><?= $n ?></b>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-    <p class="muted small">A bundle counts as the packs in it, a copy on two consoles once, and hidden copies not at all, as on the site.</p>
-  </section>
-</div>
 
 <section class="card sync-board" id="syncBoard" data-endpoint="<?= e(url('admin_sync')) ?>">
   <div class="card-head">
@@ -212,5 +182,36 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.', '<a
     <dt>Signed in as</dt><dd><?= e(current_user()['email']) ?></dd>
   </dl>
 </section>
+
+<div class="grid-2">
+  <section class="card" id="byConsole">
+    <h2>By console</h2>
+    <ul class="bars">
+      <?php $max = max($fig['consoles'] ?: [1]); ?>
+      <?php foreach ($fig['consoles'] as $console => $n): ?>
+        <li>
+          <a href="<?= e(url('admin_games?console=' . rawurlencode($console) . '&flag=onsite')) ?>"><?= e(console_name($console)) ?></a>
+          <span class="bar fam-<?= e(console_family($console)) ?>" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
+          <b><?= $n ?></b>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>PC launchers</h2>
+    <ul class="bars">
+      <?php $max = max($fig['launchers'] ?: [1]); ?>
+      <?php foreach ($fig['launchers'] as $launcher => $n): ?>
+        <li>
+          <a href="<?= e(url('admin_games?launcher=' . rawurlencode($launcher) . '&flag=onsite')) ?>"><?= e(LAUNCHERS[$launcher] ?? $launcher) ?></a>
+          <span class="bar" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
+          <b><?= $n ?></b>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <p class="muted small">A bundle counts as the packs in it, a copy on two consoles once, and hidden copies not at all, as on the site.</p>
+  </section>
+</div>
 
 <?php admin_footer(); ?>
