@@ -39,23 +39,23 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.', '<a
 ?>
 
 <section class="stats" aria-label="The collection in figures">
-  <div class="stat big"><b><?= number_format($fig['games']) ?></b><span>Games</span></div>
-  <div class="stat"><b><?= number_format($fig['physical']) ?></b><span>Physical</span></div>
-  <div class="stat"><b><?= number_format($fig['digital']) ?></b><span>Digital</span></div>
-  <div class="stat"><b><?= count($fig['consoles']) ?></b><span>Consoles</span></div>
+  <a class="stat big" href="<?= e(url('admin_games?flag=onsite')) ?>"><b><?= number_format($fig['games']) ?></b><span>Games</span></a>
+  <a class="stat" href="<?= e(url('admin_games?format=physical&flag=onsite')) ?>"><b><?= number_format($fig['physical']) ?></b><span>Physical</span></a>
+  <a class="stat" href="<?= e(url('admin_games?format=digital&flag=onsite')) ?>"><b><?= number_format($fig['digital']) ?></b><span>Digital</span></a>
+  <a class="stat" href="#byConsole"><b><?= count($fig['consoles']) ?></b><span>Consoles</span></a>
   <?php foreach ($fig['families'] as $family => $n): ?>
-    <div class="stat fam-<?= e($family) ?>"><b><?= $n ?></b><span><?= e($familyNames[$family] ?? $family) ?></span></div>
+    <a class="stat fam-<?= e($family) ?>" href="<?= e(url('admin_games?console=' . rawurlencode('@' . $family) . '&flag=onsite')) ?>"><b><?= $n ?></b><span><?= e($familyNames[$family] ?? $family) ?></span></a>
   <?php endforeach; ?>
 </section>
 
 <div class="grid-2">
-  <section class="card">
+  <section class="card" id="byConsole">
     <h2>By console</h2>
     <ul class="bars">
       <?php $max = max($fig['consoles'] ?: [1]); ?>
       <?php foreach ($fig['consoles'] as $console => $n): ?>
         <li>
-          <a href="<?= e(url('admin_games?console=' . rawurlencode($console))) ?>"><?= e(console_name($console)) ?></a>
+          <a href="<?= e(url('admin_games?console=' . rawurlencode($console) . '&flag=onsite')) ?>"><?= e(console_name($console)) ?></a>
           <span class="bar fam-<?= e(console_family($console)) ?>" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
           <b><?= $n ?></b>
         </li>
@@ -69,7 +69,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.', '<a
       <?php $max = max($fig['launchers'] ?: [1]); ?>
       <?php foreach ($fig['launchers'] as $launcher => $n): ?>
         <li>
-          <a href="<?= e(url('admin_games?launcher=' . rawurlencode($launcher))) ?>"><?= e(LAUNCHERS[$launcher] ?? $launcher) ?></a>
+          <a href="<?= e(url('admin_games?launcher=' . rawurlencode($launcher) . '&flag=onsite')) ?>"><?= e(LAUNCHERS[$launcher] ?? $launcher) ?></a>
           <span class="bar" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
           <b><?= $n ?></b>
         </li>

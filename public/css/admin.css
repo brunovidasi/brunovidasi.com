@@ -295,3 +295,9 @@ pre.code, pre.log { background: rgba(10,10,11,.7); border: 1px solid var(--line)
 .auth-mark { color: var(--accent); display: grid; place-items: center; margin-bottom: 12px; }
 .auth .back { text-align: center; font-size: 13px; }
 .auth .back a { color: var(--muted); }
+
+/* the dashboard's figures go to the collection, filtered to them */
+a.stat { color: var(--text); text-decoration: none; transition: border-color .15s, transform .15s, background .15s; }
+a.stat:hover { border-color: var(--accent); background: rgba(31,31,34,.95); transform: translateY(-2px); text-decoration: none; }
+a.stat:hover span { color: var(--text); }
+@media (prefers-reduced-motion: reduce) { a.stat:hover { transform: none; } }
