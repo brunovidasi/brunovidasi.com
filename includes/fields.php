@@ -16,6 +16,7 @@
  *   options  for a select: value => label, or the name of a function that returns them
  *   help     a line under the field
  *   sync     the platforms whose sync can write it
+ *   private  only in the admin: never in what the site is handed (public_game())
  */
 
 const FIELD_GROUPS = [
@@ -38,7 +39,7 @@ const FIELDS = [
     'region'     => ['label' => 'Region', 'group' => 'basics', 'type' => 'select', 'col' => 'region', 'always' => true, 'options' => 'region_options', 'sync' => ['steam', 'nintendo', 'ea', 'rockstar']],
     'released'   => ['label' => 'Released', 'group' => 'basics', 'type' => 'text', 'col' => 'released', 'always' => true, 'help' => 'YYYY-MM-DD, or YYYY-MM, or YYYY.', 'sync' => ['steam']],
     'dateSource' => ['label' => 'Release date from', 'group' => 'basics', 'type' => 'select', 'col' => 'date_source', 'always' => true, 'options' => ['manual' => 'Typed in', 'steam' => 'Steam', 'libretro-database' => 'libretro database'], 'sync' => ['steam', 'nintendo']],
-    'dateNote'   => ['label' => 'Date note', 'group' => 'basics', 'type' => 'text'],
+    'dateNote'   => ['label' => 'Date note', 'group' => 'basics', 'type' => 'text', 'private' => true, 'help' => 'Where the release date comes from. Only in the admin.'],
     'shelfDate'  => ['label' => 'Shelf date', 'group' => 'basics', 'type' => 'text', 'help' => 'Files the copy under another date among its namesakes: The Sims Deluxe Edition beside The Sims.'],
     'publisher'  => ['label' => 'Publisher', 'group' => 'basics', 'type' => 'text', 'col' => 'publisher', 'always' => true, 'sync' => ['steam', 'ea', 'rockstar']],
     'developer'  => ['label' => 'Developer', 'group' => 'basics', 'type' => 'text', 'col' => 'developer', 'always' => true, 'sync' => ['steam', 'ea']],
@@ -47,7 +48,8 @@ const FIELDS = [
     'pack'       => ['label' => 'Pack', 'group' => 'basics', 'type' => 'select', 'col' => 'pack', 'options' => 'pack_options', 'sync' => ['ea']],
     'packCode'   => ['label' => 'Pack code', 'group' => 'basics', 'type' => 'text', 'col' => 'pack_code', 'help' => 'EP08, SP12…'],
     'note'       => ['label' => 'Note', 'group' => 'basics', 'type' => 'textarea', 'col' => 'note', 'help' => 'Shown in the game\'s details.'],
-    'check'      => ['label' => 'Still to check', 'group' => 'basics', 'type' => 'textarea', 'col' => 'check_note', 'help' => 'A reminder to yourself. The dashboard lists the copies that have one.'],
+    'check'      => ['label' => 'Still to check', 'group' => 'basics', 'type' => 'textarea', 'col' => 'check_note', 'private' => true, 'help' => 'A reminder to yourself. The dashboard lists the copies that have one (hidden ones aside). Only in the admin.'],
+    'privateNote' => ['label' => 'Private note', 'group' => 'basics', 'type' => 'textarea', 'private' => true, 'help' => 'Anything about the copy for you alone. Never sent to the site.'],
 
     // ---- this copy ----
     'format'       => ['label' => 'Format', 'group' => 'copy', 'type' => 'select', 'col' => 'format', 'always' => true, 'options' => 'format_options', 'sync' => ['steam', 'nintendo', 'ea', 'rockstar']],
@@ -57,7 +59,7 @@ const FIELDS = [
     'platinum'     => ['label' => 'Platinum / Essentials', 'group' => 'copy', 'type' => 'bool', 'col' => 'platinum', 'help' => 'A budget re-release. No means "checked, it is not".'],
     'fav'          => ['label' => 'Favourite', 'group' => 'copy', 'type' => 'bool', 'col' => 'fav'],
     'hidden'       => ['label' => 'Hidden from the site', 'group' => 'copy', 'type' => 'bool', 'col' => 'hidden', 'help' => 'Keeps a synced game off the site. Delete it instead and the next sync brings it back.'],
-    'reproduction' => ['label' => 'Reproduction', 'group' => 'copy', 'type' => 'bool', 'help' => 'Not an official release.'],
+    'reproduction' => ['label' => 'Reproduction', 'group' => 'copy', 'type' => 'bool', 'private' => true, 'help' => 'Not an official release. Only in the admin: the site never says so.'],
     'steelbook'    => ['label' => 'SteelBook', 'group' => 'copy', 'type' => 'bool'],
     'kinect'       => ['label' => 'Kinect', 'group' => 'copy', 'type' => 'bool'],
     'alsoOn'       => ['label' => 'Also plays on', 'group' => 'copy', 'type' => 'list', 'help' => 'Console ids, comma separated: a copy that plays on two consoles stands under each.'],

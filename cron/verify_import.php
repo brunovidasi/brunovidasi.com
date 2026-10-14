@@ -21,7 +21,7 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 $dir = rtrim($argv[1] ?? __DIR__ . '/../seed', '/');
 
 $checks = [
-    'games.json'      => fn () => ['updated' => data_updated(), 'games' => array_values(all_games())],
+    'games.json'      => fn () => ['updated' => data_updated(), 'games' => array_values(array_map('public_game', all_games()))],
     'steam.json'      => fn () => json_decode(platform_json('steam') ?? 'null', true),
     'psn.json'        => fn () => json_decode(platform_json('psn') ?? 'null', true),
     'nintendo.json'   => fn () => json_decode(platform_json('nintendo') ?? 'null', true),
@@ -39,6 +39,9 @@ foreach ($checks as $file => $build) {
         continue;
     }
     $want = json_decode((string) file_get_contents("$dir/$file"), true);
+    if ($file === 'games.json') {
+        $want['games'] = array_map('public_game', $want['games']);
+    }
     $diffs = [];
     json_diff($want, $build(), '', $diffs);
     if ($diffs) {

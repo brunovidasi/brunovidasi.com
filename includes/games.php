@@ -88,6 +88,12 @@ function encode_field_value(array $f, mixed $value): mixed
     };
 }
 
+/** A copy as the public API hands it out: without the fields only the admin sees (check, dateNote, privateNote). */
+function public_game(array $game): array
+{
+    return array_diff_key($game, array_filter(FIELDS, fn ($f) => !empty($f['private'])));
+}
+
 /* ---------- reading ---------- */
 
 /** Every copy, in the site's order, as the site's objects keyed by id. */

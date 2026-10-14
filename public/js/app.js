@@ -1451,7 +1451,7 @@
     }
 
     function details(g) {
-      const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.reproduction && 'Reproduction', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
+      const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
       return glance(g) + tags(marks)
         + (g.note ? `<p class="dw-note">${esc(g.note)}</p>` : '')
         + section('The copy', copyHtml(g))
