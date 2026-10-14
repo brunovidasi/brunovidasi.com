@@ -327,6 +327,12 @@ a { color: inherit; }
 .rtrack { display: flex; align-items: flex-end; gap: 5px; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; touch-action: pan-x pan-y; scroll-snap-type: x proximity; scroll-padding: 0 20px;
   margin: 0 -20px; padding: 18px 20px 0; scrollbar-width: none; border-bottom: 12px solid; border-image: linear-gradient(#3a2713, #2a1b0e 40%, #1a1009) 1; }
 .rtrack::-webkit-scrollbar { display: none; }
+/* it fades out, shelf and all, at an end with more past it (js/app.js) */
+.rtrack { --fl: 0px; --fr: 0px;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent);
+  mask: linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent); }
+.rtrack.more-l { --fl: 80px; }
+.rtrack.more-r { --fr: 80px; }
 .rtrack .item { flex: none; border: 0; padding: 0; background: none; cursor: pointer; scroll-snap-align: start; }
 .rtrack .item.face, .rtrack .item.loose { margin: 0 8px; }
 .rtrack .item:focus-visible { outline: none; }
@@ -337,11 +343,13 @@ a { color: inherit; }
 .rtrack .gt .cart { transform: rotate(-4deg); }
 @media (hover: hover) { .rtrack .item:hover .gt { transform: translateY(-8px); } }
 /* with a mouse, arrows either end of a row move along it, shown while there is more that way (js/app.js) */
-.rgrp { position: relative; }
-.rnav { display: none; position: absolute; z-index: 5; bottom: 12px; height: 220px; width: 44px; border: 0; padding: 0; cursor: pointer;
+.rbar { position: relative; }
+/* they stand inside the page's column, level with the heading's ends, over the faded part of the row, and as tall
+   as its cases (between the row's top padding and its shelf), so they sit halfway up the tallest */
+.rnav { display: none; position: absolute; z-index: 5; top: 18px; bottom: 12px; width: 36px; border: 0; padding: 0; background: none; cursor: pointer;
   color: var(--text); font-size: 22px; opacity: 0; pointer-events: none; transition: opacity .2s; }
-.rnav.prev { left: -20px; background: linear-gradient(90deg, rgba(10,10,11,.92), rgba(10,10,11,0)); }
-.rnav.next { right: -20px; background: linear-gradient(-90deg, rgba(10,10,11,.92), rgba(10,10,11,0)); }
+.rnav.prev { left: 0; }
+.rnav.next { right: 0; }
 .rnav span { display: grid; place-items: center; width: 36px; height: 36px; margin: auto; border-radius: 50%; background: rgba(20,20,22,.9); border: 1px solid var(--line-strong); }
 .rnav:hover span { background: var(--gold); color: var(--ink); border-color: var(--gold); }
 @media (hover: hover) and (pointer: fine) {

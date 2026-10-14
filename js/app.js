@@ -761,7 +761,11 @@
         btn.append(tile);
         track.append(btn);
       });
-      sec.append(track);
+      // the row and its arrows together, so the arrows stand as tall as the row's cases
+      const bar = document.createElement('div');
+      bar.className = 'rbar';
+      bar.append(track);
+      sec.append(bar);
       // with a mouse, an arrow either end moves along the row by most of its width
       const arrows = [-1, 1].map(dir => {
         const b = document.createElement('button');
@@ -769,14 +773,17 @@
         b.className = 'rnav ' + (dir < 0 ? 'prev' : 'next');
         b.tabIndex = -1;
         b.setAttribute('aria-label', dir < 0 ? 'Scroll the row left' : 'Scroll the row right');
-        b.innerHTML = `<span>${dir < 0 ? '‹' : '›'}</span>`;
+        // a drawn chevron: the font's ‹ › sit off the middle of the circle
+        b.innerHTML = `<span><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="${dir < 0 ? 'M7.5 2.5 4 6l3.5 3.5' : 'M4.5 2.5 8 6 4.5 9.5'}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
         b.addEventListener('click', () => track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: reduced() ? 'auto' : 'smooth' }));
-        sec.append(b);
+        bar.append(b);
         return b;
       });
       const ends = () => {
         arrows[0].classList.toggle('more', track.scrollLeft > 4);
         arrows[1].classList.toggle('more', track.scrollLeft + track.clientWidth < track.scrollWidth - 4);
+        track.classList.toggle('more-l', track.scrollLeft > 4);
+        track.classList.toggle('more-r', track.scrollLeft + track.clientWidth < track.scrollWidth - 4);
       };
       track.addEventListener('scroll', ends, { passive: true });
       requestAnimationFrame(ends);
