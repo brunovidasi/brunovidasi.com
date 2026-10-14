@@ -1,9 +1,9 @@
-# Bruno's Games
+# Bruno's Game Shelf
 
 The game collection site: black, finely pinstriped pages with a blue accent and a dark wooden bookcase, set in Orbitron (the big display text) and Exo 2 (everything else). It started from the record site (`brunovida.si/music`); the two are separate sites.
 
 - **The bar**: the console filter sits under the header, and the bar under it has the search and the sort (a dropdown in the site's own style) on the left and the views on the right, with how many games are showing on the line below, as on the record site. On a phone the search folds into a magnifying glass that opens across the bar.
-- **The shelf** (`index.html`): every game on a wooden bookcase, grouped by console, in that console's real case at its real size. Loose cartridges stand on their own (a SNES cartridge at its real size beside the cases, the small cards larger so they can be seen); SNES cartridges stand on their side in a row, like books, with the title on their top label facing out, beside the one that faces out. A PAL one, or an unofficial one, has nothing on its top edge, so it faces out too. The spines are drawn wider than real ones so their titles can be read. Each shelf is only a little taller than the tallest game on it. Like a real shelf, it is a bit messy: on most shelves the last game or two lean over onto the one before, and so do some at the end of a console before its bookend. The plate under each console is in its family's colour, as in the filter: red Nintendo, blue PlayStation, green Xbox. The console filter at the top shows a drawing of each console.
+- **The shelf** (`public/index.php`): every game on a wooden bookcase, grouped by console, in that console's real case at its real size. Loose cartridges stand on their own (a SNES cartridge at its real size beside the cases, the small cards larger so they can be seen); SNES cartridges stand on their side in a row, like books, with the title on their top label facing out, beside the one that faces out. A PAL one, or an unofficial one, has nothing on its top edge, so it faces out too. The spines are drawn wider than real ones so their titles can be read. Each shelf is only a little taller than the tallest game on it. Like a real shelf, it is a bit messy: on most shelves the last game or two lean over onto the one before, and so do some at the end of a console before its bookend. The plate under each console is in its family's colour, as in the filter: red Nintendo, blue PlayStation, green Xbox. The console filter at the top shows a drawing of each console.
 - **The grid**: every game face out, standing on one line at its real size, with its name under it. Going between *Shelf* and *Grid* carries every case on screen across, as the record site does between its floor and its grid: each case comes off the shelf and turns from its spine to its cover on the way, and turns back to its spine on the way home. Between the shelf and the rows each spine widens or narrows smoothly in the air to the width it lands at, and a case picked from the rows leaves at the row's spine width and narrows to its real depth as it turns (and widens again on the way home). A SNES cartridge standing on its side turns from its top label to its front the same way, as one solid cartridge, and so it does when it is picked off the shelf.
 - **The rows**: each console on a strip of shelf of its own that scrolls sideways. The cases stand as on the shelf, their spines out (*Show* works as on the shelf), but taller and with each spine much wider than a real one, so they are easy to tap on a phone. Swipe a row to go along it, or with a mouse use the arrows that show at either end; a scroll down over a row still scrolls the page. Sorted any way but by console, the games stand on one long row.
 - **The showcase**: one game at a time on a glossy stage, with the rest fanned out either side and the light behind it in the colour of its cover, as in `prototypes/3-showcase.html`. Drag, scroll sideways, use the arrows or the arrow keys to move along, or jump with the strip under it (a block per console). The game in the middle is picked up like anywhere else, and one to the side comes to the middle first. The cases fly across between the showcase and the other views, as between the shelf and the grid.
@@ -13,24 +13,118 @@ The game collection site: black, finely pinstriped pages with a blue accent and 
 - **The Sims collection** (`?sims`): the page in the game's own clothes: a deep Sims-blue sky, glossy round blue panels, plumbob green for what is picked, a cream wallpapered room behind the bookcase, Fredoka and Nunito. A plumbob (`assets/plumbob.svg`, turning) bobs beside the title, and over whichever case the pointer is on, as over a picked Sim. Every Sims game and pack, on the same bookcase, in the same grid and list, grouped by game (The Sims, The Sims 2, The Sims Stories, The Sims 3, The Sims Medieval, The Sims 4, SimCity, MySims) rather than by console. Its *Checklist* view sorts them by game and pack, with how much of each is there and the want list. A solid case is on disc, an outline is in the EA app.
 - **Grand Theft Auto** (`?gta`): the page after GTA VI's Vice City (the `leonida` style prototype): a sunset over the water with palms, the shelf as a collage of panels split by black gutters, Anton, Yellowtail and Manrope. Every GTA copy on the bookcase, grouped by game. Its *Checklist* goes era by era, one row per game with its copies on every platform and a dashed outline at the real case size for each version still to find. Those outlines are the want list at the bottom.
 - **Design prototypes** (`prototypes/`): the four early designs, kept as they were.
-- **Style prototypes** (`prototypes/styles/`): eleven looks for the same site, none of them live yet. `prototypes/styles/index.html` is a gallery of them with a screenshot of each, and every style has a full preview of the site in its own folder (`prototypes/styles/neon/`, and `?sims`, `?gta` on it). Each look is one stylesheet, `prototypes/styles/<name>.css`, loaded after the site's own CSS: `neon` (Neon Arcade), `hud` (Holo Vault), `pixel` (Pixel Quest), `dashboard` (Next-Gen Home), `museum` (Hall of Fame), `atomic` (Atomic Purple), `comic` (Game Mag), `console` (Super Console), `glitch` (Glitch City), `leonida` (Leonida, after GTA VI's Vice City) and `datacore` (Data Core). The top of each names the Google Fonts it needs. The previews are copies of the site's page, so after changing `index.html`, run `node tools/style-previews.mjs` to rebuild them.
+- **Style prototypes** (`public/prototypes/styles/`): eleven looks for the same site, none of them live yet. `public/prototypes/styles/index.html` is a gallery of them with a screenshot of each, and every style has a full preview of the site in its own folder (`prototypes/styles/neon/`, and `?sims`, `?gta` on it). Each look is one stylesheet, `prototypes/styles/<name>.css`, loaded after the site's own CSS: `neon` (Neon Arcade), `hud` (Holo Vault), `pixel` (Pixel Quest), `dashboard` (Next-Gen Home), `museum` (Hall of Fame), `atomic` (Atomic Purple), `comic` (Game Mag), `console` (Super Console), `glitch` (Glitch City), `leonida` (Leonida, after GTA VI's Vice City) and `datacore` (Data Core). The top of each names the Google Fonts it needs. The previews are copies of the site's page, so after changing `index.html`, run `node tools/style-previews.mjs` to rebuild them.
 
-## Running it
+## How it is built
 
-The shelf loads `data/games.json`, so open it through a web server rather than as a file:
+The site is PHP with a SQLite database, built the same way as the record site (`brunovida.si/music`), and has an admin behind it at `/admin`:
+
+- **The front end** is the same page as before (`public/index.php`, `public/js/`, `public/css/`). It reads the collection from the site's own JSON API (`api/games`, `api/steam`, `api/psn`, `api/nintendo`, `api/xbox`, `api/ea`, `api/rockstar`, `api/sims_wants`, `api/gta`), which hands it exactly what the old `data/*.json` files had, so nothing on the page had to change. The site's name, each page's title, description and header, the views it offers and the "Add me" links come from Settings.
+- **The admin** (`/admin`): the dashboard, the collection, Sync History and Settings. One account, Bruno's.
+- **The syncs** talk to Steam, PlayStation Network, Xbox, Nintendo, the EA app and Rockstar themselves, from the admin's buttons or a cron job, and write into the database. They were the PHP exporters in `api/` and the Node tools in `tools/` (still in the git history, and in the `games-website` repo).
+
+A link like `#ps2` opens straight onto one console, and `#ps2-final-fantasy-x` opens one game. `?sims` or `?gta` opens a collection, and in one a section's name opens the checklist there: `?gta#want-list`.
+
+The collections are the same shelf (`public/js/app.js`): each adds itself to `window.COLLECTIONS` with its name, its games, how they group, its header and its checklist (see the top of `js/app.js`), and its look is a stylesheet scoped to its class on `<html>` (`.sims`, `.gta`).
+
+## Local setup
+
+Needs PHP 8.1+ with `pdo_sqlite`, `curl`, `gd` and `sodium` (all in the usual builds).
 
 ```sh
-python3 -m http.server 8000     # or: npx serve
-# then open http://localhost:8000
+cp config/config.example.php config/config.php
+# in config/config.php: owner_email, and an app_key:
+php -r "echo bin2hex(random_bytes(32));"
+php cron/import_json.php          # the collection from seed/*.json, once
+php cron/verify_import.php        # checks the API hands back exactly what the files said
+php -S localhost:8020 -t public dev-server.php
 ```
 
-There is no build step. A link like `index.html#ps2` opens straight onto one console, and `index.html#ps2-final-fantasy-x` opens one game. `?sims` or `?gta` opens a collection, and in one a section's name opens the checklist there: `?gta#want-list`.
+Then open <http://localhost:8020/setup> to create the one account (the email must match `owner_email`), connect the platforms in **Settings → Connections**, and sync from the dashboard.
 
-The collections are the same shelf (`js/app.js`): each adds itself to `window.COLLECTIONS` with its name, its games, how they group, its header and its checklist (see the top of `js/app.js`), and its look is a stylesheet scoped to its class on `<html>` (`.sims`, `.gta`).
+`dev-server.php` exists because PHP's built-in server has no rewrite engine; it mirrors `.htaccess` so `/admin` and `/api/games` resolve locally exactly as they do on the server. The built-in server does one request at a time, so the admin waits while a sync runs; Apache on the real host doesn't.
 
-## The collection: `data/games.json`
+`seed/` holds the JSON the site had before it had a database. It is only read by `cron/import_json.php` (`--force` to start over, which keeps the account, settings and sign-ins); after that, the database is the collection.
 
-One entry per copy on the shelf:
+## The database
+
+`sql/schema.sql`, applied on every request (`includes/db.php`). Columns added later go in `MIGRATED_COLUMNS` there.
+
+- **`games`**: one row per copy, keyed by the id the site has always used. The fields the admin filters on are columns; the rest of what the shelf draws a copy with (spine, case colour, cartridge, box…) is in `extra_json`. Which field is where is one list, `FIELDS` in `includes/fields.php`, which the import, the edit form and the API all read.
+- **`platform_records`**: what each platform says about each of its games (play time, achievements, trophies, the Steam store page), by the platform's id, as the old `data/steam.json`… had it. `platform_accounts` has the account-wide figures (trophy level, gamerscore).
+- **`field_state`**: which of a copy's fields a sync wrote, and whether it was changed by hand since (`locked`).
+- **`platform_overrides`**: synced numbers corrected by hand.
+- **`sync_runs`**, **`sync_changes`**, **`platform_record_history`**, **`sync_snapshots`**: every sync, every value it changed (before and after), every record it replaced, and what the platform answered.
+- **`sync_unmatched`**: games a sync couldn't tie to one copy.
+- **`credentials`**: the platforms' keys and sign-ins, encrypted (below). **`connections`**: how each one last fared.
+- **`wantlist`** (the Sims want list for now; the site's own wantlist will be rows here too) and **`gta_eras`**, **`gta_games`** (the GTA checklist).
+- **`settings`**, **`users`**, **`login_failures`**.
+
+## The admin
+
+- **Dashboard**: the collection in figures, counted as the site counts it (a bundle is the packs in it); each platform's last sync, with a *Sync* button, and *Sync all*; what needs a look (games to tie by hand, covers missing on the server, games with something to check, a PSN sign-in about to run out); and where things are.
+- **Collection**: every copy, with search and filters (console, physical or digital, launcher, region, series, pack, platform, favourites, hidden, no cover…). *Add a game* and each copy's edit page have every field the shelf uses. A field a sync wrote says so (*Synced from Steam · 12 Oct 2026*); changing it keeps it as you leave it, unless *Let future syncs update it* is ticked, and the platform's own value is shown beside yours. A synced number (hours played, trophies, achievements) can be corrected too: *Mine, always*, or *Mine, until the platform changes*. The cover can be uploaded, taken from an address, or found (below).
+- **Sync History**: every sync, and for each what it added, tied, filled and changed, with the value before and after, its log, and what the platform answered (to download). A platform's latest sync can be **undone**: the copies it added go, the fields it filled go back, and every record it replaced is put back.
+- **Settings**: the site's name and each page's titles and texts (the shelf, The Sims, GTA); the views (shelf, rows, grid, showcase, list) and the one a first visit opens on; the "Add me" links; the platforms' sign-ins (Connections); the cron address and how many snapshots to keep (Sync); the password.
+
+## Syncing
+
+Each platform is a client in `includes/sync/` (`steam.php`, `psn.php`, `xbox.php`, `nintendo.php`, `ea.php`, `rockstar.php`) and they share `includes/sync/engine.php`: fetch, keep what was answered, turn it into the records the site shows, tie and add copies, then write it all in one transaction, noting every change. The matching rules are the old `tools/*-sync.mjs`'s, unchanged; `normalize()` gives the same records the old tools wrote, checked against the old exports.
+
+What a sync never does: delete a copy, or change a field you typed. It adds a copy (a game bought in a launcher or on the eShop), ties one to a platform id, and fills a field that is still empty, or one it filled itself that you haven't changed. A game it can't tie to exactly one copy goes on the dashboard to tie by hand (or dismiss: a game played but not owned). To keep a synced game off the site, hide it: deleted, the next sync adds it back. A record the platform stops listing is kept and marked.
+
+| Platform | What it needs (Settings → Connections) | Lasts |
+|---|---|---|
+| Steam | the Web API key and the SteamID64 (official API) | until the key is revoked |
+| PlayStation Network | an NPSSO token, traded at once for a refresh token | about two months, renewed by each sync |
+| Xbox | Microsoft's sign-in, as the Xbox app does it: the address it ends on is pasted back | renewed by each sync |
+| Nintendo | the Nintendo Account sign-in, as the Nintendo Store app does it | about two years |
+| EA app | EA's sign-in, as the EA app does it: the `location` of its last request is pasted back | renewed by each sync |
+| Rockstar | the site's sign-in check, copied as cURL | as long as the rockstargames.com sign-in |
+
+Everything but Steam is undocumented and can change without warning, which is why every sync keeps its before-and-after and can be undone. A renewed sign-in is saved the moment it arrives.
+
+**On a schedule**: Settings → Sync makes a secret address,
+
+```
+https://brunovida.si/games/cron_sync.php?token=…              every platform ticked there
+https://brunovida.si/games/cron_sync.php?token=…&platform=psn  one
+```
+
+for any scheduler that can open an address (without a token it answers 503). If the host's cron runs PHP, use the command line instead:
+
+```
+17 4 * * * /usr/local/bin/php /path/to/games/cron/sync.php >> /path/to/games-instance/data/sync.log 2>&1
+```
+
+## Signing in
+
+There is one account and no registration page. `/setup` creates it once, only for the address in `owner_email`, and refuses afterwards. To reset the password, delete the row and run `/setup` again:
+
+```sh
+php -r 'require "includes/bootstrap.php"; db()->exec("DELETE FROM users");'
+```
+
+Sign-in failures back off per IP address (five tries, then a doubling wait), and a wrong address takes exactly as long to answer as a wrong password. Every admin form is CSRF-checked; the session cookie (`GAMES_SESSION`) is scoped to the app's path, `HttpOnly`, `SameSite=Strict`, and `Secure` in production.
+
+The platforms' keys and sign-ins are kept in the database encrypted (libsodium) with the config's `app_key`, so the database alone gives none of them away; the admin never shows one again once saved. Keep the same `app_key` when moving the database, or they have to be entered again.
+
+## Deploying (later)
+
+The plan is the record site's: this repo becomes the `games/` folder of the `brunovidasi.com` repo (as `music/` is), deployed by its FTP Action to `public_html/games`, i.e. `brunovida.si/games`. Only `public/` is web-reachable: `.htaccess` maps every request into it, and `config/`, `includes/`, `cron/`, `sql/`, `seed/` and `data/` each carry a deny-all `.htaccess` as well.
+
+**Do not put `config/config.php` on the server.** Create, *above* `public_html`:
+
+```
+/home/<user>/domains/<domain>/games-instance/config.php   <- the real config, with 'env' => 'production'
+/home/<user>/domains/<domain>/games-instance/data/        <- the SQLite database
+```
+
+The app walks up the tree looking for a directory named `games-instance`, so no server path is hardcoded; the dashboard's *About the site* shows which config and database it found. Then either upload the local database as `games-instance/data/games.production.sqlite` (with the same `app_key`), or run `/games/setup` and the import there. **The covers aren't in the repo** (`public/covers/` is gitignored; the database names each file): upload the folder by FTP once. The dashboard counts any it can't find. New covers from the admin are written there on the server.
+
+## The fields of a copy
+
+What the site is handed for each copy (`api/games`, the shape `data/games.json` had), and what the admin's edit page has a box for:
 
 | Field | Example | Notes |
 |---|---|---|
@@ -77,117 +171,6 @@ To add a game, copy an entry, change it, and set `cover` and `colors` to `null`.
 
 **PC games**: use `"console": "pc"` and add `"launcher"` (`steam`, `origin`, `ea`, `rockstar`, `battlenet`, `gog`, `ubisoft` or `none`). Add `"big": true` for a big-box release (cardboard), `"bigCase": true` for one in the thick plastic case of the early 2000s (EA's *PC GAME* and *PC CD* cases: a DVD case's height and 28 mm deep, with a CD inside), `"mac": true` when it plays on a Mac too, and `"alsoDigital": true` for a disc that is also in the launcher's library. A disc in a clear case instead of the usual black one gets `"clearCase": true` (San Andreas, Bully, the Sold Out pack). A copy in the Steam library has `"steamAppId"` (below).
 
-## Steam
-
-The Steam library comes in through `tools/steam-sync.mjs`, from an export made by `api/steam-exporter` (see its README; its `config.php` holds the API key and is never committed, and neither are its exports):
-
-```sh
-cd api/steam-exporter && php export.php    # a new export in exports/
-cd ../../tools && node steam-sync.mjs --dry  # show what it would change
-node steam-sync.mjs                          # bring it in
-```
-
-Run it again whenever the library changes. It writes two files:
-
-- `data/steam.json`: everything Steam says about each game, by app id: playtime (in minutes, in all and per system), when it was last played, its achievements (how many, and each one with its name, description, icon and, once Steam returns them, when it was unlocked), and its store page (description, genres, categories, platforms, languages, age ratings, Metacritic, price, DLC, screenshots, trailers, pictures). The sync writes it whole each time, so it is never edited by hand. The account's own details (its SteamID, bans, badges) stay out of it.
-- `data/games.json`: each copy in the Steam library has `"steamAppId"`. A game in the library with no copy tied to it gets a new digital one (`"launcher": "steam"`, `"dateSource": "steam"`, the region from the store's currency), with the game's Steam library art as its cover (`"source": "steam"`; `fetch-covers.mjs` leaves it alone except with `--only`). A digital PC copy with the same title, no `steamAppId` and no other launcher is tied to it instead. A boxed copy never is: a Steam copy is a copy of its own, as RollerCoaster Tycoon 2: Triple Thrill Pack is both on the shelf and on Steam (a disc that activates on Steam can be tied by hand with `steamAppId` and `"alsoDigital": true`). After that the copy is yours: the sync only fills its fields that are still empty and never changes one that is set, so titles, `sortAs`, a better cover and the rest can be edited as on any game. To keep a Steam game off the site, give it `"hidden": true` rather than deleting it, or the next sync brings it back. A tied copy that drops out of the library is only reported, never deleted.
-
-On the site, a game with Steam data shows its playtime, when it was last played, its achievements, the store's description and a link to its store page under its details, and its licence (the back of a digital copy) has the playtime and app id. Achievements unlocked need the Steam profile's *Game details* to be public; until then only how many a game has shows.
-
-When the site talks to the Steam API itself, the PHP side can hand `fromExport()` in `tools/steam-sync.mjs` the same shape the exporter writes, or another reader can return what it returns, and the rest stays as it is.
-
-## PlayStation Network
-
-What PSN knows about the PlayStation games comes in the same way, through `tools/psn-sync.mjs`, from an export made by `api/psn-exporter` (see its README: it needs a fresh NPSSO token, which is never written down anywhere, and its exports are never committed):
-
-```sh
-cd api/psn-exporter && PSN_NPSSO='…' php export.php
-cd ../../tools && node psn-sync.mjs --dry   # show what it would change
-node psn-sync.mjs                           # bring it in
-```
-
-It writes `data/psn.json`, by PSN id, written whole each time: each game's play history (PS4 and PS5 only: how long, how many times, when first and last played), each trophy set (PS3, PS4 and PS5: how many trophies of each grade it has, how many were earned and when it last changed) and the account's trophy level. The account's ids, profile and friends stay out of it, and so do the apps that aren't games (Netflix, YouTube, Spotify).
-
-The PlayStation games are discs already on the shelf, so the sync never adds a copy: it ties one with `"psnTitleId"` (`CUSA…`, `PPSA…`: its play history) and `"psnTrophySet"` (`NPWR…`: its trophies). A PSN game is tied to the one copy on its console with the same name, or with a name that starts with it (*The Sims 4* is *The Sims 4 Plus Cats & Dogs*). The export doesn't say which console a trophy set is for, only whether it is the PS5's trophy service, so an older one can be a PS3 or a PS4 set. When there is no copy or more than one to choose from, the sync only reports it, and it is tied by hand: *Mortal Kombat*'s trophies are *Mortal Kombat: Komplete Edition*'s, the two *SingStar* sets the PS3's and the PS4's (`check` on `ps3-singstar`). A copy with more than one game in it takes a list, and its numbers are added up: *GTA: The Trilogy – The Definitive Edition* has each game's own play history and trophies (`"psnTitleId": ["CUSA26613_00"]`, with Vice City's and San Andreas' to join it once they have been played).
-
-On the site, a tied game shows under its details how long it was played, over how many sessions, when it was first and last played, and how many of its trophies were earned.
-
-## Nintendo Switch
-
-The Switch and Switch 2 play history comes in the same way, through `tools/nintendo-sync.mjs`, from an export made by `api/nintendo-exporter` (see its README: it signs in once to the Nintendo Account as the Nintendo Store app does, and keeps the session in `session.json`, which is never committed, and neither are its exports):
-
-```bash
-cd api/nintendo-exporter && php export.php login   # once
-php export.php                                     # a new export in exports/
-cd ../../tools && node nintendo-sync.mjs --dry     # show what it would change
-node nintendo-sync.mjs                             # bring it in
-```
-
-It writes `data/nintendo.json`, by Nintendo title id (`0100…`), written whole each time: every game played on the account, cartridge or download, with how long it was played, on how many days, when it was first and last played and which console it was played on. It lists games played, not games owned: one never started isn't in it. Nothing about the account goes in it.
-
-The sync ties a copy with `"nintendoTitleId"`, to the one Switch or Switch 2 copy with the same name (or `listedAs`), or with a name that starts with it (but not a sequel's: *Just Dance* isn't *Just Dance 2022*), leaving out *Nintendo Switch 2 Edition*; when there are several, the one on the console it was played on. When there are several, it only reports it, and it is tied by hand: *Moving Out* and *Pokémon: Let's Go, Pikachu!* are tied to both their copies. A copy with more than one game in it takes a list, and its numbers are added up: the *GTA* Trilogy cartridge has III's and San Andreas' (Vice City's joins once it has been played), the *MySims: Cozy Bundle* MySims' and MySims Kingdom's.
-
-A game played with no copy at all was bought or downloaded on the eShop, so it gets a new digital copy (`--no-add` stops that), with only its title filled in: give it its release date, publisher, developer and genre by hand, and its cover with `fetch-covers.mjs --only` (a free game with no box takes its eShop icon from `data/nintendo.json`, as `"plain": true`). After that the copy is yours. To keep one off the site, give it `"hidden": true` rather than deleting it, or the next sync adds it back. Apps and what comes with Nintendo Switch Online (YouTube, Pokémon HOME, the Nintendo Classics, Tetris 99) are never added.
-
-On the site, a tied game shows under its details how long it was played, on how many days and when it was first and last played, and a digital copy's licence has its playtime. A digital Switch or Switch 2 copy is a *Nintendo eShop* copy, in its details and its licence, and *eShop* finds them in the search.
-
-## Xbox
-
-What Xbox Live knows about the Xbox games comes in the same way, through `tools/xbox-sync.mjs`, from an export made by `api/xbox-exporter` (see its README: it signs in once to the Microsoft account as the Xbox app does, and keeps the session in `session.json`, which is never committed, and neither are its exports):
-
-```bash
-cd api/xbox-exporter && php export.php login   # once
-php export.php                                 # a new export in exports/
-cd ../../tools && node xbox-sync.mjs --dry     # show what it would change
-node xbox-sync.mjs                             # bring it in
-```
-
-It writes `data/xbox.json`, by Xbox title id, written whole each time: every game played on the profile (Xbox 360, Xbox One, Series X|S and Xbox on PC), when it was last played, the minutes played Xbox keeps for it (only some Xbox One, Series and PC games have them; Xbox 360 ones never do), its achievements (how many, how many unlocked, the gamerscore, and each one unlocked with its date) and whether it came with Game Pass, and the profile's gamerscore. It lists games played, not games owned. The gamertag and Xbox id stay out of it.
-
-The sync ties a copy with `"xboxTitleId"`, to the one copy with the same name (or `listedAs`), or with a name that starts with it, on a console it was played on: an Xbox 360 game to the `x360` copy, even when it was played on an Xbox One; an Xbox One or Series game to the `xone` copy; a game played in the Xbox app on PC to the `pc` copy. It reads Xbox's short names (*GTA V*, *Bully Scholarship Ed.*). When there is no copy or more than one, it only reports it, and it is tied by hand. It never adds a copy: Xbox lists the Game Pass and free games played too (*Fortnite*, *Call of Duty: Modern Warfare*), which aren't on the shelf. The Windows games the Xbox Game Bar noticed running (the EA *Sims* games) say only when they were last played, so they stay out.
-
-On the site, a tied game shows under its details how long it was played (when Xbox knows), when it was last played, how many achievements were unlocked, the gamerscore and the latest achievement, and *Xbox Live* finds them in the search.
-
-## EA app
-
-The EA app library comes in the same way, through `tools/ea-sync.mjs`, from an export made by `api/ea-exporter` (see its README: it signs in once to the EA account as the EA app does, and keeps the session in `session.json`, which is never committed, and neither are its exports):
-
-```bash
-cd api/ea-exporter && php export.php login   # once
-php export.php                               # a new export in exports/
-cd ../../tools && node ea-sync.mjs --dry     # show what it would change
-node ea-sync.mjs                             # bring it in
-```
-
-It writes `data/ea.json`, by EA game slug, written whole each time: every game and add-on (expansion, game, stuff pack, kit) the EA account owns on PC (bought, or a disc's code redeemed), the offers it is owned through and since when, and for a game the play time and last session the EA app keeps for it and its achievements with when each was unlocked. Unlike Xbox and Nintendo it lists games owned, played or not. The parts EA ships a game in (Battlefield 6's HD textures, multiplayer and single player), the free Battlefield REDSEC and the extras that aren't a pack (SimCity's city sets, the Sims 4 bonus items and bundles) stay out. Nothing about the account goes in it.
-
-The sync ties a copy with `"eaSlug"`, to the one PC copy with the same name (or `listedAs`; ™, a year in brackets and *Expansion Pack* at the end don't count: *The Sims™ 3 Late Night Expansion Pack* is *The Sims 3: Late Night*), and of several to the digital one or the disc that is `alsoDigital`. When there are still several, it only reports it, and it is tied by hand. EA names a few games its own way, so they are tied by hand: *The Sims™ + The Sims Packs* is *The Sims Legacy Collection*, *The Sims™ 2 + The Sims™ 2 Packs* the *Legacy Collection* of The Sims 2, *Sim City 3000™ Unlimited* SimCity 3000. A game with no copy at all was bought in the EA app, so it gets a new digital one (`"launcher": "ea"`; `--no-add` stops that), with only its title and region filled in (an add-on takes its game's name before its own, *The Sims 4: Grunge Revival Kit*, and its series, publisher, developer and genre, and a `pack` from its name): give it its release date, publisher, developer and genre by hand, and its cover with `fetch-covers.mjs --only`. After that the copy is yours. To keep one off the site, give it `"hidden": true` rather than deleting it, or the next sync adds it back.
-
-On the site, a tied game shows under its details how long it was played in the EA app, when it was last played and how many achievements were unlocked (a tied add-on, since when it is in the EA app), and a digital copy's licence has its playtime and the day it joined the account. With only the PC picked, the *EA app* library is exactly the copies tied to the export: the ones bought in the EA app and the discs whose code was redeemed in it (those are under *Physical* too). *EA app* finds them in the search.
-
-## Rockstar Games
-
-What Rockstar knows about the account comes in the same way, through `tools/rockstar-sync.mjs`, from an export made by `api/rockstar-exporter` (see its README: it signs in once from the site's sign-in check copied as cURL out of a signed-in rockstargames.com tab, and keeps it in `session.json`, which is never committed, and neither are its exports):
-
-```bash
-cd api/rockstar-exporter && pbpaste | php export.php login   # once
-php export.php                                     # a new export in exports/
-cd ../../tools && node rockstar-sync.mjs --dry     # show what it would change
-node rockstar-sync.mjs                             # bring it in
-```
-
-It writes `data/rockstar.json`, by Rockstar's short name for a game (`gtav`, `rdr2`, `lan`), written whole each time: every game the account has played, on which platforms and when it was last seen in each, and for a PC game the achievements unlocked, with when. Rockstar keeps no play time anyone can read (the launcher counts it but never shows it), and gives only the achievements unlocked, not how many there are. Nothing about the account goes in it.
-
-The sync ties a PC copy with `"rockstarTitle"`, to the one PC copy with the same name (or `listedAs`), and of several to the one on the Rockstar Games Launcher. When there are still several, it only reports it, and it is tied by hand. Rockstar names its games by short codes, which `TITLES` in the sync turns into the shelf's names; a code that isn't there is only reported, so add it. A PC game with no copy at all was bought in the launcher, so it gets a new digital one (`"launcher": "rockstar"`; `--no-add` stops that), with only its title and publisher filled in. The console games are left to PSN and Xbox. After that the copy is yours. To keep one off the site, give it `"hidden": true` rather than deleting it, or the next sync adds it back.
-
-On the site, a tied game shows under its details when it was last played on PC and how many achievements were unlocked, and *Rockstar Games Launcher* finds them in the search.
-
-**The Sims page** takes every game with a `"series"` (`"The Sims"`, `"The Sims 2"`, `"The Sims Stories"`, `"The Sims 3"`, `"The Sims Medieval"`, `"The Sims 4"`, `"SimCity"` or `"MySims"`), on any console. `"pack"` says what it is (`Base game`, `Collection`, `Expansion Pack`, `Game Pack`, `Stuff Pack`, `Kit`, `World` or `Extra`) and `"packCode"` gives The Sims 4's numbering (`EP01`, `GP04`, `SP12`). Serial keys are never kept here.
-
-**The GTA page** reads `data/gta.json`: the eras, and in each its games with `copies` (ids from `games.json`) and `missing` (console ids, plus `psp` and `xsx` for Xbox Series X|S). When a missing version comes home, add it to `games.json` and move its id from `missing` to `copies`. A copy with two games in it (Grand Theft Auto & GTA London) goes in both games' `copies`: it shows in both rows of the checklist and stands on the shelf once, with the first.
-
-**The Sims want list** is `data/sims-wants.json`: the games and packs not in the collection yet, with the same `series`, `pack` and `packCode`, plus `platform` and an optional `note`. When one comes home, delete it there and add it to `games.json`.
-
 ## Printed spines
 
 A game's `spine` draws its spine as the real box prints it. Every part is drawn, so it stays sharp at any size; nothing is a photo. A game in a thick EA case (`bigCase`) gets `{ "style": "ea-pcgame" }` by default.
@@ -209,56 +192,32 @@ The SNES, Game Boy, Game Boy Color, GBA, DS, 3DS, Switch and Switch 2 cartridges
 
 ## Covers
 
-`tools/fetch-covers.mjs` looks for box art for every game whose `cover` is `null`. It downloads it into `covers/`, resizes it, and writes the file and its colours back into `games.json`:
+Every cover is a JPEG 520 px tall under `public/covers/<console>/<id without the console>.jpg`, with its shape and the three colours the spine is drawn in worked out from it (`includes/images.php`, with GD). On a copy's edit page:
 
-```sh
-cd tools && npm install
-node fetch-covers.mjs --dry      # show what it would match
-node fetch-covers.mjs            # download
-node fetch-covers.mjs --only ps2-the-sims   # redo one game
-node fetch-covers.mjs --recheck  # after changing regions: swap in the right region's box
-node fetch-covers.mjs --upgrade-wiki   # swap Wikipedia pictures on PS4, PS5, Switch, Switch 2 and Xbox for real box scans
-```
+- **Find cover** asks every source that might have the copy's box and shows them all, best first, its own region's before another's; *Use this* saves one (`includes/covers.php`, was `tools/fetch-covers.mjs`). The sources are free and need no key: [libretro-thumbnails](https://github.com/libretro-thumbnails) (PS1, PS2, Xbox, Wii, Wii U, DS, 3DS, Game Boy, GBC, GBA, SNES, and DOS boxes for the first PC games), [aldostools/resources](https://github.com/aldostools/resources) (PS3, by disc serial), [xlenore/ps2-covers](https://github.com/xlenore/ps2-covers) (PS2, by serial), [the Sims Wiki](https://sims.fandom.com) and Wikipedia (PC), and [TheGamesDB](https://thegamesdb.net) (PS4, PS5, Xbox One, Xbox 360, Switch, Switch 2, PC). The GitHub collections' file lists are kept a week in `data/cache/`.
+- A copy steers it with **Cover match** (a libretro file name such as `DreamWorks Shark Tale (Europe)`, a PS3 serial such as `BLES00229`, a PS2 serial such as `SLES-52047`, or a wiki page), **TheGamesDB id** (the number in a release's address there), and **Wikipedia cover**: *No* (keeps a wrong key-art picture from being offered).
+- **Upload a picture**, or **take it from an address**: anything else, a photo of your own copy included.
+- **Upload a photo of the card or cartridge label** puts it in `cover.label`. (The old `tools/fetch-cards.mjs` found label scans in LaunchBox's 100 MB database download, which a web host can't keep; those labels are all still there, and new ones are uploaded by hand.)
+- *Work out the shape and colours again* measures a cover file that was put on the server by hand.
 
-It uses free community collections on GitHub, region by region, and needs no keys:
-
-- [libretro-thumbnails](https://github.com/libretro-thumbnails): PS1, PS2, Xbox, Wii, Wii U, DS, 3DS, Game Boy, GBC, GBA, SNES
-- [aldostools/resources](https://github.com/aldostools/resources): PS3, by disc serial
-- [xlenore/ps2-covers](https://github.com/xlenore/ps2-covers): PS2, by disc serial
-
-If it picks the wrong one, or finds nothing, set `"coverMatch"` on the game:
-- the libretro file name without `.png`, for example `"DreamWorks Shark Tale (Europe)"`
-- a PS3 serial, for example `"BLES00229"`
-- a PS2 serial, for example `"SLES-52047"`
-
-PC games come from the box art on the game's page on [the Sims Wiki](https://sims.fandom.com), then Wikipedia, then libretro-thumbnails' DOS boxes (the first Grand Theft Auto). `"coverMatch"` names the page when the title doesn't find it. This needs `sims.fandom.com`, `static.wikia.nocookie.net`, `en.wikipedia.org` and `upload.wikimedia.org` to be reachable. In a Claude Code cloud session, run it as `NODE_USE_ENV_PROXY=1 node fetch-covers.mjs` so Node goes through the session's proxy.
-
-None of these collections cover PS4, PS5, Switch, Switch 2, Xbox One or most Xbox 360 games. Those come from [TheGamesDB](https://thegamesdb.net), which has real box scans release by release: the script takes the scan of the copy's own region (a PAL copy gets a British or Australian box, with the console's band across the top), else an English one from elsewhere, and the plain release before a special edition. If it picks the wrong release, set `"tgdbId"` on the game to the number in that release's TheGamesDB address (`game.php?id=121209`). PC games it can't find on the wikis come from TheGamesDB too. A wide picture there (a photo of the box) is skipped. What TheGamesDB lacks takes the box on the game's Wikipedia page, which is often key art or another console's box, so look at what comes back. A picture wider than a box (a store icon, a banner) is skipped, `"coverMatch"` names the page, and `"wikiCover": false` stops a wrong one coming back. A game with no cover shows a printed title card in the right case. The details of every game without a cover have a *Find the cover on Google Images* link that searches for the title, console and region. To add a cover by hand:
-1. Save the image as `covers/<console>/<name>.jpg`.
-2. Set `"cover": { "file": "covers/…", "source": "manual" }` on the game.
-3. Run `node fetch-covers.mjs` in `tools/`. It measures the cover's shape, so it fits the case, and takes its colours for the spine. It does not change the image.
-
-The script never replaces covers marked `manual`. A source with an API key, such as IGDB or TheGamesDB, would fill these consoles automatically. It needs a small server to keep the key private, which can come with the PHP side of the site.
+A picture wider than a box is turned away when it comes from a source (it is a photo of something else); one you upload never is. A cover you picked is yours: a sync no longer replaces it.
 
 ## Files
 
-- `index.html`, `css/site.css`, `js/app.js`: the page, the filter, the shelf, the grid, the list, the shelf ⇄ grid flight and the spotlight
-- `css/cases.css`, `js/cases.js`: each console's case, spine, back, disc and cartridge
-- `js/consoles.js`: the consoles with their real case sizes, the regions and the PC launchers
-- `js/console-art.js`: the console drawings in the filter
-- `legacy/`: the console drawings and cartridges as they were before the PlayStation, Xbox and cartridge redraw (the in-between versions are in the git history) (`legacy/console-art.js`, `legacy/cases.js`), and `legacy/index.html`, which shows each old one beside the one on the site now. Nothing on the site loads them
-- `css/collection.css`, `js/collection.js`: what the collections' checklists share: the cases on their stretches of shelf, the meters, the want cards
-- `css/sims.css`, `js/sims.js`, `assets/plumbob.svg`: the Sims collection and its look
-- `data/sims-wants.json`: the Sims want list
-- `css/gta.css`, `js/gta.js`, `data/gta.json`: the Grand Theft Auto collection and its look
-- `data/games.json`: the collection
-- `data/steam.json`, `tools/steam-sync.mjs`, `api/steam-exporter/`: the Steam library (above)
-- `data/psn.json`, `tools/psn-sync.mjs`, `api/psn-exporter/`: PlayStation Network (above)
-- `data/nintendo.json`, `tools/nintendo-sync.mjs`, `api/nintendo-exporter/`: the Nintendo Switch play history (above)
-- `data/xbox.json`, `tools/xbox-sync.mjs`, `api/xbox-exporter/`: Xbox Live (above)
-- `data/ea.json`, `tools/ea-sync.mjs`, `api/ea-exporter/`: the EA app library (above)
-- `covers/`: box art, one folder per console
-- `tools/`: the cover fetcher (and `palette.mjs`, the colours it takes from a cover), the Steam, PSN, Nintendo, Xbox and EA app syncs, and `style-previews.mjs`, which builds the style prototype previews
-- `prototypes/`, `assets/`: the four design prototypes (and the plumbob)
-- `prototypes/styles/`: the style prototypes, their previews and their gallery
-- `fonts/`: the self-hosted fonts: Orbitron and Exo 2 for the site, Fredoka and Nunito for the Sims, Anton, Yellowtail and Manrope for GTA, Fraunces and Space Grotesk for what is printed on the cases
+- `public/index.php`, `public/css/site.css`, `public/js/app.js`: the page, the filter, the shelf, the grid, the list, the shelf ⇄ grid flight and the spotlight
+- `public/css/cases.css`, `public/js/cases.js`: each console's case, spine, back, disc and cartridge
+- `public/js/consoles.js`: the consoles with their real case sizes, the regions and the PC launchers
+- `public/js/console-art.js`: the console drawings in the filter
+- `public/css/collection.css`, `public/js/collection.js`: what the collections' checklists share
+- `public/css/sims.css`, `public/js/sims.js`, `public/assets/plumbob.svg`: the Sims collection and its look
+- `public/css/gta.css`, `public/js/gta.js`: the Grand Theft Auto collection and its look
+- `public/api/`: the JSON the page reads
+- `public/admin*.php`, `public/css/admin.css`, `public/js/admin.js`: the admin; `public/login.php`, `setup.php`, `logout.php`
+- `public/cron_sync.php`, `cron/sync.php`: the scheduled sync; `cron/import_json.php`, `cron/verify_import.php`: the import from `seed/`
+- `includes/`: `bootstrap.php` (the app), `admin.php` (+ the admin and a session), `config.php`, `runtime.php`, `db.php`, `helpers.php`, `auth.php`, `csrf.php`, `secrets.php` (the encrypted sign-ins), `fields.php` (every field of a copy), `games.php`, `platforms.php`, `site.php` (Settings' texts, views and links), `http.php`, `images.php`, `covers.php`, `sync/`, `admin_ui.php`, `templates/`
+- `sql/schema.sql`: the whole schema
+- `seed/`: the JSON the site had before the database
+- `public/covers/`: box art, one folder per console (not in the repo)
+- `public/legacy/`: the console drawings and cartridges as they were before the PlayStation, Xbox and cartridge redraw, beside the ones on the site now. Nothing on the site loads them
+- `public/prototypes/`: the design prototypes and the style prototypes with their gallery
+- `public/fonts/`: the self-hosted fonts: Orbitron and Exo 2 for the site, Fredoka and Nunito for the Sims, Anton, Yellowtail and Manrope for GTA, Fraunces and Space Grotesk for what is printed on the cases

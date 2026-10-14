@@ -1,3 +1,25 @@
-tools/node_modules/
-tools/.cache/
+# NOTE: these rules must travel WITH this folder. This app is to be deployed as a
+# subfolder of the brunovidasi.com repo (games/), which is PUBLIC —
+# this file is what keeps the database and the logs out of it. The parent
+# repo's own .gitignore does not cover them.
+/config/config.php
+/data/*.sqlite
+/data/*.sqlite-journal
+/data/*.sqlite-wal
+/data/*.sqlite-shm
+/data/*.log
+/data/*.log.1
+/data/cache/
+
+# The covers live on the server, uploaded by FTP once and then managed from the
+# admin; the database keeps each one's file name.
+/public/covers/*
+!/public/covers/.gitkeep
+
+# Belt and braces: an instance directory should live outside the repo entirely,
+# but ignore it here too in case one is ever created inside by mistake.
+/games-instance/
+
+node_modules/
 .DS_Store
+/.claude/launch.json
