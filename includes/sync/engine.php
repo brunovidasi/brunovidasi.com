@@ -122,8 +122,11 @@ final class SyncRun
     public function link(string $gameId, string $field, string|int $extId, string $label): void
     {
         $old = $this->games[$gameId][$field] ?? null;
-        $this->games[$gameId][$field] = $extId;
-        $this->change('linked', $gameId, $field, $old, $extId, $label);
+        // a copy with several games in it (a trilogy) keeps the ones it has and takes this one too
+        $current = game_links($this->games[$gameId], $field);
+        $value = FIELDS[$field]['type'] === 'idlist' && $current ? [...$current, (string) $extId] : $extId;
+        $this->games[$gameId][$field] = $value;
+        $this->change('linked', $gameId, $field, $old, $value, $label);
     }
 
     /**

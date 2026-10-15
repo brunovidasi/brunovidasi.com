@@ -141,8 +141,7 @@
 .sims .nav-bob { display: inline-block; }
 
 @media (max-width: 640px) {
-  .sims .brand { font-size: 16px; white-space: nowrap; }
-  .sims .topnav a { white-space: nowrap; padding: 6px 9px; font-size: 12px; }
+  .sims .brand { font-size: min(16px, 9cqi); }
   .sims .stats { gap: 6px; }
   .sims .stats div { min-width: 0; padding: 8px 4px 7px; border-radius: 12px; }
   .sims .stats b { font-size: 22px; }

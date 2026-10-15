@@ -12,7 +12,11 @@
  *
  * A game is tied to the one Switch or Switch 2 copy with the same name (or what
  * it is listed as), else a name that starts with it; of several, the ones on the
- * console it was played on. A game with no copy at all was bought on the eShop,
+ * console it was played on. A cartridge with several games on it is named for
+ * them with a " + " between (Toy Story: Retro Roundup! + Toy Story 3 Complete
+ * Edition): each game is tied to it by its own name, even with the publisher in
+ * front (Disney•Pixar …), until it has as many as its name has parts. A game
+ * with no copy at all was bought on the eShop,
  * so it gets a new digital one. Apps and what comes with Nintendo Switch Online
  * are never added.
  */
@@ -178,8 +182,25 @@ final class NintendoSync extends PlatformSync
     /** A Switch or Switch 2 copy not tied yet, the same name, else a name that starts with it; of several, the ones on its console. */
     private function candidates(SyncRun $run, array $t): array
     {
-        $free = array_filter($run->games, fn ($g) => in_array($g['console'], self::CONSOLES, true) && !game_links($g, 'nintendoTitleId'));
         $n = norm_name($t['name']);
+        // a cartridge with several games still to tie, one of them by this name
+        $parts = array_filter($run->games, function ($g) use ($n) {
+            $names = self::parts($g);
+            if (!in_array($g['console'], self::CONSOLES, true) || count($names) < 2 || count(game_links($g, 'nintendoTitleId')) >= count($names)) {
+                return false;
+            }
+            foreach ($names as $m) {
+                if ($n === $m || str_ends_with($n, ' ' . $m)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if ($parts) {
+            return $parts;
+        }
+
+        $free = array_filter($run->games, fn ($g) => in_array($g['console'], self::CONSOLES, true) && !game_links($g, 'nintendoTitleId'));
         $same = array_filter($free, fn ($g) => in_array($n, names_of($g, 'norm_name'), true));
         // (but a name followed by a number is another game: Just Dance isn't Just Dance 2022)
         $cs = $same ?: array_filter($free, function ($g) use ($n) {
@@ -193,5 +214,11 @@ final class NintendoSync extends PlatformSync
         $here = array_filter($cs, fn ($g) => $g['console'] === $t['console']);
 
         return $here ?: $cs;
+    }
+
+    /** The games on a copy, from its name: "A + B" is two. */
+    private static function parts(array $g): array
+    {
+        return array_values(array_unique(array_map('norm_name', preg_split('/\s+\+\s+/u', (string) $g['title']))));
     }
 }

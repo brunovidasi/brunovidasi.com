@@ -139,7 +139,8 @@ a { color: inherit; }
 .filters { position: sticky; top: calc(52px + env(safe-area-inset-top, 0px)); z-index: 800; background: linear-gradient(rgba(12,12,13,.95), rgba(12,12,13,.9)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .filters-in { --control-h: 42px; max-width: var(--page); margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
 /* the search: the glass, the field, and a cross once something is typed (js/app.js, searchBox) */
-.search { flex: 0 1 400px; min-width: 0; display: flex; align-items: center; height: var(--control-h); border: 1.5px solid var(--line-strong); border-radius: 3px; background: var(--surface); transition: border-color .2s, flex-grow .3s cubic-bezier(.2,.8,.25,1); }
+/* it gives up its width before the views would wrap under it, down to 180px */
+.search { flex: 1 1 180px; max-width: 400px; min-width: 0; display: flex; align-items: center; height: var(--control-h); border: 1.5px solid var(--line-strong); border-radius: 3px; background: var(--surface); transition: border-color .2s, flex-grow .3s cubic-bezier(.2,.8,.25,1); }
 .search:hover { border-color: rgba(242,234,216,.5); }
 .search:focus-within, .search.has-query { border-color: var(--gold); }
 .search-open, .search-close { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
@@ -183,6 +184,8 @@ a { color: inherit; }
 .seg button + button { border-left: 1.5px solid var(--line-strong); }
 .seg button:hover { background: rgba(242,234,216,.1); }
 .seg button.on { background: var(--gold); color: var(--ink); }
+/* between the phone's bar and a wide one, the views draw in so they stay on the search's line */
+@media (min-width: 821px) and (max-width: 1000px) { .seg button { padding: 0 12px; } }
 .count { font-size: 12px; opacity: .55; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* ---------- the tools above the shelf ---------- */
@@ -589,7 +592,7 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
   /* one row: the search folded to a glass, the sort taking what is left, the views. Opening the search
      stretches it across the row while the rest slides shut, as on the record site */
   .filters-in { --control-h: 40px; --dur: .3s; padding: 10px 16px; gap: 8px; flex-wrap: nowrap; transition: column-gap var(--dur); }
-  .search { flex: 0 0 var(--control-h); overflow: hidden; }
+  .search { flex: 0 0 var(--control-h); max-width: none; overflow: hidden; }
   .search-open { width: calc(var(--control-h) - 3px); color: var(--text); pointer-events: auto; }
   .search input { font-size: 16px; visibility: hidden; transition: visibility 0s var(--dur); } /* 16px, or iOS zooms in */
   .search:focus-within .search-open { color: var(--text); }
@@ -649,15 +652,21 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
   .figures b { font-size: 10px; letter-spacing: 0; }
   .figures .fig-y { display: none; }
   .figures .fig-r { display: inline; }
-  .topbar { padding-right: 10px; }
-  .brand { font-size: 14px; white-space: nowrap; }
+  .topbar { padding-right: 10px; gap: 10px; }
+  /* the name takes the room the pages leave it, and shrinks to fit it (7cqi: Orbitron is about 14 em wide) */
+  .brandbox { flex: 1 1 0; container-type: inline-size; }
+  .brand { font-size: min(14px, 7cqi); white-space: nowrap; }
   .topnav a { padding: 6px 9px; font-size: 12px; white-space: nowrap; }
   /* no room for the add-me buttons beside the pages: they move to a strip under the top bar */
-  :root { --under-bar: 0px; }
+  :root:has(.addme-strip) { --under-bar: 0px; }
   .topbar .addme { display: none; }
   .addme-strip { display: flex; align-items: center; margin: 0; padding: calc(62px + var(--top-inset)) 16px 0; border: 0; font-size: 12px; }
-  .addme-strip > span { opacity: .55; margin-right: 2px; }
-  .addme-strip :is(a, button) { flex-direction: row-reverse; }
+  .addme-strip > span { opacity: .55; margin-right: 2px; white-space: nowrap; }
+  /* the buttons share out the row, so it ends where the page's column does */
+  .addme-strip :is(a, button) { flex: 1 1 auto; flex-direction: row-reverse; }
+  /* the wash over the top of the page starts behind the top bar, as it does without the strip, not under it
+     (the strip is its 62px padding and a 30px row) */
+  .addme-strip ~ #shell .hero::before { top: calc(-92px - var(--top-inset)); }
   .addme-strip .lbl { margin: 0 2px 0 6px; }
   .grid { gap: 26px var(--gap); }
   .cap { text-align: center; margin-top: 12px; }
@@ -665,13 +674,23 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
   .cap small { font-size: .7rem; }
   .spot-who { font-size: .9rem; }
 }
-/* the smallest phones: the name and the three pages still on one line */
-@media (max-width: 380px) {
-  .brand { font-size: 12px; letter-spacing: 0; }
+/* the smallest phones: the pages closer, so the name keeps more room, and the add-me buttons tighter, so
+   they fit on one line beside "Add me on" */
+@media (max-width: 400px) {
+  .brand { letter-spacing: 0; }
   .topnav { gap: 0; }
   .topnav a { padding: 5px 7px; font-size: 11px; }
+  .addme-strip { gap: 4px; }
+  .addme-strip :is(a, button) { padding: 0 6px; }
+  .addme-strip .lbl { font-size: 11px; margin: 0 1px 0 5px; }
 }
 @media (max-width: 360px) { .figures .fig-r { display: none; } }
+@media (max-width: 340px) {
+  .topnav a { padding: 5px 5px; font-size: 10px; }
+  .addme-strip { gap: 3px; }
+  .addme-strip :is(a, button) { padding: 0 5px; }
+  .addme-strip .lbl { margin: 0 0 0 4px; }
+}
 @media (max-width: 760px) {
   .list { --cols: 56px minmax(0, 1fr) auto; padding: .3rem; }
   .lrow { gap: 10px; padding: 6px 8px; }

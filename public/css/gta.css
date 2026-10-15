@@ -151,7 +151,7 @@ html.gta {
 
 @media (max-width: 820px) { .gta body::before { height: 45vh; opacity: .7; } }
 @media (max-width: 640px) {
-  .gta .brand { font-size: 17px; white-space: nowrap; } .gta .topnav a { white-space: nowrap; padding: 6px 8px; font-size: 11px; }
+  .gta .brand { font-size: min(17px, 9.2cqi); } .gta .topnav a { white-space: nowrap; padding: 6px 8px; font-size: 11px; }
   .gta .eyebrow { font-size: 24px; }
   .gta .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; width: 100%; }
   .gta .stats div { padding: 8px 8px 10px; } .gta .stats b { font-size: 26px; } .gta .stats span { font-size: 9px; letter-spacing: .04em; }
@@ -179,3 +179,5 @@ html.gta {
   .tr-head small { margin-left: 0; flex-basis: 100%; }
   .ghostbox b { font-size: 11px; }
 }
+@media (max-width: 400px) { .gta .topnav a { padding: 5px 6px; font-size: 10px; letter-spacing: .06em; } }
+@media (max-width: 340px) { .gta .topnav a { padding: 5px 4px; letter-spacing: .03em; } }
