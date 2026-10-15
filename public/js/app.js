@@ -462,7 +462,8 @@
     return btn;
   }
 
-  // In "one cover per console" (or game), one per console faces out: a favourite (or one marked to) if any, else the newest with a cover.
+  // In "one cover per console" (or game), one per console faces out: those marked faceOut if any, else the newest with a cover
+  // (not one marked faceOut false). Being a favourite (fav) doesn't turn a game out.
   function leaders() {
     const out = new Set(), by = {};
     games.forEach(g => (by[groupOf(g).key] = by[groupOf(g).key] || []).push(g));
@@ -470,10 +471,9 @@
       // a console whose games are all loose cartridges (the SNES) faces one of those out
       let pool = gs.filter(g => g.format === 'boxed');
       if (!pool.length) pool = gs.filter(g => g.format === 'cartridge-only' && CONSOLE_BY_ID[g.console].stack);
-      // faceOut, where a game has it, says whether it faces out over its being a favourite
-      const favs = pool.filter(g => g.faceOut ?? g.fav);
-      if (favs.length) { favs.forEach(g => out.add(g.id)); continue; }
-      const pick = [...pool].sort((a, b) => (!!b.cover - !!a.cover) || (b.released || '').localeCompare(a.released || ''))[0];
+      const marked = pool.filter(g => g.faceOut);
+      if (marked.length) { marked.forEach(g => out.add(g.id)); continue; }
+      const pick = pool.filter(g => g.faceOut !== false).sort((a, b) => (!!b.cover - !!a.cover) || (b.released || '').localeCompare(a.released || ''))[0];
       if (pick) out.add(pick.id);
     }
     return out;
@@ -1457,7 +1457,7 @@
     }
 
     function details(g) {
-      const marks = [g.fav && '♥ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
+      const marks = [g.fav && '★ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
       return glance(g) + tags(marks)
         + (g.note ? `<p class="dw-note">${esc(g.note)}</p>` : '')
         + section('The copy', copyHtml(g))

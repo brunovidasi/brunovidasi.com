@@ -168,7 +168,8 @@ if (is_post()) {
         });
 
         flash($isNew ? "{$new['title']} was added." : "{$new['title']} was saved.");
-        redirect('admin/game?id=' . rawurlencode($new['id']));
+        $tab = post('tab');
+        redirect('admin/game?id=' . rawurlencode($new['id']) . (preg_match('/^g-[a-z]+$/', $tab) ? "#$tab" : ''));
     }
 
     // show the form again with what was typed
@@ -187,9 +188,25 @@ if (!$isNew) {
     $history = $stmt->fetchAll();
 }
 
+// the form's parts, as FIELD_GROUPS has them; the cover's are in the cover card
+$groupKeys = fn (string $group) => array_keys(array_filter(FIELDS, fn ($f) => $f['group'] === $group));
+$groups = [];
+foreach (FIELD_GROUPS as $group => $groupLabel) {
+    if ($group !== 'cover') {
+        $groups[$group] = [$groupLabel, $groupKeys($group)];
+    }
+}
+
 $title = $isNew ? 'Add a game' : $game['title'];
 $intro = $isNew ? 'A copy for the shelf. The id is made from the console and the title unless you type one.' : console_name($game['console']) . ' · ' . ($game['id']);
-$actions = $isNew ? '' : '<a class="button ghost" href="' . e(url('#' . rawurlencode($id))) . '" target="_blank" rel="noopener">See it on the site ↗</a>';
+// Save, Back, See it on the site and Delete, beside the title; the buttons belong to the form below
+// (form="gameForm"). Save comes first in the page so Enter saves; the CSS sets them out Delete first.
+$actions = '<span class="edit-actions">'
+    . '<button type="submit" form="gameForm" name="action" value="save" class="primary">' . ($isNew ? 'Add the game' : 'Save') . '</button>'
+    . ($isNew ? '' : '<a class="button ghost" href="' . e(url('#' . rawurlencode($id))) . '" target="_blank" rel="noopener">See it on the site ↗</a>')
+    . '<a class="button ghost" href="' . e(url('admin/games')) . '">Back to the collection</a>'
+    . ($isNew ? '' : '<button type="submit" form="gameForm" name="action" value="delete" class="danger" formnovalidate data-confirm="' . e("Delete {$game['title']}? " . ($links ? 'It is tied to a platform, so the next sync may add it back: hiding it keeps it off the site instead.' : 'This cannot be undone.')) . '">Delete</button>')
+    . '</span>';
 admin_header($title, $intro, $actions);
 
 foreach ($errors as $error) {
@@ -202,87 +219,6 @@ foreach ($errors as $error) {
   <input type="hidden" name="original_id" value="<?= e($isNew ? '' : $id) ?>">
 
   <div class="edit-layout">
-    <div class="edit-main">
-
-      <?php foreach (FIELD_GROUPS as $group => $groupLabel):
-          if (in_array($group, ['cover'], true)) {
-              continue;
-          }
-          $keys = array_keys(array_filter(FIELDS, fn ($f) => $f['group'] === $group));
-          $open = in_array($group, ['basics', 'copy', 'links'], true) || array_filter($keys, fn ($k) => isset($game[$k]) && $game[$k] !== null);
-          ?>
-        <details class="card group" <?= $open ? 'open' : '' ?> id="g-<?= e($group) ?>">
-          <summary><h2><?= e($groupLabel) ?></h2></summary>
-          <div class="fields">
-            <?php if ($group === 'basics'): ?>
-              <div class="field">
-                <label for="game_id">Id</label>
-                <input type="text" id="game_id" name="game_id" value="<?= e($game['id']) ?>" pattern="[a-z0-9][a-z0-9\-]*" placeholder="<?= $isNew ? 'made from the console and title' : '' ?>">
-                <div class="hint">The address of the game on the site (#<?= e($game['id'] ?: 'ps5-title') ?>). Changing it breaks links to the old one.</div>
-              </div>
-            <?php endif; ?>
-            <?php foreach ($keys as $key): ?>
-              <?= field_input($key, $game[$key] ?? null, $states[$key] ?? null) ?>
-            <?php endforeach; ?>
-          </div>
-        </details>
-      <?php endforeach; ?>
-
-      <?php if ($links): ?>
-        <section class="card group" id="g-synced">
-          <h2>What the platforms say</h2>
-          <p class="muted small">Synced numbers, shown on the site under the game's details. Correct one and choose whether it stays yours, or only until the platform says something new.</p>
-          <?php foreach ($links as $platform => $collections): ?>
-            <?php foreach ($collections as $collection => $extIds): ?>
-              <?php foreach ($extIds as $extId):
-                  $rec = platform_record_row($platform, $collection, $extId);
-                  $data = $rec ? json_decode($rec['data_json'], true) : null;
-                  $ov = record_overrides($platform, $collection, $extId);
-                  ?>
-                <div class="synced-block">
-                  <div class="synced-head">
-                    <span class="dot <?= e($platform) ?>"></span>
-                    <b><?= e($data['name'] ?? $extId) ?></b>
-                    <span class="muted small"><?= e(PLATFORMS[$platform]['name']) ?> · <?= e($collection === 'trophySets' ? 'trophies' : 'play history') ?> · <code><?= e($extId) ?></code></span>
-                    <?php if ($rec): ?><?= sync_badge($platform, $rec['synced_at']) ?><?php endif; ?>
-                    <?php if ($rec && $rec['missing_since']): ?><span class="pill warn">Gone from <?= e(PLATFORMS[$platform]['short']) ?> since <?= e(format_date($rec['missing_since'])) ?></span><?php endif; ?>
-                  </div>
-                  <?php if (!$rec): ?>
-                    <p class="muted small">Not in the last sync yet: its numbers show once <?= e(PLATFORMS[$platform]['name']) ?> is synced.</p>
-                  <?php else: ?>
-                    <div class="synced-fields">
-                      <?php foreach (PLATFORM_FIELDS[$platform][$collection] ?? [] as $path => [$label, $type]):
-                          $synced = path_get($data, $path);
-                          $o = $ov[$path] ?? null;
-                          $value = $o ? from_json($o['value_json']) : $synced;
-                          $name = "o[$platform][$collection][$extId][$path]";
-                          $inputId = 'o-' . md5($name);
-                          ?>
-                        <div class="field synced-field<?= $o ? ' overridden' : '' ?>">
-                          <label for="<?= e($inputId) ?>"><?= e($label) ?><?= $type === 'minutes' ? ' <span class="muted">(hours)</span>' : '' ?></label>
-                          <?php if ($type === 'minutes'): ?>
-                            <input type="number" step="0.01" min="0" id="<?= e($inputId) ?>" name="<?= e($name) ?>[value]" value="<?= e(minutes_to_hours($value === null ? null : (int) $value)) ?>" data-synced="<?= e(minutes_to_hours($synced === null ? null : (int) $synced)) ?>">
-                          <?php elseif ($type === 'datetime'): ?>
-                            <input type="datetime-local" id="<?= e($inputId) ?>" name="<?= e($name) ?>[value]" value="<?= e(iso_to_local_input($value)) ?>" data-synced="<?= e(iso_to_local_input($synced)) ?>">
-                          <?php else: ?>
-                            <input type="number" min="0" id="<?= e($inputId) ?>" name="<?= e($name) ?>[value]" value="<?= e($value) ?>" data-synced="<?= e($synced) ?>">
-                          <?php endif; ?>
-                          <select name="<?= e($name) ?>[mode]" class="mode" aria-label="<?= e($label) ?>: whose value">
-                            <?= options_html(['' => 'Synced value', 'keep' => 'Mine, always', 'until_sync' => 'Mine, until the platform changes'], $o['mode'] ?? '') ?>
-                          </select>
-                          <div class="hint"><?= e(PLATFORMS[$platform]['short']) ?> says <?= e(format_platform_value($synced, $type)) ?><?= $o ? ' · yours since ' . e(format_date($o['updated_at'])) : '' ?></div>
-                        </div>
-                      <?php endforeach; ?>
-                    </div>
-                  <?php endif; ?>
-                </div>
-              <?php endforeach; ?>
-            <?php endforeach; ?>
-          <?php endforeach; ?>
-        </section>
-      <?php endif; ?>
-    </div>
-
     <aside class="edit-side">
       <section class="card cover-card" id="g-cover" data-find="<?= e(url('admin/cover')) ?>" data-id="<?= e($isNew ? '' : $id) ?>">
         <h2>Cover</h2>
@@ -344,6 +280,13 @@ foreach ($errors as $error) {
           </label>
           <div class="field"><label for="label_ref">About the label photo</label><input type="text" id="label_ref" name="label_ref" value="<?= e($game['cover']['labelRef'] ?? '') ?>"></div>
         </details>
+        <?php $coverKeys = array_values(array_filter($groupKeys('cover'), fn ($k) => !in_array(FIELDS[$k]['type'], ['cover', 'colors'], true))); ?>
+        <details class="cover-details" <?= array_filter($coverKeys, fn ($k) => isset($game[$k])) ? 'open' : '' ?>>
+          <summary>What Find cover goes by</summary>
+          <?php foreach ($coverKeys as $key): ?>
+            <?= field_input($key, $game[$key] ?? null, $states[$key] ?? null) ?>
+          <?php endforeach; ?>
+        </details>
       </section>
 
       <?php if ($history): ?>
@@ -362,15 +305,105 @@ foreach ($errors as $error) {
         </section>
       <?php endif; ?>
     </aside>
+    <div class="edit-main">
+
+      <input type="hidden" name="tab" value="" data-tab-input>
+      <nav class="jump" aria-label="Parts of the form" data-tabs>
+        <a href="#g-cover" class="jump-cover">Cover</a>
+        <?php foreach ($groups as $group => [$groupLabel, $keys]): $set = count(array_filter($keys, fn ($k) => isset($game[$k]))); ?>
+          <a href="#g-<?= e($group) ?>" data-tab><?= e($groupLabel) ?><?php if ($set && $group !== 'basics'): ?> <span class="count"><?= $set ?></span><?php endif; ?></a>
+        <?php endforeach; ?>
+        <?php if ($links): ?><a href="#g-synced" data-tab>Synced numbers</a><?php endif; ?>
+      </nav>
+
+      <?php foreach ($groups as $group => [$groupLabel, $keys]):
+          // the on/off ones first, side by side, then the rest
+          $toggles = array_values(array_filter($keys, fn ($k) => FIELDS[$k]['type'] === 'bool'));
+          $others = array_values(array_diff($keys, $toggles));
+          ?>
+        <section class="card group" id="g-<?= e($group) ?>" data-panel>
+          <h2><?= e($groupLabel) ?></h2>
+          <?php if ($toggles): ?>
+            <div class="toggles">
+              <?php foreach ($toggles as $key): ?>
+                <?= field_input($key, $game[$key] ?? null, $states[$key] ?? null) ?>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+          <?php if ($others || $group === 'basics'): ?>
+            <div class="fields">
+              <?php foreach ($others as $key): ?>
+                <?= field_input($key, $game[$key] ?? null, $states[$key] ?? null) ?>
+              <?php endforeach; ?>
+              <?php if ($group === 'basics'): ?>
+                <div class="field">
+                  <label for="game_id">Id</label>
+                  <input type="text" id="game_id" name="game_id" value="<?= e($game['id']) ?>" pattern="[a-z0-9][a-z0-9\-]*" placeholder="<?= $isNew ? 'made from the console and title' : '' ?>">
+                  <div class="hint">The address of the game on the site (#<?= e($game['id'] ?: 'ps5-title') ?>). Changing it breaks links to the old one.</div>
+                </div>
+              <?php endif; ?>
+            </div>
+          <?php endif; ?>
+        </section>
+      <?php endforeach; ?>
+
+      <?php if ($links): ?>
+        <section class="card group" id="g-synced" data-panel>
+          <h2>What the platforms say</h2>
+          <p class="muted small">Synced numbers, shown on the site under the game's details. Correct one and choose whether it stays yours, or only until the platform says something new.</p>
+          <?php foreach ($links as $platform => $collections): ?>
+            <?php foreach ($collections as $collection => $extIds): ?>
+              <?php foreach ($extIds as $extId):
+                  $rec = platform_record_row($platform, $collection, $extId);
+                  $data = $rec ? json_decode($rec['data_json'], true) : null;
+                  $ov = record_overrides($platform, $collection, $extId);
+                  ?>
+                <div class="synced-block">
+                  <div class="synced-head">
+                    <span class="dot <?= e($platform) ?>"></span>
+                    <b><?= e($data['name'] ?? $extId) ?></b>
+                    <span class="muted small"><?= e(PLATFORMS[$platform]['name']) ?> · <?= e($collection === 'trophySets' ? 'trophies' : 'play history') ?> · <code><?= e($extId) ?></code></span>
+                    <?php if ($rec): ?><?= sync_badge($platform, $rec['synced_at']) ?><?php endif; ?>
+                    <?php if ($rec && $rec['missing_since']): ?><span class="pill warn">Gone from <?= e(PLATFORMS[$platform]['short']) ?> since <?= e(format_date($rec['missing_since'])) ?></span><?php endif; ?>
+                  </div>
+                  <?php if (!$rec): ?>
+                    <p class="muted small">Not in the last sync yet: its numbers show once <?= e(PLATFORMS[$platform]['name']) ?> is synced.</p>
+                  <?php else: ?>
+                    <div class="synced-fields">
+                      <?php foreach (PLATFORM_FIELDS[$platform][$collection] ?? [] as $path => [$label, $type]):
+                          $synced = path_get($data, $path);
+                          $o = $ov[$path] ?? null;
+                          $value = $o ? from_json($o['value_json']) : $synced;
+                          $name = "o[$platform][$collection][$extId][$path]";
+                          $inputId = 'o-' . md5($name);
+                          ?>
+                        <div class="field synced-field<?= $o ? ' overridden' : '' ?>">
+                          <label for="<?= e($inputId) ?>"><?= e($label) ?><?= $type === 'minutes' ? ' <span class="muted">(hours)</span>' : '' ?></label>
+                          <?php if ($type === 'minutes'): ?>
+                            <input type="number" step="0.01" min="0" id="<?= e($inputId) ?>" name="<?= e($name) ?>[value]" value="<?= e(minutes_to_hours($value === null ? null : (int) $value)) ?>" data-synced="<?= e(minutes_to_hours($synced === null ? null : (int) $synced)) ?>">
+                          <?php elseif ($type === 'datetime'): ?>
+                            <input type="datetime-local" id="<?= e($inputId) ?>" name="<?= e($name) ?>[value]" value="<?= e(iso_to_local_input($value)) ?>" data-synced="<?= e(iso_to_local_input($synced)) ?>">
+                          <?php else: ?>
+                            <input type="number" min="0" id="<?= e($inputId) ?>" name="<?= e($name) ?>[value]" value="<?= e($value) ?>" data-synced="<?= e($synced) ?>">
+                          <?php endif; ?>
+                          <select name="<?= e($name) ?>[mode]" class="mode" aria-label="<?= e($label) ?>: whose value">
+                            <?= options_html(['' => 'Synced value', 'keep' => 'Mine, always', 'until_sync' => 'Mine, until the platform changes'], $o['mode'] ?? '') ?>
+                          </select>
+                          <div class="hint"><?= e(PLATFORMS[$platform]['short']) ?> says <?= e(format_platform_value($synced, $type)) ?><?= $o ? ' · yours since ' . e(format_date($o['updated_at'])) : '' ?></div>
+                        </div>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+              <?php endforeach; ?>
+            <?php endforeach; ?>
+          <?php endforeach; ?>
+        </section>
+      <?php endif; ?>
+    </div>
+
   </div>
 
-  <div class="save-bar">
-    <button type="submit" name="action" value="save" class="primary"><?= $isNew ? 'Add the game' : 'Save' ?></button>
-    <a class="button ghost" href="<?= e(url('admin/games')) ?>">Back to the collection</a>
-    <?php if (!$isNew): ?>
-      <button type="submit" name="action" value="delete" class="danger" formnovalidate data-confirm="Delete <?= e($game['title']) ?>? <?= $links ? 'It is tied to a platform, so the next sync may add it back: hiding it keeps it off the site instead.' : 'This cannot be undone.' ?>">Delete</button>
-    <?php endif; ?>
-  </div>
 </form>
 
 <?php admin_footer(); ?>

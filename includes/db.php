@@ -54,6 +54,20 @@ function run_migrations(PDO $db): void
             }
         }
     }
+
+    // Once: a favourite used to face out on the shelf. Now Faces out is its own field, so each
+    // favourite that faced out keeps doing so (one marked faceOut either way already says).
+    if (!$db->query("SELECT 1 FROM settings WHERE key = 'migrated_fav_face_out'")->fetch()) {
+        db_transaction(function (PDO $db) {
+            $db->exec("
+                UPDATE games SET extra_json = json_set(COALESCE(extra_json, '{}'), '$.faceOut', json('true'))
+                WHERE fav = 1 AND json_type(COALESCE(extra_json, '{}'), '$.faceOut') IS NULL
+            ");
+            $db->exec("INSERT INTO settings (key, value) VALUES ('migrated_fav_face_out', 'true')");
+            $db->exec("INSERT INTO settings (key, value) VALUES ('data_changed_at', '\"" . gmdate('c') . "\"')
+                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')");
+        });
+    }
 }
 
 /** A settings row, JSON-decoded and cached for the rest of the request. */

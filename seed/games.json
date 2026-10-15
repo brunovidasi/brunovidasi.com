@@ -68,6 +68,7 @@
       "genre": "Action role-playing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ps5/hogwarts-legacy.jpg",
         "source": "manual",
@@ -226,6 +227,7 @@
       "genre": "Action-adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ps4/grand-theft-auto-v.jpg",
         "ratio": 0.8071,
@@ -806,6 +808,7 @@
       "genre": "Rhythm",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ps3/guitar-hero-live.jpg",
         "ratio": 0.8667,
@@ -1142,6 +1145,7 @@
       "genre": "Rhythm",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ps3/rock-band.jpg",
         "ratio": 0.8667,
@@ -1411,6 +1415,7 @@
       "genre": "Kart racing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "platinum": false,
       "coverMatch": "SLES-53869",
       "cover": {
@@ -1765,6 +1770,7 @@
       "genre": "Rhythm",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "platinum": false,
       "cover": {
         "file": "covers/ps2/guitar-hero-iii-legends-of-rock.jpg",
@@ -2281,6 +2287,7 @@
       "genre": "Action-adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "platinum": false,
       "caseColor": "#16171a",
       "coverMatch": "SLES-52541",
@@ -2357,6 +2364,7 @@
       "genre": "Kart racing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ps1/toy-story-racer.jpg",
         "ratio": 1.0059,
@@ -2490,6 +2498,7 @@
       "genre": "Role-playing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/switch2/pokemon-legends-z-a.jpg",
         "source": "manual",
@@ -2657,6 +2666,7 @@
       "genre": "Action-adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/switch/grand-theft-auto-the-trilogy-the-definitive-edition.jpg",
         "source": "manual",
@@ -3103,6 +3113,7 @@
       "genre": "Kart racing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/switch/mario-kart-8-deluxe.jpg",
         "ratio": 0.6154,
@@ -3624,6 +3635,7 @@
       "genre": "Role-playing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/switch/pokemon-violet.jpg",
         "source": "manual",
@@ -3765,6 +3777,7 @@
       "genre": "Simulation",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "check": "Release date unknown for the Switch version.",
       "cover": {
         "file": "covers/switch/rollercoaster-tycoon-classic.jpg",
@@ -4458,6 +4471,7 @@
       "publisher": "Activision",
       "developer": "FreeStyleGames",
       "fav": true,
+      "faceOut": true,
       "genre": "Rhythm",
       "format": "boxed",
       "note": "No guitar controller",
@@ -5087,6 +5101,7 @@
       "format": "boxed",
       "edition": "Nintendo Selects",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/wiiu/donkey-kong-country-tropical-freeze-nintendo-selects.jpg",
         "source": "manual",
@@ -5275,6 +5290,7 @@
       "genre": "Platformer",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/wiiu/super-mario-3d-world.jpg",
         "ratio": 0.7135,
@@ -5467,6 +5483,7 @@
       "genre": "Platformer",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/wii/donkey-kong-country-returns.jpg",
         "ratio": 0.7154,
@@ -5685,6 +5702,7 @@
       "format": "boxed",
       "edition": "Nintendo Selects",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/wii/super-mario-galaxy-nintendo-selects.jpg",
         "source": "manual",
@@ -5902,6 +5920,7 @@
       "genre": "Platformer",
       "format": "cartridge-only",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/donkey-kong-country.jpg",
         "ratio": 1,
@@ -6110,6 +6129,7 @@
       "format": "cartridge-only",
       "coverMatch": "Tarzan (USA, Europe)",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/disneys-tarzan.jpg",
         "ratio": 1,
@@ -6164,6 +6184,7 @@
       "genre": "Racing",
       "format": "cartridge-only",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/wacky-races.jpg",
         "ratio": 0.9961,
@@ -6192,6 +6213,7 @@
       "format": "cartridge-only",
       "caseStyle": "gb",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/pokemon-blue-version.jpg",
         "ratio": 1,
@@ -6221,6 +6243,7 @@
       "format": "cartridge-only",
       "caseStyle": "gb",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/pokemon-yellow-version.jpg",
         "ratio": 1,
@@ -6250,6 +6273,7 @@
       "format": "cartridge-only",
       "caseStyle": "gb",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/pokemon-gold-version.jpg",
         "ratio": 1,
@@ -6280,6 +6304,7 @@
       "format": "cartridge-only",
       "caseStyle": "gb",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/gbc/pokemon-silver-version.jpg",
         "ratio": 1,
@@ -6408,6 +6433,7 @@
         "#ad8e99"
       ],
       "fav": true,
+      "faceOut": true,
       "cardPhoto": false
     },
     {
@@ -6467,6 +6493,7 @@
         "#39363e"
       ],
       "fav": true,
+      "faceOut": true,
       "cardPhoto": false
     },
     {
@@ -6551,6 +6578,7 @@
         "#e3e8ea"
       ],
       "fav": true,
+      "faceOut": true,
       "cardPhoto": false
     },
     {
@@ -6606,7 +6634,8 @@
         "#3f4a4d",
         "#7f8078"
       ],
-      "fav": true
+      "fav": true,
+      "faceOut": true
     },
     {
       "id": "ds-art-academy",
@@ -6696,6 +6725,7 @@
       "genre": "Action-adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ds/grand-theft-auto-chinatown-wars.jpg",
         "ratio": 1.113,
@@ -6724,6 +6754,7 @@
       "genre": "Rhythm",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "edition": "Guitar Grip bundle",
       "extras": [
         "guitargrip"
@@ -6894,6 +6925,7 @@
       "genre": "Kart racing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/ds/mario-kart-ds.jpg",
         "ratio": 1.1082,
@@ -7195,6 +7227,7 @@
       "genre": "Role-playing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "edition": "Pokéwalker bundle",
       "extras": [
         "pokewalker"
@@ -7815,6 +7848,7 @@
       "genre": "Kart racing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/3ds/mario-kart-7.jpg",
         "ratio": 1.1228,
@@ -7923,6 +7957,7 @@
       "genre": "Role-playing",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/3ds/pokemon-sun.jpg",
         "ratio": 1.1149,
@@ -8421,6 +8456,7 @@
       "genre": "Platformer",
       "format": "cartridge-only",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/snes/super-mario-world.jpg",
         "ratio": 1.4342,
@@ -8448,6 +8484,7 @@
       "genre": "Kart racing",
       "format": "cartridge-only",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/snes/super-mario-kart.jpg",
         "ratio": 1.4342,
@@ -8531,6 +8568,7 @@
       "format": "cartridge-only",
       "note": "Made in Mexico (M/SNS-ADNE-USA)",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/snes/donkey-kong-country-2-diddys-kong-quest.jpg",
         "ratio": 1.4342,
@@ -8799,6 +8837,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "bigCase": true,
       "spine": {
         "style": "ea-pcgame",
@@ -9981,6 +10020,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "spine": {
         "style": "white",
         "top": "pcdvd",
@@ -10050,6 +10090,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "launcher": "ea",
       "mac": true,
       "series": "The Sims 3",
@@ -10848,6 +10889,7 @@
       "genre": "Life simulation",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "mac": true,
       "series": "The Sims Medieval",
       "pack": "Base game",
@@ -12254,6 +12296,7 @@
       "genre": "Action-adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "cover": {
         "file": "covers/pc/grand-theft-auto-iii.jpg",
         "ratio": 0.7077,
@@ -12493,6 +12536,7 @@
       "genre": "Action-adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "clearCase": true,
       "spine": {
         "style": "white",
@@ -12532,6 +12576,7 @@
       "genre": "Adventure",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "spine": {
         "style": "white",
         "color": "#3d2a80",
@@ -12680,6 +12725,7 @@
       "genre": "Construction and management simulation",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "clearCase": true,
       "note": "The Infogrames reprint, after Infogrames bought Hasbro Interactive and MicroProse in 2001",
       "spine": {
@@ -12716,6 +12762,7 @@
       "genre": "Real-time strategy",
       "format": "boxed",
       "fav": true,
+      "faceOut": true,
       "box": {
         "w": 137,
         "h": 193,

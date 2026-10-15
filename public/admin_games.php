@@ -64,6 +64,7 @@ $games = array_filter($all, function ($g) use ($f, $words) {
 
     return match ($f['flag']) {
         'fav'     => !empty($g['fav']),
+        'faceout' => !empty($g['faceOut']),
         'hidden'  => !empty($g['hidden']),
         'onsite'  => empty($g['hidden']),
         'nocover' => empty($g['cover']['file']),
@@ -111,7 +112,7 @@ admin_header('Collection', count($all) . ' copies in the database. Pick one to c
   <select name="region" aria-label="Region"><?= options_html($regions, $f['region'], 'Any region') ?></select>
   <select name="series" aria-label="Series"><?= options_html(array_combine($series, $series), $f['series'], 'Any series') ?></select>
   <select name="pack" aria-label="Pack"><?= options_html(array_combine($packs, $packs), $f['pack'], 'Any pack') ?></select>
-  <select name="flag" aria-label="Only"><?= options_html(['onsite' => 'On the site (not hidden)', 'fav' => 'Favourites', 'hidden' => 'Hidden', 'nocover' => 'No cover', 'check' => 'Still to check', 'bundle' => 'Bundles', 'digitaltoo' => 'Also in a launcher'], $f['flag'], 'Everything') ?></select>
+  <select name="flag" aria-label="Only"><?= options_html(['onsite' => 'On the site (not hidden)', 'fav' => 'Favourites', 'faceout' => 'Facing out', 'hidden' => 'Hidden', 'nocover' => 'No cover', 'check' => 'Still to check', 'bundle' => 'Bundles', 'digitaltoo' => 'Also in a launcher'], $f['flag'], 'Everything') ?></select>
   <select name="sort" aria-label="Sort"><?= options_html(['shelf' => 'By console', 'title' => 'Title A–Z', 'released' => 'Newest release', 'updated' => 'Last changed'], $f['sort']) ?></select>
   <noscript><button type="submit">Filter</button></noscript>
   <?php if ($filtering): ?><a class="clear" href="<?= e(url('admin/games')) ?>">Clear</a><?php endif; ?>
@@ -120,6 +121,29 @@ admin_header('Collection', count($all) . ' copies in the database. Pick one to c
 <?php $siteCount = collection_figures($games)['games']; ?>
 <div class="count-line" id="gameColumns"><span><?= count($games) ?> of <?= count($all) ?> <?= plural(count($all), 'copy', 'copies') ?><?php if ($siteCount !== count($games)): ?> · <span title="As the site and the dashboard count them: hidden copies left out, a bundle counted as the packs in it"><?= $siteCount ?> <?= plural($siteCount, 'game') ?> as the site counts them</span><?php endif; ?></span></div>
 
+<?php if ($games): ?>
+<form method="post" action="<?= e(url('admin/flags')) ?>" id="flagForm" data-flags>
+  <?= csrf_field() ?>
+  <input type="hidden" name="back" value="<?= e(http_build_query(array_filter($f))) ?>">
+  <div class="batch-bar" data-batch>
+    <span class="batch-count"><b data-picked>0</b> ticked</span>
+    <span class="batch-group" role="group" aria-label="Favourite">
+      <button type="submit" name="set" value="fav:1" class="small">★ Favourite</button>
+      <button type="submit" name="set" value="fav:" class="small ghost">Not favourite</button>
+    </span>
+    <span class="batch-group" role="group" aria-label="Faces out">
+      <button type="submit" name="set" value="faceOut:1" class="small">Face out</button>
+      <button type="submit" name="set" value="faceOut:0" class="small ghost" title="Stands on its side even when nothing else of its console faces out">On its side</button>
+      <button type="submit" name="set" value="faceOut:" class="small ghost" title="Neither: the shelf decides">Shelf decides</button>
+    </span>
+    <span class="batch-group" role="group" aria-label="Hidden">
+      <button type="submit" name="set" value="hidden:1" class="small ghost">Hide</button>
+      <button type="submit" name="set" value="hidden:" class="small ghost">Show on the site</button>
+    </span>
+    <button type="button" class="link small" data-unpick>Untick all</button>
+    <span class="batch-out muted small" data-batch-out role="status"></span>
+  </div>
+<?php endif; ?>
 <div class="card flush">
   <?php if (!$games): ?>
     <p class="empty">Nothing matches. <a href="<?= e(url('admin/games')) ?>">Show everything</a></p>
@@ -128,7 +152,7 @@ admin_header('Collection', count($all) . ' copies in the database. Pick one to c
     <table class="table games" data-sort="games" data-columns="gameColumns">
       <thead>
         <tr>
-          <th></th><th>Title</th><th data-col="console">Console</th><th data-col="copy">Copy</th><th data-col="region">Region</th>
+          <th class="c-pick"><input type="checkbox" data-pick-all aria-label="Tick every copy listed"></th><th></th><th>Title</th><th data-col="console">Console</th><th data-col="copy">Copy</th><th data-col="region">Region</th>
           <th data-col="released" data-first="desc">Released</th><th data-col="publisher" data-off>Publisher</th><th data-col="developer" data-off>Developer</th>
           <th data-col="genre" data-off>Genre</th><th data-col="series" data-off>Series</th><th data-col="playtime" data-first="desc">Play time</th>
           <th data-col="progress" data-first="desc">Achievements</th><th data-col="lastplayed" data-first="desc">Last played</th>
@@ -137,12 +161,13 @@ admin_header('Collection', count($all) . ' copies in the database. Pick one to c
       </thead>
       <tbody>
       <?php foreach ($games as $g): $links = game_platform_links($g); $st = $stats[$g['id']]; ?>
-        <tr<?= !empty($g['hidden']) ? ' class="is-hidden"' : '' ?>>
+        <tr data-id="<?= e($g['id']) ?>"<?= !empty($g['hidden']) ? ' class="is-hidden"' : '' ?>>
+          <td class="c-pick"><input type="checkbox" name="ids[]" value="<?= e($g['id']) ?>" aria-label="Tick <?= e($g['title']) ?>"></td>
           <td class="c-thumb"><a href="<?= e(url('admin/game?id=' . rawurlencode($g['id']))) ?>" tabindex="-1"><?= cover_thumb($g) ?></a></td>
           <td class="c-title" data-sort="<?= e($sortTitle($g)) ?>">
             <a href="<?= e(url('admin/game?id=' . rawurlencode($g['id']))) ?>"><?= e($g['title']) ?></a>
-            <?php if (!empty($g['fav'])): ?><span class="star" title="Favourite">★</span><?php endif; ?>
-            <?php if (!empty($g['hidden'])): ?><span class="pill">Hidden</span><?php endif; ?>
+            <?= quick_marks($g) ?>
+            <span class="pill" data-hidden-pill<?= empty($g['hidden']) ? ' hidden' : '' ?>>Hidden</span>
             <?php if (!empty($g['check'])): ?><span class="pill warn" title="<?= e($g['check']) ?>">Check</span><?php endif; ?>
             <div class="muted small"><?= e(implode(' · ', array_filter([$g['edition'] ?? null, $g['pack'] ?? null, !empty($g['contains']) ? count($g['contains']) . ' packs inside' : null]))) ?: '<code>' . e($g['id']) . '</code>' ?></div>
           </td>
@@ -167,5 +192,6 @@ admin_header('Collection', count($all) . ' copies in the database. Pick one to c
   </div>
   <?php endif; ?>
 </div>
+<?php if ($games): ?></form><?php endif; ?>
 
 <?php admin_footer(); ?>

@@ -107,10 +107,28 @@
     });
     // "Use it": the synced value back in its box
     $$('[data-use]').forEach(b => b.addEventListener('click', () => {
-      const input = document.getElementById(b.dataset.use);
-      input.value = b.dataset.value;
+      let input = document.getElementById(b.dataset.use);
+      if (input.type === 'checkbox') input.checked = b.dataset.value === '1';
+      else if (input.matches('.seg')) (input = $(`input[value="${b.dataset.value}"]`, input)).checked = true;
+      else input.value = b.dataset.value;
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }));
+    // the parts of the form as tabs: one shown at a time, its tab lit, kept in the address (and across a save)
+    const tabs = $$('[data-tabs] a[data-tab]');
+    const panels = $$('[data-panel]', form);
+    const tabInput = $('[data-tab-input]', form);
+    const showTab = id => {
+      if (!panels.some(p => p.id === id)) id = panels[0]?.id;
+      panels.forEach(p => { p.hidden = p.id !== id; });
+      tabs.forEach(a => { const on = a.hash === `#${id}`; a.classList.toggle('on', on); a.setAttribute('aria-current', on ? 'true' : 'false'); });
+      if (tabInput) tabInput.value = id || '';
+    };
+    tabs.forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      showTab(a.hash.slice(1));
+      history.replaceState(null, '', a.hash);
+    }));
+    showTab(location.hash.slice(1));
     // a synced number changed by hand is yours; set back to the synced value, it is the platform's again
     $$('.synced-field').forEach(f => {
       const input = $('input', f), mode = $('select.mode', f);
@@ -170,6 +188,72 @@
       findBtn.disabled = false;
       findBtn.textContent = 'Find cover again';
     });
+  }
+
+  /* ---------- the collection's quick marks: ★, Faces out and Hidden, on a row or on every copy ticked ---------- */
+  const flagForm = $('form[data-flags]');
+  if (flagForm) {
+    const bar = $('[data-batch]', flagForm), out = $('[data-batch-out]', flagForm);
+    const all = $('[data-pick-all]', flagForm);
+    const picks = () => $$('input[name="ids[]"]', flagForm);
+    let last = null; // the box ticked last, for shift-click ranges
+    const refresh = () => {
+      const ticked = picks().filter(i => i.checked);
+      picks().forEach(i => i.closest('tr').classList.toggle('picked', i.checked));
+      $('[data-picked]', bar).textContent = ticked.length;
+      bar.classList.toggle('idle', !ticked.length);
+      all.checked = ticked.length && ticked.length === picks().length;
+      all.indeterminate = ticked.length > 0 && !all.checked;
+    };
+    flagForm.addEventListener('click', e => {
+      const box = e.target.closest('input[name="ids[]"]');
+      if (!box) return;
+      if (e.shiftKey && last && last !== box) {
+        // in the order the rows stand now, which the sorting may have changed
+        const list = picks(), a = list.indexOf(last), b = list.indexOf(box);
+        list.slice(Math.min(a, b), Math.max(a, b) + 1).forEach(i => { i.checked = box.checked; });
+      }
+      last = box;
+      refresh();
+    });
+    all.addEventListener('change', () => { picks().forEach(i => { i.checked = all.checked; }); refresh(); });
+    $('[data-unpick]', bar).addEventListener('click', () => { picks().forEach(i => { i.checked = false; }); refresh(); });
+
+    // a copy's marks, as the server now has them
+    const show = (id, g) => {
+      const row = $(`tr[data-id="${CSS.escape(id)}"]`, flagForm);
+      if (!row) return;
+      const fav = $('.qmark.fav', row), face = $('.qmark.face', row);
+      fav.classList.toggle('on', g.fav);
+      fav.setAttribute('aria-pressed', g.fav);
+      face.classList.toggle('on', g.faceOut === true);
+      face.classList.toggle('side', g.faceOut === false);
+      face.setAttribute('aria-pressed', g.faceOut === true);
+      face.title = g.faceOut === true ? 'Faces out' : g.faceOut === false ? 'On its side, on purpose' : 'Faces out: the shelf decides';
+      row.classList.toggle('is-hidden', g.hidden);
+      $('[data-hidden-pill]', row).hidden = !g.hidden;
+    };
+    flagForm.addEventListener('submit', async e => {
+      const button = e.submitter;
+      if (!button) return;
+      e.preventDefault();
+      const body = new FormData(flagForm, button);
+      button.classList.add('busy');
+      button.disabled = true;
+      out.textContent = '';
+      try {
+        const r = await fetch(flagForm.action, { method: 'POST', body, credentials: 'same-origin', headers: { Accept: 'application/json' } });
+        const json = await r.json().catch(() => null);
+        if (!r.ok || !json) throw new Error(json?.error || `The server answered ${r.status} without saying why.`);
+        Object.entries(json.games).forEach(([id, g]) => show(id, g));
+        if (button.name === 'set') out.textContent = `Done: ${Object.keys(json.games).length} changed.`;
+      } catch (err) {
+        if (button.name === 'set') out.textContent = err.message; else alert(err.message);
+      }
+      button.classList.remove('busy');
+      button.disabled = false;
+    });
+    refresh();
   }
 
   /* ---------- the dashboard's syncs ---------- */

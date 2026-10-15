@@ -113,6 +113,23 @@ function cover_thumb(array $game, string $class = 'thumb'): string
 }
 
 /**
+ * A copy's Favourite and Faces out, as buttons in the collection's list: each flips it
+ * (admin/flags). Faces out shows a cover when on, a spine when it is No.
+ */
+function quick_marks(array $game): string
+{
+    $fav = !empty($game['fav']);
+    $face = $game['faceOut'] ?? null;
+    $faceTitle = $face === true ? 'Faces out' : ($face === false ? 'On its side, on purpose' : 'Faces out: the shelf decides');
+
+    return '<span class="marks">'
+        . '<button type="submit" name="toggle" value="fav:' . e($game['id']) . '" class="qmark fav' . ($fav ? ' on' : '') . '" aria-pressed="' . ($fav ? 'true' : 'false') . '" title="Favourite" aria-label="Favourite">★</button>'
+        . '<button type="submit" name="toggle" value="faceOut:' . e($game['id']) . '" class="qmark face' . ($face === true ? ' on' : ($face === false ? ' side' : '')) . '" aria-pressed="' . ($face === true ? 'true' : 'false') . '" title="' . e($faceTitle) . '" aria-label="Faces out">'
+        . '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect class="front" x="3" y="1.5" width="10" height="13" rx="1.2"/><rect class="spine" x="6.5" y="1.5" width="3" height="13" rx=".8"/></svg></button>'
+        . '</span>';
+}
+
+/**
  * One field of the edit form, as FIELDS describes it. $state is its field_state
  * row when a sync wrote it: the field then says so, and offers to let later
  * syncs keep it up to date or to keep the value as it is.
@@ -123,12 +140,14 @@ function field_input(string $key, mixed $value, ?array $state = null): string
     $name = "f[$key]";
     $id = 'f-' . $key;
     $type = $f['type'];
+    if ($type === 'bool') {
+        return bool_input($key, $value, field_sync_box($key, $value, $state));
+    }
     $attrs = ' id="' . e($id) . '" name="' . e($name) . '"' . (!empty($f['required']) ? ' required' : '');
 
     $input = match ($type) {
         'textarea' => '<textarea' . $attrs . ' rows="3">' . e($value) . '</textarea>',
         'select' => '<select' . $attrs . '>' . options_html(field_options($key) + ($value !== null && !isset(field_options($key)[$value]) ? [$value => $value] : []), $value, '—') . '</select>',
-        'bool' => '<select' . $attrs . '>' . options_html(['1' => 'Yes', '0' => 'No'], $value === null ? null : ($value ? '1' : '0'), '—') . '</select>',
         'int' => '<input type="number"' . $attrs . ' value="' . e($value) . '">',
         'color' => '<span class="color-pair"><input type="color" value="' . e(preg_match('/^#[0-9a-f]{6}$/i', (string) $value) ? $value : '#000000') . '" data-color-for="' . e($id) . '" aria-label="Pick a colour"><input type="text"' . $attrs . ' value="' . e($value) . '" placeholder="#rrggbb" pattern="#[0-9a-fA-F]{3,8}|"></span>',
         'idlist' => '<input type="text"' . $attrs . ' value="' . e(is_array($value) ? implode(', ', $value) : $value) . '">'
@@ -139,6 +158,51 @@ function field_input(string $key, mixed $value, ?array $state = null): string
         default => '<input type="text"' . $attrs . ' value="' . e($value) . '">',
     };
 
+    return '<div class="field' . ($type === 'json' || $type === 'textarea' ? ' wide' : '') . '">'
+        . '<label for="' . e($id) . '">' . e($f['label']) . '</label>'
+        . $input
+        . (isset($f['help']) ? '<div class="hint">' . e($f['help']) . '</div>' : '')
+        . field_sync_box($key, $value, $state)
+        . '</div>';
+}
+
+/**
+ * A bool field as a switch: on, or left out. One whose No says something (FIELDS' "no"), or that
+ * is No now, gets Yes, No and neither instead, so the No isn't lost by saving.
+ */
+function bool_input(string $key, mixed $value, string $sync = ''): string
+{
+    $f = FIELDS[$key];
+    $value = $value === null ? null : (bool) $value;
+    $name = "f[$key]";
+    $id = 'f-' . $key;
+    $hint = isset($f['help']) ? '<div class="hint">' . e($f['help']) . '</div>' : '';
+
+    if (empty($f['no']) && $value !== false) {
+        return '<div class="field toggle">'
+            . '<label class="switch"><input type="hidden" name="' . e($name) . '" value="">'
+            . '<input type="checkbox" role="switch" id="' . e($id) . '" name="' . e($name) . '" value="1"' . ($value ? ' checked' : '') . '>'
+            . '<span class="track" aria-hidden="true"></span><span>' . e($f['label']) . '</span></label>'
+            . $hint . $sync . '</div>';
+    }
+
+    $current = $value === null ? '' : ($value ? '1' : '0');
+    $choices = '';
+    foreach (['' => '—', '1' => 'Yes', '0' => 'No'] as $v => $label) {
+        $choices .= '<label class="' . ($v === '' ? 'unset' : ($v === '1' ? 'yes' : 'no')) . '"' . ($v === '' ? ' title="Neither: left out"' : '') . '>'
+            . '<input type="radio" name="' . e($name) . '" value="' . $v . '"' . ($v === $current ? ' checked' : '') . '><span>' . $label . '</span></label>';
+    }
+
+    return '<div class="field toggle">'
+        . '<div class="tri"><span class="tri-label" id="' . e($id) . '-label">' . e($f['label']) . '</span>'
+        . '<span class="seg" id="' . e($id) . '" role="radiogroup" aria-labelledby="' . e($id) . '-label">' . $choices . '</span></div>'
+        . $hint . $sync . '</div>';
+}
+
+/** What a sync wrote in a field, and whether it may write it again: under the field's input. */
+function field_sync_box(string $key, mixed $value, ?array $state): string
+{
+    $id = 'f-' . $key;
     $sync = '';
     if ($state) {
         $synced = from_json($state['synced_value']);
@@ -151,12 +215,7 @@ function field_input(string $key, mixed $value, ?array $state = null): string
             . '</div>';
     }
 
-    return '<div class="field' . ($type === 'json' || $type === 'textarea' ? ' wide' : '') . '">'
-        . '<label for="' . e($id) . '">' . e($f['label']) . '</label>'
-        . $input
-        . (isset($f['help']) ? '<div class="hint">' . e($f['help']) . '</div>' : '')
-        . $sync
-        . '</div>';
+    return $sync;
 }
 
 /**
