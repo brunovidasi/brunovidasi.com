@@ -94,6 +94,7 @@ const FIELDS = [
     'spineColor' => ['label' => 'Spine colour', 'group' => 'case', 'type' => 'color'],
     'bigCase'    => ['label' => 'Big case', 'group' => 'case', 'type' => 'bool', 'help' => 'The thick PC cases of the early 2000s.'],
     'clearCase'  => ['label' => 'Clear case', 'group' => 'case', 'type' => 'bool'],
+    'jewelCase'  => ['label' => 'Jewel case', 'group' => 'case', 'type' => 'bool', 'help' => 'A CD jewel case, like a music CD\'s: the PC games of the 90s.'],
     'faceOut'    => ['label' => 'Faces out', 'group' => 'case', 'type' => 'bool'],
     'topLabel'   => ['label' => 'Top label', 'group' => 'case', 'type' => 'bool'],
     'spine'      => ['label' => 'Spine', 'group' => 'case', 'type' => 'json', 'help' => 'How the spine is printed: {"style": "ea-pcgame", "logo": "logos/…", "title", "sub", "top", "foot": […], "color"…}'],
@@ -139,6 +140,14 @@ const CONSOLES = [
     'pc' => 'PC', 'xone' => 'Xbox One', 'x360' => 'Xbox 360', 'xbox' => 'Xbox',
 ];
 
+/** Their short names, as js/consoles.js has them, but with the Xbox in front of One and 360. */
+const CONSOLE_SHORT = [
+    'ps5' => 'PS5', 'ps4' => 'PS4', 'ps3' => 'PS3', 'ps2' => 'PS2', 'ps1' => 'PS1',
+    'switch2' => 'Switch 2', 'switch' => 'Switch', 'wiiu' => 'Wii U', '3ds' => '3DS', 'wii' => 'Wii',
+    'ds' => 'DS', 'gba' => 'GBA', 'gbc' => 'GBC', 'snes' => 'SNES', 'gb' => 'GB',
+    'pc' => 'PC', 'xone' => 'Xbox One', 'x360' => 'Xbox 360', 'xbox' => 'Xbox',
+];
+
 const CONSOLE_FAMILIES = [
     'playstation' => ['ps5', 'ps4', 'ps3', 'ps2', 'ps1'],
     'nintendo'    => ['switch2', 'switch', 'wiiu', '3ds', 'wii', 'ds', 'gba', 'gbc', 'snes', 'gb'],
@@ -170,6 +179,11 @@ function pack_options(): array { return array_combine(PACKS, PACKS); }
 function console_name(?string $id): string
 {
     return CONSOLES[$id] ?? (string) $id;
+}
+
+function console_short(?string $id): string
+{
+    return CONSOLE_SHORT[$id] ?? console_name($id);
 }
 
 function console_family(string $id): string

@@ -46,6 +46,9 @@ window.BIGBOX = { w: 190, h: 235, d: 50 };
 /* The thick plastic PC cases of the early 2000s (EA's PC GAME and PC CD ones): a DVD case's height, twice its depth. */
 window.PCBIGCASE = { w: 135, h: 190, d: 28 };
 
+/* A PC game of the 90s in a CD jewel case, the same clear case as a music CD's. */
+window.PCJEWEL = { w: 142, h: 125, d: 10 };
+
 /* Where a PC copy activates — for the PC games still to come. */
 window.LAUNCHERS = {
   steam:     { name: 'Steam',           bg: '#171a21', fg: '#66c0f4', glyph: '◉' },

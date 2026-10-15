@@ -32,9 +32,10 @@
      with no rim: it keeps its real width and its own art fills it. */
   function layout(g, s) {
     const c = C()[styleOf(g)];
-    // a PC game in a thick plastic case (g.bigCase) keeps its case's kind, only bigger
-    const m = ownBox(g) || (g.bigCase && window.PCBIGCASE) || c;
-    const kind = ownBox(g) ? 'box' : c.kind;
+    // a PC game in a thick plastic case (g.bigCase) keeps its case's kind, only bigger; one in a CD jewel case (g.jewelCase) is one
+    const jewel = !ownBox(g) && g.jewelCase;
+    const m = ownBox(g) || (g.bigCase && window.PCBIGCASE) || (jewel && window.PCJEWEL) || c;
+    const kind = ownBox(g) ? 'box' : jewel ? 'jewel' : c.kind;
     // a clear DS case is a little thicker than the black ones
     const h = m.h * s, d = (g.clearCase && !ownBox(g) && c.dClear || m.d) * s;
     const r = g.cover && g.cover.ratio;
@@ -42,8 +43,9 @@
     if (kind === 'keep' && !g.steelbook) { const t = m.w * s * 0.018; rim = [t, t, t, m.w * s * 0.045]; }
     // a PS3 case is clear, with a moulded strip across its top above the cover (Blu-ray Disc and PLAYSTATION 3 raised in it)
     if (ps3Case(g)) rim[0] = h * 0.065;
-    // a PlayStation jewel case shows its black tray down a wide hinge on the left
-    if (kind === 'jewel') { const t = m.w * s * 0.012; rim = [t, t, t, m.w * s * (styleOf(g) === 'ps1' ? 0.1 : 0.07)]; }
+    // a PlayStation jewel case shows its black tray down a wide hinge on the left; a clear one its hinge, the booklet's 120 mm
+    // square in the 125 mm high lid
+    if (kind === 'jewel') { const t = m.w * s * (jewel ? 0.018 : 0.012); rim = [t, t, t, m.w * s * (styleOf(g) === 'ps1' || jewel ? 0.1 : 0.07)]; }
     const ih = h - rim[0] - rim[2];
     const iw = r && !g.cover.plain && !g.steelbook ? ih * r : m.w * s - rim[1] - rim[3];
     return { w: iw + rim[1] + rim[3], h, d, kind, c, ix: rim[3], iy: rim[0], iw, ih };
@@ -1165,7 +1167,7 @@
   /* ---------- what is inside ---------- */
   // a PAL or Japanese SNES game comes in the Super Famicom's shell (CART.sfc)
   const mediaType = g => {
-    if (g.big || g.bigCase) return 'cd';
+    if (g.big || g.bigCase || g.jewelCase) return 'cd';
     const m = C()[styleOf(g)].media;
     return m === 'snes' && ['PAL', 'NTSC-J'].includes(window.REGIONS[g.region]?.std) ? 'sfc' : m;
   };
@@ -1210,7 +1212,7 @@
   };
   let discN = 0;
   function discHTML(g, s, type) {
-    const T = g.big ? { face: 'silver', mould: 'PC', fmt: 'CD-ROM' } : DISC[styleOf(g)] || { face: 'silver', mould: '', fmt: '' };
+    const T = g.big || g.jewelCase ? { face: 'silver', mould: 'PC', fmt: 'CD-ROM' } : DISC[styleOf(g)] || { face: 'silver', mould: '', fmt: '' };
     const id = 'dsc' + ++discN;
     // the same marks every time for the same game
     let seed = [...String(g.id || g.title)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 2147483647, 7) || 7;

@@ -33,7 +33,7 @@ function nullable(string $value): ?string
     return $value === '' ? null : $value;
 }
 
-/** Takes a page name ('admin_games?x=1') or a path already under the app ('/games/admin'). */
+/** Takes a page name ('admin/games?x=1') or a path already under the app ('/games/admin'). */
 function redirect(string $path): never
 {
     $isAbsolute = str_starts_with($path, 'http') || str_starts_with($path, app_path());
@@ -63,10 +63,10 @@ function take_flashes(): array
     return $flashes;
 }
 
-/** The current page's name, e.g. 'admin_games'. */
+/** The current page's name as its URL has it: public/admin_games.php is 'admin/games'. */
 function current_page(): string
 {
-    return basename($_SERVER['SCRIPT_NAME'] ?? '', '.php');
+    return preg_replace('/^admin_/', 'admin/', basename($_SERVER['SCRIPT_NAME'] ?? '', '.php'));
 }
 
 function json_response(mixed $data, int $status = 200): never

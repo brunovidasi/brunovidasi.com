@@ -18,7 +18,7 @@ header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 header('Referrer-Policy: no-referrer');
 
-$next = url('admin_settings') . '?tab=connections';
+$next = url('admin/settings') . '?tab=connections';
 ?>
 <!DOCTYPE html>
 <html lang="en">

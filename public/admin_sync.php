@@ -25,5 +25,5 @@ $last = latest_ok_sync_run($platform);
 json_response($result + [
     'platform'  => $platform,
     'last'      => $last ? time_ago($last['finished_at']) : null,
-    'run_url'   => $result['run_id'] ? url('admin_sync_run?id=' . $result['run_id']) : null,
+    'run_url'   => $result['run_id'] ? url('admin/sync_run?id=' . $result['run_id']) : null,
 ], $result['status'] === 'error' ? 502 : 200);

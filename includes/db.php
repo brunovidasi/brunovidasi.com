@@ -40,7 +40,9 @@ function db(): PDO
  * can't add them to a database that already exists, so they go here rather
  * than into schema.sql.
  */
-const MIGRATED_COLUMNS = [];
+const MIGRATED_COLUMNS = [
+    'hardware' => ['released' => 'TEXT', 'manufacturer' => 'TEXT', 'specs_json' => 'TEXT', 'photo_json' => 'TEXT'],
+];
 
 function run_migrations(PDO $db): void
 {

@@ -46,7 +46,7 @@ final class XboxSync extends PlatformSync
     /** Where Microsoft sends you back to; registered as the app's redirect URI. */
     public static function appRedirectUri(): string
     {
-        return base_url() . '/admin_connect';
+        return base_url() . '/admin/connect';
     }
 
     /** The "Connect Xbox" button's address: Microsoft's sign-in for your own app. */

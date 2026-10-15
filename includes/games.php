@@ -107,6 +107,12 @@ function all_games(): array
     return $games;
 }
 
+/** When each copy went into the collection (its row's created_at, UTC), keyed by id. */
+function games_added(): array
+{
+    return db()->query('SELECT id, created_at FROM games')->fetchAll(PDO::FETCH_KEY_PAIR);
+}
+
 function find_game(string $id): ?array
 {
     $row = find_game_row($id);

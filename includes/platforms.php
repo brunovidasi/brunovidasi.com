@@ -289,3 +289,60 @@ function game_platform_links(array $game): array
 
     return $out;
 }
+
+/**
+ * What the platforms say about each copy, for the admin's collection list: its
+ * play time (minutes), achievements or trophies earned and in all, and when it
+ * was last played, added up over every record it is tied to, with the values
+ * corrected by hand put in. game id => [minutes, earned, total, lastPlayed].
+ */
+function games_play_stats(array $games): array
+{
+    // where each platform keeps the figures, by record list
+    $paths = [
+        'steam'    => ['games' => ['playtime.total', 'achievements.unlocked', 'achievements.total', 'lastPlayed']],
+        'psn'      => ['titles' => ['playtime', null, null, 'lastPlayed'], 'trophySets' => [null, 'earnedTotal', 'total', null]],
+        'xbox'     => ['titles' => ['playtime', 'achievements.earned', 'achievements.total', 'lastPlayed']],
+        'nintendo' => ['titles' => ['playtime', null, null, 'lastPlayed']],
+        'ea'       => ['games' => ['playtime', 'achievements.earned', 'achievements.total', 'lastPlayed']],
+        'rockstar' => ['games' => [null, 'achievements.earned', null, 'lastPlayed']],
+    ];
+    $records = [];
+    foreach ($paths as $platform => $lists) {
+        $overrides = platform_overrides($platform);
+        foreach (array_keys($lists) as $collection) {
+            foreach (platform_records($platform, $collection) as $extId => $record) {
+                $records[$platform][$collection][$extId] = apply_overrides($record, $overrides[$collection . "\0" . $extId] ?? []);
+            }
+        }
+    }
+
+    $out = [];
+    foreach ($games as $g) {
+        $stats = ['minutes' => null, 'earned' => null, 'total' => null, 'lastPlayed' => null];
+        foreach (game_platform_links($g) as $platform => $lists) {
+            foreach ($lists as $collection => $ids) {
+                [$minutes, $earned, $total, $last] = $paths[$platform][$collection] ?? [null, null, null, null];
+                foreach ($ids as $extId) {
+                    $r = $records[$platform][$collection][$extId] ?? null;
+                    if (!$r) {
+                        continue;
+                    }
+                    foreach (['minutes' => $minutes, 'earned' => $earned, 'total' => $total] as $k => $path) {
+                        $v = $path ? path_get($r, $path) : null;
+                        if (is_numeric($v)) {
+                            $stats[$k] = ($stats[$k] ?? 0) + (int) $v;
+                        }
+                    }
+                    $v = $last ? path_get($r, $last) : null;
+                    if (is_string($v) && $v > (string) $stats['lastPlayed']) {
+                        $stats['lastPlayed'] = $v;
+                    }
+                }
+            }
+        }
+        $out[$g['id']] = $stats;
+    }
+
+    return $out;
+}

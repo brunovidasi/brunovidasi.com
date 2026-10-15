@@ -37,6 +37,15 @@ DirectoryIndex index.php index.html
     RewriteCond %{DOCUMENT_ROOT}/games/public/api/$1.php -f
     RewriteRule ^api/([A-Za-z0-9_]+)$ public/api/$1.php [L,QSA]
 
+    # The admin's pages: /admin/games -> public/admin_games.php
+    RewriteCond %{DOCUMENT_ROOT}/games/public/admin_$1.php -f
+    RewriteRule ^admin/([A-Za-z0-9_]+)$ public/admin_$1.php [L,QSA]
+
+    # Their old addresses, /admin_games and /admin_games.php, redirect there (GET only, as below).
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteCond %{DOCUMENT_ROOT}/games/public/admin_$1.php -f
+    RewriteRule ^admin_([A-Za-z0-9_]+)(?:\.php)?$ /games/admin/$1 [L,R=301,NE]
+
     # The pages, linked without .php: /admin -> public/admin.php
     RewriteCond %{DOCUMENT_ROOT}/games/public/$1.php -f
     RewriteRule ^([A-Za-z0-9_]+)$ public/$1.php [L,QSA]

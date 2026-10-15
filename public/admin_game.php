@@ -31,7 +31,7 @@ if (is_post()) {
     if ($action === 'delete' && !$isNew) {
         delete_game($id);
         flash("{$game['title']} was deleted." . (game_platform_links($game) ? ' It was tied to a platform: the next sync may add it back (hide it instead to keep it off the site).' : ''));
-        redirect('admin_games');
+        redirect('admin/games');
     }
 
     $old = $game;
@@ -168,7 +168,7 @@ if (is_post()) {
         });
 
         flash($isNew ? "{$new['title']} was added." : "{$new['title']} was saved.");
-        redirect('admin_game?id=' . rawurlencode($new['id']));
+        redirect('admin/game?id=' . rawurlencode($new['id']));
     }
 
     // show the form again with what was typed
@@ -284,7 +284,7 @@ foreach ($errors as $error) {
     </div>
 
     <aside class="edit-side">
-      <section class="card cover-card" id="g-cover" data-find="<?= e(url('admin_cover')) ?>" data-id="<?= e($isNew ? '' : $id) ?>">
+      <section class="card cover-card" id="g-cover" data-find="<?= e(url('admin/cover')) ?>" data-id="<?= e($isNew ? '' : $id) ?>">
         <h2>Cover</h2>
         <div class="cover-preview">
           <?php if ($coverFile && is_file(public_dir() . '/' . $coverFile)): ?>
@@ -353,7 +353,7 @@ foreach ($errors as $error) {
             <?php foreach ($history as $h): ?>
               <li>
                 <span class="dot <?= e($h['platform']) ?>"></span>
-                <a href="<?= e(url('admin_sync_run?id=' . $h['run_id'])) ?>"><?= e(format_date($h['started_at'])) ?></a>
+                <a href="<?= e(url('admin/sync_run?id=' . $h['run_id'])) ?>"><?= e(format_date($h['started_at'])) ?></a>
                 <?= e(change_kind_label($h['kind'])) ?><?= $h['field'] ? ' <code>' . e($h['field']) . '</code>' : '' ?>
                 <?php if ($h['status'] === 'reverted'): ?><span class="pill reverted">Undone</span><?php endif; ?>
               </li>
@@ -366,7 +366,7 @@ foreach ($errors as $error) {
 
   <div class="save-bar">
     <button type="submit" name="action" value="save" class="primary"><?= $isNew ? 'Add the game' : 'Save' ?></button>
-    <a class="button ghost" href="<?= e(url('admin_games')) ?>">Back to the collection</a>
+    <a class="button ghost" href="<?= e(url('admin/games')) ?>">Back to the collection</a>
     <?php if (!$isNew): ?>
       <button type="submit" name="action" value="delete" class="danger" formnovalidate data-confirm="Delete <?= e($game['title']) ?>? <?= $links ? 'It is tied to a platform, so the next sync may add it back: hiding it keeps it off the site instead.' : 'This cannot be undone.' ?>">Delete</button>
     <?php endif; ?>

@@ -24,7 +24,7 @@ if (is_post() && post('action') === 'revert') {
     } catch (Throwable $e) {
         flash($e->getMessage(), 'error');
     }
-    redirect('admin_sync_run?id=' . $run['id']);
+    redirect('admin/sync_run?id=' . $run['id']);
 }
 
 if (query('snapshot') === '1') {
@@ -95,7 +95,7 @@ $canRevert = can_revert_run($run);
 admin_header(
     platform_name($run['platform']) . ' sync, ' . format_datetime($run['started_at']),
     ucfirst($run['trigger_source']) . ($secs !== null ? " · took $secs s" : '') . ' · ' . $run['api_calls'] . ' ' . plural((int) $run['api_calls'], 'request'),
-    '<a class="button ghost" href="' . e(url('admin_sync_runs')) . '">All syncs</a>'
+    '<a class="button ghost" href="' . e(url('admin/sync_runs')) . '">All syncs</a>'
 );
 ?>
 
@@ -113,7 +113,7 @@ admin_header(
   </div>
   <div class="run-actions">
     <?php if ($snapshot !== false): ?>
-      <a class="button ghost" href="<?= e(url('admin_sync_run?id=' . $run['id'] . '&snapshot=1')) ?>">Download what <?= e(PLATFORMS[$run['platform']]['short']) ?> answered <span class="muted">(<?= e(format_bytes((int) $snapshot)) ?>)</span></a>
+      <a class="button ghost" href="<?= e(url('admin/sync_run?id=' . $run['id'] . '&snapshot=1')) ?>">Download what <?= e(PLATFORMS[$run['platform']]['short']) ?> answered <span class="muted">(<?= e(format_bytes((int) $snapshot)) ?>)</span></a>
     <?php endif; ?>
     <?php if ($canRevert): ?>
       <form method="post" class="inline">
@@ -139,7 +139,7 @@ admin_header(
           <tr>
             <th scope="row">
               <?php if ($first['game_id'] && game_exists($first['game_id'])): ?>
-                <a href="<?= e(url('admin_game?id=' . rawurlencode($first['game_id']))) ?>"><?= e($first['label'] ?? $first['game_id']) ?></a>
+                <a href="<?= e(url('admin/game?id=' . rawurlencode($first['game_id']))) ?>"><?= e($first['label'] ?? $first['game_id']) ?></a>
               <?php else: ?>
                 <?= e($first['label'] ?? $first['ext_id']) ?>
               <?php endif; ?>

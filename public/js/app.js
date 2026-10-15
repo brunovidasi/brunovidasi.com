@@ -64,6 +64,8 @@
     publisher: { label: 'Publisher', value: g => g.publisher || '' },
     genre:     { label: 'Genre',     value: g => g.genre || '' },
     // minutes played, all told, by what Steam, PlayStation Network, Nintendo, Xbox and the EA app say: unplayed or untracked go last
+    // when the copy went into the collection (added, from the API)
+    added:     { label: 'Added',     value: g => g.added || '', plain: true },
     played:    { label: 'Played',    value: g => { const m = minutesPlayed(g); return m ? String(m).padStart(8, '0') : ''; }, plain: true },
     // a collection's games, each in the order its copies came out
     // (a game can file under another date than its own, g.shelfDate: The Sims Deluxe Edition beside The Sims)
@@ -71,10 +73,12 @@
   };
   const MENU = {
     console: { key: GROUP, dir: 'asc', label: 'By console' },
+    added: { key: 'added', dir: 'desc', label: 'Recently added', short: 'Recent' },
+    played: { key: 'played', dir: 'desc', label: 'Most played first', short: 'Most played' },
     title: { key: 'title', dir: 'asc', label: 'Title A–Z' },
+    titleDesc: { key: 'title', dir: 'desc', label: 'Title Z–A' },
     newest: { key: 'released', dir: 'desc', label: 'Newest release first', short: 'Newest first' },
     oldest: { key: 'released', dir: 'asc', label: 'Oldest release first', short: 'Oldest first' },
-    played: { key: 'played', dir: 'desc', label: 'Most played first', short: 'Most played' },
   };
   const validSort = s => s && SORT_BY[s.key] && (s.key !== 'group' || CFG) && (s.dir === 'asc' || s.dir === 'desc') ? { key: s.key, dir: s.dir } : { key: GROUP, dir: 'asc' };
   function sortList(list, { key, dir }) {

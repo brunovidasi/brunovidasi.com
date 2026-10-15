@@ -9,6 +9,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/fields.php';
 require_once __DIR__ . '/games.php';
+require_once __DIR__ . '/hardware.php';
 require_once __DIR__ . '/platforms.php';
 require_once __DIR__ . '/site.php';
 require_once __DIR__ . '/http.php';

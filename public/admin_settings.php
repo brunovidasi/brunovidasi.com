@@ -62,7 +62,7 @@ if(/nintendo\.com$/.test(h)){alert('Click it on the "Select this person" page, a
 if(confirm('Send your PlayStation sign-in to your game shelf? This opens Sony\'s page for it: click the bookmark again there.'))location.href='https://ca.account.sony.com/api/v1/ssocookie';})();
 JS;
 
-    return 'javascript:' . rawurlencode(sprintf(str_replace("\n", '', $js), json_encode(base_url() . '/admin_connect')));
+    return 'javascript:' . rawurlencode(sprintf(str_replace("\n", '', $js), json_encode(base_url() . '/admin/connect')));
 }
 
 /* ---------- coming back from Microsoft's "Connect Xbox" and "Sign in through Steam" (through admin_connect) ---------- */
@@ -99,7 +99,7 @@ if (!is_post() && $tab === 'connections' && in_array($oauth, ['xbox', 'steam'], 
     } catch (Throwable $e) {
         flash(platform_name($oauth) . ': ' . $e->getMessage(), 'error');
     }
-    redirect('admin_settings?tab=connections#' . $oauth);
+    redirect('admin/settings?tab=connections#' . $oauth);
 }
 
 /* ---------- saving ---------- */
@@ -258,7 +258,7 @@ if (is_post()) {
     }
 
     if (!$errors) {
-        redirect('admin_settings?tab=' . $tab);
+        redirect('admin/settings?tab=' . $tab);
     }
 }
 
@@ -279,7 +279,7 @@ foreach ($errors as $error) {
 
 <nav class="tabs" aria-label="Settings">
   <?php foreach (SETTINGS_TABS as $key => $label): ?>
-    <a href="<?= e(url('admin_settings?tab=' . $key)) ?>"<?= $tab === $key ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
+    <a href="<?= e(url('admin/settings?tab=' . $key)) ?>"<?= $tab === $key ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
   <?php endforeach; ?>
 </nav>
 
@@ -393,7 +393,7 @@ foreach ($errors as $error) {
 
       <?php if ($platform === 'steam'): ?>
         <p class="quick">
-          <a class="button" href="<?= e(SteamSync::signInUrl(base_url() . '/admin_connect?oauth=steam&state=' . connect_state('steam_return')['state'])) ?>">Sign in through Steam</a>
+          <a class="button" href="<?= e(SteamSync::signInUrl(base_url() . '/admin/connect?oauth=steam&state=' . connect_state('steam_return')['state'])) ?>">Sign in through Steam</a>
           <span class="muted small">Fills in your SteamID. The Web API key is still pasted once below: Steam has no way to hand it over.</span>
         </p>
       <?php elseif ($platform === 'xbox'): ?>
@@ -410,7 +410,7 @@ foreach ($errors as $error) {
             <li>Name it anything (<i><?= e(site_settings()['name']) ?></i>). Under <i>Supported account types</i> pick <b>Personal Microsoft accounts only</b>.</li>
             <li>Under <i>Redirect URI</i> pick <b>Web</b> and give it:
               <div class="copy-row"><input type="text" readonly value="<?= e(XboxSync::appRedirectUri()) ?>" id="xboxRedirect" aria-label="Redirect URI"><button type="button" data-copy="xboxRedirect">Copy</button></div>
-              <?php if (!is_production()): ?><span class="muted small">When the site is online, add <code>https://brunovida.si/games/admin_connect</code> too (<i>Authentication</i> → <i>Add URI</i>).</span><?php endif; ?></li>
+              <?php if (!is_production()): ?><span class="muted small">When the site is online, add <code>https://brunovida.si/games/admin/connect</code> too (<i>Authentication</i> → <i>Add URI</i>).</span><?php endif; ?></li>
             <li><i>Register</i>, and copy the <b>Application (client) ID</b> from its page.</li>
             <li>In <i>Certificates &amp; secrets</i>, make a <i>New client secret</i> (24 months is the longest) and copy its <b>Value</b>. When it runs out, make a new one and save it here.</li>
           </ol>

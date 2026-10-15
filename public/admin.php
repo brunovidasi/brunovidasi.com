@@ -40,17 +40,17 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
 ?>
 
 <section class="stats" aria-label="The collection in figures">
-  <a class="stat big" href="<?= e(url('admin_games?flag=onsite')) ?>"><b><?= number_format($fig['games']) ?></b><span>Games</span></a>
-  <a class="stat" href="<?= e(url('admin_games?format=physical&flag=onsite')) ?>"><b><?= number_format($fig['physical']) ?></b><span>Physical</span></a>
-  <a class="stat" href="<?= e(url('admin_games?format=digital&flag=onsite')) ?>"><b><?= number_format($fig['digital']) ?></b><span>Digital</span></a>
+  <a class="stat big" href="<?= e(url('admin/games?flag=onsite')) ?>"><b><?= number_format($fig['games']) ?></b><span>Games</span></a>
+  <a class="stat" href="<?= e(url('admin/games?format=physical&flag=onsite')) ?>"><b><?= number_format($fig['physical']) ?></b><span>Physical</span></a>
+  <a class="stat" href="<?= e(url('admin/games?format=digital&flag=onsite')) ?>"><b><?= number_format($fig['digital']) ?></b><span>Digital</span></a>
   <a class="stat" href="#byConsole"><b><?= count($fig['consoles']) ?></b><span>Consoles</span></a>
   <?php foreach ($fig['families'] as $family => $n): ?>
-    <a class="stat fam-<?= e($family) ?>" href="<?= e(url('admin_games?console=' . rawurlencode('@' . $family) . '&flag=onsite')) ?>"><b><?= $n ?></b><span><?= e($familyNames[$family] ?? $family) ?></span></a>
+    <a class="stat fam-<?= e($family) ?>" href="<?= e(url('admin/games?console=' . rawurlencode('@' . $family) . '&flag=onsite')) ?>"><b><?= $n ?></b><span><?= e($familyNames[$family] ?? $family) ?></span></a>
   <?php endforeach; ?>
-  <a class="stat add" href="<?= e(url('admin_game')) ?>"><b aria-hidden="true">+</b><span>Add a game</span></a>
+  <a class="stat add" href="<?= e(url('admin/game')) ?>"><b aria-hidden="true">+</b><span>Add a game</span></a>
 </section>
 
-<section class="card sync-board" id="syncBoard" data-endpoint="<?= e(url('admin_sync')) ?>">
+<section class="card sync-board" id="syncBoard" data-endpoint="<?= e(url('admin/sync')) ?>">
   <div class="card-head">
     <h2>Syncs</h2>
     <button type="button" class="primary" data-sync-all>Sync all</button>
@@ -75,9 +75,9 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
           <dt>Last synced</dt>
           <dd data-last><?php if ($lastOk): ?><span title="<?= e(format_datetime($lastOk['finished_at'])) ?>"><?= e(time_ago($lastOk['finished_at'])) ?></span><?php elseif ($account): ?><span title="Imported from the old JSON file">From the old file, <?= e(format_date($account['synced'] ?? null)) ?></span><?php else: ?>Never<?php endif; ?></dd>
           <?php if ($last && $last['status'] === 'error'): ?>
-            <dt>Last try</dt><dd class="error-text"><a href="<?= e(url('admin_sync_run?id=' . $last['id'])) ?>"><?= e($last['message']) ?></a></dd>
+            <dt>Last try</dt><dd class="error-text"><a href="<?= e(url('admin/sync_run?id=' . $last['id'])) ?>"><?= e($last['message']) ?></a></dd>
           <?php elseif ($lastOk): ?>
-            <dt>Result</dt><dd><a href="<?= e(url('admin_sync_run?id=' . $lastOk['id'])) ?>"><?= e($lastOk['message']) ?></a></dd>
+            <dt>Result</dt><dd><a href="<?= e(url('admin/sync_run?id=' . $lastOk['id'])) ?>"><?= e($lastOk['message']) ?></a></dd>
           <?php endif; ?>
         </dl>
         <p class="sync-out" data-out aria-live="polite"></p>
@@ -85,7 +85,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
           <?php if ($connected): ?>
             <button type="button" data-sync="<?= e($platform) ?>">Sync <?= e($p['short']) ?></button>
           <?php else: ?>
-            <a class="button ghost" href="<?= e(url('admin_settings?tab=connections#' . $platform)) ?>">Connect</a>
+            <a class="button ghost" href="<?= e(url('admin/settings?tab=connections#' . $platform)) ?>">Connect</a>
           <?php endif; ?>
           <?php if ($p['unofficial']): ?><span class="muted small" title="Undocumented: the platform can change it at any time, and every sync is kept so one can be undone.">Unofficial API</span><?php endif; ?>
         </footer>
@@ -93,9 +93,9 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
     <?php endforeach; ?>
   </div>
   <?php if ($cronUrl): ?>
-    <p class="muted small">Cron: <?= $lastCron ? 'last ran ' . e(time_ago($lastCron['started_at'])) : 'not run yet' ?> · the address is in <a href="<?= e(url('admin_settings?tab=sync')) ?>">Settings → Sync</a>.</p>
+    <p class="muted small">Cron: <?= $lastCron ? 'last ran ' . e(time_ago($lastCron['started_at'])) : 'not run yet' ?> · the address is in <a href="<?= e(url('admin/settings?tab=sync')) ?>">Settings → Sync</a>.</p>
   <?php else: ?>
-    <p class="muted small">No cron address yet: make one in <a href="<?= e(url('admin_settings?tab=sync')) ?>">Settings → Sync</a> to sync on a schedule.</p>
+    <p class="muted small">No cron address yet: make one in <a href="<?= e(url('admin/settings?tab=sync')) ?>">Settings → Sync</a> to sync on a schedule.</p>
   <?php endif; ?>
 </section>
 
@@ -106,16 +106,16 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
       <li class="warn"><b><?= count($missingFiles) ?></b> <?= plural(count($missingFiles), 'cover') ?> named in the database <?= count($missingFiles) === 1 ? 'is' : 'are' ?> not in <code>public/covers/</code> on this server yet<?= is_production() ? ': upload the covers folder by FTP' : '' ?>.</li>
     <?php endif; ?>
     <?php if ($psnDays !== null && $psnDays < 14): ?>
-      <li class="warn">The PSN sign-in runs out in <?= max(0, $psnDays) ?> <?= plural(max(0, $psnDays), 'day') ?>: <a href="<?= e(url('admin_settings?tab=connections#psn')) ?>">connect it again</a> with a new NPSSO token.</li>
+      <li class="warn">The PSN sign-in runs out in <?= max(0, $psnDays) ?> <?= plural(max(0, $psnDays), 'day') ?>: <a href="<?= e(url('admin/settings?tab=connections#psn')) ?>">connect it again</a> with a new NPSSO token.</li>
     <?php endif; ?>
     <?php if ($noCover): ?>
-      <li><a href="<?= e(url('admin_games?flag=nocover')) ?>"><b><?= count($noCover) ?></b> <?= plural(count($noCover), 'game') ?> without a cover</a></li>
+      <li><a href="<?= e(url('admin/games?flag=nocover')) ?>"><b><?= count($noCover) ?></b> <?= plural(count($noCover), 'game') ?> without a cover</a></li>
     <?php endif; ?>
     <?php if ($checks): ?>
-      <li><a href="<?= e(url('admin_games?flag=check')) ?>"><b><?= count($checks) ?></b> <?= plural(count($checks), 'game') ?> with something still to check</a></li>
+      <li><a href="<?= e(url('admin/games?flag=check')) ?>"><b><?= count($checks) ?></b> <?= plural(count($checks), 'game') ?> with something still to check</a></li>
     <?php endif; ?>
     <?php if ($hidden): ?>
-      <li><a href="<?= e(url('admin_games?flag=hidden')) ?>"><b><?= count($hidden) ?></b> hidden from the site</a></li>
+      <li><a href="<?= e(url('admin/games?flag=hidden')) ?>"><b><?= count($hidden) ?></b> hidden from the site</a></li>
     <?php endif; ?>
     <?php if (!$unmatched && !$missingFiles && !$noCover && !$checks): ?>
       <li class="muted">Nothing. Everything synced is tied to a copy.</li>
@@ -129,8 +129,8 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
       <?php foreach ($games as $g): ?><option value="<?= e($g['id']) ?>"><?= e($g['title'] . ' · ' . console_name($g['console'])) ?></option><?php endforeach; ?>
     </datalist>
     <div class="table-wrap">
-      <table class="table compact">
-        <thead><tr><th>Platform</th><th>Game</th><th>Why</th><th>Tie to</th><th></th></tr></thead>
+      <table class="table compact" data-sort="unmatched">
+        <thead><tr><th>Platform</th><th>Game</th><th>Why</th><th data-nosort>Tie to</th><th></th></tr></thead>
         <tbody>
         <?php foreach ($unmatched as $u): $cands = json_column($u['candidates_json']); ?>
           <tr>
@@ -138,7 +138,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
             <td><?= e($u['name']) ?><div class="muted small"><code><?= e($u['ext_id']) ?></code></div></td>
             <td><?= $u['reason'] === 'ambiguous' ? 'Could be ' . count($cands) . ' copies' : 'No copy with that name' ?></td>
             <td>
-              <form method="post" action="<?= e(url('admin_unmatched')) ?>" class="inline">
+              <form method="post" action="<?= e(url('admin/unmatched')) ?>" class="inline">
                 <?= csrf_field() ?>
                 <input type="hidden" name="platform" value="<?= e($u['platform']) ?>">
                 <input type="hidden" name="collection" value="<?= e($u['collection']) ?>">
@@ -152,7 +152,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
               </form>
             </td>
             <td>
-              <form method="post" action="<?= e(url('admin_unmatched')) ?>" class="inline">
+              <form method="post" action="<?= e(url('admin/unmatched')) ?>" class="inline">
                 <?= csrf_field() ?>
                 <input type="hidden" name="platform" value="<?= e($u['platform']) ?>">
                 <input type="hidden" name="collection" value="<?= e($u['collection']) ?>">
@@ -191,7 +191,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
       <?php $max = max($fig['consoles'] ?: [1]); ?>
       <?php foreach ($fig['consoles'] as $console => $n): ?>
         <li>
-          <a href="<?= e(url('admin_games?console=' . rawurlencode($console) . '&flag=onsite')) ?>"><?= e(console_name($console)) ?></a>
+          <a href="<?= e(url('admin/games?console=' . rawurlencode($console) . '&flag=onsite')) ?>"><?= e(console_name($console)) ?></a>
           <span class="bar fam-<?= e(console_family($console)) ?>" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
           <b><?= $n ?></b>
         </li>
@@ -205,7 +205,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
       <?php $max = max($fig['launchers'] ?: [1]); ?>
       <?php foreach ($fig['launchers'] as $launcher => $n): ?>
         <li>
-          <a href="<?= e(url('admin_games?launcher=' . rawurlencode($launcher) . '&flag=onsite')) ?>"><?= e(LAUNCHERS[$launcher] ?? $launcher) ?></a>
+          <a href="<?= e(url('admin/games?launcher=' . rawurlencode($launcher) . '&flag=onsite')) ?>"><?= e(LAUNCHERS[$launcher] ?? $launcher) ?></a>
           <span class="bar" style="--w: <?= round($n / $max * 100, 1) ?>%"></span>
           <b><?= $n ?></b>
         </li>

@@ -4,15 +4,17 @@
 
 const ADMIN_NAV = [
     'admin'           => 'Dashboard',
-    'admin_games'     => 'Collection',
-    'admin_sync_runs' => 'Sync History',
-    'admin_settings'  => 'Settings',
+    'admin/games'     => 'Collection',
+    'admin/consoles'  => 'Consoles',
+    'admin/sync_runs' => 'Sync History',
+    'admin/settings'  => 'Settings',
 ];
 
 /** Sub-pages light up their parent's tab. */
 const ADMIN_NAV_PARENTS = [
-    'admin_game'     => 'admin_games',
-    'admin_sync_run' => 'admin_sync_runs',
+    'admin/game'     => 'admin/games',
+    'admin/console'  => 'admin/consoles',
+    'admin/sync_run' => 'admin/sync_runs',
 ];
 
 /* ---------- page frame ---------- */

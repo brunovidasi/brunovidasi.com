@@ -34,7 +34,7 @@ $runs = $stmt->fetchAll();
 admin_header('Sync History', 'Every sync, what it brought in and what it changed. A platform\'s latest sync can be undone.');
 ?>
 
-<form class="filters card" method="get" action="<?= e(url('admin_sync_runs')) ?>" data-autosubmit>
+<form class="filters card" method="get" action="<?= e(url('admin/sync_runs')) ?>" data-autosubmit>
   <select name="platform" aria-label="Platform"><?= options_html(array_map(fn ($p) => $p['name'], PLATFORMS), $platform, 'Every platform') ?></select>
   <select name="status" aria-label="Result"><?= options_html(['ok' => 'OK', 'error' => 'Failed', 'reverted' => 'Undone', 'running' => 'Running'], $status, 'Any result') ?></select>
   <noscript><button type="submit">Filter</button></noscript>
@@ -45,13 +45,13 @@ admin_header('Sync History', 'Every sync, what it brought in and what it changed
     <p class="empty">No syncs yet<?= $where ? ' like that' : '' ?>. The dashboard has a button for each platform.</p>
   <?php else: ?>
   <div class="table-wrap">
-    <table class="table runs">
-      <thead><tr><th>When</th><th>Platform</th><th>Result</th><th>Added</th><th>Tied</th><th>Changed</th><th>To tie</th><th>Started by</th><th></th></tr></thead>
+    <table class="table runs" data-sort="runs">
+      <thead><tr><th data-first="desc">When</th><th>Platform</th><th>Result</th><th data-first="desc">Added</th><th data-first="desc">Tied</th><th data-first="desc">Changed</th><th data-first="desc">To tie</th><th>Started by</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($runs as $r):
           $secs = $r['finished_at'] ? to_timestamp($r['finished_at']) - to_timestamp($r['started_at']) : null; ?>
         <tr>
-          <td><a href="<?= e(url('admin_sync_run?id=' . $r['id'])) ?>"><?= e(format_datetime($r['started_at'])) ?></a><div class="muted small"><?= e(time_ago($r['started_at'])) ?><?= $secs !== null ? ' · ' . $secs . ' s' : '' ?></div></td>
+          <td data-sort="<?= e($r['started_at']) ?>"><a href="<?= e(url('admin/sync_run?id=' . $r['id'])) ?>"><?= e(format_datetime($r['started_at'])) ?></a><div class="muted small"><?= e(time_ago($r['started_at'])) ?><?= $secs !== null ? ' · ' . $secs . ' s' : '' ?></div></td>
           <td><span class="dot <?= e($r['platform']) ?>"></span> <?= e(PLATFORMS[$r['platform']]['name'] ?? $r['platform']) ?></td>
           <td><?= status_pill($r['status']) ?><?php if ($r['status'] === 'error'): ?><div class="error-text small"><?= e(mb_strimwidth((string) $r['message'], 0, 90, '…')) ?></div><?php endif; ?></td>
           <td><?= $r['games_added'] ?: '' ?></td>
@@ -59,7 +59,7 @@ admin_header('Sync History', 'Every sync, what it brought in and what it changed
           <td><?= ($r['records_changed'] + $r['games_changed']) ?: '' ?></td>
           <td><?= $r['unmatched'] ?: '' ?></td>
           <td><?= e(ucfirst($r['trigger_source'])) ?></td>
-          <td><a href="<?= e(url('admin_sync_run?id=' . $r['id'])) ?>">Details</a></td>
+          <td><a href="<?= e(url('admin/sync_run?id=' . $r['id'])) ?>">Details</a></td>
         </tr>
       <?php endforeach; ?>
       </tbody>
@@ -70,9 +70,9 @@ admin_header('Sync History', 'Every sync, what it brought in and what it changed
 
 <?php if ($total > $per): ?>
   <nav class="pager">
-    <?php if ($page > 1): ?><a href="<?= e(url('admin_sync_runs?' . http_build_query(['platform' => $platform, 'status' => $status, 'page' => $page - 1]))) ?>">← Newer</a><?php endif; ?>
+    <?php if ($page > 1): ?><a href="<?= e(url('admin/sync_runs?' . http_build_query(['platform' => $platform, 'status' => $status, 'page' => $page - 1]))) ?>">← Newer</a><?php endif; ?>
     <span>Page <?= $page ?> of <?= (int) ceil($total / $per) ?></span>
-    <?php if ($page * $per < $total): ?><a href="<?= e(url('admin_sync_runs?' . http_build_query(['platform' => $platform, 'status' => $status, 'page' => $page + 1]))) ?>">Older →</a><?php endif; ?>
+    <?php if ($page * $per < $total): ?><a href="<?= e(url('admin/sync_runs?' . http_build_query(['platform' => $platform, 'status' => $status, 'page' => $page + 1]))) ?>">Older →</a><?php endif; ?>
   </nav>
 <?php endif; ?>
 

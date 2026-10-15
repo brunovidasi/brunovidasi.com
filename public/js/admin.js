@@ -1,6 +1,6 @@
 /* admin.js — what the admin's pages do in the browser: the menu on a phone, the filters that apply as
    they change, the confirmations, the colour pickers, the synced fields that stop syncing once changed,
-   Find cover, and the dashboard's Sync buttons. Every page works without it, but slower. */
+   Find cover, the dashboard's Sync buttons, and the tables' sorting and column picker. Every page works without it, but slower. */
 
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
@@ -205,4 +205,90 @@
       all.disabled = false;
     });
   }
+  /* ---------- tables: sort by any column, and pick the columns ---------- */
+  // A table with data-sort sorts by a click on a column's heading (again for the other way). A cell's
+  // data-sort, when it has one, is what it sorts by (an ISO date, minutes, a console's place); empty
+  // cells go last either way. The choice is kept for the visit, so it holds as the filters change.
+  const store = {
+    get(k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch (e) { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private window */ } },
+    getLocal(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+    setLocal(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private window */ } },
+  };
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+  $$('table[data-sort]').forEach((table, n) => {
+    const key = `sort:${location.pathname}:${table.dataset.sort || n}`;
+    const heads = $$('thead th', table);
+    const body = table.tBodies[0];
+    const value = (row, i) => {
+      const cell = row.cells[i];
+      if (!cell) return '';
+      return (cell.dataset.sort ?? cell.textContent).trim();
+    };
+    function sortBy(i, dir) {
+      const rows = [...body.rows];
+      rows.sort((a, b) => {
+        const x = value(a, i), y = value(b, i);
+        if (x === '' || y === '') return (x === '') - (y === '');
+        const nx = Number(x), ny = Number(y);
+        const c = !isNaN(nx) && !isNaN(ny) ? nx - ny : collator.compare(x, y);
+        return dir === 'desc' ? -c : c;
+      });
+      body.append(...rows);
+      heads.forEach((th, j) => th.setAttribute('aria-sort', j === i ? (dir === 'desc' ? 'descending' : 'ascending') : 'none'));
+    }
+    heads.forEach((th, i) => {
+      if (th.textContent.trim() === '' || th.hasAttribute('data-nosort')) return;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'sort';
+      button.innerHTML = `${th.innerHTML}<span class="arrows" aria-hidden="true"></span>`;
+      th.replaceChildren(button);
+      th.setAttribute('aria-sort', 'none');
+      button.addEventListener('click', () => {
+        // numbers and dates read best biggest first; words A to Z
+        const first = th.dataset.first || 'asc';
+        const now = th.getAttribute('aria-sort');
+        const dir = now === 'none' ? first : now === 'ascending' ? 'desc' : 'asc';
+        sortBy(i, dir);
+        store.set(key, { i, dir });
+      });
+    });
+    const saved = store.get(key);
+    if (saved && heads[saved.i]?.querySelector('.sort')) sortBy(saved.i, saved.dir);
+  });
+
+  // A table with data-columns gets a Columns menu in the element its value names. A heading with
+  // data-col names its column; data-off hides it until it is picked. The choice is kept for good.
+  $$('table[data-columns]').forEach(table => {
+    const host = document.getElementById(table.dataset.columns);
+    if (!host) return;
+    const key = `columns:${location.pathname}`;
+    const heads = $$('thead th', table);
+    const saved = store.getLocal(key) || {};
+    const cols = heads.map((th, i) => ({ th, i, name: th.dataset.col })).filter(c => c.name);
+    const show = (c, on) => {
+      c.th.hidden = !on;
+      for (const row of table.tBodies[0].rows) if (row.cells[c.i]) row.cells[c.i].hidden = !on;
+    };
+    const menu = document.createElement('details');
+    menu.className = 'col-picker';
+    menu.innerHTML = '<summary>Columns</summary><div class="col-list"></div>';
+    cols.forEach(c => {
+      const on = c.name in saved ? saved[c.name] : !c.th.hasAttribute('data-off');
+      show(c, on);
+      const label = document.createElement('label');
+      label.className = 'check';
+      label.innerHTML = `<input type="checkbox"${on ? ' checked' : ''}> <span>${esc(c.th.textContent.trim())}</span>`;
+      label.firstChild.addEventListener('change', e => {
+        show(c, e.target.checked);
+        saved[c.name] = e.target.checked;
+        store.setLocal(key, saved);
+      });
+      $('.col-list', menu).append(label);
+    });
+    host.append(menu);
+    document.addEventListener('click', e => { if (!menu.contains(e.target)) menu.open = false; });
+  });
 })();

@@ -5,7 +5,7 @@
  *
  *     php -S localhost:8020 -t public dev-server.php
  *
- * It mirrors .htaccess and nothing more, so /admin and /api/games resolve
+ * It mirrors .htaccess and nothing more, so /admin, /admin/games and /api/games resolve
  * locally exactly as they do on the server.
  */
 
@@ -25,6 +25,14 @@ if ($name === '') {
 if (preg_match('#^api/([A-Za-z0-9_]+)$#', $name, $m) && is_file("$public/api/$m[1].php")) {
     $script = "$public/api/$m[1].php";
     $name = "api/$m[1]";
+} elseif (preg_match('#^admin/([A-Za-z0-9_]+)$#', $name, $m) && is_file("$public/admin_$m[1].php")) {
+    $script = "$public/admin_$m[1].php";
+    $name = "admin_$m[1]";
+} elseif (preg_match('#^admin_([A-Za-z0-9_]+)(\.php)?$#', $name, $m) && is_file("$public/admin_$m[1].php") && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    // the old addresses, as in .htaccess
+    $query = $_SERVER['QUERY_STRING'] ?? '';
+    header("Location: /admin/$m[1]" . ($query !== '' ? "?$query" : ''), true, 301);
+    return true;
 } elseif (preg_match('/^[A-Za-z0-9_]+$/', $name) && is_file("$public/$name.php")) {
     // One path segment only, as in .htaccess, which also keeps /../config out of reach.
     $script = "$public/$name.php";

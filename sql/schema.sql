@@ -299,3 +299,32 @@ CREATE TABLE IF NOT EXISTS login_failures (
     fails       INTEGER NOT NULL DEFAULT 0,
     last_fail   INTEGER NOT NULL DEFAULT 0              -- unix time
 );
+
+-- The consoles themselves: one row per machine, with what is on its label. Only
+-- the admin reads it for now; nothing here is in what the site is handed. The
+-- serial numbers stay out of the repo too (the repo is public), so the rows
+-- live only in the database: see cron/import_hardware.php.
+CREATE TABLE IF NOT EXISTS hardware (
+    id              TEXT PRIMARY KEY,           -- "switch-oled", "wii-white"
+    position        INTEGER NOT NULL DEFAULT 0,
+    console         TEXT NOT NULL,              -- the shelf it goes with: "switch", "ps2"
+    name            TEXT NOT NULL,              -- "Nintendo Switch OLED"
+    model           TEXT,                       -- "HEG-001", "CECH-3002B"
+    edition         TEXT,                       -- "Pokémon: Let's Go Edition"
+    color           TEXT,
+    region          TEXT,                       -- a region code, as a copy's: AUS, EUR, USA…
+    video           TEXT,                       -- PAL | NTSC
+    region_free     INTEGER,
+    year            TEXT,                       -- when that model came out
+    storage         TEXT,                       -- "32 GB"
+    serial          TEXT,
+    manufactured    TEXT,                       -- the date on the label
+    label_text      TEXT,                       -- everything the label says, as written
+    extra_json      TEXT,                       -- other markings: product id, FCC id, the Wii U GamePad…
+    note            TEXT,
+    -- (released, manufacturer, specs_json and photo_json are added by MIGRATED_COLUMNS)
+    created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_hardware_console ON hardware (console, position);
