@@ -161,7 +161,9 @@ form.inline { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wr
 .bars .bar.fam-playstation::after { background: var(--playstation); } .bars .bar.fam-nintendo::after { background: var(--fam-nintendo); }
 .bars .bar.fam-pc::after { background: var(--pc); } .bars .bar.fam-xbox::after { background: var(--fam-xbox); }
 .bars b { text-align: right; font-variant-numeric: tabular-nums; }
-.sync-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 12px; }
+.sync-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+@media (max-width: 1000px) { .sync-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .sync-grid { grid-template-columns: minmax(0, 1fr); } }
 .sync-tile { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; transition: border-color .2s; }
 .sync-tile header { display: flex; align-items: center; gap: 8px; }
 .sync-tile h3 { flex: 1; }
