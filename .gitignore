@@ -12,3 +12,6 @@ projects/landing-pages/flowparty.com.au/Archive.zip
 
 # Deployed from its own repo (brunovidasi/games-collection) to public_html/games.
 /games/
+
+# Deployed from its own repo (brunovidasi/music-collection) to public_html/music.
+/music/
