@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-10",
+  "updated": "2026-10-16",
   "eras": [
     {
       "id": "top-down",
@@ -196,11 +196,38 @@
       "blurb": "On the same list.",
       "games": [
         {
+          "title": "Max Payne",
+          "released": "2001",
+          "copies": [
+            "ps2-max-payne"
+          ],
+          "missing": []
+        },
+        {
+          "title": "Bully",
+          "released": "2006",
+          "copies": [
+            "pc-bully-scholarship-edition",
+            "ps2-canis-canem-edit",
+            "x360-bully-scholarship-edition",
+            "wii-bully-scholarship-edition"
+          ],
+          "missing": []
+        },
+        {
           "title": "L.A. Noire",
           "released": "2011",
           "copies": [
             "pc-la-noire",
             "switch-la-noire"
+          ],
+          "missing": []
+        },
+        {
+          "title": "Red Dead Redemption 2",
+          "released": "2018",
+          "copies": [
+            "xone-red-dead-redemption-2"
           ],
           "missing": []
         }
