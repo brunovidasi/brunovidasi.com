@@ -22,8 +22,9 @@
   /* how far the page starts below the top bar: the bar grows by the phone's status bar and
      notch. A host that already pads the page by that much (the published artifact) sets it to 0 */
   --top-inset: env(safe-area-inset-top, 0px);
-  /* the room the fixed top bar takes over the page; on phones the add-me strip takes it instead */
-  --under-bar: calc(52px + var(--top-inset));
+  /* the top bar's height (taller on phones, with the name over its figures), and the room it takes over the page */
+  --bar-h: 52px;
+  --under-bar: calc(var(--bar-h) + var(--top-inset));
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -44,8 +45,11 @@ a { color: inherit; }
 
 /* ---------- top bar ---------- */
 /* its name and links line up with the page under it: the same column, the same side padding */
-.topbar { position: fixed; left: 0; right: 0; top: 0; z-index: 900; height: calc(52px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(20px, calc((100% - var(--page)) / 2 + 20px)) 0; display: flex; align-items: center; background: linear-gradient(rgba(10,10,11,.96), rgba(10,10,11,.9)); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topbar { position: fixed; left: 0; right: 0; top: 0; z-index: 900; height: calc(var(--bar-h) + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(20px, calc((100% - var(--page)) / 2 + 20px)) 0; display: flex; align-items: center; background: linear-gradient(rgba(10,10,11,.96), rgba(10,10,11,.9)); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .brand { font: 700 16px var(--font-display); text-decoration: none; letter-spacing: .02em; }
+/* on phones the pages and the add-me buttons fold into a menu behind a burger (index.php); here they sit in the bar */
+.menu-toggle { display: none; }
+.topmenu { display: contents; }
 .brand span { color: var(--gold); }
 /* the figures, the shelf's or the collection's, small beside its name; on phones, under it */
 .brandbox { display: flex; align-items: baseline; gap: 6px 22px; min-width: 0; }
@@ -61,33 +65,38 @@ a { color: inherit; }
 /* add me: a round button for each console's friends list, at the far right, its mark in the console's colour.
    The EA app's is a button that copies the EA ID, as it has no link to add a friend */
 .addme { display: flex; gap: 6px; }
-.addme .psn { --brand: #3b7be0; } .addme .nintendo { --brand: #e8303a; } .addme .xbox { --brand: #3aa64a; } .addme .ea { --brand: #f56c2d; }
+.addme .psn { --brand: #3b7be0; } .addme .nintendo { --brand: #e8303a; } .addme .xbox { --brand: #3aa64a; } .addme .steam { --brand: #1a9fff; } .addme .ea { --brand: #f56c2d; }
 .addme :is(a, button) { font: inherit; color: inherit; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 30px; min-width: 30px; box-sizing: border-box; padding: 0 7px; border-radius: 99px; border: 1px solid var(--line-strong); white-space: nowrap; text-decoration: none; opacity: .85; transition: opacity .15s, background .15s, color .15s, border-color .15s; }
 .addme svg { flex: none; fill: var(--brand, currentColor); transition: fill .15s; }
 .addme .lbl { font-size: 12px; font-weight: 600; }
 .addme :is(a, button):is(:hover, :focus-visible, .copied) { opacity: 1; color: #fff; background: var(--brand, var(--gold)); border-color: var(--brand, var(--gold)); }
 .addme :is(a, button):is(:hover, :focus-visible, .copied) svg { fill: #fff; }
-/* in the top bar, hovering them opens room on their left for the hovered one's name: the buttons never move
-   under the pointer, and the name keeps its button hovered while the pointer crosses it. The name stays beside the
-   buttons (--n of 30px, set by the page, with 6px gaps, 8px apart) and the group clips it, so it shows as the room opens */
-.topbar .addme { position: relative; clip-path: inset(-4px); margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); transition: padding-left .25s ease; }
-.topbar .addme:is(:hover, :focus-within) { padding-left: 156px; }
-.topbar .addme .lbl { position: absolute; right: calc(var(--n, 4) * 36px + 2px); top: 0; width: 134px; line-height: 30px; text-align: right; color: var(--text); opacity: 0; pointer-events: none; transition: opacity .15s; }
-.topbar .addme :is(a, button):is(:hover, :focus-visible, .copied) .lbl { opacity: 1; pointer-events: auto; }
-/* on phones, a strip of them under the top bar, their names always showing */
+/* in the top bar, the hovered one's name floats over the page just under it, nothing in the bar moving: lined up
+   with the button's right edge (they sit at the far right, so it never runs off the page), its point under the mark */
+.topbar .addme:not(.addme-strip) { margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
+.topbar .addme:not(.addme-strip) :is(a, button) { position: relative; }
+.topbar .addme:not(.addme-strip) .lbl { position: absolute; right: -4px; top: calc(100% + 9px); padding: 6px 10px; border-radius: 8px; line-height: 1.2;
+  color: var(--text); background: rgba(16,16,18,.97); border: 1px solid var(--line-strong); box-shadow: 0 8px 22px rgba(0,0,0,.5);
+  opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .15s, transform .15s; }
+.topbar .addme:not(.addme-strip) .lbl::before { content: ""; position: absolute; right: 14px; top: -5px; width: 8px; height: 8px; transform: rotate(45deg);
+  background: inherit; border: inherit; border-width: 1px 0 0 1px; }
+.topbar .addme:not(.addme-strip) :is(a, button):is(:hover, :focus-visible, .copied) .lbl { opacity: 1; transform: none; }
+/* on phones, a row of them in the menu, their names always showing */
 .addme-strip { display: none; }
 
-/* too narrow for the name, the figures and the pages on one line: the figures go under the name */
-@media (max-width: 960px) {
+/* the bar's words never break onto a second line: where they would, the figures go under the name, then shorten */
+.brand, .figures > span, .topnav a { white-space: nowrap; }
+/* too narrow for the name, the figures and the pages on one line (a collection's four figures make it the widest):
+   the figures go under the name */
+@media (max-width: 1100px) {
   .brandbox { flex-direction: column; align-items: flex-start; gap: 3px; }
-  .brand { white-space: nowrap; }
   .figures { padding-left: 0; border-left: 0; gap: 10px; font-size: 9px; }
   .figures b { font-size: 11px; }
 }
 
 /* a collection's four figures: their short labels, then on narrower screens only the total and the ones still to find
    (the shelf has two) */
-@media (max-width: 1100px) { .figures .fig-long { display: none; } .figures .fig-short { display: inline; } }
+@media (max-width: 1240px) { .figures .fig-long { display: none; } .figures .fig-short { display: inline; } }
 @media (max-width: 760px) { .figures > span:nth-child(3):not(:last-child) { display: none; } }
 @media (max-width: 380px) { .figures > span:nth-child(2):not(:last-child) { display: none; } }
 
@@ -138,7 +147,7 @@ a { color: inherit; }
 .chip.empty { opacity: .35; }
 
 /* ---------- the bar: search and sort on the left, the views at the right, as on the record site ---------- */
-.filters { position: sticky; top: calc(52px + env(safe-area-inset-top, 0px)); z-index: 800; background: linear-gradient(rgba(12,12,13,.95), rgba(12,12,13,.9)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.filters { position: sticky; top: calc(var(--bar-h) + env(safe-area-inset-top, 0px)); z-index: 800; background: linear-gradient(rgba(12,12,13,.95), rgba(12,12,13,.9)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .filters-in { --control-h: 42px; max-width: var(--page); margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
 /* the search: the glass, the field, and a cross once something is typed (js/app.js, searchBox) */
 /* it takes all the bar the sort and the views leave, and gives it up before the views would wrap under it, down to 180px */
@@ -302,7 +311,7 @@ a { color: inherit; }
 .ghead:first-child { margin-top: 0; }
 .ghead .cart-art { width: 42px; height: 28px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.45)); }
 .ghead b { font: 700 .95rem var(--font-display); letter-spacing: .03em; }
-.ghead i { font-style: normal; font-size: 12px; opacity: .5; margin-left: auto; font-variant-numeric: tabular-nums; }
+.ghead i { font-style: normal; font-size: 12px; opacity: .5; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .cell { display: flex; flex-direction: column; min-width: 0; border: 0; padding: 0; background: none; text-align: left; cursor: pointer; }
 .cell:focus-visible { outline: none; }
 .cell:focus-visible .gt > * { outline: 2px solid var(--gold); outline-offset: 3px; }
@@ -607,6 +616,7 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
   /* a search typed and the box closed over it: a dot on the glass */
   .search.has-query .search-open::after { content: ""; position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
   .search.has-query .search-close { visibility: hidden; }
+  .filters.searching .filters-in { column-gap: 0; } /* the shut ones' gaps closing too, so the search runs to the edge */
   .filters.searching .search { flex-grow: 1; }
   .filters.searching .search-open { color: rgba(242,234,216,.6); cursor: text; }
   .filters.searching .search-open::after { display: none; }
@@ -645,52 +655,58 @@ footer a { text-decoration-color: rgba(242,234,216,.3); }
 }
 @media (max-width: 380px) {
   .seg button { padding: 0 7px; font-size: 12px; }
+  /* a collection's six views (its Checklist too): closer, so all six fit across */
+  .seg:has(> :nth-child(6)) button { padding: 0 2px; font-size: 11px; }
+  .gta .seg:has(> :nth-child(6)) button { padding: 0 2px; font-size: 10px; letter-spacing: 0; }
   .dd-button { padding: 0 9px; font-size: 12px; }
 }
 @media (max-width: 820px) and (prefers-reduced-motion: reduce) {
   .filters-in, .search, .filters-in > :not(.search) { transition: none !important; }
 }
+/* phones and small tablets: the burger, the name over its figures in the middle, the pages and add-me in its menu */
+@media (max-width: 820px) {
+  :root { --bar-h: 64px; }
+  .brandbox { gap: 5px; }
+  .figures { padding-left: 0; border-left: 0; gap: 10px; font-size: 9px; letter-spacing: .06em; justify-content: center; }
+  .figures b { font-size: 11px; letter-spacing: 0; }
+  /* the burger at the left, the name in the middle, bigger, with the figures under it; an empty column at the right
+     the burger's width keeps it in the middle of the screen. The name shrinks to fit (7cqi: Orbitron is about 14 em wide) */
+  .topbar { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; padding-left: 10px; padding-right: 10px; }
+  .brandbox { grid-column: 2; align-items: center; text-align: center; container-type: inline-size; }
+  .brand { font-size: min(23px, 7cqi); line-height: 1.15; white-space: nowrap; }
+  .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: none; color: inherit; cursor: pointer; }
+  .menu-toggle span, .menu-toggle span::before, .menu-toggle span::after { display: block; width: 22px; height: 2px; border-radius: 1px; background: currentColor; transition: transform .25s, background .25s; }
+  .menu-toggle span { position: relative; }
+  .menu-toggle span::before, .menu-toggle span::after { content: ""; position: absolute; left: 0; }
+  .menu-toggle span::before { transform: translateY(-6px); }
+  .menu-toggle span::after { transform: translateY(6px); }
+  .menu-open .menu-toggle span { background: transparent; }
+  .menu-open .menu-toggle span::before { transform: rotate(45deg); }
+  .menu-open .menu-toggle span::after { transform: rotate(-45deg); }
+  /* the menu: a panel under the bar, the pages one under the other, then the add-me buttons */
+  .topmenu { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 16px; padding: 14px 16px 18px;
+    background: rgb(12,12,13); border-bottom: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0,0,0,.5); /* solid: under the bar's blur a see-through one shows the page */
+    opacity: 1; transform: none; transition: opacity .2s, transform .2s; }
+  .menu-open .topmenu { display: flex; }
+  @starting-style { .menu-open .topmenu { opacity: 0; transform: translateY(-8px); } }
+  .topnav { margin: 0; flex-direction: column; gap: 4px; }
+  .topnav a { padding: 11px 14px; font-size: 15px; border-radius: 10px; }
+  .topbar .addme:not(.addme-strip) { display: none; }
+  .addme-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; }
+  .addme-strip > span { flex-basis: 100%; opacity: .55; }
+  .addme-strip :is(a, button) { height: 36px; padding: 0 12px; flex-direction: row-reverse; }
+  .addme-strip .lbl { margin: 0 2px 0 7px; font-size: 13px; }
+}
 @media (max-width: 640px) {
-  /* on a phone the two years become one span, so the line fits beside the pages */
-  .figures { padding-left: 0; border-left: 0; gap: 8px; font-size: 8px; letter-spacing: .05em; }
-  .figures b { font-size: 10px; letter-spacing: 0; }
-  .topbar { padding-right: 10px; gap: 10px; }
-  /* the name takes the room the pages leave it, and shrinks to fit it (7cqi: Orbitron is about 14 em wide) */
-  .brandbox { flex: 1 1 0; container-type: inline-size; }
-  .brand { font-size: min(14px, 7cqi); white-space: nowrap; }
-  .topnav a { padding: 6px 9px; font-size: 12px; white-space: nowrap; }
-  /* no room for the add-me buttons beside the pages: they move to a strip under the top bar */
-  :root:has(.addme-strip) { --under-bar: 0px; }
-  .topbar .addme { display: none; }
-  .addme-strip { display: flex; align-items: center; margin: 0; padding: calc(62px + var(--top-inset)) 16px 0; border: 0; font-size: 12px; }
-  .addme-strip > span { opacity: .55; margin-right: 2px; white-space: nowrap; }
-  /* the buttons share out the row, so it ends where the page's column does */
-  .addme-strip :is(a, button) { flex: 1 1 auto; flex-direction: row-reverse; }
-  /* the wash over the top of the page starts behind the top bar, as it does without the strip, not under it
-     (the strip is its 62px padding and a 30px row) */
-  .addme-strip ~ #shell .hero::before { top: calc(-92px - var(--top-inset)); }
-  .addme-strip .lbl { margin: 0 2px 0 6px; }
   .grid { gap: 26px var(--gap); }
   .cap { text-align: center; margin-top: 12px; }
   .cap b { font-size: .86rem; }
   .cap small { font-size: .7rem; }
   .spot-who { font-size: .9rem; }
 }
-/* the smallest phones: the pages closer, so the name keeps more room, and the add-me buttons tighter, so
-   they fit on one line beside "Add me on" */
+/* the smallest phones: the name keeps more room */
 @media (max-width: 400px) {
   .brand { letter-spacing: 0; }
-  .topnav { gap: 0; }
-  .topnav a { padding: 5px 7px; font-size: 11px; }
-  .addme-strip { gap: 4px; }
-  .addme-strip :is(a, button) { padding: 0 6px; }
-  .addme-strip .lbl { font-size: 11px; margin: 0 1px 0 5px; }
-}
-@media (max-width: 340px) {
-  .topnav a { padding: 5px 5px; font-size: 10px; }
-  .addme-strip { gap: 3px; }
-  .addme-strip :is(a, button) { padding: 0 5px; }
-  .addme-strip .lbl { margin: 0 0 0 4px; }
 }
 @media (max-width: 760px) {
   .list { --cols: 56px minmax(0, 1fr) auto; padding: .3rem; }

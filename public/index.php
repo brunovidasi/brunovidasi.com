@@ -62,17 +62,19 @@ header('Content-Type: text/html; charset=utf-8');
 <body>
 
 <div class="topbar">
+  <button type="button" class="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="topmenu"><span></span></button>
   <div class="brandbox">
     <a class="brand" href="<?= e(url('')) ?>"><?= $brand ?></a>
     <div class="figures" id="figures" aria-label="The collection in figures"></div>
   </div>
+  <div class="topmenu" id="topmenu">
   <nav class="topnav" aria-label="Collections">
     <a href="<?= e(url('')) ?>" data-col=""<?= $current('') ?>><?= e($pages['shelf']['nav']) ?></a>
     <a href="<?= e(url('sims')) ?>" data-col="sims"<?= $current('sims') ?>><img class="nav-bob" src="<?= e(url('assets/plumbob.svg')) ?>" alt="" width="8" height="16"><?= e($pages['sims']['nav']) ?></a>
     <a href="<?= e(url('gta')) ?>" data-col="gta"<?= $current('gta') ?>><?= e($pages['gta']['nav']) ?></a>
   </nav>
 <?php if ($friends): ?>
-  <nav class="addme" aria-label="Add me" style="--n: <?= count($friends) ?>">
+  <nav class="addme" aria-label="Add me">
 <?php foreach ($friends as $key => $f): ?>
 <?php if ($f['copy']): ?>
     <button type="button" class="<?= $key ?>" data-copy="<?= e($f['url']) ?>" aria-label="<?= e($f['aria']) ?>"><span class="lbl"><?= e($f['long']) ?></span><?= FRIEND_ICONS[$key] ?></button>
@@ -81,9 +83,6 @@ header('Content-Type: text/html; charset=utf-8');
 <?php endif; ?>
 <?php endforeach; ?>
   </nav>
-<?php endif; ?>
-</div>
-<?php if ($friends): ?>
   <nav class="addme addme-strip" aria-label="Add me">
     <span>Add me on</span>
 <?php foreach ($friends as $key => $f): ?>
@@ -95,6 +94,8 @@ header('Content-Type: text/html; charset=utf-8');
 <?php endforeach; ?>
   </nav>
 <?php endif; ?>
+  </div>
+</div>
 
 <div id="shell"></div>
 
@@ -114,6 +115,20 @@ header('Content-Type: text/html; charset=utf-8');
 
 <script>window.SITE = <?= json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>;</script>
 <script>
+// on a phone the pages and the add-me buttons fold into a menu behind the burger at the left of the top bar
+(() => {
+  const bar = document.querySelector('.topbar'), toggle = bar.querySelector('.menu-toggle');
+  const setMenu = on => {
+    bar.classList.toggle('menu-open', on);
+    toggle.setAttribute('aria-expanded', String(on));
+    toggle.setAttribute('aria-label', on ? 'Close menu' : 'Menu');
+  };
+  toggle.addEventListener('click', () => setMenu(!bar.classList.contains('menu-open')));
+  bar.querySelectorAll('.topnav a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('click', e => { if (!bar.contains(e.target)) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && bar.classList.contains('menu-open')) { setMenu(false); toggle.focus(); } });
+  matchMedia('(max-width: 820px)').addEventListener('change', () => setMenu(false));
+})();
 // an "Add me" with no link (the EA app) copies the ID to search for, and says so for a moment
 document.querySelectorAll('.addme [data-copy]').forEach(b => b.addEventListener('click', async () => {
   const lbl = b.querySelector('.lbl'), was = lbl.textContent;

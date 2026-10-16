@@ -4,6 +4,28 @@
 .collection { --acc: var(--gold); --acc-dk: #1f4fa8; --acc-glow: rgba(77,141,255,.4); }
 .collection .hero h1 em { font-style: normal; color: var(--acc); }
 
+/* ---------- going from one look to the next, item by item (dress in js/app.js): the page behind fades from one
+   sky to the other while each named piece turns in its own moment (its delay set by the script), sliding to where
+   it stands now; what is only in the old look fades away, what is only in the new rises in. The games flying
+   across (.morph, js/app.js) stay above it all, as they are ---------- */
+html[data-dress]::view-transition-group(*) { animation-duration: .7s; animation-timing-function: cubic-bezier(.3, .7, .2, 1); animation-fill-mode: both; }
+html[data-dress]::view-transition-old(*), html[data-dress]::view-transition-new(*) { animation-duration: .6s; animation-fill-mode: both; }
+html[data-dress]::view-transition-old(*):only-child { animation-name: dress-out; animation-duration: .3s; }
+html[data-dress]::view-transition-new(*):only-child { animation-name: dress-in; animation-timing-function: cubic-bezier(.2, .8, .3, 1); }
+html[data-dress]::view-transition-group(root), html[data-dress]::view-transition-old(root), html[data-dress]::view-transition-new(root) { animation-duration: 1s; }
+html[data-dress] .morph { position: fixed; inset: 0; view-transition-name: dr-flights; }
+html[data-dress]::view-transition-group(dr-flights), html[data-dress]::view-transition-new(dr-flights) { animation: none; }
+/* the letters moving from the old words to the new, drawn over the page (js/app.js): shown as they move, from the
+   first moment, not faded in as a piece of the change */
+.dress-letters { position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+.dress-letters > span { position: absolute; white-space: pre; transform-origin: 0 0; }
+html[data-dress] .dress-letters { view-transition-name: dr-letters; }
+html[data-dress]::view-transition-group(dr-letters), html[data-dress]::view-transition-new(dr-letters) { animation: none; }
+@keyframes dress-out { to { opacity: 0; transform: scale(.96); } }
+@keyframes dress-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+/* a game turning over like a tile, when the new collection has none of the games showing (its turn set by the script) */
+html[data-dress]::view-transition-old(*.dr-t), html[data-dress]::view-transition-new(*.dr-t) { animation: none !important; mix-blend-mode: normal; }
+
 /* ---------- the checklist: a view of its own beside the shelf, grid and list ---------- */
 #checklist { display: none; padding-bottom: 30px; }
 body[data-view="checklist"] #checklist { display: block; }

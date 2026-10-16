@@ -134,10 +134,16 @@ if (is_post()) {
                 $errors[] = 'Keep at least one view.';
                 break;
             }
-            $default = post('default_view');
-            set_setting('views', ['enabled' => $enabled, 'default' => in_array($default, $enabled, true) ? $default : $enabled[0]]);
+            // checked against what is on when read (views_settings), so a view turned off falls back there
+            $defaults = [];
+            foreach (array_keys(PAGE_NAMES) as $page) {
+                foreach (['desktop', 'mobile'] as $device) {
+                    $defaults[$page][$device] = (string) ($_POST['default_view'][$page][$device] ?? '');
+                }
+            }
+            set_setting('views', ['enabled' => $enabled, 'defaults' => $defaults]);
             touch_data();
-            flash('The views were saved. Someone who last picked a view that is now off gets the default one.');
+            flash('The views were saved. Someone who last picked a view that is now off gets the page\'s first one.');
             break;
 
         case 'friends':
@@ -326,8 +332,24 @@ foreach ($errors as $error) {
         <?php foreach (VIEWS as $key => $label): ?>
           <div class="view-pick">
             <?= check_box('views[]', in_array($key, $views['enabled'], true), $label, '', $key) ?>
-            <label class="radio"><input type="radio" name="default_view" value="<?= e($key) ?>"<?= $views['default'] === $key ? ' checked' : '' ?>> First one shown</label>
           </div>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <section class="card">
+      <h2>The first view shown</h2>
+      <p class="muted small">What each page opens on for someone who hasn't picked a view there yet, and when its link in the top bar is clicked. A view turned off above falls back to the first one on.</p>
+      <div class="view-defaults">
+        <span></span><span class="muted small">Computer</span><span class="muted small">Phone</span>
+        <?php foreach (PAGE_NAMES as $page => $name): ?>
+          <span class="view-page"><?= e($name) ?></span>
+          <?php foreach (['desktop' => 'computer', 'mobile' => 'phone'] as $device => $on): ?>
+            <select name="default_view[<?= $page ?>][<?= $device ?>]" aria-label="<?= e($name . ' on a ' . $on) ?>">
+              <?php foreach ($page === 'shelf' ? VIEWS : VIEWS + ['checklist' => 'Checklist'] as $key => $label): ?>
+                <option value="<?= e($key) ?>"<?= $views['defaults'][$page][$device] === $key ? ' selected' : '' ?>><?= e($label) ?></option>
+              <?php endforeach; ?>
+            </select>
+          <?php endforeach; ?>
         <?php endforeach; ?>
       </div>
     </section>

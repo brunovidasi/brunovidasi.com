@@ -473,7 +473,7 @@
         <path d="M118 -40 Q127 -20 127 0 Q127 25 118 48" stroke="#fff" stroke-opacity=".1" stroke-width="1.2" fill="none"/></g>
       <g transform="translate(371 284) rotate(9) scale(2.71 3.4)">
         <rect x="-118" y="-61" width="245.5" height="128" rx="38" fill="#18181a" stroke="#66666e" stroke-width=".9"/>
-        <path d="M-84 -58.8 H90 stroke="#fff" stroke-opacity=".14" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M-84 -58.8 H90" stroke="#fff" stroke-opacity=".14" stroke-width="1.6" stroke-linecap="round"/>
         <rect x="-73" y="-43" width="146" height="86" rx="3" fill="#0e0e10" stroke="#2c2c30" stroke-width=".6"/>
         <rect x="-68.6" y="-38.6" width="137.2" height="77.2" fill="#020203"/>
         <path d="M-68.6 -38.6 H68.6 V-12 Q0 -28 -68.6 -6 Z" fill="#fff" opacity=".06"/>

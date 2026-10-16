@@ -342,11 +342,13 @@ tr:hover .qmark:not(.on):not(.side) { opacity: .6; }
 .view-picks { display: grid; gap: 10px; }
 .view-pick { display: flex; align-items: center; gap: 22px; padding: 10px 12px; background: var(--surface-2); border-radius: 9px; }
 .view-pick .check { min-width: 120px; font-weight: 600; }
+.view-defaults { display: grid; grid-template-columns: auto minmax(0, 200px) minmax(0, 200px); gap: 10px 14px; align-items: center; }
+.view-page { font-weight: 600; }
 .friend-row { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
 .friend-row:first-of-type { border-top: 0; }
 .friend-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-3); display: grid; place-items: center; }
 .friend-icon svg { fill: var(--text); }
-.friend-icon.psn svg { fill: var(--psn); } .friend-icon.nintendo svg { fill: var(--nintendo); } .friend-icon.xbox svg { fill: var(--xbox); } .friend-icon.ea svg { fill: var(--ea); }
+.friend-icon.psn svg { fill: var(--psn); } .friend-icon.nintendo svg { fill: var(--nintendo); } .friend-icon.xbox svg { fill: var(--xbox); } .friend-icon.steam svg { fill: var(--steam); } .friend-icon.ea svg { fill: var(--ea); }
 .connection .dot { width: 11px; height: 11px; }
 .connection > details > summary { cursor: pointer; font-weight: 600; color: var(--accent); margin-top: 6px; }
 .connection > details[open] > summary { margin-bottom: 12px; }

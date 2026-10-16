@@ -95,14 +95,23 @@
     });
   }
 
-  // the views Settings has turned on (window.SITE, from index.php), and the one a first visit opens on
+  // the views Settings has turned on (window.SITE, from index.php), and the one each page opens on, on a
+  // computer and on a phone (the phone's is the bar's own breakpoint, css/site.css)
   const SITE = window.SITE || {};
   const SITE_VIEWS = (SITE.views || ['shelf', 'rows', 'grid', 'showcase', 'list']).filter(v => v !== 'checklist');
-  const DEFAULT_VIEW = SITE_VIEWS.includes(SITE.defaultView) ? SITE.defaultView : SITE_VIEWS[0] || 'shelf';
+  const viewsOf = col => [...SITE_VIEWS, ...(COLLECTIONS[col]?.checklist ? ['checklist'] : [])];
+  const device = () => matchMedia('(max-width: 820px)').matches ? 'mobile' : 'desktop';
+  const defaultView = col => {
+    const v = SITE.defaultViews?.[col || 'shelf']?.[device()];
+    return viewsOf(col).includes(v) ? v : SITE_VIEWS[0] || 'shelf';
+  };
+  // the view last picked, remembered for each page on a computer and on a phone apart
+  const viewKey = col => `view.${col || 'shelf'}.${device()}`;
+  const openingView = col => { const v = store.get(viewKey(col)); return viewsOf(col).includes(v) ? v : defaultView(col); };
   let VIEWS = [...SITE_VIEWS];
   const flat = v => v === 'checklist'; // views with no cases to carry across
   const state = {
-    view: [...VIEWS, 'checklist'].includes(store.get('view')) ? store.get('view') : DEFAULT_VIEW, // checked again once a collection is picked
+    view: '', // the page's own, once a collection is picked (setCollection)
     mode: 'mixed', // one cover per console faces out, the rest stand as spines
     sort: store.get('sort'), // checked once a collection is picked
     sel: new Set(), q: '', lib: '',
@@ -248,7 +257,7 @@
       // the shelf, the rows and the grid are the same cases laid out three ways, so they are carried across
       const before = Morph.capture();
       state.view = b.dataset.view;
-      store.set('view', state.view);
+      store.set(viewKey(COL), state.view);
       sync();
       render(!before);
       Morph.play(before);
@@ -340,10 +349,11 @@
     $('#count').textContent = `${tally(games)} of ${tally(ALL)} games`;
   }
 
-  function changed() {
+  // animate: the games come in afresh (not when they are left to fly across, Morph)
+  function changed(animate = true) {
     games = list();
     sync();
-    render(true);
+    render(animate);
     if (!Detail.isOpen()) setPath(here(), true);
   }
 
@@ -1069,9 +1079,10 @@
       run = null;
     }
 
-    /** Sets the games of the view just drawn travelling from where `snap` had them. */
-    function play(snap) {
-      if (!snap || snap.view === state.view || flat(state.view) || reduced()) return;
+    /** Sets the games of the view just drawn travelling from where `snap` had them (with `always`, even
+        into the same view: a change of collection). */
+    function play(snap, always) {
+      if (!snap || (snap.view === state.view && !always) || flat(state.view) || reduced()) return;
       stop();
       if (state.view === 'showcase') { scEnter(snap); return; }
       const layer = document.createElement('div');
@@ -2061,14 +2072,14 @@
     if (Detail.isOpen()) Detail.close(true);
     // the consoles picked then, or the one in the address
     const sel = e.state?.sel || (CONSOLE_BY_ID[id] ? [id] : []);
-    const go = () => { quiet = true; try { show(); } finally { quiet = false; } };
-    const show = () => {
+    const go = (animate = true) => { quiet = true; try { show(animate); } finally { quiet = false; } };
+    const show = animate => {
       const moved = col !== COL;
       if (moved) setCollection(col);
       const ids = sel.filter(c => ALL.some(x => x.console === c));
       if (moved || !sameSel(ids)) {
         state.sel = new Set(ids);
-        changed();
+        changed(animate);
         showPicked();
       }
       if (moved) scrollTo(0, 0);
@@ -2078,7 +2089,7 @@
         setTimeout(() => Detail.open(g, null, true), moved ? 300 : 0);
       } else if (id && !CONSOLE_BY_ID[id]) showSection(id);
     };
-    if (col !== COL && document.startViewTransition && !reduced()) document.startViewTransition(go); else go();
+    if (col !== COL) dress(col, go, openingView(col)); else go();
   });
 
   /* ---------- the collections: the whole shelf, or one series in its own look ---------- */
@@ -2096,8 +2107,8 @@
     groupOf = CFG ? CFG.group : byConsole;
     MENU.console.key = GROUP;
     MENU.console.label = CFG ? `By ${CFG.groupNoun}` : 'By console';
-    VIEWS = [...SITE_VIEWS, ...(CFG && CFG.checklist ? ['checklist'] : [])];
-    if (!VIEWS.includes(state.view)) state.view = DEFAULT_VIEW;
+    VIEWS = viewsOf(COL);
+    state.view = openingView(COL);
     // sorted by console on the shelf is sorted by game in a collection, and back
     const s = state.sort || {};
     state.sort = validSort(s.key === 'console' || s.key === 'group' ? { key: GROUP, dir: s.dir } : s);
@@ -2110,16 +2121,236 @@
     $$('.topnav [data-col]').forEach(a => a.dataset.col === COL ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     hero();
   }
+  // The change from one look to the next, item by item: the top bar's pieces, the header, each console's chip
+  // and the controls under them turn into the new collection's each in its own moment, rippling out from the
+  // link to it, the chips sliding to where they stand in the new one, and the page behind fades from one sky to
+  // the other (css/collection.css). The games showing in both fly from their place in the one to their place in
+  // the other (Morph), turning from spine to cover on the way; when none of those on screen is in the new one
+  // (the Sims to GTA), the games turn over instead, one by one out from the link, each into the one taking its
+  // place. go(animate) makes the change, drawing the games in afresh or leaving them to the flights or the tiles;
+  // view is the view it opens on. With no view transitions, or less motion asked for, it simply changes
+  function dress(col, go, view = state.view) {
+    if (!document.startViewTransition || reduced()) { go(true); return; }
+    const root = document.documentElement;
+    const a = $(`.topnav [data-col="${col}"]`)?.getBoundingClientRect();
+    const ox = a && a.width ? a.left + a.width / 2 : innerWidth / 2, oy = a && a.height ? a.top + a.height / 2 : 0;
+    // each turns a moment later the further it stood from the link
+    const away = (r, k, most) => Math.round(Math.min(most, Math.hypot(r.left + r.width / 2 - ox, r.top + r.height / 2 - oy) * k));
+    const into = COLLECTIONS[col] ? LISTS[col] : DB;
+    // in the same view a tile turns into the one in its place; into another, the old go and the new come where they stand
+    const same = view === state.view;
+    const olds = tiles(same ? 'slot' : 'out');
+    const flip = !olds.some(([, el]) => into.includes(byId.get(el.dataset.id)));
+    const delays = new Map();
+    // the consoles' bar moves as one, rippling only a little along it from the link's side, so its chips don't
+    // come down one after another in a staircase; a chip new to it rises in as the others land, not at the start
+    const bar = /^dr-(chip|fam)-/;
+    const along = (r, fresh) => Math.round(Math.min(160, Math.abs(r.left + r.width / 2 - ox) * 0.12)) + (fresh ? 280 : 0);
+    let named = [], first = true;
+    const name = list => {
+      named = list;
+      named.forEach(([n, el, r]) => {
+        el.style.viewTransitionName = n;
+        if (n.startsWith('dr-t-')) el.style.viewTransitionClass = 'dr-t';
+        if (!delays.has(n)) delays.set(n, n.startsWith('dr-t-') ? away(r, 0.3, 420) : bar.test(n) ? along(r, !first) : away(r, 0.32, 380));
+      });
+      first = false;
+    };
+    const unname = () => named.forEach(([, el]) => { el.style.viewTransitionName = el.style.viewTransitionClass = ''; });
+    // The letters aren't pieces of the view transition (a few hundred of those and every frame stutters): the
+    // words are hidden from the picture taken of the page before, and drawn again over the page after
+    // (.dress-letters), each letter twice, as it looked and as it looks now, the two moving between the old
+    // place and the new while one fades into the other, on transforms and opacity alone. The layer is only in the
+    // page after the change, so the view transition sets it over everything else (what was in the page before
+    // stays in the order it stood, under what is new)
+    const layer = document.createElement('div');
+    layer.className = 'dress-letters';
+    const was = letters();
+    was.forEach(l => { l.sp.style.visibility = 'hidden'; });
+    name([...dressed(COL), ...(flip ? olds : [])]);
+    root.dataset.dress = col || 'shelf';
+    let moves = [];
+    const t = document.startViewTransition(async () => {
+      unname();
+      unsplit();
+      if (flip) go(false);
+      else {
+        const before = Morph.capture();
+        go(!before);
+        Morph.play(before, true);
+      }
+      // the new look's type, so its letters are measured as they will stand (laid out first, so its fonts are asked
+      // for; waited for only if one is still coming, as the wait costs a frame even when none is)
+      document.body.offsetWidth;
+      if (document.fonts.status === 'loading') await document.fonts.ready;
+      name([...dressed(COL), ...(flip ? tiles(same ? 'slot' : 'in') : [])]);
+      const is = letters(), left = new Map(was.map(l => [l.name, l]));
+      was.forEach(l => { l.el = drawn(l); layer.append(l.el); });
+      is.forEach(l => { l.el = drawn(l); l.el.style.opacity = 0; layer.append(l.el); l.sp.style.visibility = 'hidden'; });
+      document.body.append(layer);
+      const move = (o, r) => `translate(${(r.left - o.left).toFixed(1)}px, ${(r.top - o.top).toFixed(1)}px) scale(${(r.width / o.width).toFixed(3)}, ${(r.height / o.height).toFixed(3)})`;
+      const ease = 'cubic-bezier(.3, .7, .2, 1)';
+      for (const l of is) {
+        const o = left.get(l.name);
+        left.delete(l.name);
+        if (o) {
+          const timing = { duration: 620, delay: away(o.r, 0.32, 380), easing: ease, fill: 'both' };
+          moves.push([o.el, [{ transform: 'none', opacity: 1 }, { opacity: 0, offset: 0.7 }, { transform: move(o.r, l.r), opacity: 0 }], timing]);
+          moves.push([l.el, [{ transform: move(l.r, o.r), opacity: 0 }, { opacity: 1, offset: 0.45 }, { transform: 'none', opacity: 1 }], timing]);
+        } else {
+          moves.push([l.el, [{ transform: 'translateY(8px) scale(.9)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 500, delay: away(l.r, 0.32, 380) + 120, easing: ease, fill: 'both' }]);
+        }
+      }
+      for (const o of left.values()) moves.push([o.el, [{ opacity: 1 }, { transform: 'translateY(-4px) scale(.9)', opacity: 0 }], { duration: 300, delay: away(o.r, 0.32, 380), easing: 'ease-in', fill: 'both' }]);
+    });
+    // each piece's moment set on its animations themselves, not by a rule for each name (the browser would match
+    // every piece against every rule on every frame)
+    t.ready.then(() => {
+      for (const anim of document.getAnimations()) {
+        const n = /^::view-transition-[a-z-]+\((dr-[\w-]+)\)$/.exec(anim.effect?.pseudoElement || '')?.[1];
+        if (n && delays.has(n)) anim.effect.updateTiming({ delay: delays.get(n) });
+      }
+      // a tile turns edge on, then the new one turns in from the other side (css/collection.css takes away their fades)
+      const turn = deg => `perspective(900px) rotateY(${deg}deg) scale(${deg ? 0.94 : 1})`;
+      for (const [n, d] of delays) {
+        if (!n.startsWith('dr-t-')) continue;
+        root.animate([{ transform: turn(0) }, { transform: turn(90) }], { pseudoElement: `::view-transition-old(${n})`, duration: 260, delay: d, easing: 'cubic-bezier(.55, 0, .9, .45)', fill: 'both' });
+        root.animate([{ transform: turn(-90) }, { transform: turn(0) }], { pseudoElement: `::view-transition-new(${n})`, duration: 450, delay: d + 220, easing: 'cubic-bezier(.2, .75, .3, 1.15)', fill: 'both' });
+      }
+      moves = moves.map(([el, frames, timing]) => el.animate(frames, timing));
+    }).catch(() => { moves = []; /* skipped: the page simply changed */ });
+    t.finished.finally(() => { unname(); delete root.dataset.dress; });
+    // the words come back once the last letter has landed
+    t.finished.then(() => Promise.all(moves.map(m => m.finished)), () => {}).finally(() => { layer.remove(); unsplit(); });
+  }
+  // The words that change letter by letter as the look changes: each letter turns from the old font and colour
+  // into the new where it stands, or, where the words differ (the headers' titles), flies to the same letter in
+  // the new ones; the letters with none to go to fade, the new ones rise. [the words' name, where they are,
+  // which of them, the bar they scroll sideways in]
+  const LETTERED = [['brand', '.topbar .brand'], ['title', '#hero h1:not(.sr-only)'], ['eyebrow', '#hero .eyebrow'],
+    ['nav', '.topnav a', el => el.dataset.col || 'shelf'], ['view', '#view button', el => el.dataset.view, '#view']];
+  // Each letter of those words on screen, split into an element of its own (.dl): { name (the words, the letter and
+  // which of them it is), sp, r (where it stands), look (how it is drawn) }. All the splitting first, then all
+  // the measuring, so the page is laid out once, not once a letter
+  function letters() {
+    const groups = [];
+    for (const [key, sel, which, within] of LETTERED) {
+      for (const el of $$(sel)) { split(el); groups.push([which ? `${key}-${which(el)}` : key, el, within]); }
+    }
+    const out = [], clips = new Map();
+    // words painted with a gradient through their letters (GTA's): each letter takes its own part of it
+    const clipOf = (sp, top) => {
+      for (let p = sp.parentElement; p && p !== top; p = p.parentElement) {
+        if (!clips.has(p)) { const cs = getComputedStyle(p); clips.set(p, cs.webkitBackgroundClip === 'text' || cs.backgroundClip === 'text' ? [p.getBoundingClientRect(), cs.backgroundImage] : null); }
+        if (clips.get(p)) return clips.get(p);
+      }
+      return null;
+    };
+    for (const [k, el, within] of groups) {
+      const box = within && $(within)?.getBoundingClientRect();
+      const seen = {};
+      for (const sp of $$('.dl', el)) {
+        const c = sp.textContent.toLowerCase().codePointAt(0).toString(36);
+        const n = seen[c] = (seen[c] || 0) + 1;
+        const r = sp.getBoundingClientRect();
+        if (!r.width || r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) continue;
+        // in a bar that scrolls sideways, only those in its sight
+        if (box && (r.left < box.left - 1 || r.right > box.right + 1)) continue;
+        const cs = getComputedStyle(sp), clip = clipOf(sp, el.parentElement);
+        let look = `font-family:${cs.fontFamily};font-size:${cs.fontSize};font-weight:${cs.fontWeight};font-style:${cs.fontStyle};`
+          + `letter-spacing:${cs.letterSpacing};text-transform:${cs.textTransform};color:${cs.color};text-shadow:${cs.textShadow};`;
+        if (clip) {
+          const [pr, image] = clip;
+          look += `background-image:${image};background-repeat:no-repeat;background-size:${pr.width}px ${pr.height}px;`
+            + `background-position:${(pr.left - r.left).toFixed(1)}px ${(pr.top - r.top).toFixed(1)}px;-webkit-background-clip:text;background-clip:text;color:transparent;`;
+        }
+        out.push({ name: `${k}-${c}-${n}`, sp, r, look });
+      }
+    }
+    return out;
+  }
+  // a letter drawn over the page where it stands, as it looks there
+  function drawn(l) {
+    const el = document.createElement('span');
+    el.textContent = l.sp.textContent;
+    el.style.cssText = l.look + `left:${l.r.left.toFixed(1)}px;top:${l.r.top.toFixed(1)}px;line-height:${l.r.height.toFixed(1)}px;`;
+    return el;
+  }
+  function split(el) {
+    const texts = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    while (walk.nextNode()) if (walk.currentNode.data.trim()) texts.push(walk.currentNode);
+    for (const t of texts) {
+      const bits = document.createDocumentFragment();
+      for (const ch of t.data) {
+        if (/\s/.test(ch)) { bits.append(ch); continue; }
+        // an element of its own, not a span, so the page's rules for the spans in the words (.brand span) don't catch it
+        const sp = document.createElement('dress-l');
+        sp.className = 'dl';
+        sp.textContent = ch;
+        bits.append(sp);
+      }
+      t.replaceWith(bits);
+    }
+  }
+  function unsplit() {
+    const parents = new Set();
+    for (const sp of $$('.dl')) { parents.add(sp.parentNode); sp.replaceWith(sp.textContent); }
+    parents.forEach(p => p.normalize());
+  }
+  // the games on screen as tiles to turn over, in reading order: [name, element, where it stands]
+  function tiles(kind) {
+    if (flat(state.view)) return [];
+    const out = [];
+    for (const el of host.querySelectorAll('[data-id]')) {
+      const r = el.getBoundingClientRect();
+      if (r.width && r.height && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth) out.push([el, r]);
+    }
+    out.sort((x, y) => x[1].top - y[1].top || x[1].left - y[1].left);
+    return out.slice(0, 80).map(([el, r], i) => [`dr-t-${kind}-${i}`, el, r]);
+  }
+  // what turns on its own as the look changes: [its name, the element, where it stands], each one on screen.
+  // The figures and the header are the collection's own, so the old ones go and the new ones come; the rest
+  // are the same in both and change where they stand
+  function dressed(col) {
+    const out = [], seen = new Set(), c = col || 'shelf';
+    const box = $('.cscroll')?.getBoundingClientRect();
+    const add = (key, el, inside) => {
+      if (!el || seen.has(key)) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height || r.bottom < 0 || r.top > innerHeight) return;
+      // a chip or view button scrolled out of its bar's sight stays in it, rather than showing past its edge on the way
+      if (inside && (r.left < inside.left - 1 || r.right > inside.right + 1)) return;
+      seen.add(key);
+      out.push(['dr-' + key, el, r]);
+    };
+    add('bar', $('.topbar'));
+    add('brand', $('.topbar .brand'));
+    $$('#figures > span').forEach((el, i) => add(`fig-${c}-${i}`, el));
+    $$('.topnav a').forEach(el => add('nav-' + (el.dataset.col || 'shelf'), el));
+    $$('.topbar .addme > *').forEach((el, i) => add('add-' + i, el));
+    add('hero-' + c, $('#hero .hero'));
+    add('cbar', $('.consoles-bar'));
+    add('chip-all', $('.chip[data-all]'));
+    $$('.famname').forEach(el => add('fam-' + el.dataset.fam, el, box));
+    $$('.chip[data-c]').forEach(el => add('chip-' + el.dataset.c, el, box));
+    add('filters', $('.filters'));
+    add('search', $('#searchBox'));
+    add('sort', $('.filters .dd'));
+    const seg = $('#view')?.getBoundingClientRect();
+    $$('#view button').forEach(el => add('view-' + el.dataset.view, el, seg));
+    add('count', $('#count'));
+    return out;
+  }
   // what a top bar's link opens on, every console showing: a collection in the grid, newest first,
   // the whole shelf on its bookcase by console (remembered, so the site's name reloads it the same way)
   function openFresh() {
     state.sel = new Set();
-    state.view = CFG ? (VIEWS.includes('grid') ? 'grid' : DEFAULT_VIEW) : (VIEWS.includes('shelf') ? 'shelf' : DEFAULT_VIEW);
+    state.view = defaultView(COL);
     state.sort = validSort(CFG ? MENU.newest : MENU.console);
-    store.set('view', state.view);
+    store.set(viewKey(COL), state.view);
     store.set('sort', state.sort);
   }
-  // a click on the top bar's links changes the collection where it stands, fading from one look to the other;
+  // a click on the top bar's links changes the collection where it stands, from one look to the other (dress);
   // the collection showing goes back to the top of it (/sims from /sims/pc). Either way it opens fresh (openFresh).
   // The site's name is a plain link: it loads the whole shelf afresh
   $$('.topnav [data-col]').forEach(a => a.addEventListener('click', e => {
@@ -2132,14 +2363,14 @@
       scrollTo(0, 0);
       return;
     }
-    const go = () => {
+    const go = animate => {
       setCollection(col);
       openFresh();
-      changed(); // a step in the history: /sims
+      changed(animate); // a step in the history: /sims
       showPicked();
       scrollTo(0, 0);
     };
-    if (document.startViewTransition && !reduced()) document.startViewTransition(go); else go();
+    dress(col, go, defaultView(col));
   }));
 
   /* A copy's PSN play history and trophies. A copy with more than one game in it (a trilogy) is tied to

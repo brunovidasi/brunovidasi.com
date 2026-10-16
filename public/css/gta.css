@@ -154,12 +154,19 @@ html.gta {
 .gta .want a { color: var(--orange); }
 .gta .tag { border-radius: 0; }
 
-@media (max-width: 820px) { .gta body::before { height: 45vh; opacity: .7; } }
+@media (max-width: 820px) {
+  .gta body::before { height: 45vh; opacity: .7; }
+  .gta .brand { font-size: min(27px, 9.2cqi); line-height: 1.1; }
+  .gta .figures { line-height: 1.2; }
+  .gta .figures b { font-size: 12px; }
+  .gta .topmenu { background: rgb(10,6,16); }
+  .gta .topnav a { font-size: 14px; }
+}
 @media (max-width: 640px) {
-  .gta .brand { font-size: min(17px, 9.2cqi); } .gta .topnav a { white-space: nowrap; padding: 6px 8px; font-size: 11px; }
+  /* six views across the row: tighter, so Checklist fits */
+  .gta .seg button { font-size: 11px; letter-spacing: .03em; padding: 0 4px; }
   .gta .eyebrow { font-size: 21px; }
   .gta .hero p { font-size: 14px; }
-  .gta .figures b { font-size: 12px; }
   .gta .bay { background-size: 60px auto, auto; }
 }
 
@@ -184,5 +191,3 @@ html.gta {
   .tr-head small { margin-left: 0; flex-basis: 100%; }
   .ghostbox b { font-size: 11px; }
 }
-@media (max-width: 400px) { .gta .topnav a { padding: 5px 6px; font-size: 10px; letter-spacing: .06em; } }
-@media (max-width: 340px) { .gta .topnav a { padding: 5px 4px; letter-spacing: .03em; } }
