@@ -188,7 +188,7 @@ export function renderWebsiteCard(project, _sameYearAsPrevious, category){
     : act('website-detail', category, project.id);
 
   return `
-    <div class="website-card" id="project-${project.id}" data-status="${vm.status}" data-company="${companySlug}"${vm.isArchived ? ' data-archived="true"' : ''}>
+    <div class="website-card website-card--site" id="project-${project.id}" data-status="${vm.status}" data-company="${companySlug}"${vm.isArchived ? ' data-archived="true"' : ''}>
       <div class="website-chrome">
         <span class="website-dot r"${act('card-minimize', project.id)} title="Minimize"></span><span class="website-dot y"${act('card-minimize', project.id)} title="Minimize"></span><span class="website-dot g"${detailAttrs} title="View project"></span>
         <div class="website-urlbar">${vm.lockHtml}${vm.urlHtml}</div>
@@ -208,15 +208,17 @@ export function renderWebsiteCard(project, _sameYearAsPrevious, category){
             </div>
             ${vm.roleHtml}
             ${descHtml}
-            ${vm.techHtml}
           </div>
           ${vm.logoHtml ? `<div class="website-logo-wrap">${vm.logoHtml}</div>` : ''}
         </div>
-        <div class="doc-actions">
-          <button class="doc-btn"${detailAttrs}>${ICON_EYE_SVG}View project</button>
-          ${vm.visitHtml}
-          ${vm.githubHtml}
-          ${vm.pdfHtml}
+        <div class="website-foot">
+          ${vm.techHtml}
+          <div class="doc-actions">
+            <button class="doc-btn"${detailAttrs}>${ICON_EYE_SVG}View project</button>
+            ${vm.visitHtml}
+            ${vm.githubHtml}
+            ${vm.pdfHtml}
+          </div>
         </div>
       </div>
     </div>`;

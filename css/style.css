@@ -3196,6 +3196,37 @@ h1.hero {
   margin-top: 10px;
 }
 
+/* Website/web-system grid cards fill their row, with the tech pills and buttons
+   pinned to the bottom so they line up across cards whatever the text above. */
+.tools-grid .website-card--site {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+.tools-grid .website-card--site.minimized {
+  align-self: flex-start;
+}
+
+.website-card--site > .website-chrome,
+.website-card--site > .website-thumb {
+  flex-shrink: 0;
+}
+
+.website-card--site .website-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.website-foot {
+  margin-top: auto;
+}
+
+.website-foot .doc-actions {
+  flex-wrap: wrap;
+}
+
 /* ---- Detail view --------------------------------------------------------- */
 
 /* website/web-system detail page: yellow dot hides the description column so the

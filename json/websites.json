@@ -1,5 +1,23 @@
 [
   {
+    "id": "gamecollection",
+    "title": "Game Collection",
+    "url": "brunovida.si/games",
+    "year": 2026,
+    "live": "https://brunovida.si/games",
+    "status": "live",
+    "icon": "🕹️",
+    "role": "Freelance — Full-Stack Design & Development",
+    "description": "A personal project showing my video game collection on a wooden bookcase, every game in its console's real case at its real size, with shelf, rows, grid, showcase and list views and cases that fly between them.",
+    "extendedDescription": "Built in vanilla JavaScript and CSS 3D, with no framework: pick a case off the shelf and it flies out to be turned round, opened to show the disc or have its cartridge taken out. The Sims and GTA collections each restyle the whole page in their own game's look. Behind it is a custom PHP admin with its own SQLite database that syncs the collection from Steam, PlayStation Network, Xbox, Nintendo, the EA app and Rockstar, keeping every change so a sync can be undone.",
+    "logo": "img/clients/games.png",
+    "screenshot": "img/screenshots/games.jpg",
+    "screenshotGif": "",
+    "github": "https://github.com/brunovidasi/games-collection",
+    "company": "Freelance",
+    "tech": ["PHP", "SQLite", "JavaScript", "CSS 3D", "Platform APIs"]
+  },
+  {
     "id": "flowparty",
     "title": "FLOW Party Sydney",
     "url": "flowpartysyd.com",
@@ -14,7 +32,8 @@
     "screenshot": "img/screenshots/flow-party.jpg",
     "screenshotGif": "img/screenshots/flow-party.gif",
     "github": "https://github.com/brunovidasi/flowpartysyd.com",
-    "company": "Freelance"
+    "company": "Freelance",
+    "tech": ["HTML", "CSS", "JavaScript"]
   },
   {
     "id": "vinylcollection",
@@ -31,7 +50,8 @@
     "screenshot": "img/screenshots/music.jpg",
     "screenshotGif": "",
     "github": "https://github.com/brunovidasi/music-collection",
-    "company": "Freelance"
+    "company": "Freelance",
+    "tech": ["PHP", "SQLite", "JavaScript", "CSS", "Discogs API"]
   },
   {
     "id": "darualab",
@@ -47,7 +67,8 @@
     "screenshot": "img/screenshots/darua-lab.jpg",
     "screenshotGif": "img/screenshots/darua-lab.gif",
     "github": "",
-    "company": "Freelance"
+    "company": "Freelance",
+    "tech": ["UI/UX Design", "Responsive Design"]
   },
   {
     "id": "brazilianculturalcentre",
@@ -63,7 +84,8 @@
     "screenshot": "img/screenshots/brazilian-cultural-centre.jpg",
     "screenshotGif": "img/screenshots/brazilian-cultural-centre.gif",
     "github": "",
-    "company": "Freelance"
+    "company": "Freelance",
+    "tech": ["UI/UX Design", "Responsive Design"]
   },
   {
     "id": "rheem",
@@ -80,7 +102,8 @@
     "screenshot": "img/screenshots/rheem.jpg",
     "screenshotGif": "img/screenshots/rheem.gif",
     "github": "",
-    "company": "The Hallway"
+    "company": "The Hallway",
+    "tech": ["Node.js", "React", "Drupal 8", "Contentful"]
   },
   {
     "id": "westernsydneyairport",
@@ -97,7 +120,8 @@
     "screenshot": "img/screenshots/westernsydneyairport.jpg",
     "screenshotGif": "img/screenshots/westernsydneyairport.gif",
     "github": "",
-    "company": "The Hallway"
+    "company": "The Hallway",
+    "tech": ["Drupal 8", "PHP", "JavaScript", "CSS"]
   },
   {
     "id": "generalpants",
@@ -113,7 +137,8 @@
     "screenshot": "img/screenshots/generalpants.jpg",
     "screenshotGif": "img/screenshots/generalpants.gif",
     "github": "",
-    "company": "General Pants Co."
+    "company": "General Pants Co.",
+    "tech": ["Salesforce Commerce Cloud", "JavaScript", "CSS"]
   },
   {
     "id": "franciscanasdedillingen",
@@ -129,7 +154,8 @@
     "screenshot": "img/screenshots/franciscanasdedillingen.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "AM4"
+    "company": "AM4",
+    "tech": ["Joomla", "PHP", "MySQL", "jQuery"]
   },
   {
     "id": "camilareis",
@@ -146,7 +172,8 @@
     "screenshot": "img/screenshots/camilareis.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "Freelance"
+    "company": "Freelance",
+    "tech": ["Joomla", "PHP", "MySQL", "jQuery"]
   },
   {
     "id": "adventista",
@@ -163,7 +190,8 @@
     "screenshot": "img/screenshots/adventista.png",
     "screenshotGif": "",
     "github": "",
-    "company": ""
+    "company": "",
+    "tech": ["HTML", "CSS"]
   },
   {
     "id": "sojaracoes",
@@ -181,7 +209,8 @@
     "screenshot": "img/screenshots/sojaracoes.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "SCE Sistemas"
+    "company": "SCE Sistemas",
+    "tech": ["OpenCart", "PHP", "MySQL", "jQuery", "Web Services"]
   },
   {
     "id": "comicscamisetas",
@@ -198,7 +227,8 @@
     "screenshot": "img/screenshots/comicscamisetas.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "SCE Sistemas"
+    "company": "SCE Sistemas",
+    "tech": ["OpenCart", "PHP", "MySQL", "jQuery"]
   },
   {
     "id": "megadestec",
@@ -216,7 +246,8 @@
     "screenshot": "img/screenshots/megadestec.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "SCE Sistemas"
+    "company": "SCE Sistemas",
+    "tech": ["OpenCart", "PHP", "MySQL", "jQuery", "Web Services"]
   },
   {
     "id": "enfoquepapelaria",
@@ -234,7 +265,8 @@
     "screenshot": "img/screenshots/enfoquepapelaria.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "SCE Sistemas"
+    "company": "SCE Sistemas",
+    "tech": ["OpenCart", "PHP", "MySQL", "jQuery", "Web Services"]
   },
   {
     "id": "westconnex",
@@ -251,6 +283,7 @@
     "screenshot": "img/screenshots/westconnex.jpg",
     "screenshotGif": "",
     "github": "",
-    "company": "The Hallway"
+    "company": "The Hallway",
+    "tech": ["Drupal 7", "PHP", "jQuery", "Bootstrap"]
   }
 ]
