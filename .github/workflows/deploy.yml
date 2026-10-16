@@ -37,7 +37,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /domains/brunovidasi.com/public_html/
-          dry-run: true
           # games/ and music/ are deployed by their own repos (brunovidasi/games-collection,
           # brunovidasi/music-collection): excluded, they are never uploaded or deleted from here.
           exclude: |
