@@ -1,0 +1,90 @@
+# Bruno's Game Shelf, to be deployed at https://brunovida.si/games (public_html/games).
+#
+# Every request is mapped into public/, the only folder that may be reachable
+# over HTTP, so the server's layout is the repo's. dev-server.php mirrors these
+# rules for PHP's built-in server.
+#
+# A parent .htaccess's rewrite rules are not inherited once this one turns the
+# RewriteEngine on.
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # The URL path this app is mounted at.
+    RewriteBase /games/
+
+    # HTTPS only. The second condition stops a redirect loop behind a proxy that terminates TLS.
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # /games/public/… to the canonical URL. THE_REQUEST is the client's own
+    # request line, untouched by the rewrites below.
+    RewriteCond %{THE_REQUEST} \s/games/public/ [NC]
+    RewriteRule ^public/(.*)$ /games/$1 [L,R=301]
+
+    # Stop here once inside public/: the rules re-run after every rewrite.
+    RewriteRule ^public/ - [L]
+
+    # The bare root goes straight to the file: a rewrite to the folder, left to
+    # DirectoryIndex, 500s on this host.
+    RewriteRule ^$ public/index.php [L]
+
+    # The JSON API: /api/games -> public/api/games.php
+    RewriteCond %{DOCUMENT_ROOT}/games/public/api/$1.php -f
+    RewriteRule ^api/([A-Za-z0-9_]+)$ public/api/$1.php [L,QSA]
+
+    # The admin's pages: /admin/games -> public/admin_games.php
+    RewriteCond %{DOCUMENT_ROOT}/games/public/admin_$1.php -f
+    RewriteRule ^admin/([A-Za-z0-9_]+)$ public/admin_$1.php [L,QSA]
+
+    # Their old addresses, /admin_games and /admin_games.php, redirect there (GET only, as below).
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteCond %{DOCUMENT_ROOT}/games/public/admin_$1.php -f
+    RewriteRule ^admin_([A-Za-z0-9_]+)(?:\.php)?$ /games/admin/$1 [L,R=301,NE]
+
+    # The pages, linked without .php: /admin -> public/admin.php
+    RewriteCond %{DOCUMENT_ROOT}/games/public/$1.php -f
+    RewriteRule ^([A-Za-z0-9_]+)$ public/$1.php [L,QSA]
+
+    # Old .php URLs redirect to the extensionless ones. GET only, since a 301
+    # would turn a POST into a GET and drop its body. cron_sync keeps its .php:
+    # its URL lives in a scheduler's config.
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteRule ^(?!cron_sync)([A-Za-z0-9_]+)\.php$ /games/$1 [L,R=301,NE]
+
+    # The shelf's own addresses, /wiiu, /sims, /sims/wiiu, /ps2-final-fantasy-x:
+    # index.php draws them (and 404s what isn't one). A real file or folder wins.
+    RewriteCond %{DOCUMENT_ROOT}/games/public/$1 !-f
+    RewriteCond %{DOCUMENT_ROOT}/games/public/$1 !-d
+    RewriteRule ^([A-Za-z0-9-]+(?:/[A-Za-z0-9-]+)?)/?$ public/index.php [L]
+
+    # Everything else (css, js, fonts, covers, prototypes) is served from public/.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# The app's own error pages, through the rewrites above to public/404.php and
+# public/500.php, for this folder only (the parent site has its own). A PHP
+# fatal draws the same 500 page from includes/runtime.php.
+ErrorDocument 404 /games/404
+ErrorDocument 500 /games/500
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# The database is never downloadable, even without mod_rewrite. data/ has its own deny-all too.
+<FilesMatch "\.(sqlite|sqlite-wal|sqlite-shm|sqlite-journal|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>

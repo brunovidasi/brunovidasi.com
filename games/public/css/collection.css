@@ -1,0 +1,91 @@
+/* collection.css — what the collections (?sims, ?gta: js/sims.js, js/gta.js) share: the pills
+   that jump to each game, a section per game with its meter, the cases standing on
+   stretches of shelf, and the want list. Each sets its own --acc colour (css/sims.css, css/gta.css). */
+.collection { --acc: var(--gold); --acc-dk: #1f4fa8; --acc-glow: rgba(77,141,255,.4); }
+.collection .hero h1 em { font-style: normal; color: var(--acc); }
+
+/* ---------- going from one look to the next, item by item (dress in js/app.js): the page behind fades from one
+   sky to the other while each named piece turns in its own moment (its delay set by the script), sliding to where
+   it stands now; what is only in the old look fades away, what is only in the new rises in. The games flying
+   across (.morph, js/app.js) stay above it all, as they are ---------- */
+html[data-dress]::view-transition-group(*) { animation-duration: .7s; animation-timing-function: cubic-bezier(.3, .7, .2, 1); animation-fill-mode: both; }
+html[data-dress]::view-transition-old(*), html[data-dress]::view-transition-new(*) { animation-duration: .6s; animation-fill-mode: both; }
+html[data-dress]::view-transition-old(*):only-child { animation-name: dress-out; animation-duration: .3s; }
+html[data-dress]::view-transition-new(*):only-child { animation-name: dress-in; animation-timing-function: cubic-bezier(.2, .8, .3, 1); }
+html[data-dress]::view-transition-group(root), html[data-dress]::view-transition-old(root), html[data-dress]::view-transition-new(root) { animation-duration: 1s; }
+html[data-dress] .morph { position: fixed; inset: 0; view-transition-name: dr-flights; }
+html[data-dress]::view-transition-group(dr-flights), html[data-dress]::view-transition-new(dr-flights) { animation: none; }
+/* the letters moving from the old words to the new, drawn over the page (js/app.js): shown as they move, from the
+   first moment, not faded in as a piece of the change */
+.dress-letters { position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+.dress-letters > span { position: absolute; white-space: pre; transform-origin: 0 0; }
+html[data-dress] .dress-letters { view-transition-name: dr-letters; }
+html[data-dress]::view-transition-group(dr-letters), html[data-dress]::view-transition-new(dr-letters) { animation: none; }
+@keyframes dress-out { to { opacity: 0; transform: scale(.96); } }
+@keyframes dress-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+/* a game turning over like a tile, when the new collection has none of the games showing (its turn set by the script) */
+html[data-dress]::view-transition-old(*.dr-t), html[data-dress]::view-transition-new(*.dr-t) { animation: none !important; mix-blend-mode: normal; }
+
+/* ---------- the checklist: a view of its own beside the shelf, grid and list ---------- */
+#checklist { display: none; padding-bottom: 30px; }
+body[data-view="checklist"] #checklist { display: block; }
+body[data-view="checklist"] :is(.case-wrap, .tools, .consoles-bar, .filters .search, .filters .dd, .count) { display: none; }
+
+/* ---------- jump to a game ---------- */
+.series-nav .in { max-width: var(--page); margin: 0 auto; padding: 10px 20px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.series-nav .in::-webkit-scrollbar { display: none; }
+.series-nav a { flex: none; text-decoration: none; border: 1px solid var(--line); border-radius: 99px; padding: 6px 12px; font-size: 12px; white-space: nowrap; opacity: .8; display: inline-flex; gap: 6px; align-items: center; }
+.series-nav a:hover { opacity: 1; border-color: var(--line-strong); }
+.series-nav a.on { background: var(--gold); border-color: var(--gold); color: var(--ink); opacity: 1; }
+.series-nav a em { font-style: normal; opacity: .6; font-variant-numeric: tabular-nums; }
+.series-nav a.want { border-style: dashed; }
+
+/* ---------- one game in the series ---------- */
+.series { max-width: var(--page); margin: 0 auto; padding: 46px 20px 8px; scroll-margin-top: 150px; }
+.shead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 30px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.shead h2 { margin: 0; font: 700 clamp(24px, 3.4vw, 34px)/1.05 var(--font-display); letter-spacing: .01em; }
+.shead p { margin: 6px 0 0; font-size: 13px; opacity: .6; }
+.meter { min-width: 220px; flex: 0 1 320px; }
+.meter .nums { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.meter .nums b { font: 700 17px/1 var(--font-display); }
+.meter .nums span { opacity: .6; align-self: flex-end; }
+.meter .track { height: 8px; border-radius: 99px; background: rgba(242,234,216,.1); overflow: hidden; }
+.meter .track i { display: block; height: 100%; width: var(--p); border-radius: inherit; background: linear-gradient(90deg, var(--acc-dk), var(--acc)); box-shadow: 0 0 10px var(--acc-glow); }
+
+.packs { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 0 22px; }
+.pgrp { flex: 1 1 auto; min-width: 0; max-width: 100%; }
+.packs h3 { margin: 22px 0 0; font: 500 11px/1 var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--gold); display: flex; gap: 8px; align-items: center; }
+.packs h3 em { font-style: normal; color: var(--text); opacity: .45; letter-spacing: .08em; }
+
+/* the cases, standing on a shelf board */
+.rack { position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 26px var(--gap); padding: 22px 16px 26px; margin-top: 12px; border-radius: 4px;
+  --cell: 128px; --gap: 20px;
+  background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.1)); box-shadow: inset 0 10px 16px -10px rgba(0,0,0,.8); }
+.collection .cell { text-decoration: none; color: inherit; width: var(--cell); }
+.collection .stage { display: flex; align-items: flex-end; justify-content: center; height: var(--stage, 168px); }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.tag { font: 600 9.5px/1 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; padding: 3px 6px; border-radius: 3px; border: 1px solid var(--line-strong); opacity: .85; white-space: nowrap; }
+.tag.disc { border-color: rgba(77,141,255,.6); color: #8fb6ff; }
+.tag.dl { background: var(--lb, rgba(242,234,216,.15)); border-color: var(--lb, rgba(242,234,216,.15)); color: var(--lf, var(--text)); }
+.tag.mac { border-color: rgba(242,234,216,.4); }
+.tag.code { border-color: transparent; background: rgba(242,234,216,.1); }
+
+/* ---------- the want list ---------- */
+.pgrp:has(.wants) { flex-basis: 100%; }
+.wants { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+.want { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; padding: 10px 12px; border: 1.5px dashed rgba(242,234,216,.28); border-radius: 6px; background: rgba(0,0,0,.25); }
+.want .ghostcase { width: 44px; height: 60px; border: 1.5px dashed rgba(242,234,216,.35); border-radius: 3px; display: grid; place-items: center; font: 600 10px/1 var(--font-ui); letter-spacing: .06em; opacity: .7; }
+.want b { display: block; font: 600 .95rem/1.25 var(--font-ui); }
+.want small { display: block; font-size: .74rem; opacity: .6; margin-top: 3px; }
+.want .note { opacity: .8; font-style: italic; }
+.want a { font-size: .74rem; color: var(--gold); text-decoration: none; display: inline-block; margin-top: 4px; }
+.want a:hover { text-decoration: underline; }
+.series.wantlist .shead h2 em { font-style: normal; color: var(--gold); }
+
+@media (max-width: 640px) {
+  .series { padding: 36px 16px 4px; }
+  .series-nav .in { padding: 8px 16px; }
+  .rack { --cell: 96px; --gap: 12px; padding: 18px 10px 20px; }
+  .collection .stage { height: var(--stage, 130px); }
+  .meter { min-width: 0; flex-basis: 100%; }
+}

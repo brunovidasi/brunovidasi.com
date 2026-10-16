@@ -1,0 +1,2862 @@
+{
+  "synced": "2026-10-11T05:03:59+00:00",
+  "source": "api/steam-exporter",
+  "currency": "AUD",
+  "totals": {
+    "games": 8,
+    "playtime": 400
+  },
+  "games": {
+    "231140": {
+      "appid": 231140,
+      "name": "Cities XL Platinum",
+      "storeUrl": "https://store.steampowered.com/app/231140",
+      "playtime": {
+        "total": 0,
+        "windows": 0,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": null,
+      "achievements": {
+        "total": 0,
+        "unlocked": null,
+        "list": []
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/231140/b98c63743fd64454009d49682dae66e2f749255c.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/header.jpg?t=1651242019",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/capsule_184x69.jpg?t=1651242019",
+        "background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/231140?t=1651242019"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "Build cities, shape a world.Cities XL Platinum lets you design, build and link up cities of all shapes and sizes around the Cities XL planet!Build more impressive cities than ever before! Cities XL Platinum offers a huge variety of over 1,000 buildings and constructions (including 50 brand new structures), that you can freely place on...",
+        "about": "Build cities, shape a world. Cities XL Platinum lets you design, build and link up cities of all shapes and sizes around the Cities XL planet! Build more impressive cities than ever before! Cities XL Platinum offers a huge variety of over 1,000 buildings and constructions (including 50 brand new structures), that you can freely place on more than 60 gigantic maps, offering varied terrain and an incredible level of detail. Take on the role of virtual mayor and find solutions to the problems faced by modern city planners like energy shortages and public transportation. Answer the growing needs of your citizens and find the perfect balance between various services such as housing, recreation, and employment. Specialize your cities and set up a trade network with neighboring towns to ensure large-scale financial success with an increasingly complex network of cities!Key Features: Over 1000 different buildings 60 gigantic maps Answer the needs of the citizens: employment, housing, recreation, and more Manage a large-scale economy",
+        "released": "2013-02-06",
+        "comingSoon": false,
+        "developers": [
+          "Focus Entertainment"
+        ],
+        "publishers": [
+          "Focus Entertainment"
+        ],
+        "genres": [
+          "Simulation"
+        ],
+        "categories": [
+          "Single-player",
+          "Steam Cloud",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": false,
+          "linux": false
+        },
+        "controllerSupport": null,
+        "languages": [
+          "English",
+          "German",
+          "French",
+          "Italian",
+          "Spanish - Spain",
+          "Polish"
+        ],
+        "metacritic": null,
+        "recommendations": 1064,
+        "ageRatings": {
+          "esrb": "e",
+          "pegi": "3",
+          "usk": "0",
+          "oflc": "g"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 14.95,
+          "final": 14.95,
+          "discount": 0
+        },
+        "dlc": [],
+        "website": "http://www.citiesxl.com/",
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_1f945270fc526e511884a348f76e31d8f1775261.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_b0963c29b367ddd539c1813b327d64671126ecc6.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_f0016ab352cdc398eb7eb3673432e53d98179c2e.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_36cae9046151498da3acfa223c9813e143784225.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_5f69e28dc967bee5d083bcd06502eafc8d6c128f.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_57cdbdb7d876f852e39e72cc79241e90706d321a.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_8cc06dfb9e2ac50c27d2df289da650aac7099c9f.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_9b433f226620070543367ec770d86472ac11369d.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_4ea26389a26fbb7d6e7d2928df0442932cc8f1fe.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_a954da046c3eb182b2dd0fb500849ae9a718deb9.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_1dfa12d91bba31e66dd2b4f38b8e43fbb26e868a.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_55f38604a3447eacb2953b3ff8e38a01ce04f4b5.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_33a4d348775dd64e0f379c4b48923dcae7eac91f.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_662c4b9f6fc9147870789eeb295706667b387e52.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_ac9c9c4dec7a231c76bb44db80e561c94c641948.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_67ded1b76a5bf8822f9d78f819d1ef8b3b44a906.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_a2cc6b785448cf5fd1e3e354ded57a7e325af5d7.1920x1080.jpg?t=1651242019",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/231140/ss_964a05023ca9c6ea0b9b43f0c1e3ec27275c2f7a.1920x1080.jpg?t=1651242019"
+        ],
+        "trailers": [
+          {
+            "name": "Cities XL Platinum Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2028356/movie.293x165.jpg?t=1447357414",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/231140/10561/091fd1b69cd9cbe42cd7ce68d7a688c7115bd355/1751279065/hls_264_master.m3u8?t=1447357414"
+          },
+          {
+            "name": "Cities XL Platinum DUB Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2028476/movie.293x165.jpg?t=1447357643",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/231140/10997/af980877568b3d3b3f0e1b6527e2cc9455ac922e/1751279066/hls_264_master.m3u8?t=1447357643"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": false,
+        "market": false,
+        "dlc": false
+      }
+    },
+    "255710": {
+      "appid": 255710,
+      "name": "Cities: Skylines",
+      "storeUrl": "https://store.steampowered.com/app/255710",
+      "playtime": {
+        "total": 58,
+        "windows": 58,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": "2025-10-14T09:45:49.000Z",
+      "achievements": {
+        "total": 135,
+        "unlocked": null,
+        "list": [
+          {
+            "name": "Pioneer",
+            "description": "Create your very first city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f51e370319e24698845c2fac6e30f0effd2e193c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Decorator",
+            "description": "Use the Asset Editor to make your very own asset",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/216656e621aeed2f9f2d29031a9aac7fa3707b48.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Terraformer",
+            "description": "Create a map",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/32878a94c52fc6a12bcc8057d798d42586012f41.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Well Informed",
+            "description": "Have a look at all the different info-view panels",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7811a5d8b755764c7904ae5585c263e5e91c7bca.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "City Planner",
+            "description": "Use the district tool to draw 3 districts",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/729272ea04769772defb9bd1e2280ba286137d3d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Lawmaker",
+            "description": "Apply a policy to a district you created",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/c80ba2cc079170b59e1dd8be0d0bddeab09f60d6.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Power at Your Fingertips",
+            "description": "Unlock all city services",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d102f916e9a7f2118422f633fe93d97e9ac10f0e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Heavenly City",
+            "description": "Unlock Monuments",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/6c122d175f3004b0d0220d5488c0a753fdf0edd3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Medic!",
+            "description": "Build the Medical Center Monument",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/109527a02f339cab16cfb11fd210450f982a87b7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "A Huge Hadron",
+            "description": "Build the Hadron Collider Monument",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/64806dc71ad91cb7b1a4eb047b3c58654ff6442a.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Beam Me Up",
+            "description": "Build the Space Elevator Monument",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/76b2418f9b926d1bed7ceb52d5cf9404c644d870.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "New Eden",
+            "description": "Build the Eden Project Monument",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/dfad7815db017628c49d9cbac02a96e17d39daa0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Short Fuse",
+            "description": "Build the Fusion Power Plant Monument",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/2e46dce59e7596165cc6a4f7ce66ca6513da1de5.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "I Want It All",
+            "description": "Unlock every single building in the game",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9693dc7a8b44fdd8df17f37943d0041991ef22a2.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Metropolis",
+            "description": "Have a population of 100,000 in your city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/76af53ca5a47b2324c4c4ec79788db8358fd2321.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Distroy",
+            "description": "Have more than 10 districts with unique policies",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/addf24dee470ffac552b08575e3d0537aba48f4b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "City in Motion",
+            "description": "Have 20 transport lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9629100ffddba0a53decd5f95b534f31487a0b0f.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "City in Motion 2",
+            "description": "Have 50 transport lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/efc0fd11877549a6c9a3beaf4cdf7c0ac73f3ebe.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Climbing the Social Ladder",
+            "description": "Have a Citizen educated to level 3 from 0",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/86574b48e2ce53c6b6f9010bf83c04bc7e8918d1.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Unpopular Mayor",
+            "description": "Have 15% happiness",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f3926197a6315c6684a84fdde4e943e77baeae15.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Rolling in Dough",
+            "description": "Earn 15,000 per week",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ce2271e776b8679ad30af2f5cb8e746cdcae3786.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Frenetic Player",
+            "description": "Click on a police building 100 times in a row",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/5d67463a7e48709e030a4fc2c5dc4536c36caa6e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Happy Town",
+            "description": "Have more than 95% city happiness for 5 years",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/327b87931bf3817fef6e5fa686a3068a82cf726e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Tough City",
+            "description": "Have the city survive a crime rate of over 40% for 2 years",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ca5e19b0c2db4b35475c391ab8dde27157211e72.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Fire Watch",
+            "description": "Have 5 Fire Stations",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7484ced611532d286ac79afdadda8908a90ef9a7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Safest Town",
+            "description": "Have 5 Police Headquarters",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/09e63631ed8d5b3987386dfd2700b9dddfeb54b4.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Professional Dumper",
+            "description": "Fill five landfill sites",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/fa85b09e82b4fbd59349d6a64db6dbdc6de919b4.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Earthloving City",
+            "description": "No water or ground pollution in a city of over 10,000 residents",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ae5b702eeeecfb5b93972d9100a836a2c80eb6c3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Higher Education",
+            "description": "Have over 70% of citizens highly educated in a city of over 10,000 people",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ae97a794885c7328039c779c2976329458b9430d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "SIMulated City",
+            "description": "Have an area the size of nine map tiles",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/1522c5287db6a11159646da13eb9a503240701d0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Safe City",
+            "description": "Keep the crime rate under 10% for 4 years straight",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/6f1af57f6f51b31d7614a42051360c690584d213.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Power to the People",
+            "description": "Have the industry tax rate over 5% higher than either residential tax rate for one year",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/763001d751c249c519278bb54a08c7d18092de53.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Make Them Pay",
+            "description": "Have both residential tax rates over 5% higher than industry for one year",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/c560e0a927c09afb2df69844cd8f29509fe935bd.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Leisure Suites",
+            "description": "Have 1000 squares of leisure specialized commercial zone",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/5cec1fe8dfc6f2354bbab93be06dabf5059bb63b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Playing With The Boys",
+            "description": "Have 1000 squares of beach specialized commercial zone",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/95db716e049d40843a81d4a1a30db70903b5ebb0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Prison Break",
+            "description": "Have 15 Prisons in the city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/3615fcebf2175491a2b9e8663ac2785be0eff608.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "1001 Nights",
+            "description": "Experience 1001 nights in the game",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/1a649d6798dd53bfca680eb0b928f448a149b43b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Does My Bum Look Big In This?",
+            "description": "Change Chirper look",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/10e5fb1dc2ffce75d5be3be9cae288752cbcdf62.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Singing In The-",
+            "description": "Experience rain",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/4e51a8469c5e8cb3fbf9261431b272a27d102675.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Foggy Weather",
+            "description": "Experience fog",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/786867741ae8555fe7efd862554481c09e9b7f69.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Brrr!",
+            "description": "Create a winter map in map editor",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9ff8209ba5c7bad09a3826bf5afb30a83ada5d36.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Get Your Snowshoes Ready!",
+            "description": "Experience snowfall",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/b9d878f031cc5e95cb2fb1e5b5db87695320302e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Here's A Tram",
+            "description": "Have one tram line active",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d1f36654a5409c50b641e51beb0c832b8c718d25.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "I Love Trams!",
+            "description": "Have 10 tram lines active",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/20c0a0b98f4f1b1b112e76998d8b285c8ac1f22a.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Are They Naked In There?",
+            "description": "Have a Sauna in the city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/1da5bcbad863ff8017ac405040841751a6748096.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "It's Wintertime!",
+            "description": "Change Chirper to a winter look",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/b17b74dc47a53fefd50449d97ec2443890763552.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Speed up!",
+            "description": "Boost 100 km of streets with Road maintenance service",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/4daa3c0ca385dfd5910ff821ecb6de77d6f20a00.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Plowmaster",
+            "description": "Have snowplows collect 2000000 units of snow",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/236210e6cc52c7cbf719f48c4832413f41d3b713.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Quay-King",
+            "description": "Build one quay",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/0fc4559b07b5afd605451d7c923ea0a652b950a1.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "With Canals You Can!",
+            "description": "Build one canal",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ae7ca7457347c04b894607e757a8443291714064.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "We need snorkels!",
+            "description": "Experience a tsunami",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/60ec7265f11e05eb8a472828bc46bee0d8cb9e16.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Shake It Up!",
+            "description": "Experience an earthquake",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/2e9a3f4a13e5b0fe05ea56adeb69ba1d77a7c3b0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "It's heading right for us!",
+            "description": "Experience a meteor strike",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f25c019547b14af4c69b73e098b97f232e81d398.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Drop the Base",
+            "description": "Experience a sinkhole",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9581d695bfda60fdfedaab4c3480b301f5ba7ea9.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Run, Bambi!",
+            "description": "Experience a forest fire",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7fc3229ad22b0e2efec2cfeb31e26de142b89e66.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Thunder and Lightning",
+            "description": "Experience a thunderstorm",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/faafa2b5f19c0d00587d327b5da5c4a7e6fbab86.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Twist and shout",
+            "description": "Experience a tornado",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d42638501b698fac213de9b6b120b6672ad84df5.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "What the...?",
+            "description": "Experience a special disaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/50d02258059d39351d4a98a4b7c4f92616aef4ee.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Eternal City",
+            "description": "Have ten disasters hit the same city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/83f37a889e1b0f2e2cb16d2a1c43cba565cbfbab.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Creator",
+            "description": "Create 10 scenarios",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/0ed2e1d6ce759ae65dc8f9b2bb2b26a5eb0d7dec.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "We Have A Winner!",
+            "description": "Win 10 scenarios",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/1fca811d581d9b49d5253d7292c1443f318b3fa9.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Underdog",
+            "description": "Lose 10 scenarios",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/799de73fc5e37fc5dd5ea8829b3674e507c3fe44.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Rejoice And Be Ferry",
+            "description": "Have 3 ferry lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/a8db34903f04f75072958b726c211394f2a7f4fa.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Ferry Faerie",
+            "description": "Have 15 ferry lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7328d461ee406a0f07a044045d83c181add5abb3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Triorail",
+            "description": "Have 3 monorail lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/4140ef64760025e24574b0d857167654f186900b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Not So Mono",
+            "description": "Have 10 monorail lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f6db7ccb57a7ffebde6e72183f4e2cf8ed9e3d41.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Clark Cable",
+            "description": "Transport 5 000 passengers with Cable Cars",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/6439cb632c36f58537f0df0e74ba7ff63144cac8.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Cables Galore",
+            "description": "Transport 20 000 passengers with Cable Cars",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9a271e04693a2f6fa8a1143124bf4f116b873241.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Blimp? Blimp.",
+            "description": "Have 3 blimp lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/87178faf35bec3f0baf4a8c59ea1044ef7bbbcd7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Put Some Blimp In Your Blimp",
+            "description": "Have 10 blimp lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/330069be038f0a5208d6ca43d5246e766b2afb19.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Combo Breaker!",
+            "description": "Have one Ferry and Bus Exchange Stop, Metro-Monorail-Train Hub, Monorail-Bus Hub and Multiplatform Train Station",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/172abec85718c9534b17f9c3eca6bd086f6fc016.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Nomen Est Omen",
+            "description": "Name a road",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d668ab4928e7e96cd97c17c433101eb90df66db5.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Centurion",
+            "description": "Name 100 roads",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d84bd8e69426f564ba5b63cdb26206a73aaf7bd5.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "It's Called Steve",
+            "description": "Name a road \"Steve\"",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/5fc6aa47cc569c1c83f6e69cf8d103fc65013a05.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Totally In Motion",
+            "description": "Win all three Mass Transit scenarios",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/364741229c10843f6019b496f688079bbd55351e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Reporting!",
+            "description": "Check a route of a citizen",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/a61610e2937e694b6ea4a263c7c8cbd8fded9990.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Super Self-Sufficient",
+            "description": "Have all residential zone in your city be specialized Self-Sufficient Housing",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/b3c04c456d2fd02233a1fe89b8d94e9221e7f402.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "I to the T",
+            "description": "Have all office zone in your city be specialized IT-Cluster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/433ccdc0623a9dd5bc28f3484218771eadf7c52b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Organistic",
+            "description": "Have all commercial zone in your city be specialized Organic and Local Produce",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/997cd20e6ab2a03a4cf8192ffe68159109ec1e66.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Green Energy",
+            "description": "Produce all electricity without using raw materials",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/61672abf180dbc42a9a0922175cac1d8f60710e6.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Friendly Teaching",
+            "description": "Build one of each eco-friendly schools: Community School, Institute of Creative Arts and Modern Technology Institute",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ce7d5de10fdabca17d2c5948502115d7251c825d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Greenest City",
+            "description": "Have no polluting industry in your city, only Office Zone and specialized zones",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/2341201e47aecb4691bf84299bdbaa69a6a249e3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Park To Rule All Parks",
+            "description": "Have a maximum level park made with Park Tool",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/547290c244f39f8f8b90827adcb4e33fc8e9114d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Parking Not Forbidden",
+            "description": "Have 10 parks made with Park Tool",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7154e85cd2f4fbb01e617218cfe53776733a25fc.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Z00",
+            "description": "Have a park with all zoo buildings built in it",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f82890ced87e60c824ae0b6e9b4e1e05fcaa42ce.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Ambulare",
+            "description": "Have 5 pedestrian Walking Tour lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/81a4db9df9ebc1eb10a0f494b6df890d73904783.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Maintain That Park",
+            "description": "Have a Park Maintenance Service and a Zoo, Nature Reserve and Amusement Park in your city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/c115f69f5d6ea3370dd5dc8be9db9f068c939dff.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Coaster Tycoon",
+            "description": "Have a park with all Amusement Park buildings built in it",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/97f2b095237ce347b0ff3988c440d7fdfb99a66f.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Naturally",
+            "description": "Have a park with all Nature Reserve buildings built in it",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f90fd94f8340ac96a3fb3f566a13d812f303962f.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Sights To Be Seen",
+            "description": "Have 15 Sightseeing Bus lines",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/45f739ad208cdff6da54a898725ea89ef0d81e43.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Full Capacity",
+            "description": "Level up an Industry Area up to Level 5",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/1ff2e6b439b2dc1db71d3c56cbe1e66a4d9b434c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Serial Investor",
+            "description": "Build 10 Industry Areas",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/4e22fd4ecf9c8f2a1cdbba62796452da5b570290.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Offshore Assets",
+            "description": "Build five Oil Rigs",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/b37411c37354908ded503de0b6c34a20059991bb.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Industry Tycoon",
+            "description": "Build all Unique Factories",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9e26f18230e8b3c389e2a1fcbb6388bff85d2f6e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Postman",
+            "description": "Deliver 1 000 000 units of Mail",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/fe3404baacc6c7f09a96a606a2affa1e3939a128.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Just Tolling",
+            "description": "Build one of each road Toll Booth buildings",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/cad785fbd9e6cd81da75fe15d55879ca993e3903.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Scaling Up",
+            "description": "Build 10 Warehouse buildings",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/cb3b12025e325a0317e874fa6821dc07dd0f5b66.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Student Housing Project",
+            "description": "Have total number of 10 Dormitories",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/fd0e348d7c68bf12af4179162d79abd313d61bef.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Education Nation",
+            "description": "Have 15 000 students studying on campuses at the same time",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/afb1601412b78edb371a225f48d28c987d66d054.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Distinguished Academics",
+            "description": "Have one campus reach \"Prestigious\" in reputation",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/e9ef464ec7894008c55fdd29b780762d3ee73a02.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Varsity Sports Patron",
+            "description": "Build all five varsity sports arenas on one campus in one city",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/c1ccacb0811df14e3b8e7c9414a39b9b8b908240.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Higher Learning",
+            "description": "Build all Campus Area types with all of their respective campus buildings and faculties",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/810000dacccfa21d01a1278abb9d20ce57799a09.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Academic Scholar",
+            "description": "Create 100 academic works",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9321a19a2c50439b67394850db943666327cc06a.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "For For-Profit Education!",
+            "description": "Cover one campus area upkeep cost entirely with tuition fees paid by students in a campus area with more than 5000 students",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7c76de74bd3d1ff6cb5449ff98e0437de4a29350.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Aquaculture",
+            "description": "Farm 7 500 000 units of fish and sea plants.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9cb3c1bda2625b5c9c6cec700facd617d036565d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Fisher King",
+            "description": "Catch 10 000 000 units of fish.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/227fe724fe65186e25a126cdeb612125c0fb6aed.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Multidisciplinary Transport Tycoon",
+            "description": "Build one of each of the following transport hubs: Underground Metro-Intercity Bus Hub, Bus-Intercity Bus Hub, Train-Metro Hub, Metropolitan Airport, Bus-Metro Hub",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/64452a755cd7193e119cd924b63a480fe6e5acbe.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Trolleyface",
+            "description": "Transport 35 000 amount of citizens in trolleybuses.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/b12e63048ee7e0d12e05532134e8184220ac1b47.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "World of Rotorcraft",
+            "description": "Transport 15 000 amount of citizens in passenger helicopters.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9e0a5c4369738cc58cf3ff47a980ac68a4dcfa15.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Come Fly With Me!",
+            "description": "Have 60 tourists visit the Aviation Club during one week.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/3648e86265d6b86451aa3679502416ee0418ebe4.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Waters of Our Lives",
+            "description": "Treat 20 000 000 m3 of waste water using the Inland Water Treatment Plants.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/e42af4e6704b69ca99f468a3316ce18300238b80.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Airline Tycoon ",
+            "description": "Have an airport area reach level 3.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/41fe9cf99085fd9edd208906bc386f712ec2d67c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Airlifter",
+            "description": "Have 10 000 total passengers travel through an airport area. ",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/2a91e7318c6cf55a6a5309d102bc83cc5da6fa30.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Airport Architect",
+            "description": "Build an airport area with a terminal, a runway and an aircraft stand.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/08eead810b447eb5a6c497c3c8c34b6fbc1bee0a.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Airfield Expertise",
+            "description": "Build an airport area with an area of 25000 cells.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/2096bbe760ce162af55ceefce35d8a7611d08ae7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "High-cost-carrier ",
+            "description": "Set the airline ticket price slider to the maximum price. ",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/ba974bdae30dcbc041da036fd508b4e858054f6c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Garbage Collection Issues",
+            "description": "Have 5 garbage service points reach their capacity limit.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/351e22f785fc199a151c89c7ed61a81220d446c3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Sweetest City",
+            "description": "Build 10 ice cream stand plazas in one pedestrian area.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/5d42549008b02172e5c4a23f79bda8b5effcea29.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Very Focused",
+            "description": "Have one pedestrian area focused on residential, one in commercial, and one in workplace zones.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/1d2a1e8d5a90bc2e4b36a9fd4c38c7b45925ce3e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Can't Buy Me Love ",
+            "description": "Earn ₡5,000,000 through investments.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/0c464e24210d0a2d2d171777a404b7b586938fd0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "All In",
+            "description": "Have at least ₡1 000 000 in cash. Put all of your available cash into investments, then don't sell any investments for one month.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/6cbe716e40d2ff8f6685d93a4a776fd8f3681d42.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Cash Flow",
+            "description": "Have a bank building get flooded.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/f20bc2fe0638679e1b2c705b9868cb624ace2658.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "So Much Cash!",
+            "description": "Transport ₡2,000,000 using cash transport vans in one week.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/fe059411e4112bad2c0aeeca1b1081be28a0091d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "No risk, no fun!",
+            "description": "Take a loan in order to make an investment.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/10a21e0f7c94b1c575ca6a299fba89369b8bf757.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Very Accommodating",
+            "description": "Have total of 500 weekly guests to stay at hotels.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/9d7297ab84e309422e524d8876c210c39c27d6ee.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Peak Season",
+            "description": "Organize three hotel events.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/7ac8bce67582527873f16c57c2ef394ae546c1ad.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Fully Booked!",
+            "description": "Have the maximum possible number of guests stay at any 5 star hotel with at least 100 rooms.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/e19b4d3bb5f514c374499cd929e26047b8c7506e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Start your engines!",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/243829958f2e8035c6f3dbe18a060b171d6df8e8.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Grand Circuit Pro",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/6be9aad199e220d55897f0aba6ded7ea14a065b9.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "I Run This City",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/fad3071cefe540ae2416a8fe8ccaf2b1634e5b6e.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Tour de Metro",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/b75b8064d2eb0cc6fef800b792283a5df14126e2.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Foot Traffic",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d5c56ae03d4540600f7ba6a2651c0b5111d10e26.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "White Night",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/42fc8cb17df176028e38b0326befc34857e095f1.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "He Did What in This Cup?",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/d77776a44a020107ade7ace84c2281fdc599a244.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Grande Parade",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/255710/c03ca50c96b8e552a1a4c298723cbd2057fd4f9e.jpg",
+            "hidden": true,
+            "unlocked": null
+          }
+        ]
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/255710/6cf7b10dd29db28448ef79698ed2118a03617d63.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/header.jpg?t=1791468493",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/4cf458b43b41e4f86d3e4e604e7a7577c7926b01/capsule_184x69.jpg?t=1791468493",
+        "background": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/page_bg_raw.jpg?t=1791468493"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "Cities: Skylines is a modern take on the classic city simulation. The game introduces new game play elements to realize the thrill and hardships of creating and maintaining a real city whilst expanding on some well-established tropes of the city building experience.",
+        "about": "Cities: Skylines is a modern take on the classic city simulation. The game introduces new game play elements to realize the thrill and hardships of creating and maintaining a real city whilst expanding on some well-established tropes of the city building experience. You’re only limited by your imagination, so take control and reach for the sky! Multi-tiered and challenging simulation Constructing your city from the ground up is easy to learn, but hard to master. Playing as the mayor of your city you’ll be faced with balancing essential requirements such as education, water electricity, police, fire fighting, healthcare and much more along with your citys real economy system. Citizens within your city react fluidly, with gravitas and with an air of authenticity to a multitude of game play scenarios. Extensive local traffic simulation Colossal Order's extensive experience developing the Cities in Motion series is fully utilized in a fully fleshed out and well-crafted local traffic simulation. Districts and Policies Be more than just an administrator from city hall. Designating parts of your city as a district results in the application of policies which results in you rising to the status of Mayor for your own city. Utilize the Day and Night Cycle The city changes during the hours of the day and affects citizen schedules. Traffic is visibly slower at night and some zoned areas do not work with full efficiency. Cities: Skylines will put you in control of managing the different aspects of the day and night cycles.Extensive modding support Build or improve on existing maps and structures. You can then import your creations into the game, share them as well as download the creations of other city builders on the Steam workshop.",
+        "released": "2015-03-10",
+        "comingSoon": false,
+        "developers": [
+          "Colossal Order"
+        ],
+        "publishers": [
+          "Paradox Interactive"
+        ],
+        "genres": [
+          "Simulation",
+          "Strategy"
+        ],
+        "categories": [
+          "Single-player",
+          "Steam Achievements",
+          "Steam Trading Cards",
+          "Steam Workshop",
+          "Steam Cloud",
+          "Includes level editor",
+          "Remote Play on Tablet",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": true,
+          "linux": true
+        },
+        "controllerSupport": null,
+        "languages": [
+          "English",
+          "French",
+          "German",
+          "Spanish - Spain",
+          "Polish",
+          "Portuguese - Brazil",
+          "Russian",
+          "Simplified Chinese",
+          "Korean",
+          "Japanese"
+        ],
+        "metacritic": {
+          "score": 85,
+          "url": "https://www.metacritic.com/game/pc/cities-skylines?ftag=MCD-06-10aaa1f"
+        },
+        "recommendations": 228169,
+        "ageRatings": {
+          "esrb": "e",
+          "pegi": "3",
+          "usk": "0",
+          "dejus": "14",
+          "steam_germany": "12",
+          "igrs": "3"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 42.95,
+          "final": 42.95,
+          "discount": 0
+        },
+        "dlc": [
+          4771370,
+          4771380,
+          4771390,
+          4031130,
+          4031140,
+          4031150,
+          4031160,
+          3731500,
+          3731510,
+          3731530,
+          2955910,
+          2955900,
+          2955920,
+          2955870,
+          2955880,
+          2955890,
+          2934300,
+          2342310,
+          2313320,
+          2313322,
+          2313321,
+          2313323,
+          2313324,
+          2148900,
+          2224691,
+          2224690,
+          2148902,
+          2225940,
+          2225941,
+          2148901,
+          2148903,
+          2148904,
+          2144480,
+          2144481,
+          2144482,
+          2144483,
+          2008400,
+          1992290,
+          1992291,
+          1992293,
+          1992292,
+          1726380,
+          1726382,
+          1726381,
+          1726384,
+          1726383,
+          1531471,
+          1531470,
+          1531473,
+          1531472,
+          1146930,
+          1148022,
+          1196100,
+          1148020,
+          1148021,
+          944071,
+          1059820,
+          1065491,
+          1065490,
+          715194,
+          944070,
+          715191,
+          614580,
+          547502,
+          515191,
+          420610,
+          369150,
+          715190,
+          547500,
+          515190,
+          815380,
+          715193,
+          614581,
+          614582,
+          547501,
+          346791,
+          715192,
+          456200,
+          563850
+        ],
+        "website": null,
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_0754001c88ad4dbfff92faf9a97e8d87cf3f8840.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_e0f842c9327df9defabf120b6c59e1ba42f54a75.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_b5a4b72062b8c4ad677b242963e88c2e624cb1f9.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_39f74526167020dfae4156945f24e7e49d5eedf8.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_a4ebf2b3ad46e620d99fa471708d68b28ea4d7d1.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_013b26f27484941d4edbd406f8df5b5238f120df.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_e90299bea1faee761c11c5242c4e6e89f3ef7fb9.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_79130723c29cdd89f6169514bc4aad03aa58e823.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_7d54fe076aabfd4fbe465517a4f1a4426e9cb367.1920x1080.jpg?t=1791468493",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255710/ss_13bf6dcdc9f4e383f885752fbe9114ddb4dfd729.1920x1080.jpg?t=1791468493"
+        ],
+        "trailers": [
+          {
+            "name": "Trailer 2020",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256785384/movie.293x165.jpg?t=1589550020",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/255710/285736/c6d0fd84c7635300ea7ce0ca9222840f47fe228d/1750489550/hls_264_master.m3u8?t=1589550020"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": true,
+        "market": false,
+        "dlc": true
+      }
+    },
+    "282560": {
+      "appid": 282560,
+      "name": "RollerCoaster Tycoon World",
+      "storeUrl": "https://store.steampowered.com/app/282560",
+      "playtime": {
+        "total": 1,
+        "windows": 1,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": "2025-09-03T02:01:34.000Z",
+      "achievements": {
+        "total": 30,
+        "unlocked": null,
+        "list": [
+          {
+            "name": "Failure is the Mother of Success",
+            "description": "Go bankrupt once",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/878560769fe897cb81220ae5af0662aff735fad9.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "My Sketch",
+            "description": "Create your 1st coaster blueprint",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/1430f4e618e7c2d93478cd6c82d8b1f1f61e34a2.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "My Plan",
+            "description": "Create 5 coaster blueprints",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/7c869594584c0b19d146b05504ee69504ec83522.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "My Design",
+            "description": "Create 20 coaster blueprints",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/5277b0d85f501b1874cbc961a339368dae953421.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Leave the Birds Alone!",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/bff687e9ad119ad454b718af492b5e229e621d5a.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Free Coconut Juice",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/15060e7a1892602ca7ca39e8aa124d2651846be1.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Strike!",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/c32d32ceb3ae7eacac8a9d54ae300d8465f67607.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Peep Bowling",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/ebd4806bd9cb454313a6101409ae2402384b394a.jpg",
+            "hidden": true,
+            "unlocked": null
+          },
+          {
+            "name": "Getting Noticed",
+            "description": "Reach a Park Rating of 100",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/1987e6803f9c857db89fd13b56aeca0b33dd1ad1.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The New Star",
+            "description": "Reach a Park Rating 500",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/44cbbe700574bba5556a402f9a1e303ab2847291.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Peak of my Popularity",
+            "description": "Reach a Park Rating 750",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/d9e7d93916527e77a2b7f449e1fc52802e05277b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Zuckerberg",
+            "description": "Build a park with a value of $500,000",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/e3c0ca7a01fb42bb1b7e5aa0cc4f330e1ddf7b78.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Gates",
+            "description": "Build a park with a value of $1,000,000",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/8c77d655d601c5117eee0d30e7b19e7ff04f27b7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Tycoon's Most Wanted",
+            "description": "Have 1,000 peeps become injured",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/f36962503a2d1cedde4c51734bfb509641a84735.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Where's Aldo",
+            "description": "Have 1,000 peeps become lost",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/febb38c9c670171d2a7f81275c50c1583723508d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "I'M A BILLIONAIRE!",
+            "description": "Total profit of $1,000,000,000",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/cf59bef514a5101074b92ccf844dae19e60f11c4.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Wood You?",
+            "description": "Build a wooden coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/fe0eabaf9de3a4e9c909e34f9d71541e49c014b6.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Hyperactive",
+            "description": "Build a hyper coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/2ae6b52d1ad78412f1545bb14c7f951c9f3e1446.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "88 Mph",
+            "description": "Build an accelerator coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/999c605ff2945b95a03c39616e32917667a3478c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Under the Tracks",
+            "description": "Build an inverted coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/ae9e2c1811b47e0d7c9c88db8efc328acfc21c4c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Fast on your Feet",
+            "description": "Build a standing coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/be5de2ad5f84bc2da2fdbf9c275ada9004684cd0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Going Down",
+            "description": "Build a dive coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/80d10a40a3a221fd663002731ba2f591a723b4b7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Like an Eagle",
+            "description": "Build a wing coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/d131b94c151f30f863e096b99a128babb53f2c97.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Look Out Below",
+            "description": "Build a floorless coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/86060da27d03b131f23018d42fb2f3133981af12.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "It's a Bird, It's a Plane",
+            "description": "Build a flying coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/e10f942872ad1aa3990fac5ed135d179e1053400.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Scrambled Peeps",
+            "description": "Build a spinning coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/2cdff58ab2fd7035b3439f8a6c541134d988e0f7.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "I hope this is stable",
+            "description": "Build your first custom-coaster",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/10696aa88eaa4ddbfe93092156d9b357fdc772cf.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "And I would Walk…",
+            "description": "Build a total of 500 miles of tracks",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/f11c7ce270e6be63341cdd54b84ff73528f77510.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Crash Test",
+            "description": "Crash 30 Coasters while they're in test mode",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/056a1569422a62d0939b922f4f726ddfaa4a8b94.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "This is not a drill",
+            "description": null,
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/282560/e712cd008967b39a13f26ba163dd0703f4ac8083.jpg",
+            "hidden": true,
+            "unlocked": null
+          }
+        ]
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/282560/020cf47a673f649cc18cb71decde2371faf1d3aa.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/header.jpg?t=1733161242",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/capsule_184x69.jpg?t=1733161242",
+        "background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/282560?t=1733161242"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "RollerCoaster Tycoon World is the newest installment in the legendary RCT franchise. This next-generation theme park simulation and building game includes fan-favorite features along with incredible new advancements!",
+        "about": "RollerCoaster Tycoon World is the newest installment in the legendary RCT franchise. This next-generation theme park simulation and building game includes fan-favorite features and incredible new advancements such as stunning 3D environments full of roller coaster thrills, exciting flat rides, eager guests, user-generated content, robust social features, and more – all in one massively fun game! FEATURES Powerful Building Tools: Innovative 3D Coaster Editor: Easily create the coolest and wildest coasters imaginable with our best track editor ever! Using our spline-based editor, tracks can be fully manipulated in 3D for the first time, allowing you to create any shape you can dream up. Expansive Selection of In-Game Objects: Entertain your park guests with tons of different coasters, flatrides, shops, scenery items and more! Freeform Object Placement: Control and place every single in-game object anywhere on the map at any angle. Curved Paths: Select your unique type of path from a variety of widths, styles, and shapes. You can make them straight, or for the first time in the franchise, curve them at almost any angle! Fully Deformable Terrain with Water: Place amazing rides and change your park’s landscape in full 3D with completely deformable terrain and water. Expansive Customization Support: Piece-by-Piece Builder: Create custom buildings and scenery in-game with our expansive Piece-by-Piece tools. Four themes (Adventure, Sci-fi, Western and Generic) and over 260 premade, tiled pieces give players limitless creative freedom. User-Generated Content Tools: For the first time, you will be able to create any item you want in any 3D editing program that works with Unity, and import it into the game for everyone to use! Our robust Steam Workshop integration lets you quickly and easily share your UGC creations with the entire RCTW community! Multiple Maps and Themes: Choose from different environments – forest, deserts, tropical islands - and theme options (Western, Sci-fi and more!) to make each park unique. Next-Generation Simulation: Brand-New Progression Mode: Experience an exciting new way to play with our mission-based campaign system. This progression mode features dozens of engaging and increasingly tricky missions over 3 world maps, with multiple objectives and playstyle options. As you complete these missions, you’ll be granted Research Points, which can then be used to unlock over 100 new scenery items for use in your Sandbox Mode. Detailed Park Management Tools: Run a successful theme park using a plethora of park management tools and trackers. From park finances to the thoughts of your guests, everything is at your fingertips including new features like heat maps! Sandbox Mode: Build the park of your dreams with unlimited resources in our Sandbox mode. Items unlocked in the Progression Mode will be made available in your Sandbox, or at the touch of a button you can access the full breadth of RCTW coasters, flatrides, shops, and more. Build how you want! Responsive Environments and Guests: Create themed zones in your park! Placing different themed objects near your rides will increase their attractiveness to certain peeps, changing game play dynamically. Advanced Physics Calculations: The coasters in RCTW use a more complex physics simulation than any previous game in the franchise. This simulation allows for amazing designs and a lifelike riding experience. Build a coaster that stays perfectly on its tracks or teeters on the brink of disaster; just be careful or your coaster may jump the rails! Ride Every Coaster: Hop into the front seat of a coaster and ride what you made yourself! Innovative Services: Manage your park’s medical, janitorial, entertainment and mechanical needs with the re-designed, simple-yet-powerful services system. Native Sharing and Social Features: Social Media Integration: Share all your cool creations and designs with your friends straight from within the game! Friend’s Lists and Stat Comparisons: See what your Steam and Social friends are up to in their games from within yours! It’s easy to see someone’s latest coaster or when they last edited their park. Native Steam Workshop Support: Native Steam Workshop support is built right into RollerCoaster Tycoon World! The interface has been simplified and centralized to make it easy for anyone from the casual to hardcore user. Custom scenery, blueprinted coasters, parks and more can be easily and seamlessly shared from within the game. UGC has been designed to be accessible and easy to use for everyone.",
+        "released": "2016-11-16",
+        "comingSoon": false,
+        "developers": [
+          "Nvizzio Creations"
+        ],
+        "publishers": [
+          "Atari",
+          "RCTO Productions"
+        ],
+        "genres": [
+          "Simulation",
+          "Strategy"
+        ],
+        "categories": [
+          "Single-player",
+          "Steam Achievements",
+          "Full controller support",
+          "Steam Workshop",
+          "Steam Cloud",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": false,
+          "linux": false
+        },
+        "controllerSupport": "full",
+        "languages": [
+          "English",
+          "French",
+          "Italian",
+          "German",
+          "Spanish - Spain",
+          "Portuguese - Brazil",
+          "Russian",
+          "Dutch",
+          "Simplified Chinese"
+        ],
+        "metacritic": {
+          "score": 43,
+          "url": "https://www.metacritic.com/game/pc/rollercoaster-tycoon-world?ftag=MCD-06-10aaa1f"
+        },
+        "recommendations": 3246,
+        "ageRatings": {
+          "esrb": "e",
+          "pegi": "3",
+          "usk": "0",
+          "dejus": "l",
+          "steam_germany": "6",
+          "igrs": "13"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 21.5,
+          "final": 5.37,
+          "discount": 75
+        },
+        "dlc": [],
+        "website": "http://www.rollercoastertycoon.com",
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_7fd5ef51167cd15c79853d07dd4cf80f8f8f33a0.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_78604e7f2287ef8eda3f0ae085c36e764d100c0a.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_b77df327e1881eb0af9da33cc56268b45ee9e464.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_94985fe630fbf329c125dbae42a14ff09d732cf5.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_0b87e3b52add4d4556e13d276f3e46c3eb74fac5.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_8aa3120d2a437a490e86057cd3b2c93ec374a479.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_a6fdc71d0850399177d78e4fd2f4a6bb98fe170e.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_dc0f8288317310747d81ab1b3536d39823e9378e.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_138311094271647b277cc2daca4b660bbab3585c.1920x1080.jpg?t=1733161242",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/282560/ss_518c66b98339eb6d5c2b7acffb4f8398b1941bbb.1920x1080.jpg?t=1733161242"
+        ],
+        "trailers": [
+          {
+            "name": "Piece-by-Piece Featurette",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256674714/movie.293x165.jpg?t=1479311514",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/282560/80498/3e57f6125f754e11aa6378dd50c86a8e3a38b7af/1750489313/hls_264_master.m3u8?t=1479311514"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": true,
+        "market": false,
+        "dlc": true
+      }
+    },
+    "285330": {
+      "appid": 285330,
+      "name": "RollerCoaster Tycoon 2: Triple Thrill Pack",
+      "storeUrl": "https://store.steampowered.com/app/285330",
+      "playtime": {
+        "total": 1,
+        "windows": 1,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": "2025-08-31T12:21:52.000Z",
+      "achievements": {
+        "total": null,
+        "unlocked": null,
+        "list": []
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/285330/1a59fffe8f8e41a446beaecbd58b961f5907a7a5.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/header.jpg?t=1733160988",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/capsule_184x69.jpg?t=1733160988",
+        "background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/285330?t=1733160988"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "This compilation includes the entire RollerCoaster Tycoon 2 series, with the original game as well as the Time Twister and Wacky Worlds expansions.",
+        "about": "Stretch your imagination further to build bigger parks and higher coasters! Break ground and start from scratch, open the gates to a remarkable Six Flags park, or just create the most gut-wrenching roller coaster imaginable - now you can play your way! Choose and complete different scenarios accordingly to the experience and content you like. Satisfy the visitors by building various attractions and facilities.Wild new rides, exciting new themes, and improved easy-to-use building tools make creating the ultimate amusement park more fun than ever! Test your Tycoon skills with 25 amazing Six Flags coasters and 5 Six Flags parks based on real-life places Create incredible roller coasters using all-new Roller Coaster Designer! Thrill your park guests with over 150 different rides and attractions Customize your park with new and unique themes, including Giant Garden, Wild West, Pirates, and more!",
+        "released": "2014-05-21",
+        "comingSoon": false,
+        "developers": [
+          "Chris Sawyer Productions"
+        ],
+        "publishers": [
+          "Atari"
+        ],
+        "genres": [
+          "Simulation",
+          "Strategy"
+        ],
+        "categories": [
+          "Single-player",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": false,
+          "linux": false
+        },
+        "controllerSupport": null,
+        "languages": [
+          "English",
+          "French",
+          "Italian",
+          "German",
+          "Spanish - Spain"
+        ],
+        "metacritic": {
+          "score": 74,
+          "url": "https://www.metacritic.com/game/pc/rollercoaster-tycoon-2?ftag=MCD-06-10aaa1f"
+        },
+        "recommendations": 5066,
+        "ageRatings": {
+          "esrb": "e",
+          "dejus": "6",
+          "steam_germany": "6",
+          "igrs": "13"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 14.5,
+          "final": 3.62,
+          "discount": 75
+        },
+        "dlc": [],
+        "website": "http://www.rollercoastertycoon.com/",
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/ss_606ca43a0269c54994cad3afb54de1fa44c788e6.1920x1080.jpg?t=1733160988",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/ss_70ea110f186400e3b22618c0ee581c59c1c49c42.1920x1080.jpg?t=1733160988",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/ss_fbe84aebdadc6a4109d7f646171a4168dda47588.1920x1080.jpg?t=1733160988",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/ss_fd1af2e8bfc7624d9d6d731139097c92979c30f9.1920x1080.jpg?t=1733160988",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/285330/ss_5f3d0c48967904f629d7f23a6c688c4eea6af936.1920x1080.jpg?t=1733160988"
+        ],
+        "trailers": [
+          {
+            "name": "RCT2 TTP Commercial",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2032447/movie.293x165.jpg?t=1447361946",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/285330/20977/8b0ebd090a04162f211c51f01e75de860c1323b7/1750489920/hls_264_master.m3u8?t=1447361946"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": false,
+        "market": false,
+        "dlc": false
+      }
+    },
+    "683900": {
+      "appid": 683900,
+      "name": "RollerCoaster Tycoon Classic",
+      "storeUrl": "https://store.steampowered.com/app/683900",
+      "playtime": {
+        "total": 0,
+        "windows": 0,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": null,
+      "achievements": {
+        "total": null,
+        "unlocked": null,
+        "list": []
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/683900/d92aacd38295dce500a7da7e9951254bc1b4bede.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/header.jpg?t=1773076729",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/capsule_184x69.jpg?t=1773076729",
+        "background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/683900?t=1773076729"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "Create incredible parks in the original rollercoaster sim from Chris Sawyer.",
+        "about": "RollerCoaster Tycoon Classic is a new RCT experience, remastered in 2017 by franchise creator Chris Sawyer to combine the best features from two of the most successful and beloved RCT games in the series’ history – RollerCoaster Tycoon and RollerCoaster Tycoon 2. Roller Coaster Tycoon Classic also comes complete with the Toolkit, Wacky Worlds, and Time Twister expansion packs! Create and run amazing parks filled with the most outrageous rides imaginable. RCT Classic includes a mixture of authentic playability, depth of gameplay and unique graphical style of Chris Sawyer’s original best-selling RollerCoaster Tycoon PC Games. Packed with content, players can enjoy designing and building roller coasters and rides, landscaping parks and managing the staff and finances to keep their guests happy and the money flowing in. Can you become the next RollerCoaster Tycoon? Key Features: The Original RollerCoaster Sim: Experience all the fun from the original RollerCoaster Tycoon and RollerCoaster Tycoon 2 games, with a new sim that combines the best elements of both classic titles. Coaster Construction: Create incredible roller coasters – Quickly build a pre-made design or use the intuitive piece-by-piece building tools to design and theme your own unique rides. Park Designer: Keep your guests happy by building gentle or wild rides, food and drink stalls, water rides, and even transport rides to take them around the park; Customize your park by building scenery, fine-tuning the landscape, and routing the footpaths. Park Management: Run your park’s marketing and finances to make a profit while attracting more guests; Organize your staff to keep the park running well and looking its best. Exciting Environments: Build the ultimate theme park in a variety of challenging environments, from the tranquility of Forest Frontiers to the bustling commerce of Megaworld Park. Park Scenarios: Progress through 95 classic park scenarios from RollerCoaster Tycoon and RollerCoaster Tycoon 2. Authentic Gameplay: Classic-style isometric graphics and original amusement park music and sound effects. Packed with Content: Includes hundreds of types of roller coasters and rides, and dozens of different shops, stalls, and facilities. Expansion Packs: Wacky Worlds Expansion Pack: Find your passport and pack your bags! Wacky Worlds takes players on the ultimate trip around the globe in 17 new park scenarios! Includes exotic rides, profitable concessions and the most famous landmarks known to man including the Eiffel Tower, Big Ben, Statue of Liberty, Great Wall of China and more! Each location is packed with opportunities for success, fun and unique challenges. Time Twister Expansion Pack: Travel through time with 14 new park scenarios based on historical and fantasy time-themes and build a park that is truly a blast from the past (or future if you like). Play in a Prehistoric amusement park decorated with huge animated T-Rex’s and coasters such as the Raptor Ride, or choose from Mythological times, the Dark Ages, the Rock & Roll crazed ‘50s, the Future or the Roaring Twenties. Toolkit: Park Scenario Editor: Design and build your own amazing parks – Make them as easy or as challenging as you want, using your choice of scenery and rides! Includes a number of Six Flags parks to get you started. Ride Designer: Build, test, fine-tune and theme your own awesome roller coaster designs in the Ride Designer before saving them for use while playing! Import and Export: Share your saved parks, park scenarios and ride designs with friends, and try out their creations too! (Includes the ability to import most saved parks and scenarios created with the original RollerCoaster Tycoon 2 PC game).",
+        "released": "2017-09-28",
+        "comingSoon": false,
+        "developers": [
+          "Origin8 Technologies Ltd."
+        ],
+        "publishers": [
+          "Atari"
+        ],
+        "genres": [
+          "Simulation",
+          "Strategy"
+        ],
+        "categories": [
+          "Single-player",
+          "Steam Cloud",
+          "Includes level editor",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": true,
+          "linux": false
+        },
+        "controllerSupport": null,
+        "languages": [
+          "English",
+          "French",
+          "Italian",
+          "German",
+          "Spanish - Spain",
+          "Dutch",
+          "Simplified Chinese"
+        ],
+        "metacritic": null,
+        "recommendations": 2688,
+        "ageRatings": {
+          "dejus": "6",
+          "steam_germany": "6",
+          "igrs": "13"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 28.95,
+          "final": 7.23,
+          "discount": 75
+        },
+        "dlc": [],
+        "website": "http://www.rollercoastertycoon.com/rollercoaster-tycoon-classic/",
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/ss_e956595ba232c4b2c67fa31a563157df8f39ab20.1920x1080.jpg?t=1773076729",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/ss_41ef4deaa6fdc7de6ef2d86a3d18b219bb91d3c0.1920x1080.jpg?t=1773076729",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/ss_9a6cbae9ff3b89ce80a68ecbee4b60aa38e93aaf.1920x1080.jpg?t=1773076729",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/ss_2b59187cdaf02970fb5b19b303a9918496b3bca1.1920x1080.jpg?t=1773076729",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/ss_1d93829df4649cfc6678266fd6c5053dab184070.1920x1080.jpg?t=1773076729",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/683900/ss_2dac327e4b5eddd35593c3ed473175340a8c553b.1920x1080.jpg?t=1773076729"
+        ],
+        "trailers": [
+          {
+            "name": "RCT Classic Reveal",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256695903/movie.293x165.jpg?t=1506355032",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/683900/123829/4ffec7d689e5bb9b504c000d314091e03261952b/1750570742/hls_264_master.m3u8?t=1506355032"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": false,
+        "market": false,
+        "dlc": false
+      }
+    },
+    "1017900": {
+      "appid": 1017900,
+      "name": "Age of Empires: Definitive Edition",
+      "storeUrl": "https://store.steampowered.com/app/1017900",
+      "playtime": {
+        "total": 319,
+        "windows": 319,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": "2025-09-13T11:40:22.000Z",
+      "achievements": {
+        "total": 44,
+        "unlocked": null,
+        "list": [
+          {
+            "name": "Roma Victrix",
+            "description": "Complete the Rise of Rome campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/af7740f29570c6ceb609c2ee417905d2a05df7f9.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Veni, Vidi, Vici",
+            "description": "Complete the Ave Caesar campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/8137421f01f2aa689a4e123920de912b6e3fb7c6.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Imperial Peace",
+            "description": "Complete the Imperium Romana campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/e34fccd296cbd1d40c79cae0b2e8dd64b914bbc1.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Elephant In The Rome",
+            "description": "Complete the Enemies of Rome campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/7b489d963c1454fede2b2eafb883e6873867456d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Punic Attack",
+            "description": "Complete the First Punic War campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/ec05b240d566ff9d52f383bb080d3f350ce3c259.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Hittite Baby One More Time",
+            "description": "Complete the Reign of the Hittites campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/b8b6d045ae3d8bf02a43e4ee668df218a723cf6b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Pharaoh",
+            "description": "Complete the Ascent of Egypt learning campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/0fe71c52535db2e4cf359a13b0a6d37a7bdeaa7f.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Smoking Ziggurats",
+            "description": "Complete the Voices of Babylon campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/8c15f30a737311e890a43597194bd669ff4d9d43.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Epic",
+            "description": "Complete the Glory of Greece campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/46656827f5df8680fe011ef9717dad45ffcafaaf.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Big In Japan",
+            "description": "Complete the Yamato Empire of the Rising Sun campaign",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/dcd680d0ee4e4774070d63b7fca508df8f771545.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Homes?",
+            "description": "Build 500 houses",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/c6128d502524028633fd39e5f03b5b140be14652.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Towers of Babel",
+            "description": "Build 50 Babylonian Towers",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/aab4b84a735ca267f3e22870c10ba24d2b9de781.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Rise And Wall",
+            "description": "Build 789 Shang wall segments",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/9035a03217b65a1f6a1d7e75b793a6561fdb0c99.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Not that I'm keeping count…",
+            "description": "Defeat 1000 enemy units",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/805364e5d2f90d0fe8906c999eaa327912546e79.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Hun, is that you?",
+            "description": "Destroy 200 temples",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/aba7ac6e258d3def76f44df2984ecbcbc0bee265.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Heracles",
+            "description": "Defeat a Lion (Alpha)",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/b3d543a3a96636b3d06eb03d3bccd18ca8941c0b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Artemis",
+            "description": "Hunt 250 animals",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/57b9e9131a6cf49d38097cff2b594a5132f9ce0f.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Parthian Shot",
+            "description": "Train 500 Horse Archers",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/1a9222b8393a50c98cedde36c71279b7290308a2.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "21st Century",
+            "description": "Train 21 Centurions",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/a96d7b2390420fd78c27cafd98d16f69a5cabddb.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Axe To Grind",
+            "description": "Train 400 Axemen",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/e6fc7253443195611c9aae85c587e65032115008.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Cute Cats",
+            "description": "Build 500 heavy catapults",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/793d4cfd8b1c73a0b9f0b7ec7a742af4e6eb1e62.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "The Choson Ones",
+            "description": "Create 1000 Choson Legions",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/2e8789f0f4c5a7e50ad6e6b9c77b70710774a56c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Dancing Chariots",
+            "description": "Train 400 Assyrian Chariot Archers",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/05e1c49dc2a2508c64b30bc5f00966c32e11e206.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Minoan Compies",
+            "description": "Train 100 Minoan Composite Bowman",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/2b3ac09edd7d81a21eecf14c7a6e354ab106f7fa.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Scytheseeing",
+            "description": "Train 100 Egyptian Scythe Chariots",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/d37c2b058549753dc572265b159a0361112945ec.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Syntagma",
+            "description": "Train 256 Macedonian Hoplites",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/2b450166f2d20d6f7b02a4b676be4a0a62cabb3d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Wololo",
+            "description": "Convert 1000 units",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/0bfb657bca13daac2197bf58e46eac8f345af575.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Eye of Horus",
+            "description": "Convert 20 units with Egyptian Priests",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/5f30c076706c75ee0adc1e2c63c4b442a701bd1c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Losing Your Religion",
+            "description": "Convert an enemy Priest",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/915dd2834243598a434d0ddf8a31c5c30950cae9.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Atlas",
+            "description": "Explore all areas of a single map",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/d3561c6d2ef2d43851bde1254aaddefe5b9d2b9a.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Feet on the ground",
+            "description": "Win a random map game without training any cavalry",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/dc5b9f3b5d34061fbd0bb137bfd57338c6ce58c8.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Eye in the sky",
+            "description": "Win a random map without training any archery units",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/52ae27c197e0c95803005d2df400629838c7bbf2.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Assassin",
+            "description": "Defeated 20 heroes",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/d41122beb2a14e1cfd661fe407dd27ddd6f83636.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Perseus",
+            "description": "Killed a Medusa",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/5ee601958672836dba80c2fcfc3e86c26b07b772.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Coinage",
+            "description": "Collected 50,000 gold",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/72a7794ce749900424b665e052739a87e167b1c5.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Quarry",
+            "description": "Collected 50,000 stone",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/4f6bb3938e093722d0200b4ef6d1a98210adedf0.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "WoodStock",
+            "description": "Collected 50,000 wood",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/d4b6d3e2f69ab7998abada2095b6db770001361d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Pepperoni Pizza",
+            "description": "Collected 50,000 food",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/46e70ee5068e9ec062e90418a9bbac16d7201ef3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Marvelous",
+            "description": "Won a game by building and holding a wonder",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/a086ba91d41653cf9a0ba5efdb5775172e522aab.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Archimedes",
+            "description": "Researched every technology available in a single game",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/a50d37e9533c79464d85d5fd495d76a7cff40428.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Pegasus",
+            "description": "Advanced first to every age",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/42c4d0d1cc609a737f81736b985418c40ae6e3ba.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "State Of The Artifact",
+            "description": "Won a game by holding all the artifacts",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/f57c072371e8b96d8565696daadc27411c897964.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Ruin Them All",
+            "description": "Won a game by holding ruins",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/295440517a116e670aed9f78e5e9c1c3448a11cb.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Res Publica",
+            "description": "Won a ranked Elo game.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1017900/f83091213d7dc8e3bffb15ba2035fa51698e552b.jpg",
+            "hidden": false,
+            "unlocked": null
+          }
+        ]
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1017900/e8623421f060fd7e3a5f79a5c003701702acec42.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/header.jpg?t=1763053714",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/capsule_184x69.jpg?t=1763053714",
+        "background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1017900?t=1763053714"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "Age of Empires, the pivotal real-time strategy game that launched a 20-year legacy returns with modernized gameplay, all-new 4K visuals, 8-person multiplayer battles and a host of other new features. Welcome back to history.",
+        "about": "Age of Empires, the pivotal RTS that launched a 20-year legacy returns in definitive form for Windows 10 PCs. Bringing together all of the officially released content with modernized gameplay, all-new visuals and a host of other new features, Age of Empires: Definitive Edition is the complete RTS package. Engage in over 40 hours of updated campaign content with new narration and pacing, jump online in up to 8-player battles with new competitive features and modes, experience 4K HD visuals with overhauled animations, get creative with the scenario builder and share your creations. There’s never been a better time to jump in to Age of Empires. Welcome back to history.",
+        "released": "2019-08-19",
+        "comingSoon": false,
+        "developers": [
+          "World's Edge",
+          "Forgotten Empires",
+          "Tantalus"
+        ],
+        "publishers": [
+          "Xbox Game Studios"
+        ],
+        "genres": [
+          "Strategy"
+        ],
+        "categories": [
+          "Single-player",
+          "Multi-player",
+          "PvP",
+          "Online PvP",
+          "LAN PvP",
+          "Cross-Platform Multiplayer",
+          "Steam Achievements",
+          "Steam Trading Cards",
+          "Steam Cloud",
+          "Includes level editor",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": false,
+          "linux": false
+        },
+        "controllerSupport": null,
+        "languages": [
+          "English",
+          "French",
+          "Italian",
+          "German",
+          "Spanish - Spain",
+          "Japanese",
+          "Korean",
+          "Portuguese - Brazil",
+          "Russian",
+          "Simplified Chinese",
+          "Spanish - Latin America",
+          "Traditional Chinese",
+          "Vietnamese languages with full audio support"
+        ],
+        "metacritic": {
+          "score": 69,
+          "url": "https://www.metacritic.com/game/pc/age-of-empires-definitive-edition?ftag=MCD-06-10aaa1f"
+        },
+        "recommendations": 14365,
+        "ageRatings": {
+          "esrb": "t",
+          "pegi": "12",
+          "usk": "12",
+          "oflc": "pg",
+          "nzoflc": "pg",
+          "cero": "b",
+          "kgrb": "12",
+          "dejus": "12",
+          "fpb": "13",
+          "csrr": "C15",
+          "crl": "12"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 22.45,
+          "final": 22.45,
+          "discount": 0
+        },
+        "dlc": [
+          1237770
+        ],
+        "website": "https://www.ageofempires.com",
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/ss_8eb2a7b1ebeb669f107c4af1afb1118f2d8a8e5f.1920x1080.jpg?t=1763053714",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/ss_934c6edd764cb8d3cbf91c636d472ff60e244ec3.1920x1080.jpg?t=1763053714",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/ss_bfd3d1e91f386b53f92aba8340faa31260d43e1b.1920x1080.jpg?t=1763053714",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/ss_12a7ccb12eecca44db51e3a61bb6232f4db40c52.1920x1080.jpg?t=1763053714",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1017900/ss_023af2ed06276794ba1d7390a10c7ed13b5dc995.1920x1080.jpg?t=1763053714"
+        ],
+        "trailers": [
+          {
+            "name": "AoEDE_Launch_Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256759482/movie.293x165.jpg?t=1566229631",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/1017900/238959/e40739b70bab45bc3e0c187b84ecc7ca89364e02/1750606805/hls_264_master.m3u8?t=1566229631"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": false,
+        "market": false,
+        "dlc": true
+      }
+    },
+    "1368820": {
+      "appid": 1368820,
+      "name": "RollerCoaster Tycoon 3: Complete Edition",
+      "storeUrl": "https://store.steampowered.com/app/1368820",
+      "playtime": {
+        "total": 1,
+        "windows": 1,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": "2025-08-31T12:20:21.000Z",
+      "achievements": {
+        "total": null,
+        "unlocked": null,
+        "list": []
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/library_600x900.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1368820/62024e8d88c800cd794add3f4e5d7aa4f1f24a09.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/header.jpg?t=1779306991",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/capsule_184x69.jpg?t=1779306991",
+        "background": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/page_bg_raw.jpg?t=1779306991"
+      },
+      "store": {
+        "type": "game",
+        "free": false,
+        "description": "Build the park of a lifetime and rediscover the critically acclaimed rollercoaster simulation bestseller. Feel the thrill of a genre-defining classic, complete with two huge expansion packs.",
+        "about": "Your Park. Your Way Whatever you want to create, RollerCoaster Tycoon 3 gives you the tools and freedom to build the amusement park of your dreams.Manage like a tycoon and make your way to the top Control park finances, shops, services and staff to succeed in dozens of scenarios. Become a true tycoon and embark on your promising new career, or create your ideal park without money woes in sandbox mode. Satisfy your guests’ needs and keep your park running smoothly to succeed.Get ready to get ‘Soaked!’ and venture into the ‘Wild!’ This complete edition includes all content from both Soaked! and Wild! expansion packs. Relish the added challenge of creating and managing exhilarating waterparks and spectacular animal habitats.Enhanced for PC Play RollerCoaster Tycoon 3 in widescreen for the first time with full 1080p resolution and increased compatibility for new PC hardware.Ride the Rides Ride your creations with RollerCoaster Tycoon 3’s signature coaster cam.Packed full of content You’re free to fill your bustling park with more than 300 coasters and rides, 500 scenery pieces, 60 shops and services, and 20 animals to rear and raise.Peep Designer Create your own guests and experience your creations through their eyesMixMaster Wow your visitors with custom laser light and firework displays to delight and dazzle. Please note: The following languages are not supported on the Mac version: Italian, Spanish – Spain, Danish, Dutch, Finnish, Norwegian, Swedish",
+        "released": "2020-09-24",
+        "comingSoon": false,
+        "developers": [
+          "Frontier Developments",
+          "Aspyr (Mac)"
+        ],
+        "publishers": [
+          "Atari",
+          "Aspyr (Mac)"
+        ],
+        "genres": [
+          "Simulation",
+          "Strategy"
+        ],
+        "categories": [
+          "Single-player",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": true,
+          "linux": false
+        },
+        "controllerSupport": null,
+        "languages": [
+          "English",
+          "French",
+          "Italian",
+          "German",
+          "Spanish - Spain",
+          "Danish",
+          "Dutch",
+          "Finnish",
+          "Norwegian",
+          "Swedish"
+        ],
+        "metacritic": null,
+        "recommendations": 2657,
+        "ageRatings": {
+          "dejus": "10",
+          "steam_germany": "6",
+          "igrs": "15"
+        },
+        "price": {
+          "currency": "AUD",
+          "initial": 28.95,
+          "final": 7.23,
+          "discount": 75
+        },
+        "dlc": [],
+        "website": null,
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_aee64c598bd7d8361c3f2c8f7aff51d38ad76a63.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_b6f667f1beb16319c2f88bca728ea40d9712a3a4.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_569d87da325a5b814346cd5c7255ace94e0fa40f.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_ed0c00396a0a64db120e69f62869f7f46e7a04e2.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_d6051a9e11854500abae127e77cf12e70df76479.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_3bc522ff1b2886119b8b2062876bc7ba9a023e88.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_ff1a8c9319cff547f8122a31314a4c2ca73074d8.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_d952290f66191d853ef81b0137257d0fb1db94a6.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_aeaaf36c509e3cad43481ca53ebd64f29152bb83.1920x1080.jpg?t=1779306991",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368820/ss_635b914c62ffed454b89a73b16be32ad1cc99598.1920x1080.jpg?t=1779306991"
+        ],
+        "trailers": [
+          {
+            "name": "Rollercoaster_Tycoon_3_Complete Edition_Launch_Trailer_PEGI",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256802319/movie.293x165.jpg?t=1715885187",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/1368820/314530/4feb2c01ad75c08406c2fa801996ef1f829cd053/1750679267/hls_264_master.m3u8?t=1715885187"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": false,
+        "market": false,
+        "dlc": false
+      }
+    },
+    "2767030": {
+      "appid": 2767030,
+      "name": "Marvel Rivals",
+      "storeUrl": "https://store.steampowered.com/app/2767030",
+      "playtime": {
+        "total": 20,
+        "windows": 20,
+        "mac": 0,
+        "linux": 0,
+        "deck": 0,
+        "lastTwoWeeks": 0
+      },
+      "lastPlayed": "2025-09-06T05:08:16.000Z",
+      "achievements": {
+        "total": 49,
+        "unlocked": null,
+        "list": [
+          {
+            "name": "Rising Star",
+            "description": "Reach level 20.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/1f41bfcaaa8e5416091f3ddd53d45ae9500c0355.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "You Do You",
+            "description": "Use the customizable wheel once.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/719e38911fd358768f12ce5b7da1c265bb4a6457.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Inevitable！",
+            "description": "Win 100 matches.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/a7fc58799df36d3173da9b9a8c4efcde1bcf4547.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Thumbs Up",
+            "description": "Upvote 1 player.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/3290f7b2c3c8201ac8dbad08a8a7c255c1b7e2ef.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Onslaught!",
+            "description": "Land a 3-player KO streak.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/a6287c3d20df60cd50b8a06625830f8716ae60bb.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Master of Modes",
+            "description": "Complete 1 Arcade match.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/f28e40cc38438f671930e6eb2a742a03046d9959.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Assemble!",
+            "description": "Team up with a friend for a match.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/d1c37bf688bc0a3ad985fe1cfdb89858f6c326f4.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Smart Is New Smash",
+            "description": "As Bruce Banner, land 1 KO within 3 seconds of calming down from the Hulk to Banner.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/34d813e31241e7de58aae346b6321e37639f8d38.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Smoke Screen",
+            "description": "As the Punisher, land 3 KOs amidst the smoke of Scourge Grenade in a single game.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/a9acd0138240c9b77d02ce47032ee46a6d50e739.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "To Me, My X-Men!",
+            "description": "As Storm, assist X-Men members 10 times.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/6b5efbb0463bd383962b094621c856cabccf8c54.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "God of Treachery",
+            "description": "As Loki, land one KO by stabbing from behind.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/08ecc436da256b03a25484b63334ff1669975eb1.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Perilous Portal",
+            "description": "As Doctor Strange, land 1 terrain KO with the portal.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/5964792258ac093f85e4395d0b6cd2e47eb5e029.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Victory in Bloom",
+            "description": "As Mantis, assist allies in achieving a team wipe.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/d612a891d0352b37be131a111c4d15f60efcb6c5.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "West Coast, Best Coast",
+            "description": "As Hawkeye, partner with the Avengers to land 10 KOs.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/f33dd8f60f512f2e7f6be341336360e4f444bb39.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Justice for All! ",
+            "description": "As Captain America, land 3 KOs with a single use of Freedom Charge.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/fb0854f9d03cae935070c3fe39ab6dc44c66f66f.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Go Get 'Em, Guardians! ",
+            "description": "As Rocket Raccoon, revive the Guardians of the Galaxy members 5 times.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/f627cdfe29ad8919557583d041f6e196d2ba53fa.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Terror of the Ten Realms",
+            "description": "As Hela, land a 3-player KO streak in Yggsgard: Yggdrasill Path.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/b717800f98956b4a25a7e601515ce863a801759d.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Symphony of Light and Dark",
+            "description": "As Cloak & Dagger, assist allies in achieving a team wipe.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/993e935bb648abfc034727e6ca0fbf9880ed2363.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "King of the Dead",
+            "description": "As Black Panther, land a 3-player KO streak in the Intergalactic Empire of Wakanda: Hall of Djalia.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/9e9650ab72b2300cd45039bad41dd5d3b923abb4.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Vicious Vines",
+            "description": "As Groot, imprison 4 enemies with a single use of Strangling Prison.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/4a40a315c2d790520d92ab189eec55b7e603429b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Demon's Roar",
+            "description": "As Magik, land 3 KOs within a single transformation into Darkchild.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/8150448eb7719d5c4096a7c28fd27fa134878245.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Punishment of the Moon",
+            "description": "As Moon Knight, hit 4 enemies with a single use of Hand of Khonshu.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/a1f684f0d29a57b29539163e04f4dcfcc88eeedd.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Multiverse Tour",
+            "description": "As Luna Snow, complete a match on 5 maps with different themes.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/776303678a0a039e86dceeabe425284f4c60c89e.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "\"Ahhh, those tiny claws!\"",
+            "description": "As Squirrel Girl, land 3 KOs with a single use of Unbeatable Squirrel Tsunami.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/d10066c35b2ac228f5462fa8d86e2f0eb5a28803.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Deadly Bites",
+            "description": "As Black Widow, land 3 KOs with critical hits in a single match.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/f0b32df3834ab8b5049a8441bdfde2fd916cc1cc.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Flawless Design",
+            "description": "As Iron Man, hit 4 enemies with a single use of Invincible Pulse Cannon.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/a204389fae058fb36e3432a024122c7f04fa9a32.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Grip of Hunger",
+            "description": "As Venom, snare 4 enemies with a single use of Cellular Corrosion.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/4ffa6415d24cdbb7beb8cfb3b5e031f8d57e2a04.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Spider-Sense Tingling!",
+            "description": "As Spider-Man, detect an enemy with Spider-Sense and land a winning counterattack.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/101657e3602bedca1f497b55a4030daf7162a6e3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Homo Superior",
+            "description": "As Magneto, assist Mutant allies 10 times.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/da11f18efebd5e9467c7edd0620fe80832b4e94b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "No More Mutants",
+            "description": "As Scarlet Witch, take down Mutant enemies 10 times.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/14015209b2d39e732f1f41091552bdb741456200.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Divine Justice",
+            "description": "As Thor, strike down 4 enemies with a single use of God of Thunder.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/9a46559eec11ad3c1df46f709070f6c17c08d041.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Arm Race",
+            "description": "As Winter Soldier, land 3 KOs with a single use of Kraken Impact.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/d973a4c1be07c70a286d2c21b28b3100ccb42b8c.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Watch Your Step!",
+            "description": "As Peni Parker, blast 3 enemies with a single use of Arachno-Mine.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/9da8299cd303368339ea78a98168d661063a6769.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Vengeance for the Milano!",
+            "description": "As Star-Lord, land 10 KOs with assists from the Guardians of the Galaxy.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/01fbbe519f66305a58162fff4d5cd69f73bd9d44.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Aquatic Assault",
+            "description": "As Namor, summon Monstro Spawn to land 10 KOs in a single game.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/6cb44b1750195ba9b4d2a66f3fbed7cbe26feb44.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Family Ties",
+            "description": "As Adam Warlock, forge a soul bond with 3 allies from the Guardians of the Galaxy.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/12a7a63ef333d6c298af451037c2e844a9c475c6.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Snack Attack!",
+            "description": "As Jeff the Land Shark, swallow 4 enemies with a single use of It's Jeff!",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/fb660796efbd399782caae1ae2a1669b05fdf745.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Way of the Butterfly",
+            "description": "As Psylocke, contest the mission area for 60 seconds in a single match.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/e38148910d6343f055160ecc5faab470b265d6e2.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Rage Uncaged",
+            "description": "As Wolverine, land 3 KOs with a single use of Last Stand.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/d1ad48c6a0ec12a5dbc12a8521e6c0dd851edf54.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Might of Fuxi",
+            "description": "As Iron Fist, land 3 KOs with a single use of Living Chi.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/00cf2c4d4df745a84d70848f2459bbbbbdbe9aad.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Hot & Trending",
+            "description": "As Human Torch, land 3 KOs with a single use of Supernova.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/d88b850a5c157bdb5244fc13d2b91abffc113c95.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Bouncing Ideas",
+            "description": "As Mister Fantastic, bounce 5 times with a single use of Brainiac Bounce.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/32e9821947ba6a351a36d29b80e1415f0d461610.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Lady of the House",
+            "description": "As Invisible Woman, assist the Fantastic Four members 10 times.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/96923f25371d94a71a8b3fd34170f3ccccd9fa84.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "What Time Is It?",
+            "description": "As the Thing, knock up 4 enemies with a single use of Clobberin' Time.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/15e5d012e8d10ee5e183302e5e9436b0663d65e3.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "No More Strings",
+            "description": "As Ultron, take down Avengers members 10 times.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/5f7d6fdd9a4bd96ad4774ce3a14ccdd0377a5690.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Schism from Within",
+            "description": "As Emma Frost, force mutants to move 10 times with Psionic Seduction.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/0d486f66081c60e3a2877df6e1cabf900c0b64fe.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Old Haunts",
+            "description": "As Blade, land a 3-player KO streak in Empire of Eternal Night: Central Park.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/a10d882b380885a52ced5acd91fa3be347b9e75b.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Wish Upon a Phoenix",
+            "description": "As Phoenix, strike 4 enemies with a single Endsong Inferno landing.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/9660c12623ba95a6b259f0719f43be8422b97948.jpg",
+            "hidden": false,
+            "unlocked": null
+          },
+          {
+            "name": "Hand of Heven",
+            "description": "As Angela, snare 4 enemies with a single use of Heven's Retribution.",
+            "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2767030/3b58e82b44edf9daadd5f042d46af024e29dddfc.jpg",
+            "hidden": false,
+            "unlocked": null
+          }
+        ]
+      },
+      "images": {
+        "library": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/846b1e4bc5e334b691bbe0b19fbbb6b074d5d89f/library_capsule.jpg",
+        "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/2767030/839b4712925b95702ca56e0c4d399adf54f4d617.jpg",
+        "header": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/c61f65c5968af5d85b0393005991ecee0184fcaf/header.jpg?t=1791536405",
+        "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/1715240eac459211d3e5533aaed78751a0ae62eb/capsule_184x69.jpg?t=1791536405",
+        "background": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/page_bg_raw.jpg?t=1791536405"
+      },
+      "store": {
+        "type": "game",
+        "free": true,
+        "description": "Marvel Rivals is a Super Hero Team-Based PVP Shooter! Assemble an all-star Marvel squad, devise countless strategies by combining powers to form unique Team-Up skills and fight in destructible, ever-changing battlefields across the continually evolving Marvel universe!",
+        "about": "Marvel Rivals is a Super Hero Team-Based PVP Shooter! Assemble an all-star Marvel squad, devise countless strategies by combining powers to form unique Team-Up skills and fight in destructible, ever-changing battlefields across the continually evolving Marvel universe! A Deep and Varied Marvel Roster Choose from a vast array of fan-favorite and cult-classic Marvel Super Heroes and Super Villains from across the Avengers, Guardians of the Galaxy, X-Men, and many more from across the Marvel Multiverse. Fast and Fun 6v6 Action with Ever-Changing Game Dynamics With intricate environments, fast-paced gameplay, and ever-changing battlefields, there's never a dull moment in Marvel Rivals! Battle as Super Heroes and Super Villains with incredible abilities and combine your powers to bring unexpected fun to the battlefield in a matter of seconds. Dynamic Hero Synergy Coordinate unique combinations between characters to ignite surprising Team-Up Skills! Unleash the synergy of combined superpowers and invent new tactics that can turn the tide of combat. Ride on Groot's back as Rocket Raccoon to take on your enemies as a dangerous duo, unleash Gamma energy as Hulk to charge Iron Man's armor for massive damage, and so much more! Creative Environment Destruction Tear your way through iconic Marvel worlds across destructible environments! From Asgard to the Tokyo of 2099, use superpowers to alter these environments, reshape the terrain, and craft a strategic advantage on the battlefield! Take cover to dodge attacks or use makeshift weapons to strike down enemies. Players will find countless ways to utilize the environment to claim victory! Continually Evolving Universe and Robust Post-Launch Updates The Marvel Multiverse brings infinite possibilities! Each seasonal drop will introduce new Super Heroes to the battlefield along with challenging and diverse maps! Unlock new content to implement across various gameplay strategies while experiencing thrilling action and endless possibilities in these adventurous team battles!",
+        "released": "2024-12-05",
+        "comingSoon": false,
+        "developers": [
+          "NetEase Games"
+        ],
+        "publishers": [
+          "NetEase Games"
+        ],
+        "genres": [
+          "Action",
+          "Adventure",
+          "Casual",
+          "Massively Multiplayer",
+          "Racing",
+          "RPG",
+          "Strategy",
+          "Free To Play"
+        ],
+        "categories": [
+          "Multi-player",
+          "PvP",
+          "Online PvP",
+          "Co-op",
+          "Online Co-op",
+          "Cross-Platform Multiplayer",
+          "Steam Achievements",
+          "Full controller support",
+          "In-App Purchases",
+          "DualShock Controller Support",
+          "DualShock Controller Support",
+          "DualSense Controller Support",
+          "DualSense Controller Support",
+          "Family Sharing"
+        ],
+        "platforms": {
+          "windows": true,
+          "mac": false,
+          "linux": false
+        },
+        "controllerSupport": "full",
+        "languages": [
+          "English",
+          "French",
+          "Italian",
+          "German",
+          "Spanish - Spain",
+          "Russian",
+          "Turkish",
+          "Thai",
+          "Simplified Chinese",
+          "Traditional Chinese",
+          "Spanish - Latin America",
+          "Korean",
+          "Japanese",
+          "Polish",
+          "Portuguese - Brazil",
+          "Arabic languages with full audio support"
+        ],
+        "metacritic": null,
+        "recommendations": null,
+        "ageRatings": {
+          "kgrb": "15",
+          "csrr": "C12",
+          "dejus": "18",
+          "steam_germany": "12",
+          "igrs": "13",
+          "steam_australia": "PG"
+        },
+        "price": null,
+        "dlc": [
+          4406010
+        ],
+        "website": "https://www.marvelrivals.com",
+        "screenshots": [
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/a42d038cf0add8028021781bd18c3a7452220236/ss_a42d038cf0add8028021781bd18c3a7452220236.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/34cd58834c8f6a6c3a08ccf24848d0daf8b7d60d/ss_34cd58834c8f6a6c3a08ccf24848d0daf8b7d60d.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/5d74010ff9fe5c67c99e3ec4afc4ebce926fe780/ss_5d74010ff9fe5c67c99e3ec4afc4ebce926fe780.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/b217fd8db7e9f919e5d30f0f8997f505e0d516f5/ss_b217fd8db7e9f919e5d30f0f8997f505e0d516f5.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/03cfa6d467966c0d7a4035f091c7d2a495bc7142/ss_03cfa6d467966c0d7a4035f091c7d2a495bc7142.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/05c3266777dfa88b7b13742c72088a6431eea474/ss_05c3266777dfa88b7b13742c72088a6431eea474.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/0b7cb73d511f327e3552750b76baf08daf0b5542/ss_0b7cb73d511f327e3552750b76baf08daf0b5542.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/df4df5542db4d8d89bcf7588a5cc5d2f383d420b/ss_df4df5542db4d8d89bcf7588a5cc5d2f383d420b.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/ef496eb74de9be2d31aa6ed7091b0dd383b84774/ss_ef496eb74de9be2d31aa6ed7091b0dd383b84774.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/08d01a49716e1808fc6cc21b623c41ea04235793/ss_08d01a49716e1808fc6cc21b623c41ea04235793.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/1c1c765a7655599e3cf15c8934217ff60a1410ed/ss_1c1c765a7655599e3cf15c8934217ff60a1410ed.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/896a2342ddb3515f291f88adf991f77f1f484663/ss_896a2342ddb3515f291f88adf991f77f1f484663.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/4e3f25e1864028fff9ebe96a92081a5a732bd22d/ss_4e3f25e1864028fff9ebe96a92081a5a732bd22d.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/6b131db0a7190b40f0c1305a05bdc2b6a1daea32/ss_6b131db0a7190b40f0c1305a05bdc2b6a1daea32.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/f2e75daef3f7177d896409b6dd69b62e4088dc23/ss_f2e75daef3f7177d896409b6dd69b62e4088dc23.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/6ad9276a514ebb4289b02ed6a4ac7ce9d4edef14/ss_6ad9276a514ebb4289b02ed6a4ac7ce9d4edef14.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/ef2d770c98f3d543285693c47d78f418fd09d2dd/ss_ef2d770c98f3d543285693c47d78f418fd09d2dd.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/18825994ebe8d92f0700bcd1ecc118f48b4fc6a6/ss_18825994ebe8d92f0700bcd1ecc118f48b4fc6a6.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/03aad4fa01e6e6b58e7bec9bd0ef8c0d32b06d5b/ss_03aad4fa01e6e6b58e7bec9bd0ef8c0d32b06d5b.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/fb1d494145281f01c7b437e0b72a71977eb55894/ss_fb1d494145281f01c7b437e0b72a71977eb55894.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/8619630319804a1c233e704f6b84dd07c647e15e/ss_8619630319804a1c233e704f6b84dd07c647e15e.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/13b2d3e5ebe12e003c2718fb5e550351ad274c8d/ss_13b2d3e5ebe12e003c2718fb5e550351ad274c8d.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/47c19fb55fa8765b375deb5f9fc69a5543ac3b2c/ss_47c19fb55fa8765b375deb5f9fc69a5543ac3b2c.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/3d721a2ef3ea6063bf75abb9e10c79df858ebf72/ss_3d721a2ef3ea6063bf75abb9e10c79df858ebf72.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/07d0efaa0706ba1a1cd69389eba1b6945c949114/ss_07d0efaa0706ba1a1cd69389eba1b6945c949114.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/e2dfc14dd3e15094f0ba184c9ec48d9b65f8a0cd/ss_e2dfc14dd3e15094f0ba184c9ec48d9b65f8a0cd.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/db15a024dce0fcb029c8695a13bb02281213c9f1/ss_db15a024dce0fcb029c8695a13bb02281213c9f1.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/87436ac6aa79c7de11e46302eebf13bcd0824a28/ss_87436ac6aa79c7de11e46302eebf13bcd0824a28.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/b3116e7399759eb75c97cee01e85071cd598872b/ss_b3116e7399759eb75c97cee01e85071cd598872b.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/f0fc6afc678a2cd815fe585d564d192382f47244/ss_f0fc6afc678a2cd815fe585d564d192382f47244.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/a5a9bed9a945b253b89f2d0177a6b828389d305b/ss_a5a9bed9a945b253b89f2d0177a6b828389d305b.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/5ec7724a1898213b8f4773fe92feb0a759dca2ff/ss_5ec7724a1898213b8f4773fe92feb0a759dca2ff.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/dbda0512e57579462bc1ac872002dcb6da997d6f/ss_dbda0512e57579462bc1ac872002dcb6da997d6f.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/f2190c172de3579543198c8e4372a2f352c91ab4/ss_f2190c172de3579543198c8e4372a2f352c91ab4.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/3181ca22a2d46eaf842055a35b629639dc88cfcb/ss_3181ca22a2d46eaf842055a35b629639dc88cfcb.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/45dc321513225e666540e91e3f8ad0b654b522ce/ss_45dc321513225e666540e91e3f8ad0b654b522ce.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/ac1dc6bd93f6c2a30f9d12a9b035e329e381d6f6/ss_ac1dc6bd93f6c2a30f9d12a9b035e329e381d6f6.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/71f5d0649cfd42e7061b6419797da70f807e9514/ss_71f5d0649cfd42e7061b6419797da70f807e9514.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/f40bf087ebbb3ea5cdd7171f9decfcad4e573822/ss_f40bf087ebbb3ea5cdd7171f9decfcad4e573822.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/ae7e94f60f14bf17f87c75e99d2fdae47cbf2231/ss_ae7e94f60f14bf17f87c75e99d2fdae47cbf2231.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/60dea19cbd15c2d994c9d523e0947b9bb6e73d89/ss_60dea19cbd15c2d994c9d523e0947b9bb6e73d89.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/b4dc8811a262a3f8256523a0162bf36f184e7363/ss_b4dc8811a262a3f8256523a0162bf36f184e7363.1920x1080.jpg?t=1791536405",
+          "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2767030/6e242f0a6d2c7cf4f44dede1b0f760f72c2a5cb1/ss_6e242f0a6d2c7cf4f44dede1b0f760f72c2a5cb1.1920x1080.jpg?t=1791536405"
+        ],
+        "trailers": [
+          {
+            "name": "Path to Doomsday - Avengers: Infinity War | New PvP Mode Trailer | Marvel Rivals",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257453703/c8377c6710a6226952a19c8663b807987b264090/movie_600x337.jpg?t=1791536404",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/2767030/838245032/e9ce45a69f675a9b5580cd75e84610098c4c9d0c/1791528757/hls_264_master.m3u8?t=1791536404"
+          },
+          {
+            "name": "Butcher's Blasphemy | Marvel Rivals Season 10 Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257422551/bead0ffca6bf14f64db32a87304c0c4b83301b0e/movie_600x337.jpg?t=1789117455",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/2767030/928852697/63c5517ad25d8b7da1fbfcfbb7f825c96e0dba66/1789112624/hls_264_master.m3u8?t=1789117455"
+          },
+          {
+            "name": "The Hood: The World is His | Character Reveal Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257393533/1ff19e082753db3999fa997c1761e72e69ba6f54/movie_600x337.jpg?t=1786093206",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/2767030/1844208219/d56e70fe46d51ca0616ed5bfc4dbc9636fb94730/1786091746/hls_264_master.m3u8?t=1786093206"
+          },
+          {
+            "name": "The Mystery of Thebes | Marvel Rivals Season 9 Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257374355/d467b306e7086b1cbbda5172eee114d2498cf442/movie_600x337.jpg?t=1783674084",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/2767030/1236067204/c507e58cb5256d2bc49e49edd7dc2496954795bf/1783667197/hls_264_master.m3u8?t=1783674084"
+          },
+          {
+            "name": "Cyclops: The Fearless Leader | Character Reveal Trailer",
+            "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257356726/8581ebdfafabb0e417a50f4a0a76103ea287285d/movie_600x337.jpg?t=1783674085",
+            "video": "https://video.akamai.steamstatic.com/store_trailers/2767030/1254021000/9f279b16856fc61c926c4ae95d4c4db5712c4f99/1781254594/hls_264_master.m3u8?t=1783674085"
+          }
+        ]
+      },
+      "flags": {
+        "workshop": false,
+        "market": false,
+        "dlc": true
+      }
+    }
+  }
+}

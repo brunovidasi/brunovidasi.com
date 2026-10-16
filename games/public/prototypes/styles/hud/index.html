@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="../../../">
+<script>
+(function () {
+  var here = function (u) { return typeof u === 'string' && u.charAt(0) === '#' ? location.pathname + location.search + u : u; };
+  ['pushState', 'replaceState'].forEach(function (k) { var f = history[k].bind(history); history[k] = function (s, t, u) { return f(s, t, here(u)); }; });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.defaultPrevented) return;
+    e.preventDefault();
+    var id = a.getAttribute('href').slice(1);
+    history.pushState(null, '', '#' + id);
+    var el = id && document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  });
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruno's Game Shelf · Holo Vault style</title>
+<meta name="description" content="Bruno's video game collection, on the shelf.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/orbitron-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/exo2-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/cases.css">
+<link rel="stylesheet" href="css/collection.css">
+<link rel="stylesheet" href="css/sims.css">
+<link rel="stylesheet" href="css/gta.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&amp;family=Share+Tech+Mono&amp;display=swap">
+<link rel="stylesheet" href="prototypes/styles/hud.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandbox">
+    <a class="brand" href="prototypes/styles/hud/">Bruno's <span>Game Shelf</span></a>
+    <div class="figures" id="figures" aria-label="The collection in figures"></div>
+  </div>
+  <nav class="topnav" aria-label="Collections">
+    <a href="prototypes/styles/hud/" data-col="" aria-current="page">The Shelf</a>
+    <a href="prototypes/styles/hud/?sims" data-col="sims"><img class="nav-bob" src="assets/plumbob.svg" alt="" width="8" height="16">The Sims</a>
+    <a href="prototypes/styles/hud/?gta" data-col="gta">GTA</a>
+  </nav>
+</div>
+
+<div id="shell"></div>
+
+<div class="tools">
+  <div class="grp" id="modeWrap">
+    <span class="lbl">Show</span>
+    <div class="pills" id="mode" role="group" aria-label="How the cases stand">
+      <button type="button" data-m="mixed">One cover per console</button>
+      <button type="button" data-m="spines">All spines</button>
+      <button type="button" data-m="covers">All covers</button>
+    </div>
+  </div>
+  <div class="grp">
+    <span class="lbl">Covers</span>
+    <div class="pills" id="covers" role="group" aria-label="Filter by cover">
+      <button type="button" data-cv="">All</button>
+      <button type="button" data-cv="with">Scanned <em id="cv-with"></em></button>
+      <button type="button" data-cv="without">Still to find <em id="cv-without"></em></button>
+    </div>
+  </div>
+</div>
+
+<main class="case-wrap"><div class="bookcase" id="case"></div></main>
+<section id="checklist" aria-label="Checklist"></section>
+
+<footer>
+  <span>© 2026</span>
+  <span>Made with <span class="heart" aria-label="love">♥</span> by <a href="https://brunovida.si" target="_blank" rel="noopener">brunovida.si</a></span>
+</footer>
+
+<script src="js/consoles.js"></script>
+<script src="js/console-art.js"></script>
+<script src="js/cases.js"></script>
+<script src="js/collection.js"></script>
+<script src="js/sims.js"></script>
+<script src="js/gta.js"></script>
+<script src="js/dropdown.js"></script>
+<script src="js/app.js"></script>
+<a href="prototypes/styles/" style="position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:1050;padding:6px 12px;border-radius:99px;background:rgba(0,0,0,.72);color:#fff;font:600 12px/1.2 system-ui,sans-serif;text-decoration:none;backdrop-filter:blur(6px)">← Holo Vault · all styles</a>
+</body>
+</html>

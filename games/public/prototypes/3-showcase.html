@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Shelf — Showcase</title>
+<link rel="stylesheet" href="../assets/ui.css">
+<link rel="stylesheet" href="../assets/cases.css">
+<style>
+  /* One game at a time on a glossy stage, the rest fanned out either side. */
+  body { background: #0d0b09; }
+  .tint { position: fixed; inset: 0; z-index: -1; transition: background-color .8s; background-color: #2a2018; }
+  .tint::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 45%, transparent, rgba(8,6,4,.92) 75%), linear-gradient(transparent 55%, rgba(0,0,0,.6)); }
+
+  .show { position: relative; height: clamp(380px, 62vh, 620px); margin-top: 10px; perspective: 1300px; overflow: hidden; touch-action: pan-y; user-select: none; cursor: grab; }
+  .show:active { cursor: grabbing; }
+  .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%; background: linear-gradient(rgba(255,255,255,.05), transparent 60%); border-top: 1px solid rgba(255,255,255,.08); }
+  .it { position: absolute; left: 50%; bottom: 24%; transform-style: preserve-3d; transform-origin: 50% 100%; will-change: transform; }
+  .it .cv { -webkit-box-reflect: below 3px linear-gradient(transparent 62%, rgba(255,255,255,.22)); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 26px 40px -12px rgba(0,0,0,.8); }
+  .it.center .cv { box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 40px 70px -14px rgba(0,0,0,.9), 0 0 80px -20px var(--a3); }
+
+  .arrow { position: absolute; top: 42%; z-index: 50; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line-strong); background: rgba(20,17,13,.7); backdrop-filter: blur(6px); cursor: pointer; font-size: 18px; }
+  .arrow:hover { border-color: var(--text); }
+  .arrow.l { left: max(16px, 3vw); } .arrow.r { right: max(16px, 3vw); }
+
+  .caption { text-align: center; padding: 0 16px; min-height: 120px; }
+  .caption .eyebrow { margin: 0 0 8px; display: inline-flex; gap: 8px; align-items: center; }
+  .caption h2 { margin: 0; font: 600 clamp(26px, 3.4vw, 42px)/1.05 'Fraunces', serif; letter-spacing: -.015em; }
+  .caption p { margin: 8px 0 14px; opacity: .65; font-size: 14px; }
+  .caption .go { border: 0; background: var(--gold); color: var(--ink); border-radius: 99px; padding: 9px 18px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .caption .lch-b { display: inline-flex; align-items: center; gap: 6px; background: var(--lb); color: var(--lf); border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 600; margin-left: 8px; vertical-align: 2px; }
+  .caption .fade { animation: cap .45s cubic-bezier(.2,.8,.2,1); }
+  @keyframes cap { from { opacity: 0; transform: translateY(8px); } }
+
+  /* a timeline of the whole collection, one coloured block per console */
+  .scrub { max-width: 980px; margin: 26px auto 70px; padding: 0 20px; }
+  .track { position: relative; display: flex; height: 34px; border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid var(--line); }
+  .seg { position: relative; height: 100%; background: var(--fc); opacity: .35; border-right: 1px solid rgba(0,0,0,.5); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: .05em; overflow: hidden; white-space: nowrap; transition: opacity .2s; }
+  .seg:hover, .seg.on { opacity: .85; }
+  .thumb { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; background: var(--text); border-radius: 2px; box-shadow: 0 0 10px rgba(255,255,255,.6); pointer-events: none; transition: left .15s; }
+  .scrub small { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; opacity: .45; }
+</style>
+</head>
+<body>
+<div class="tint" id="tint"></div>
+<div id="shell"></div>
+<div class="show" id="show">
+  <div class="floor"></div>
+  <button class="arrow l" id="prev" aria-label="Previous">←</button>
+  <button class="arrow r" id="next" aria-label="Next">→</button>
+</div>
+<div class="caption" id="cap"></div>
+<div class="scrub"><div class="track" id="track"><div class="thumb" id="thumb"></div></div><small><span>Drag, scroll or use ← → · click the middle one to inspect it</span><span id="pos"></span></small></div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/cases.js"></script>
+<script src="../assets/ui.js"></script>
+<script>
+  const show = document.getElementById('show'), cap = document.getElementById('cap');
+  const track = document.getElementById('track'), thumb = document.getElementById('thumb');
+  const famColor = Object.fromEntries(FAMILIES.map(f => [f.id, f.color]));
+  let games = [], items = [], cur = 0, target = 0, raf = 0, shown = -1;
+
+  const S = () => innerWidth < 640 ? 1.25 : innerWidth < 1000 ? 1.6 : 1.9;
+  const scaleFor = g => {
+    const d = Case.dims(g, 1);
+    const maxH = show.clientHeight * 0.66;
+    return Math.min(S(), maxH / d.h, (innerWidth * 0.5) / d.w);
+  };
+
+  function build() {
+    items.forEach(i => i.el.remove());
+    items = games.map((g, i) => {
+      const el = document.createElement('div');
+      el.className = 'it';
+      const s = scaleFor(g);
+      const cv = Case.front(g, s);
+      el.append(cv);
+      const w = Case.dims(g, s).w;
+      el.style.marginLeft = -w / 2 + 'px';
+      el.addEventListener('click', e => {
+        if (dragged) return;
+        if (Math.round(cur) === i) UI.open(g, cv, 'front', games);
+        else go(i);
+      });
+      show.append(el);
+      return { el, g, cv, w };
+    });
+    track.querySelectorAll('.seg').forEach(s => s.remove());
+    if (UI.state.sort === 'console') {
+      const groups = [];
+      games.forEach((g, i) => { const l = groups[groups.length - 1]; l && l.id === g.console ? l.n++ : groups.push({ id: g.console, n: 1, start: i }); });
+      groups.forEach(gr => {
+        const s = document.createElement('div');
+        s.className = 'seg';
+        s.style.flex = gr.n;
+        s.style.setProperty('--fc', famColor[CONSOLE_BY_ID[gr.id].fam]);
+        s.dataset.id = gr.id;
+        s.textContent = gr.n / games.length > 0.035 ? CONSOLE_BY_ID[gr.id].short : '';
+        s.title = CONSOLE_BY_ID[gr.id].name;
+        track.insertBefore(s, thumb);
+      });
+    } else {
+      const s = document.createElement('div');
+      s.className = 'seg'; s.style.flex = 1; s.style.setProperty('--fc', '#C99A2E');
+      track.insertBefore(s, thumb);
+    }
+    cur = target = Math.min(target, Math.max(0, games.length - 1));
+    shown = -1;
+    layout();
+  }
+
+  function layout() {
+    const sp = Math.min(innerWidth * 0.085, 110);
+    const gap = Math.min(innerWidth * 0.2, 230);
+    items.forEach((it, i) => {
+      const o = i - cur, a = Math.abs(o);
+      if (a > 10) { it.el.style.display = 'none'; return; }
+      it.el.style.display = '';
+      const sg = Math.sign(o), k = Math.min(a, 1);
+      const x = o * sp + sg * k * gap;
+      const ry = -sg * k * 58;
+      const z = -k * 220 - a * 18;
+      it.el.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${ry}deg)`;
+      it.el.style.zIndex = 100 - Math.round(a * 4);
+      it.el.style.filter = `brightness(${1 - Math.min(a, 6) * 0.1})`;
+      it.el.classList.toggle('center', a < 0.5);
+    });
+    const c = Math.round(cur);
+    if (c !== shown && games[c]) caption(c);
+    thumb.style.left = games.length ? ((c + 0.5) / games.length * 100) + '%' : '0';
+  }
+
+  function caption(i) {
+    shown = i;
+    const g = games[i], c = CONSOLE_BY_ID[g.console];
+    document.getElementById('tint').style.backgroundColor = g.colors[1];
+    const L = g.launcher && LAUNCHERS[g.launcher];
+    cap.innerHTML = `<div class="fade"><div class="eyebrow"><span>${c.name}</span>${L ? `<span class="lch-b" style="--lb:${L.bg};--lf:${L.fg}">${L.glyph} ${L.name}</span>` : ''}</div>
+      <h2>${Case.esc(g.title)}</h2><p>${g.year} · ${Case.esc(g.publisher)} · ${STATUS[g.status].name}${g.hours ? ' · ' + g.hours + ' h played' : ''}</p>
+      <button class="go">Take a closer look</button></div>`;
+    cap.querySelector('.go').addEventListener('click', () => UI.open(g, items[i].cv, 'front', games));
+    track.querySelectorAll('.seg').forEach(s => s.classList.toggle('on', s.dataset.id === g.console));
+    document.getElementById('pos').textContent = `${i + 1} / ${games.length}`;
+  }
+
+  function tick() {
+    cur += (target - cur) * 0.14;
+    if (Math.abs(target - cur) < 0.002) cur = target;
+    layout();
+    raf = cur !== target ? requestAnimationFrame(tick) : 0;
+  }
+  function go(i) {
+    target = Math.max(0, Math.min(games.length - 1, i));
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  // drag + wheel + keys
+  let drag = null, dragged = false;
+  show.addEventListener('pointerdown', e => { if (e.target.closest('.arrow')) return; drag = { x: e.clientX, c: cur }; dragged = false; });
+  addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 5) dragged = true;
+    target = cur = Math.max(0, Math.min(games.length - 1, drag.c - dx / 90));
+    layout();
+  });
+  addEventListener('pointerup', () => { if (drag) { go(Math.round(cur)); drag = null; setTimeout(() => dragged = false, 0); } });
+  let wheelAcc = 0;
+  show.addEventListener('wheel', e => {
+    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    e.preventDefault();
+    wheelAcc += d;
+    if (Math.abs(wheelAcc) > 40) { go(Math.round(target) + Math.sign(wheelAcc)); wheelAcc = 0; }
+  }, { passive: false });
+  addEventListener('keydown', e => {
+    if (document.querySelector('.dv.open') || e.target.matches('input,select')) return;
+    if (e.key === 'ArrowRight') go(Math.round(target) + 1);
+    if (e.key === 'ArrowLeft') go(Math.round(target) - 1);
+    if (e.key === 'Enter' && games[Math.round(cur)]) UI.open(games[Math.round(cur)], items[Math.round(cur)].cv, 'front', games);
+  });
+  document.getElementById('prev').addEventListener('click', () => go(Math.round(target) - 1));
+  document.getElementById('next').addEventListener('click', () => go(Math.round(target) + 1));
+  let scrubbing = false;
+  const scrubTo = e => { const r = track.getBoundingClientRect(); go(Math.floor((e.clientX - r.left) / r.width * games.length)); };
+  track.addEventListener('pointerdown', e => { scrubbing = true; track.setPointerCapture(e.pointerId); scrubTo(e); });
+  track.addEventListener('pointermove', e => scrubbing && scrubTo(e));
+  track.addEventListener('pointerup', () => scrubbing = false);
+
+  // follow along when the detail view steps to another game
+  UI.onStep = g => { const i = games.indexOf(g); if (i >= 0) { target = cur = i; layout(); } };
+
+  UI.init({
+    title: 'The Showcase',
+    intro: 'One game at a time under the lights. Pick a console up top and the whole stage swaps over.',
+    onChange: list => { games = list; target = 0; if (!games.length) { items.forEach(i => i.el.remove()); items = []; cap.innerHTML = '<div class="empty-msg"><b>Nothing on this shelf</b>No games match those filters.</div>'; return; } build(); },
+  });
+  games = UI.list();
+  build();
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+</script>
+</body>
+</html>

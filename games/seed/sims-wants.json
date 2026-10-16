@@ -1,0 +1,279 @@
+{
+  "updated": "2026-10-03",
+  "wants": [
+    {
+      "id": "want-the-sims-4-discover-university",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Discover University",
+      "pack": "Expansion Pack",
+      "packCode": "EP08",
+      "released": "2019-11-15",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-eco-lifestyle",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Eco Lifestyle",
+      "pack": "Expansion Pack",
+      "packCode": "EP09",
+      "released": "2020-06-05",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-snowy-escape",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Snowy Escape",
+      "pack": "Expansion Pack",
+      "packCode": "EP10",
+      "released": "2020-11-13",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-high-school-years",
+      "series": "The Sims 4",
+      "title": "The Sims 4: High School Years",
+      "pack": "Expansion Pack",
+      "packCode": "EP12",
+      "released": "2022-07-28",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-growing-together",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Growing Together",
+      "pack": "Expansion Pack",
+      "packCode": "EP13",
+      "released": "2023-03-16",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-lovestruck",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Lovestruck",
+      "pack": "Expansion Pack",
+      "packCode": "EP16",
+      "released": "2024-07-25",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-life-and-death",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Life & Death",
+      "pack": "Expansion Pack",
+      "packCode": "EP17",
+      "released": "2024-10-31",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-businesses-and-hobbies",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Businesses & Hobbies",
+      "pack": "Expansion Pack",
+      "packCode": "EP18",
+      "released": "2025-03-06",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-enchanted-by-nature",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Enchanted by Nature",
+      "pack": "Expansion Pack",
+      "packCode": "EP19",
+      "released": "2025-07-10",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-strangerville",
+      "series": "The Sims 4",
+      "title": "The Sims 4: StrangerVille",
+      "pack": "Game Pack",
+      "packCode": "GP07",
+      "released": "2019-02-26",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-realm-of-magic",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Realm of Magic",
+      "pack": "Game Pack",
+      "packCode": "GP08",
+      "released": "2019-09-10",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-star-wars-journey-to-batuu",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Star Wars: Journey to Batuu",
+      "pack": "Game Pack",
+      "packCode": "GP09",
+      "released": "2020-09-08",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-dream-home-decorator",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Dream Home Decorator",
+      "pack": "Game Pack",
+      "packCode": "GP10",
+      "released": "2021-06-01",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-my-wedding-stories",
+      "series": "The Sims 4",
+      "title": "The Sims 4: My Wedding Stories",
+      "pack": "Game Pack",
+      "packCode": "GP11",
+      "released": "2022-02-23",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-werewolves",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Werewolves",
+      "pack": "Game Pack",
+      "packCode": "GP12",
+      "released": "2022-06-16",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-laundry-day-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Laundry Day Stuff",
+      "pack": "Stuff Pack",
+      "packCode": "SP13",
+      "released": "2018-01-16",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-my-first-pet-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: My First Pet Stuff",
+      "pack": "Stuff Pack",
+      "packCode": "SP14",
+      "released": "2018-03-13",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-moschino-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Moschino Stuff",
+      "pack": "Stuff Pack",
+      "packCode": "SP15",
+      "released": "2019-08-13",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-tiny-living-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Tiny Living Stuff",
+      "pack": "Stuff Pack",
+      "packCode": "SP16",
+      "released": "2020-01-21",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-nifty-knitting-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Nifty Knitting Stuff",
+      "pack": "Stuff Pack",
+      "packCode": "SP17",
+      "released": "2020-07-28",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-paranormal-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Paranormal Stuff",
+      "pack": "Stuff Pack",
+      "packCode": "SP18",
+      "released": "2021-01-26",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-home-chef-hustle-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Home Chef Hustle Stuff",
+      "pack": "Stuff Pack",
+      "released": "2023",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-crystal-creations-stuff",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Crystal Creations Stuff",
+      "pack": "Stuff Pack",
+      "released": "2024",
+      "platform": "PC / Mac"
+    },
+    {
+      "id": "want-the-sims-4-throwback-fit-kit",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Throwback Fit Kit",
+      "pack": "Kit",
+      "released": "2021-03",
+      "platform": "PC / Mac",
+      "note": "Listed on the original list as Throwback Fit Stuff"
+    },
+    {
+      "id": "want-the-sims-4-holiday-celebration-pack",
+      "series": "The Sims 4",
+      "title": "The Sims 4: Holiday Celebration Pack",
+      "pack": "Free Pack",
+      "released": null,
+      "platform": "PC / Mac",
+      "note": "Free on the EA app"
+    },
+    {
+      "id": "want-simcity-1989",
+      "series": "SimCity",
+      "title": "SimCity",
+      "pack": "Base game",
+      "released": "1989",
+      "platform": "PC",
+      "note": "The 1989 original"
+    },
+    {
+      "id": "want-simcity-64",
+      "series": "SimCity",
+      "title": "SimCity 64",
+      "pack": "Base game",
+      "released": "2000",
+      "platform": "N64"
+    },
+    {
+      "id": "want-simcity-4-rush-hour",
+      "series": "SimCity",
+      "title": "SimCity 4: Rush Hour",
+      "pack": "Expansion Pack",
+      "released": "2003-09-22",
+      "platform": "PC"
+    },
+    {
+      "id": "want-simcity-social",
+      "series": "SimCity",
+      "title": "SimCity Social",
+      "pack": "Base game",
+      "released": "2012",
+      "platform": "Facebook",
+      "note": "Closed in 2013"
+    },
+    {
+      "id": "want-simcity-buildit",
+      "series": "SimCity",
+      "title": "SimCity BuildIt",
+      "pack": "Base game",
+      "released": "2014",
+      "platform": "Mobile",
+      "note": "Free on phones"
+    },
+    {
+      "id": "want-the-urbz-sims-in-the-city",
+      "series": "The Sims 2",
+      "title": "The Urbz: Sims in the City",
+      "pack": "Base game",
+      "released": "2004-11-17",
+      "platform": "DS"
+    }
+  ]
+}

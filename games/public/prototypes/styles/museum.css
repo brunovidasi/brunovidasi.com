@@ -1,0 +1,121 @@
+/* Style prototype 5 — Hall of Fame.
+   The collection as a museum's permanent exhibition: deep green gallery walls,
+   a warm spotlight falling on every shelf, black stone plinths, ivory placards,
+   and a velvet rope along the front.
+   Loaded after site.css and cases.css; it changes the look only.
+   Fonts: https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap
+   */
+
+:root {
+  --bg: #0f1d19; --surface: #132520; --surface-2: #1a2f29;
+  --text: #f1ece2; --ink: #0f1d19;
+  --gold: #f1ece2;           /* the accent: what is selected turns ivory, like a placard */
+  --light: rgba(255,226,170,.5); --velvet: #8c1d2e; --placard: #f6f1e7;
+  --line: rgba(241,236,226,.14); --line-strong: rgba(241,236,226,.32);
+  --display: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --ui: 'Instrument Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ---------- the gallery: painted wall panels ---------- */
+body { font-family: var(--ui); background: none; }
+html {
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,226,170,.10), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 1px, transparent 1px 240px),
+    linear-gradient(#13241f, #0c1814);
+  background-attachment: fixed; background-color: var(--bg); }
+
+/* ---------- type ---------- */
+.brand { font: 500 19px var(--display); font-style: italic; letter-spacing: 0; }
+.brand span { color: var(--text); font-style: normal; font-weight: 700; }
+.hero h1 { font: 500 clamp(44px, 7vw, 86px)/0.95 var(--display); letter-spacing: -.02em; }
+.hero h1::first-letter { font-style: italic; }
+.eyebrow { font: 500 11px var(--mono); letter-spacing: .24em; color: rgba(241,236,226,.7); }
+.eyebrow::after { content: " · Permanent collection"; }
+.hero::before { background: radial-gradient(ellipse 50% 90% at 30% 0%, rgba(255,226,170,.12), transparent 70%); }
+.hero p { font-size: 16px; }
+.stats { gap: 34px; }
+.stats b { font: 500 40px/1 var(--display); font-style: italic; }
+.stats span { font-family: var(--mono); letter-spacing: .16em; }
+:is(.ghead b, .cap b, .ltitle, .empty-msg b, #tip b, .spot-info h2, .shead h2, .meter .nums b, .want b, .tr-head h3) { font-family: var(--display); font-weight: 500; }
+.spot-info h2 { font-style: italic; }
+.spot-note { font: italic 400 1.05rem/1.4 var(--display); }
+:is(.search input, select.sort, .seg button, .pills button, .packs h3, .tag, .ghostbox b, .ghostbox i, .kc) { font-family: var(--ui); }
+:is(.plate, .count, .chip .lab i, .lyear, .lregion, .spot-count, .cap small, .famname, .tools .lbl) { font-family: var(--mono); }
+
+/* ---------- bars and controls: quiet, with thin rules ---------- */
+.topbar { background: rgba(12,24,20,.9); border-bottom: 1px solid var(--line); }
+.topnav a { border-radius: 0; border-bottom: 1px solid transparent; }
+.topnav a[aria-current="page"] { background: none; color: var(--text); border-bottom-color: var(--text); }
+.topnav a:hover { background: none; border-bottom-color: var(--line-strong); }
+.filters { background: rgba(12,24,20,.92); }
+.chip { border-radius: 2px; border-color: var(--line); background: rgba(255,255,255,.02); }
+.chip:hover { border-color: var(--line-strong); }
+.chip.on { background: var(--placard); color: #1b1b1b; border-color: var(--placard); }
+.chip.all { background: #102019; box-shadow: 10px 0 12px -4px #102019; }
+.chip.all.on { background: var(--placard); }
+.search, .pills button, select.sort, .seg, .series-nav a { border-radius: 2px; }
+.search:focus-within { border-color: var(--text); }
+select.sort { background: var(--surface); }
+.pills button.on, .seg button.on, .series-nav a.on { background: var(--placard); color: #1b1b1b; border-color: var(--placard); }
+:focus-visible { outline-color: var(--text); }
+
+/* ---------- the exhibition: niches lit from above, stone plinths, placards ---------- */
+.bookcase { border-radius: 0; background: #0c1814; padding-bottom: 46px;
+  box-shadow: inset 0 0 0 1px rgba(241,236,226,.06), 0 40px 70px rgba(0,0,0,.55); }
+.bookcase::before { display: none; }
+/* the velvet rope in front, between two posts */
+.bookcase::after { content: ""; position: absolute; left: 22px; right: 22px; bottom: 10px; height: 26px; pointer-events: none;
+  background:
+    linear-gradient(90deg, #c9c3b6, #f1ece2 50%, #8c877d) left bottom / 8px 26px no-repeat,
+    linear-gradient(90deg, #c9c3b6, #f1ece2 50%, #8c877d) right bottom / 8px 26px no-repeat,
+    radial-gradient(ellipse 50% 100% at 50% 0%, transparent 92%, var(--velvet) 93% 99%, transparent 100%) 8px 0 / calc(100% - 16px) 22px no-repeat; }
+.bay { background:
+    radial-gradient(ellipse 34% 110% at 25% -8%, var(--light), transparent 70%),
+    radial-gradient(ellipse 34% 110% at 75% -8%, var(--light), transparent 70%),
+    linear-gradient(#152a24, #10211c);
+  box-shadow: inset 0 18px 24px -14px rgba(0,0,0,.8); }
+.board { height: 22px; background: linear-gradient(#3a403d, #1d2220 30%, #0b0d0c); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 14px 22px rgba(0,0,0,.6); }
+.plate { top: 4px; border-radius: 0; background: var(--placard); color: #1b1b1b; font: 500 9.5px/12px var(--mono); letter-spacing: .12em; padding: 2px 8px; box-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.plate::before, .plate::after { display: none; }
+.bookend { width: 1px; height: 76%; margin: 0 12px; border-radius: 0; background: rgba(241,236,226,.18); box-shadow: none; }
+.item:hover, .item:focus-visible { filter: brightness(1.15) drop-shadow(0 12px 18px rgba(0,0,0,.6)); }
+.item:focus-visible > * { box-shadow: 0 0 0 2px var(--placard); }
+.item.loose::after { background: linear-gradient(rgba(255,255,255,.3), rgba(255,255,255,.08)); }
+
+/* ---------- grid and list ---------- */
+.ghead b { font-size: 1.4rem; font-style: italic; }
+.ghead i { font-family: var(--mono); }
+.stage::before { background: radial-gradient(closest-side, rgba(0,0,0,.7), rgba(0,0,0,0)); }
+@media (hover: hover) { .cell:hover .cap b { color: #fff; font-style: italic; } }
+.cap b { font-size: 1.05rem; }
+.list { border-radius: 0; background: rgba(19,37,32,.85); }
+.lsort.on { color: var(--text); }
+.ltitle { font-size: 1.1rem; }
+.ltitle .kc { color: var(--text); border-color: var(--line-strong); }
+
+/* ---------- the spotlight ---------- */
+.overlay { background: radial-gradient(ellipse 50% 65% at var(--spot-x, 50%) var(--spot-y, 50%), rgba(255,226,170,.16), rgba(5,10,8,.95)); }
+.spot-close, .spot-nav, .views { background: rgba(12,24,20,.9); border-radius: 2px; }
+.spot-nav button, .views button { border-radius: 2px; }
+.spot-close:hover, .views button.on, .spot-nav button:hover:not(:disabled) { background: var(--placard); color: #1b1b1b; border-color: var(--placard); }
+.views button.open-btn { background: var(--velvet); color: #fff; }
+.spot-eyebrow { font-family: var(--mono); font-size: .7rem; }
+.stamp { border-color: var(--placard); color: var(--placard); border-radius: 0; font-family: var(--mono); }
+.spot-find { color: var(--text); text-decoration: underline; }
+#tip { border-radius: 0; background: var(--placard); color: #1b1b1b; }
+#tip span { font-family: var(--mono); font-size: 11px; }
+
+/* ---------- the collection pages ---------- */
+.rack { border-radius: 0; background: radial-gradient(ellipse 50% 120% at 50% -10%, var(--light), transparent 70%), #10211c; box-shadow: inset 0 -6px 0 #1d2220; }
+.packs h3 { color: var(--text); font-family: var(--mono); }
+.want { border-radius: 0; }
+.want a { color: var(--text); text-decoration: underline; }
+.series-nav a.on { color: #1b1b1b; }
+
+@media (max-width: 820px) { .bookcase::after { left: 10px; right: 10px; } .bookcase { padding-bottom: 40px; } }
+@media (max-width: 640px) {
+  .brand { white-space: nowrap; } .topnav a { white-space: nowrap; padding: 6px 8px; }
+  .stats { gap: 18px; } .stats b { font-size: 30px; }
+}

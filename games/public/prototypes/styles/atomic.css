@@ -1,0 +1,140 @@
+/* Style prototype 6 — Atomic Purple.
+   Y2K see-through plastic, like an Atomic Purple Game Boy: a pale lavender page
+   with a circuit board showing through, shelves of clear purple acrylic with
+   screws in the corners, and glossy jelly buttons.
+   Loaded after site.css and cases.css; it changes the look only.
+   Fonts: https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;600;700;800&display=swap
+   */
+
+:root {
+  --bg: #ece6ff; --surface: #f7f4ff; --surface-2: #ffffff;
+  --text: #2a1d5c; --ink: #ffffff;
+  --gold: #7b4dff;           /* the accent: grape */
+  --aqua: #22c7e8; --pink: #ff6fb5;
+  --fg-rgb: 42,29,92; --paper-rgb: 236,230,255;
+  --line: rgba(42,29,92,.14); --line-strong: rgba(42,29,92,.3);
+  --jelly: linear-gradient(#a888ff, #7b4dff 55%, #6236ea);
+  --gloss: inset 0 1px 0 rgba(255,255,255,.7), inset 0 -3px 6px rgba(40,0,120,.25);
+  --display: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  --ui: 'Nunito', system-ui, sans-serif;
+  color-scheme: light;
+}
+
+/* ---------- see-through plastic over a circuit board ---------- */
+body { font-family: var(--ui); background: none; }
+html {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255,111,181,.25), transparent 30%),
+    radial-gradient(circle at 88% 8%, rgba(34,199,232,.25), transparent 30%),
+    radial-gradient(circle, rgba(123,77,255,.22) 0 2.5px, transparent 3px) 0 0 / 120px 120px,
+    linear-gradient(90deg, transparent 59px, rgba(123,77,255,.12) 59px 61px, transparent 61px) 0 0 / 120px 120px,
+    linear-gradient(transparent 59px, rgba(123,77,255,.12) 59px 61px, transparent 61px) 60px 0 / 120px 120px,
+    linear-gradient(#f3efff, #e4dcff);
+  background-attachment: fixed; background-color: var(--bg); }
+
+/* ---------- type ---------- */
+.brand { font: 800 19px var(--display); letter-spacing: -.01em; }
+.brand span { background: linear-gradient(90deg, var(--gold), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero h1 { font: 800 clamp(44px, 7vw, 88px)/0.92 var(--display); letter-spacing: -.03em;
+  background: linear-gradient(175deg, #c6b2ff 10%, var(--gold) 50%, #4a1fd0 52%, #9b7bff 90%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 3px 0 #fff) drop-shadow(0 8px 16px rgba(98,54,234,.35)); }
+.eyebrow { font: 800 12px var(--ui); letter-spacing: .2em; color: var(--pink); }
+.hero p { opacity: .78; font-size: 16px; }
+.stats { gap: 10px; }
+.stats div { padding: 10px 16px; border-radius: 20px; background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 6px 18px rgba(98,54,234,.15); }
+.stats b { font: 800 30px/1 var(--display); color: var(--gold); }
+.stats span { font-weight: 800; }
+:is(.ghead b, .cap b, .ltitle, .empty-msg b, #tip b, .spot-info h2, .shead h2, .meter .nums b, .want b, .tr-head h3) { font-family: var(--display); font-weight: 700; }
+.spot-note { font: 600 1rem/1.4 var(--ui); font-style: italic; }
+:is(.search input, select.sort, .seg button, .pills button, .plate, .packs h3, .tag, .ghostbox b, .ghostbox i, .kc) { font-family: var(--ui); font-weight: 700; }
+
+/* ---------- light-page fixes for the site's dark-first colours ---------- */
+.search input::placeholder { color: rgba(var(--fg-rgb), .45); }
+.hero::before { background: none; }
+.lcon .kc { color: color-mix(in srgb, var(--fc) 75%, #000); border-color: color-mix(in srgb, var(--fc) 55%, transparent); }
+.ghost { color: rgba(var(--fg-rgb), .65); border-color: rgba(var(--fg-rgb), .4); }
+.ghost .stop { color: rgba(var(--fg-rgb), .55); }
+.cv.ghosted { outline-color: rgba(var(--fg-rgb), .45); }
+.lrow:hover, .lrow:focus-visible { background: rgba(var(--fg-rgb), .06); }
+.overlay { background: radial-gradient(ellipse 70% 75% at var(--spot-x, 50%) var(--spot-y, 50%), rgba(var(--paper-rgb), .6), rgba(var(--paper-rgb), .95)); }
+.spot-info { text-shadow: none; }
+.spot-floor { background: radial-gradient(closest-side, rgba(98,54,234,.4), rgba(98,54,234,0)); }
+.spot-close, .spot-nav, .views { background: rgba(255,255,255,.85); border-color: rgba(var(--fg-rgb), .15); color: var(--text); box-shadow: 0 6px 18px rgba(98,54,234,.18); }
+.stamp { background: rgba(255,255,255,.85); }
+.meter .track { background: rgba(var(--fg-rgb), .1); }
+.tag.disc { color: var(--gold); border-color: var(--gold); }
+.tag.mac { border-color: rgba(var(--fg-rgb), .4); }
+.tag.code { background: rgba(var(--fg-rgb), .08); }
+.want { border-color: rgba(var(--fg-rgb), .3); background: rgba(255,255,255,.45); }
+.want .ghostcase, .ghostbox { border-color: rgba(var(--fg-rgb), .35); color: rgba(var(--fg-rgb), .7); background: rgba(255,255,255,.35); }
+
+/* ---------- bars and jelly buttons ---------- */
+.topbar { background: rgba(255,255,255,.55); backdrop-filter: blur(16px) saturate(1.5); border-bottom: 1px solid rgba(255,255,255,.9); box-shadow: 0 4px 20px rgba(98,54,234,.1); }
+.topnav a { font-weight: 800; }
+.topnav a[aria-current="page"], .pills button.on, .seg button.on, .series-nav a.on { background: var(--jelly); color: #fff; border-color: transparent; box-shadow: var(--gloss), 0 4px 10px rgba(98,54,234,.35); }
+.topnav a:hover { background: rgba(123,77,255,.1); }
+.filters { background: rgba(255,255,255,.5); backdrop-filter: blur(16px) saturate(1.5); border-bottom: 1px solid rgba(255,255,255,.9); }
+.chip { border-radius: 16px; border: 1px solid rgba(255,255,255,.95); background: rgba(255,255,255,.55); box-shadow: 0 3px 10px rgba(98,54,234,.1); }
+.chip:hover { border-color: #fff; background: rgba(255,255,255,.85); }
+.chip.on { background: var(--jelly); color: #fff; border-color: transparent; box-shadow: var(--gloss), 0 6px 14px rgba(98,54,234,.4); }
+.chip.all { background: rgba(255,255,255,.9); box-shadow: 8px 0 12px -6px rgba(98,54,234,.3); }
+.chip.all.on { background: var(--jelly); }
+.search, .pills button, select.sort { background: rgba(255,255,255,.6); border-color: rgba(255,255,255,.95); }
+.search:focus-within { border-color: var(--gold); }
+.seg { border-radius: 99px; border: 1px solid rgba(255,255,255,.95); background: rgba(255,255,255,.6); }
+.seg button + button { border-left: 1px solid var(--line); }
+:focus-visible { outline-color: var(--pink); }
+
+/* ---------- the shelves: clear purple acrylic with screws ---------- */
+.bookcase { border-radius: 26px; background: linear-gradient(rgba(150,110,255,.30), rgba(110,70,235,.38));
+  border: 1px solid rgba(255,255,255,.8); backdrop-filter: blur(4px) saturate(1.4);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.8), inset 0 0 40px rgba(255,255,255,.35), 0 24px 50px rgba(98,54,234,.3); }
+.bookcase::before { height: 22px; border-radius: 26px 26px 0 0; background:
+    radial-gradient(circle at 14px 12px, #f4f1ff 0 3px, #8e78c9 3.5px 4.5px, transparent 5px),
+    radial-gradient(circle at calc(100% - 14px) 12px, #f4f1ff 0 3px, #8e78c9 3.5px 4.5px, transparent 5px);
+  box-shadow: none; }
+.bay { background:
+    linear-gradient(90deg, transparent 39px, rgba(255,255,255,.18) 39px 41px, transparent 41px) 0 0 / 80px 100%,
+    radial-gradient(circle, rgba(255,255,255,.35) 0 2px, transparent 2.5px) 20px 30px / 80px 60px,
+    linear-gradient(rgba(70,30,190,.28), rgba(70,30,190,.1));
+  box-shadow: inset 0 10px 16px -10px rgba(40,0,120,.35); }
+.board { height: 22px; border-radius: 6px; margin: 0 -14px; background: linear-gradient(rgba(255,255,255,.85), rgba(190,160,255,.6) 35%, rgba(123,77,255,.75));
+  box-shadow: inset 0 -2px 4px rgba(60,0,170,.3), 0 10px 20px rgba(98,54,234,.4); }
+.plates { inset: 0 14px; }
+.plate { top: 4px; border-radius: 99px; background: var(--jelly); color: #fff; font-size: 10px; letter-spacing: .08em; padding: 2px 9px; box-shadow: var(--gloss); }
+.plate::before, .plate::after { display: none; }
+.bookend { width: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--aqua), #b6f2ff 45%, #13a6c4); box-shadow: 0 0 10px rgba(34,199,232,.6); }
+.item:hover, .item:focus-visible { filter: brightness(1.06) drop-shadow(0 10px 14px rgba(60,0,170,.4)); }
+.item:focus-visible > * { box-shadow: 0 0 0 3px var(--pink); }
+.item.loose::after { background: linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.3)); border-color: #fff; }
+
+/* ---------- grid and list ---------- */
+.ghead { border-bottom: 2px dotted rgba(123,77,255,.35); }
+.ghead b { color: var(--gold); font-size: 1.3rem; }
+.stage::before { background: radial-gradient(closest-side, rgba(98,54,234,.35), rgba(98,54,234,0)); }
+@media (hover: hover) { .cell:hover .cap b { color: var(--gold); } }
+.list { border-radius: 22px; background: rgba(255,255,255,.6); border: 1px solid #fff; box-shadow: 0 16px 40px rgba(98,54,234,.15); backdrop-filter: blur(8px); }
+.lrow { border-radius: 12px; border-bottom-color: rgba(var(--fg-rgb), .08); }
+.lsort.on { color: var(--gold); }
+.ltitle .kc { color: var(--gold); border-color: rgba(123,77,255,.5); }
+
+/* ---------- the spotlight ---------- */
+.spot-close:hover, .views button.on, .spot-nav button:hover:not(:disabled) { background: var(--jelly); color: #fff; border-color: transparent; }
+.views button.open-btn { background: linear-gradient(#ff9bcb, var(--pink)); color: #fff; box-shadow: var(--gloss); }
+.spot-eyebrow { color: var(--gold); font-weight: 800; }
+.stamp { border-color: var(--pink); color: var(--pink); border-radius: 99px; }
+.spot-find { color: var(--gold); }
+#tip { border-radius: 14px; background: var(--jelly); color: #fff; box-shadow: var(--gloss), 0 8px 20px rgba(98,54,234,.35); }
+
+/* ---------- the collection pages ---------- */
+.rack { border-radius: 22px; background: linear-gradient(rgba(150,110,255,.25), rgba(110,70,235,.32)); box-shadow: inset 0 2px 0 rgba(255,255,255,.8), inset 0 -6px 0 rgba(123,77,255,.5), 0 12px 26px rgba(98,54,234,.2); }
+.packs h3 { color: var(--gold); }
+.want { border-radius: 16px; }
+.want a { color: var(--gold); }
+
+@media (max-width: 640px) {
+  .brand { white-space: nowrap; } .topnav a { white-space: nowrap; padding: 6px 9px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; }
+  .stats div { padding: 8px; border-radius: 14px; } .stats b { font-size: 21px; } .stats span { font-size: 9px; letter-spacing: .04em; }
+  .board { margin: 0 -10px; } .plates { inset: 0 10px; } .bookcase { border-radius: 18px; }
+}

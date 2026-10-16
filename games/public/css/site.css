@@ -1,0 +1,736 @@
+/* site.css — the shelf: header, console filter, the bookcase, the grid and the
+   list, and the spotlight a game opens into. Black, finely pinstriped pages with a
+   blue accent, and a dark wooden bookcase open at the back so the pinstripes show
+   through behind the games, as in the grid. */
+@font-face { font-family: 'Fraunces'; src: url('../fonts/fraunces-latin.woff2') format('woff2'); font-weight: 400 700; font-display: swap; }
+@font-face { font-family: 'Space Grotesk'; src: url('../fonts/space-grotesk-latin.woff2') format('woff2'); font-weight: 400 600; font-display: swap; }
+/* the site's own type: Orbitron for the big display text, Exo 2 for everything else. Fraunces and Space
+   Grotesk above stay for what is printed on the cases (css/cases.css) */
+@font-face { font-family: 'Orbitron'; src: url('../fonts/orbitron-latin.woff2') format('woff2'); font-weight: 400 900; font-display: swap; }
+@font-face { font-family: 'Exo 2'; src: url('../fonts/exo2-latin.woff2') format('woff2'); font-weight: 400 700; font-display: swap; }
+
+:root {
+  --bg: #0a0a0b; --surface: #161618; --surface-2: #1f1f22;
+  --text: #F2EAD8; --ink: #0d1424;
+  /* the accent, blue (still called --gold, the name the style prototypes override) */
+  --gold: #4d8dff;
+  --line: rgba(242,234,216,.14); --line-strong: rgba(242,234,216,.32);
+  --shadow: 0 10px 24px rgba(0,0,0,.5);
+  --page: 1320px;
+  --font-display: 'Orbitron', 'Exo 2', system-ui, sans-serif;
+  --font-ui: 'Exo 2', system-ui, sans-serif;
+  /* how far the page starts below the top bar: the bar grows by the phone's status bar and
+     notch. A host that already pads the page by that much (the published artifact) sets it to 0 */
+  --top-inset: env(safe-area-inset-top, 0px);
+  /* the top bar's height (taller on phones, with the name over its figures), and the room it takes over the page */
+  --bar-h: 52px;
+  --under-bar: calc(var(--bar-h) + var(--top-inset));
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); overflow-x: clip; }
+body { margin: 0; min-height: 100vh; color: var(--text); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; overflow-x: clip;
+  background: transparent; }
+/* black with fine diagonal pinstripes, held still behind the page so it looks the same in every view and on
+   phones (which ignore a fixed background), only just darker towards the corners */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 100% at 50% 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45)),
+    repeating-linear-gradient(135deg, #222225 0 3.2px, #121214 3.2px 6.4px),
+    var(--bg); }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* ---------- top bar ---------- */
+/* its name and links line up with the page under it: the same column, the same side padding */
+.topbar { position: fixed; left: 0; right: 0; top: 0; z-index: 900; height: calc(var(--bar-h) + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(20px, calc((100% - var(--page)) / 2 + 20px)) 0; display: flex; align-items: center; background: linear-gradient(rgba(10,10,11,.96), rgba(10,10,11,.9)); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.brand { font: 700 16px var(--font-display); text-decoration: none; letter-spacing: .02em; }
+/* on phones the pages and the add-me buttons fold into a menu behind a burger (index.php); here they sit in the bar */
+.menu-toggle { display: none; }
+.topmenu { display: contents; }
+.brand span { color: var(--gold); }
+/* the figures, the shelf's or the collection's, small beside its name; on phones, under it */
+.brandbox { display: flex; align-items: baseline; gap: 6px 22px; min-width: 0; }
+.figures { display: flex; gap: 14px; padding-left: 22px; border-left: 1px solid var(--line); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+.figures span { opacity: .55; }
+.figures b { font: 700 13px var(--font-display); letter-spacing: .02em; font-variant-numeric: tabular-nums; margin-right: 2px; }
+.figures .fig-short { display: none; }
+/* the pages */
+.topnav { margin-left: auto; display: flex; gap: 4px; }
+.topnav a { text-decoration: none; font-size: 13px; padding: 6px 12px; border-radius: 99px; opacity: .7; }
+.topnav a:hover { opacity: 1; background: rgba(242,234,216,.08); }
+.topnav a[aria-current="page"] { opacity: 1; color: var(--ink); background: var(--gold); }
+/* add me: a round button for each console's friends list, at the far right, its mark in the console's colour.
+   The EA app's is a button that copies the EA ID, as it has no link to add a friend */
+.addme { display: flex; gap: 6px; }
+.addme .psn { --brand: #3b7be0; } .addme .nintendo { --brand: #e8303a; } .addme .xbox { --brand: #3aa64a; } .addme .steam { --brand: #1a9fff; } .addme .ea { --brand: #f56c2d; }
+.addme :is(a, button) { font: inherit; color: inherit; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 30px; min-width: 30px; box-sizing: border-box; padding: 0 7px; border-radius: 99px; border: 1px solid var(--line-strong); white-space: nowrap; text-decoration: none; opacity: .85; transition: opacity .15s, background .15s, color .15s, border-color .15s; }
+.addme svg { flex: none; fill: var(--brand, currentColor); transition: fill .15s; }
+.addme .lbl { font-size: 12px; font-weight: 600; }
+.addme :is(a, button):is(:hover, :focus-visible, .copied) { opacity: 1; color: #fff; background: var(--brand, var(--gold)); border-color: var(--brand, var(--gold)); }
+.addme :is(a, button):is(:hover, :focus-visible, .copied) svg { fill: #fff; }
+/* in the top bar, the hovered one's name floats over the page just under it, nothing in the bar moving: lined up
+   with the button's right edge (they sit at the far right, so it never runs off the page), its point under the mark */
+.topbar .addme:not(.addme-strip) { margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
+.topbar .addme:not(.addme-strip) :is(a, button) { position: relative; }
+.topbar .addme:not(.addme-strip) .lbl { position: absolute; right: -4px; top: calc(100% + 9px); padding: 6px 10px; border-radius: 8px; line-height: 1.2;
+  color: var(--text); background: rgba(16,16,18,.97); border: 1px solid var(--line-strong); box-shadow: 0 8px 22px rgba(0,0,0,.5);
+  opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .15s, transform .15s; }
+.topbar .addme:not(.addme-strip) .lbl::before { content: ""; position: absolute; right: 14px; top: -5px; width: 8px; height: 8px; transform: rotate(45deg);
+  background: inherit; border: inherit; border-width: 1px 0 0 1px; }
+.topbar .addme:not(.addme-strip) :is(a, button):is(:hover, :focus-visible, .copied) .lbl { opacity: 1; transform: none; }
+/* on phones, a row of them in the menu, their names always showing */
+.addme-strip { display: none; }
+
+/* the bar's words never break onto a second line: where they would, the figures go under the name, then shorten */
+.brand, .figures > span, .topnav a { white-space: nowrap; }
+/* too narrow for the name, the figures and the pages on one line (a collection's four figures make it the widest):
+   the figures go under the name */
+@media (max-width: 1100px) {
+  .brandbox { flex-direction: column; align-items: flex-start; gap: 3px; }
+  .figures { padding-left: 0; border-left: 0; gap: 10px; font-size: 9px; }
+  .figures b { font-size: 11px; }
+}
+
+/* a collection's four figures: their short labels, then on narrower screens only the total and the ones still to find
+   (the shelf has two) */
+@media (max-width: 1240px) { .figures .fig-long { display: none; } .figures .fig-short { display: inline; } }
+@media (max-width: 760px) { .figures > span:nth-child(3):not(:last-child) { display: none; } }
+@media (max-width: 380px) { .figures > span:nth-child(2):not(:last-child) { display: none; } }
+
+/* ---------- header ---------- */
+/* the title and its words (the figures are in the top bar) */
+.hero { max-width: var(--page); margin: 0 auto; padding: calc(18px + var(--under-bar)) 20px 22px; display: flex; flex-wrap: wrap; gap: 18px 40px; align-items: center; justify-content: space-between; position: relative; }
+.hero::before { content: ""; position: absolute; top: 0; bottom: -80px; left: 50%; width: 100vw; transform: translateX(-50%); z-index: -1; background: linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.45) 60%, transparent); pointer-events: none; }
+.eyebrow { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.hero h1 { font: 800 clamp(34px, 5.4vw, 62px)/1 var(--font-display); letter-spacing: .01em; margin: 0; text-wrap: balance; }
+.hero p { margin: 12px 0 0; opacity: .68; max-width: 48ch; font-size: 15px; line-height: 1.5; }
+/* the shelf's own header: no title (the name and the figures are in the top bar), just room above the consoles */
+.hero-figures { padding-top: var(--under-bar); padding-bottom: 22px; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- console filter: under the header, above the bar ---------- */
+.consoles-bar { max-width: var(--page); margin: 0 auto; padding: 0 20px 16px; }
+.consoles { display: flex; align-items: flex-end; gap: 10px; }
+/* the consoles scroll sideways beside "All" and fade out at an edge with more past it (js/app.js) */
+.cscroll { flex: 1; min-width: 0; display: flex; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; padding: 0 2px;
+  --fl: 0px; --fr: 0px;
+  /* only the consoles fade: a solid band over the top keeps the family names clear */
+  -webkit-mask: linear-gradient(#000, #000) top / 100% 18px no-repeat, linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent);
+  mask: linear-gradient(#000, #000) top / 100% 18px no-repeat, linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent); }
+.cscroll::-webkit-scrollbar { display: none; }
+@media (pointer: fine) { .cscroll { cursor: grab; } }
+.cscroll.dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+.cscroll.dragging .chip { pointer-events: none; }
+.cscroll.more-l { --fl: 28px; }
+.cscroll.more-r { --fr: 28px; }
+.fam { display: flex; flex-direction: column; gap: 6px; flex: none; }
+/* a family's name stays in view at the left while its consoles scroll past */
+.famname { position: sticky; left: 0; align-self: flex-start; background: none; border: 0; padding: 0 2px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--fc); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.famname::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--fc); }
+.famname.on { text-decoration: underline; text-underline-offset: 3px; }
+.fam .row { display: flex; gap: 6px; }
+.chip { display: flex; align-items: center; gap: 8px; height: 50px; padding: 4px 12px 4px 6px; border-radius: 10px; border: 1px solid var(--line-strong); background: #141416; cursor: pointer; transition: background .2s, border-color .2s, transform .2s; white-space: nowrap; }
+.chip:hover { border-color: var(--text); background: #1c1c1f; transform: translateY(-1px); }
+.chip .cart-art { flex: none; width: 57px; height: 38px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.45)); transition: transform .25s cubic-bezier(.3,1.4,.5,1); }
+.chip:hover .cart-art { transform: scale(1.08) rotate(-2deg); }
+.chip .lab { display: flex; flex-direction: column; line-height: 1.05; }
+.chip .lab b { font-weight: 600; font-size: 13px; }
+.chip .lab i { font-style: normal; font-size: 10px; opacity: .55; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.chip.on { background: var(--text); color: var(--ink); border-color: var(--text); }
+.chip.on .cart-art { filter: drop-shadow(0 2px 3px rgba(0,0,0,.25)); }
+.chip.on .lab i { opacity: .7; }
+.chip.all { flex: none; padding: 4px 14px; }
+.chip.all.on { background: var(--text); }
+.chip.empty { opacity: .35; }
+
+/* ---------- the bar: search and sort on the left, the views at the right, as on the record site ---------- */
+.filters { position: sticky; top: calc(var(--bar-h) + env(safe-area-inset-top, 0px)); z-index: 800; background: linear-gradient(rgba(12,12,13,.95), rgba(12,12,13,.9)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.filters-in { --control-h: 42px; max-width: var(--page); margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
+/* the search: the glass, the field, and a cross once something is typed (js/app.js, searchBox) */
+/* it takes all the bar the sort and the views leave, and gives it up before the views would wrap under it, down to 180px */
+.search { flex: 1 1 180px; min-width: 0; display: flex; align-items: center; height: var(--control-h); border: 1.5px solid var(--line-strong); border-radius: 3px; background: var(--surface); transition: border-color .2s, flex-grow .3s cubic-bezier(.2,.8,.25,1); }
+.search:hover { border-color: rgba(242,234,216,.5); }
+.search:focus-within, .search.has-query { border-color: var(--gold); }
+.search-open, .search-close { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
+.search-open { width: 42px; color: rgba(242,234,216,.6); cursor: text; }
+.search.has-query .search-open, .search:focus-within .search-open { color: var(--gold); }
+.search-close { width: 38px; color: rgba(242,234,216,.6); font-size: 14px; visibility: hidden; }
+.search-close:hover { color: var(--text); }
+.search.has-query .search-close { visibility: visible; }
+.search input { flex: 1; min-width: 0; height: 100%; padding: 0; background: none; border: 0; outline: 0; color: var(--text); font: 500 15px var(--font-ui); }
+.search input::placeholder { color: rgba(242,234,216,.4); }
+.search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+/* the sort: a dropdown in the site's own clothes over its <select> (js/dropdown.js) */
+.dd { position: relative; }
+.dd > select { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.dd-button { display: flex; align-items: center; gap: 14px; height: var(--control-h, 42px); padding: 0 16px; border: 1.5px solid var(--line-strong); border-radius: 3px; background: var(--surface);
+  font: 500 14px var(--font-ui); color: var(--text); text-align: left; white-space: nowrap; cursor: pointer; transition: border-color .2s; }
+.dd-button::after { content: ""; flex: none; width: 12px; height: 8px; margin-left: auto; transition: transform .15s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23F2EAD8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") center / contain no-repeat; }
+.dd-button:hover { border-color: rgba(242,234,216,.5); }
+.dd.open .dd-button { border-color: var(--gold); }
+.dd.open .dd-button::after { transform: rotate(180deg); }
+.dd-short { display: none; }
+.dd-menu { position: absolute; top: calc(100% + 6px); z-index: 20; min-width: 100%; max-height: min(60vh, 340px); overflow-y: auto; margin: 0; padding: 4px; list-style: none;
+  border: 1.5px solid var(--line-strong); border-radius: 3px; background: var(--surface-2); box-shadow: var(--shadow); outline: none; }
+.dd-menu li { display: flex; align-items: center; gap: 22px; padding: 9px 12px; border-radius: 2px; font-size: 14px; white-space: nowrap; cursor: pointer; }
+.dd-menu li.active { background: rgba(242,234,216,.1); }
+.dd-menu li[aria-disabled="true"] { cursor: default; opacity: .55; }
+/* the sort in force: in the accent, with a tick */
+.dd-menu li[aria-selected="true"] { color: var(--gold); }
+.dd-menu li[aria-selected="true"]::after { content: ""; flex: none; width: 11px; height: 8px; margin-left: auto;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='8' viewBox='0 0 11 8' fill='none' stroke='%234d8dff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 4l3 3 6-6'/%3E%3C/svg%3E") center / contain no-repeat; }
+.pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.pills button { border: 1px solid var(--line); background: none; border-radius: 99px; padding: 6px 11px; font-size: 12px; cursor: pointer; opacity: .8; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.pills button:hover { opacity: 1; border-color: var(--line-strong); }
+.pills button.on { background: var(--gold); border-color: var(--gold); color: var(--ink); opacity: 1; }
+.pills em { font-style: normal; opacity: .6; font-variant-numeric: tabular-nums; }
+/* Shelf / Rows / Grid / List, as on the record site, at the far right of the bar */
+.seg { display: inline-flex; border: 1.5px solid var(--line-strong); border-radius: 3px; overflow: hidden; height: var(--control-h, 34px); }
+.filters .seg { margin-left: auto; }
+.seg button { font: 500 14px var(--font-ui); padding: 0 18px; border: 0; background: transparent; color: var(--text); cursor: pointer; }
+.seg button + button { border-left: 1.5px solid var(--line-strong); }
+.seg button:hover { background: rgba(242,234,216,.1); }
+.seg button.on { background: var(--gold); color: var(--ink); }
+/* between the phone's bar and a wide one, the views draw in so they stay on the search's line */
+@media (min-width: 821px) and (max-width: 1000px) { .seg button { padding: 0 12px; } }
+.count { font-size: 12px; opacity: .55; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- the tools above the shelf ---------- */
+.tools { max-width: var(--page); margin: 18px auto 0; padding: 0 20px; display: flex; gap: 8px 18px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+.tools .grp { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tools .lbl { opacity: .55; }
+.case-wrap { max-width: var(--page); margin: 14px auto 40px; padding: 0 20px; }
+
+/* ---------- the bookcase ---------- */
+.bookcase { position: relative; padding: 22px 22px 0; border-radius: 6px;
+  /* dark wood down the two sides; open at the back, so the page's pinstripes show through as in the grid */
+  background:
+    linear-gradient(90deg, #170f08, #2a1b0f 40%, #1c120a) left / 22px 100% no-repeat,
+    linear-gradient(90deg, #1c120a, #2a1b0f 60%, #170f08) right / 22px 100% no-repeat;
+  box-shadow: 0 30px 60px rgba(0,0,0,.6); }
+.bookcase::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 22px; border-radius: 6px 6px 0 0; background: linear-gradient(#33220f, #22160c); box-shadow: inset 0 2px 0 rgba(255,220,170,.1); }
+/* each shelf a little taller than the tallest game on it (js/app.js sets its height) */
+.bay { position: relative; display: flex; align-items: flex-end; gap: 2px; padding: 14px 14px 0;
+  background: linear-gradient(#060607, #0e0e10 35%, #121215);
+  box-shadow: inset 0 14px 18px -10px rgba(0,0,0,.8), inset 10px 0 14px -10px rgba(0,0,0,.7), inset -10px 0 14px -10px rgba(0,0,0,.7); }
+/* a digital copy in the dark: a pane of glass, white where the light catches it at the top, going to black below,
+   its outline and name in white (the collections set their own) */
+.bay { --ghost-bg: linear-gradient(rgba(255,255,255,.24), rgba(255,255,255,.07) 45%, rgba(0,0,0,.55)); --ghost-ink: rgba(255,255,255,.9); --ghost-line: rgba(255,255,255,.55); }
+.board { position: relative; height: 22px; margin: 0 -22px; z-index: 3; background: linear-gradient(#3a2713, #2a1b0e 40%, #1a1009); box-shadow: 0 8px 14px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,220,170,.14); }
+.plates { position: absolute; inset: 0 22px; }
+.plate { position: absolute; top: 4px; padding: 2px 8px; border-radius: 2px; white-space: nowrap; --pc: var(--gold); background: linear-gradient(color-mix(in srgb, var(--pc) 60%, #fff), var(--pc) 55%, color-mix(in srgb, var(--pc) 80%, #000)); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.45); font: 600 10px/12px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 1px 2px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.5); }
+.plate::before, .plate::after { content: ""; display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: color-mix(in srgb, var(--pc) 45%, #000); vertical-align: middle; margin: 0 5px 2px 0; }
+.plate::after { margin: 0 0 2px 5px; }
+
+.item { position: relative; flex: none; border: 0; padding: 0; background: none; cursor: pointer; transform-origin: 50% 100%; transition: transform .28s cubic-bezier(.3,1.4,.5,1), filter .2s; }
+.item:hover, .item:focus-visible { transform: translateY(-16px); z-index: 4; outline: none; filter: brightness(1.12); }
+.item:focus-visible > * { box-shadow: 0 0 0 2px var(--gold); }
+.item .sp:not(.ghost) { box-shadow: inset 1px 0 0 rgba(255,255,255,.18), inset -2px 0 0 rgba(0,0,0,.28), 2px 0 3px rgba(0,0,0,.35); }
+/* a case facing out is a solid one, turned a little so its spine and depth show (js/app.js, FACE_RY). It is seen
+   from its foot, as the flights between the views see it (.mf), so its bottom edge stays flat on the board and only
+   its top runs away from the eye; on hover it turns nearly square on as it lifts */
+.item.face { margin: 0 8px 0 10px; perspective: 900px; perspective-origin: 50% 100%; }
+.item.face > .bx { transform: rotateY(calc(var(--ry) * 1deg)); transition: transform .45s cubic-bezier(.3,1.2,.5,1); }
+.item.face:hover > .bx, .item.face:focus-visible > .bx { transform: rotateY(4deg); }
+.item.face:hover, .item.face:focus-visible { transform: translateY(-10px); }
+/* the spine on its side in the shade, the top and bottom edges darker still, and a gloss on the plastic over the cover */
+.item.face .bx .fc { transform-style: flat; }
+.item.face .bx .fc::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.item.face .bx .f-left::after { background: linear-gradient(90deg, rgba(0,0,0,.45), rgba(0,0,0,.2)); }
+.item.face .bx :is(.f-top, .f-bot)::after { background: rgba(0,0,0,.45); }
+.item.face .bx .f-front::after { background: linear-gradient(105deg, rgba(255,255,255,.14), rgba(255,255,255,0) 38%, rgba(255,255,255,0) 70%, rgba(255,255,255,.06)); }
+/* its shadow on the board, falling back and to the right, away from the light */
+.item.face::after { content: ""; position: absolute; left: 2%; right: -10%; bottom: -4px; height: 10px; border-radius: 50%; background: rgba(0,0,0,.6); filter: blur(5px); z-index: -1; }
+/* a loose cartridge stands on a little clear acrylic stand */
+.item.loose { margin: 0 8px; align-self: flex-end; padding-bottom: 9px; }
+.item.loose .cart { transform: rotate(-6deg); transition: transform .3s; }
+.item.loose::after { content: ""; position: absolute; left: -6px; right: -6px; bottom: 0; height: 9px; border-radius: 2px 2px 0 0;
+  background: linear-gradient(rgba(255,255,255,.28), rgba(255,255,255,.08)); border: 1px solid rgba(255,255,255,.25); border-bottom: 0; }
+.item.loose:hover, .item.loose:focus-visible { transform: translateY(-10px); }
+.item.loose:hover .cart { transform: rotate(0); }
+.item.loose:focus-visible > * { box-shadow: none; outline: 2px solid var(--gold); outline-offset: 2px; }
+/* cartridges standing on their side with their top labels out (the SNES), in a row like spines */
+.item.stack { margin: 0 1px; }
+.item.stack:focus-visible > * { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* the spines' lettering as big as their width allows: wider on a bigger screen (js/app.js) */
+.bookcase .sp { font-size: clamp(7px, calc(var(--d) * .6), 17px); }
+/* the last games on a shelf with room at its end lean over onto the one before (js/app.js, leanOf) */
+.item.lean { transform-origin: 0 100%; transform: rotate(calc(var(--lean) * -1deg)); }
+.item.lean:hover, .item.lean:focus-visible { transform: rotate(calc(var(--lean) * -.6deg)) translateY(-12px); }
+.item.lean.enter { animation-name: dropLean; }
+@keyframes dropLean { from { transform: translateY(-40px); opacity: 0; } to { transform: rotate(calc(var(--lean) * -1deg)); } }
+.bookend { flex: none; width: 10px; height: 60%; align-self: flex-end; margin: 0 8px; border-radius: 2px 2px 0 0; background: linear-gradient(90deg, #2a2a2a, #6a6a6a 40%, #1a1a1a); box-shadow: 2px 0 4px rgba(0,0,0,.5); }
+.item.enter { animation: drop .5s cubic-bezier(.3,1.3,.5,1) backwards; }
+@keyframes drop { from { transform: translateY(-40px); opacity: 0; } }
+
+/* ---------- the list, as on the record site ---------- */
+.list { margin: 0.4rem auto 3rem; padding: 0.5rem 0.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow);
+  --cols: 64px minmax(0, 2.2fr) 92px 72px 72px minmax(0, 1.3fr) minmax(0, 1.1fr); }
+.lrow { display: grid; grid-template-columns: var(--cols); gap: 14px; align-items: center; padding: 6px 10px; min-height: 64px; border-bottom: 1px solid var(--line); cursor: pointer; outline: none; font-size: 0.9rem; }
+.lrow:last-child { border-bottom: 0; }
+.lrow:hover, .lrow:focus-visible { background: rgba(242,234,216,0.07); }
+.lrow:focus-visible { box-shadow: inset 0 0 0 2px var(--gold); }
+.lrow.lhead { cursor: default; min-height: 0; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; padding-top: 6px; padding-bottom: 8px; }
+.lrow.lhead:hover { background: none; }
+.lsort { display: inline-flex; align-items: center; gap: 0.35em; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; white-space: nowrap; cursor: pointer; opacity: 0.55; }
+.lsort i { width: 0; height: 0; border: 4px solid transparent; border-top: 0; border-bottom: 5px solid currentColor; opacity: 0; transition: opacity 0.12s; }
+.lsort.desc i { transform: rotate(180deg); }
+.lsort:hover i, .lsort:focus-visible i { opacity: 0.5; }
+.lsort.on i { opacity: 1; }
+.lsort:hover, .lsort:focus-visible, .lsort.on { opacity: 1; }
+.lsort.on { color: var(--gold); }
+.lcase { display: flex; align-items: center; justify-content: center; height: 52px; }
+.lcase .cv { box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 3px 6px rgba(0,0,0,.45); }
+.lrow:hover .lcase > * { transform: translateY(-2px) rotate(-2deg); }
+.lcase > * { transition: transform .25s cubic-bezier(.3,1.4,.5,1); }
+/* coming into the list: the rows slide in one after another (beside the cases flying to their thumbnails, just their words) */
+.list.enter .lrow, .list.morphing .lrow > :not(.lcase) { animation: rowIn .45s cubic-bezier(.2,.8,.25,1) backwards; animation-delay: calc(var(--i, 0) * 22ms); }
+.list.morphing .lrow > :not(.lcase) { animation-delay: calc(.3s + var(--i, 0) * 22ms); }
+.list.morphing .lhead > * { animation-delay: .25s; }
+@keyframes rowIn { from { opacity: 0; transform: translateX(-14px); } }
+.ltitle { min-width: 0; font-family: var(--font-ui); font-weight: 600; font-size: 1rem; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.ltitle b { display: block; max-width: 100%; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ltitle small { display: none; font: 400 0.8rem var(--font-ui); opacity: 0.65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.lpub, .lgenre { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
+.lyear, .lregion { opacity: 0.65; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.kc { display: inline-block; font: 600 0.66rem/1.4 var(--font-ui); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 999px; border: 1px solid var(--line-strong); font-style: normal; white-space: nowrap; }
+.lcon .kc { color: color-mix(in srgb, var(--fc) 70%, #fff); border-color: color-mix(in srgb, var(--fc) 60%, transparent); }
+.ltitle .kc { color: var(--gold); border-color: rgba(77,141,255,.55); }
+.ltitle .kc.plat-tag { color: #d9dde2; border-color: rgba(217,221,226,.5); }
+.ltitle { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 6px; }
+.ltitle b, .ltitle small { flex-basis: 100%; }
+
+/* ---------- the grid: every game face out on one baseline, as on the record site ---------- */
+/* a row is as tall as its tallest case, and every case in it stands on the same line */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--cell), 1fr)); align-items: end; gap: 34px var(--gap); padding: 8px 0 30px; }
+.ghead { grid-column: 1 / -1; align-self: start; display: flex; align-items: center; gap: 10px; margin: 14px 0 -10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.ghead:first-child { margin-top: 0; }
+.ghead .cart-art { width: 42px; height: 28px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.45)); }
+.ghead b { font: 700 .95rem var(--font-display); letter-spacing: .03em; }
+.ghead i { font-style: normal; font-size: 12px; opacity: .5; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cell { display: flex; flex-direction: column; min-width: 0; border: 0; padding: 0; background: none; text-align: left; cursor: pointer; }
+.cell:focus-visible { outline: none; }
+.cell:focus-visible .gt > * { outline: 2px solid var(--gold); outline-offset: 3px; }
+.stage { position: relative; display: flex; align-items: flex-end; justify-content: center; }
+/* the shadow each one casts where it stands */
+.stage::before { content: ""; position: absolute; left: 10%; right: 10%; bottom: -7px; height: 12px; background: radial-gradient(closest-side, rgba(0,0,0,.6), rgba(0,0,0,0)); }
+.gt { position: relative; display: block; transition: transform .35s cubic-bezier(.2,.8,.25,1); }
+.gt > * { display: block; }
+.gt .cv { box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 10px 20px rgba(0,0,0,.5); }
+.gt .cart { transform: rotate(-4deg); }
+/* a box built from its parts stands as its model, seen from in front of its middle as it flies in */
+.gt:has(> .bx.model) { perspective: 900px; }
+/* a digital copy: its cover in full, inside a dashed outline */
+.cv.ghosted { outline: 1px dashed var(--ghost-line, rgba(242,234,216,.5)); outline-offset: 2px; }
+@media (hover: hover) { .cell:hover .gt { transform: translateY(-8px); } .cell:hover .cap b { color: var(--gold); } }
+.cap { margin-top: 14px; min-width: 0; }
+.cap b, .cap small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cap b { font: 600 .95rem/1.3 var(--font-ui); transition: color .2s; }
+.cap small { font-size: .76rem; opacity: .6; margin-top: 2px; }
+.cell.enter .gt { animation: rise .55s cubic-bezier(.3,1.25,.5,1) backwards; animation-delay: var(--d); }
+.cell.enter .cap { animation: capIn .5s ease backwards; animation-delay: calc(var(--d) + .15s); }
+@keyframes rise { from { transform: translateY(30px); opacity: 0; } }
+@keyframes capIn { from { opacity: 0; } }
+
+/* ---------- the rows: a row for each console that scrolls sideways, its spines wide enough for a thumb ---------- */
+.rgrp { margin-bottom: 22px; }
+.rgrp .ghead { margin: 0; }
+/* the row runs to the edges of the screen, and stands on a strip of shelf. It holds on to a sideways scroll only:
+   a scroll down over a row goes on down the page */
+.rtrack { display: flex; align-items: flex-end; gap: 5px; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; touch-action: pan-x pan-y; scroll-snap-type: x proximity; scroll-padding: 0 20px;
+  margin: 0 -20px; padding: 18px 20px 0; scrollbar-width: none; border-bottom: 12px solid; border-image: linear-gradient(#3a2713, #2a1b0e 40%, #1a1009) 1; }
+.rtrack::-webkit-scrollbar { display: none; }
+/* it fades out, shelf and all, at an end with more past it (js/app.js) */
+.rtrack { --fl: 0px; --fr: 0px;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent);
+  mask: linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent); }
+.rtrack.more-l { --fl: 80px; }
+.rtrack.more-r { --fr: 80px; }
+.rtrack .item { flex: none; border: 0; padding: 0; background: none; cursor: pointer; scroll-snap-align: start; }
+.rtrack .item.face, .rtrack .item.loose { margin: 0 8px; }
+.rtrack .item:focus-visible { outline: none; }
+.rtrack .item:focus-visible .gt > * { outline: 2px solid var(--gold); outline-offset: 2px; }
+.rtrack .item.enter .gt { animation: rise .55s cubic-bezier(.3,1.25,.5,1) backwards; animation-delay: inherit; }
+.rows .sp { font-size: clamp(7px, calc(var(--d) * .42), 19px); }
+.rows .gt .cv { box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 8px 16px rgba(0,0,0,.5); }
+.rtrack .gt .cart { transform: rotate(-4deg); }
+@media (hover: hover) { .rtrack .item:hover .gt { transform: translateY(-8px); } }
+/* with a mouse, arrows either end of a row move along it, shown while there is more that way (js/app.js) */
+.rbar { position: relative; }
+/* they stand inside the page's column, level with the heading's ends, over the faded part of the row, and as tall
+   as its cases (between the row's top padding and its shelf), so they sit halfway up the tallest */
+.rnav { display: none; position: absolute; z-index: 5; top: 18px; bottom: 12px; width: 36px; border: 0; padding: 0; background: none; cursor: pointer;
+  color: var(--text); font-size: 22px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.rnav.prev { left: 0; }
+.rnav.next { right: 0; }
+.rnav span { display: grid; place-items: center; width: 36px; height: 36px; margin: auto; border-radius: 50%; background: rgba(20,20,22,.9); border: 1px solid var(--line-strong); }
+.rnav:hover span { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+@media (hover: hover) and (pointer: fine) {
+  .rnav { display: block; }
+  .rgrp:hover .rnav.more { opacity: 1; pointer-events: auto; }
+}
+
+/* ---------- the showcase: one game at a time on a glossy stage, the rest fanned out either side (js/app.js) ---------- */
+/* the light behind the stage takes the colour of the game in the middle, and fades from one to the next */
+@property --tint { syntax: '<color>'; inherits: true; initial-value: #2a2a30; }
+.showcase { position: relative; margin: 0 -20px; transition: --tint .8s; }
+.showcase::before { content: ""; position: absolute; inset: -30px 0 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 60% 50% at 50% 38%, color-mix(in srgb, var(--tint) 60%, transparent), transparent 72%); }
+.sc-stage { position: relative; height: clamp(380px, 62vh, 620px); perspective: 1300px; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+.sc-stage:active { cursor: grabbing; }
+.sc-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%; background: linear-gradient(rgba(255,255,255,.05), transparent 60%); border-top: 1px solid rgba(255,255,255,.08); }
+.sc-it { position: absolute; left: 50%; bottom: 24%; padding: 0; border: 0; background: none; cursor: pointer; transform-style: preserve-3d; transform-origin: 50% 100%; will-change: transform; }
+.sc-it .gt { transform-style: preserve-3d; }
+.sc-it .gt > * { display: block; }
+/* a solid case (js/cases.js, Case.slab): each face shaded as it turns, the sides a little darker than the front,
+   and further from the middle all of it darker (js/app.js sets --dim). An overlay on each face, not a filter,
+   which would flatten the case */
+.sc-it .bx .fc { transform-style: flat; } /* so its overlay paints over it, not level with it in 3D */
+.sc-it .bx .fc::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--dim, 0); pointer-events: none; }
+.sc-it .bx .f-left::after, .sc-it .bx .f-right::after { opacity: calc(var(--dim, 0) * .75 + .2); }
+.sc-it .bx .f-top::after, .sc-it .bx .f-bot::after { opacity: calc(var(--dim, 0) * .7 + .35); }
+.sc-it .bx .cv { box-shadow: inset 0 0 0 1px rgba(0,0,0,.35); }
+.sc-it .gt > .cv::after { content: ""; position: absolute; inset: 0; z-index: 10; background: #000; opacity: var(--dim, 0); pointer-events: none; }
+/* the shadow it casts on the floor, and in the middle a glow in its colour */
+.sc-it .gt::before { content: ""; position: absolute; left: -8%; right: -8%; bottom: -12px; height: 24px; background: radial-gradient(closest-side, rgba(0,0,0,.75), rgba(0,0,0,0)); pointer-events: none; }
+.sc-it.center .gt::before { left: -25%; right: -25%; bottom: -30px; height: 70px; background: radial-gradient(closest-side, color-mix(in srgb, var(--tint) 45%, rgba(0,0,0,.6)), rgba(0,0,0,0)); }
+/* its reflection: the cover mirrored under the front of the case, fading into the floor */
+.sc-refl { position: absolute; left: 0; right: 0; top: calc(100% + 2px); height: 100%; pointer-events: none; transform: translateZ(calc(var(--sd, 0px) / 2));
+  -webkit-mask-image: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,0) 36%); mask-image: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,0) 36%); opacity: calc(1 - var(--dim, 0)); }
+.sc-refl > * { transform: scaleY(-1); box-shadow: none !important; }
+.sc-it .cart { -webkit-box-reflect: below 3px linear-gradient(transparent 62%, rgba(255,255,255,.18)); filter: drop-shadow(0 3px 5px rgba(0,0,0,.45)) brightness(calc(1 - var(--dim, 0))); }
+.sc-it:focus-visible { outline: none; }
+.sc-it:focus-visible .gt > * { outline: 2px solid var(--gold); outline-offset: 3px; }
+@media (hover: hover) { .sc-it.center:hover .gt { transform: translateY(-8px) rotateY(-12deg); } }
+.sc-it .gt { transition: transform .5s cubic-bezier(.2,.8,.25,1); }
+.showcase.enter .sc-it .gt { animation: rise .6s cubic-bezier(.3,1.25,.5,1) backwards; animation-delay: calc(var(--k, 0) * 45ms); }
+.sc-arrow { position: absolute; top: 42%; z-index: 150; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line-strong); background: rgba(20,20,22,.75); backdrop-filter: blur(6px); color: var(--text); font-size: 18px; cursor: pointer; }
+.sc-arrow:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+.sc-arrow.l { left: max(16px, 3vw); } .sc-arrow.r { right: max(16px, 3vw); }
+.sc-cap { text-align: center; padding: 0 16px; min-height: 140px; }
+.sc-fade { animation: spotUp .45s cubic-bezier(.2,.8,.2,1); }
+.sc-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+.sc-cap h2 { margin: 0; font: 700 clamp(22px, 3vw, 38px)/1.15 var(--font-display); letter-spacing: .01em; text-wrap: balance; }
+.sc-meta { margin: 8px 0 14px; opacity: .65; font-size: 14px; }
+.sc-go { border: 0; background: var(--gold); color: var(--ink); border-radius: 99px; padding: 9px 18px; font-weight: 600; font-size: 13px; cursor: pointer; }
+.sc-go:hover { filter: brightness(1.1); }
+/* a strip of the whole collection, a block per console, with a mark at the game in the middle */
+.sc-scrub { max-width: 980px; margin: 22px auto 50px; padding: 0 20px; }
+.sc-track { position: relative; display: flex; height: 34px; border-radius: 6px; overflow: hidden; cursor: pointer; border: 1px solid var(--line); touch-action: none; }
+.sc-seg { position: relative; height: 100%; background: var(--fc); opacity: .35; border-right: 1px solid rgba(0,0,0,.5); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: .05em; overflow: hidden; white-space: nowrap; transition: opacity .2s; }
+.sc-seg:hover, .sc-seg.on { opacity: .85; }
+.sc-thumb { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; background: var(--text); border-radius: 2px; box-shadow: 0 0 10px rgba(255,255,255,.6); pointer-events: none; transition: left .15s; }
+.sc-scrub small { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 11px; opacity: .45; }
+
+/* ---------- shelf ⇄ grid: the cases in the air (js/app.js, Morph) ---------- */
+.morph { position: absolute; left: 0; top: 0; z-index: 60; pointer-events: none; }
+.mf { position: absolute; perspective: 900px; display: grid; place-items: center; will-change: transform; }
+/* a cartridge in the air turns in 3D, so it must not be flattened by its shadow filter */
+.mf .cart { filter: none; }
+.mf .cart .cf { filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
+.mf > .cart { filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); }
+.grid.morphing .cap, .grid.morphing .ghead { animation: capIn .5s ease .55s backwards; }
+
+.empty-msg { text-align: center; padding: 80px 20px; opacity: .6; }
+.empty-msg b { display: block; font: 700 22px var(--font-display); margin-bottom: 6px; opacity: 1; }
+footer { max-width: var(--page); margin: 0 auto; padding: 0 20px 60px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12px; line-height: 1.6; opacity: .55; }
+footer .heart { color: var(--gold); }
+footer a { text-decoration-color: rgba(242,234,216,.3); }
+
+/* ---------- tooltip ---------- */
+#tip { position: fixed; left: 0; top: 0; z-index: 1000; pointer-events: none; background: var(--text); color: var(--ink); padding: 8px 12px; border-radius: 6px; font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.5); opacity: 0; transition: opacity .12s; max-width: 280px; line-height: 1.35; }
+#tip b { display: block; font: 600 15px var(--font-ui); }
+#tip span { opacity: .65; }
+#tip.vis { opacity: 1; }
+
+/* ---------- the spotlight: the game in the middle, its place on the page left empty ---------- */
+.overlay { position: fixed; inset: 0; z-index: 1100; opacity: 0; pointer-events: none; transition: opacity .5s ease;
+  background: radial-gradient(ellipse 70% 75% at var(--spot-x, 50%) var(--spot-y, 50%), rgba(4,4,5,.35), rgba(4,4,5,.92));
+  -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+.overlay.open { opacity: 1; pointer-events: auto; }
+.spot { position: fixed; inset: 0; z-index: 1101; overflow: hidden; pointer-events: none; }
+.spot-ui { position: fixed; inset: 0; z-index: 1103; pointer-events: none; visibility: hidden; transition: visibility 0s .45s; }
+.spot-ui.open { visibility: visible; transition: none; }
+.spot-close { position: absolute; z-index: 2; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--line-strong); background: var(--surface); color: var(--text); font-size: 1rem; cursor: pointer; transition: background .2s; }
+.spot-close:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+/* the arrows, along the foot of the stage */
+.spot-nav { pointer-events: auto; position: absolute; left: calc(var(--stage-w, 100vw) / 2); top: calc(var(--stage-h, 100vh) - 58px - env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 4px; padding: 4px; border-radius: 99px; background: rgba(20,17,13,.85); border: 1px solid var(--line); opacity: 0; transform: translate(-50%, 10px); transition: opacity .3s, transform .3s; }
+.spot-ui.open .spot-nav { opacity: 1; transform: translate(-50%, 0); transition-delay: .2s; }
+.spot-nav button { width: 36px; height: 36px; border-radius: 50%; border: 0; background: none; color: var(--text); font-size: 17px; line-height: 1; cursor: pointer; }
+.spot-nav button:hover:not(:disabled) { background: var(--text); color: var(--ink); }
+.spot-nav button:disabled { opacity: .3; cursor: default; }
+/* on a short stage (a phone either way up) the arrows stand at its sides, halfway down */
+.spot-ui.edge .spot-nav, .spot-ui.edge.open .spot-nav { left: 0; width: var(--stage-w); top: calc(var(--stage-h) / 2 - 22px); transform: none; justify-content: space-between; padding: 0 10px; border: 0; background: none; pointer-events: none; }
+.spot-ui.edge .spot-nav button { width: 40px; height: 40px; pointer-events: auto; background: rgba(20,17,13,.75); border: 1px solid var(--line); }
+.spot-ui.edge .spot-count { display: none; }
+.spot-count { min-width: 84px; text-align: center; font-size: 12px; opacity: .65; font-variant-numeric: tabular-nums; }
+.spot-art { display: inline-flex; }
+.spot-art .cart-art { width: 33px; height: 22px; }
+
+/* the case, cartridge or card that stands in the spotlight */
+.turn { position: relative; transform-style: preserve-3d; will-change: transform; }
+.flat { transform-style: preserve-3d; position: relative; }
+.flat .cart, .flat .cv { box-shadow: 0 26px 50px rgba(0,0,0,.6); }
+.flat .cart { box-shadow: none; filter: drop-shadow(0 18px 24px rgba(0,0,0,.6)); }
+/* a digital copy's back: the licence receipt it came as */
+.flat.card > .cv, .flat.card > .stamp { backface-visibility: hidden; }
+/* folding into (or out of) its dashed outline on the shelf: the sides close in, the cover fades to scanlines,
+   and the outline is left (--fold 0 to 1, --fx how far each side has come in, --px a screen pixel at that size) */
+@property --fold { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --fx { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --px { syntax: '<length>'; inherits: true; initial-value: 1px; }
+.flat.card.folding > :is(.cv, .receipt) { clip-path: inset(0 var(--fx)); box-shadow: none; }
+.flat.card.folding > .cv { opacity: calc(1 - var(--fold)); }
+.flat.card.folding > .stamp { opacity: calc(1 - var(--fold) * 4); }
+.flat.card.folding::before, .flat.card.folding::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--fx); right: var(--fx); pointer-events: none; transform: translateZ(1px); }
+/* scanlines that come up as the cover goes, then go themselves */
+.flat.card.folding::before { background: repeating-linear-gradient(180deg, rgba(242,234,216,.3) 0 var(--px), transparent 0 calc(var(--px) * 3)); opacity: min(1, calc(var(--fold) * 3), calc((1 - var(--fold)) * 3)); }
+.flat.card.folding::after { border: calc(var(--px) * 1.5) dashed rgba(242,234,216,.45); border-radius: calc(var(--px) * 3); opacity: min(1, calc(var(--fold) * 2.5)); }
+.receipt { position: absolute; inset: 0; transform: rotateY(180deg); backface-visibility: hidden; overflow: hidden; display: flex; flex-direction: column; gap: .55em;
+  padding: 1.2em 1.1em 1.6em; font: 500 var(--rf)/1.3 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; color: #2a2723;
+  background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,0) 12%), #f3efe6; box-shadow: 0 26px 50px rgba(0,0,0,.6);
+  /* torn along the bottom */
+  --tooth: calc(var(--rf) * .7);
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--tooth)) no-repeat, conic-gradient(from -45deg at bottom, #000 90deg, #0000 0) bottom / calc(var(--tooth) * 2) var(--tooth) repeat-x;
+          mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--tooth)) no-repeat, conic-gradient(from -45deg at bottom, #000 90deg, #0000 0) bottom / calc(var(--tooth) * 2) var(--tooth) repeat-x; }
+.receipt p { margin: 0; }
+.rc-shop { display: flex; align-items: center; gap: .5em; align-self: flex-start; padding: .3em .7em .3em .35em; border-radius: 99px; background: var(--lb); color: var(--lf); font: 700 1em var(--font-ui); }
+.rc-shop i { font-style: normal; display: grid; place-items: center; min-width: 1.6em; height: 1.6em; border-radius: 50%; background: rgba(255,255,255,.18); font-size: .85em; }
+.rc-kind { letter-spacing: .25em; text-transform: uppercase; font-size: .8em; opacity: .6; padding-top: .3em; border-top: 1px dashed rgba(42,39,35,.35); }
+.rc-title { font: 700 1.35em/1.1 var(--font-ui); }
+.rc-pack { font-size: .85em; opacity: .75; }
+.receipt dl { display: grid; grid-template-columns: auto 1fr; gap: .2em .8em; margin: 0; padding: .5em 0; border-block: 1px dashed rgba(42,39,35,.35); font-size: .85em; }
+.receipt dt { opacity: .55; }
+.receipt dd { margin: 0; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-bar { display: block; margin-top: auto; height: 2.4em; background: var(--bar); opacity: .85; }
+.rc-foot { font-size: .7em; opacity: .5; text-align: center; letter-spacing: .05em; }
+.stamp { position: absolute; left: 50%; top: 76%; transform: translate(-50%, -50%) rotate(-8deg); white-space: nowrap; border: 3px solid var(--gold); color: var(--gold); padding: 6px 14px; font: 700 15px var(--font-ui); letter-spacing: .2em; text-transform: uppercase; background: rgba(12,12,13,.75); border-radius: 4px; z-index: 9; }
+.views { display: flex; gap: 4px; background: rgba(20,17,13,.85); border: 1px solid var(--line); border-radius: 99px; padding: 4px; width: max-content; max-width: 100%; }
+.views button { white-space: nowrap; border: 0; background: none; padding: 6px 12px; border-radius: 99px; font-size: 12px; cursor: pointer; opacity: .75; }
+.views button:hover { opacity: 1; }
+.views button.on { background: var(--text); color: var(--ink); opacity: 1; }
+.views button.open-btn { background: var(--gold); color: var(--ink); opacity: 1; font-weight: 600; }
+
+.spot-piece { position: absolute; left: 0; top: 0; pointer-events: auto; perspective: 1400px; display: grid; place-items: center; cursor: grab; touch-action: none; user-select: none; }
+.spot-piece:active { cursor: grabbing; }
+.spot-floor { position: absolute; height: 34px; background: radial-gradient(closest-side, rgba(0,0,0,.7), rgba(0,0,0,0)); animation: spotFade .9s ease .25s backwards; transition: opacity .3s ease; }
+.spot.leaving .spot-floor { opacity: 0; }
+.spot-info { position: absolute; color: var(--text); text-align: center; text-shadow: 0 2px 22px rgba(0,0,0,.65); transition: opacity .25s ease; display: flex; flex-direction: column; align-items: center; }
+.spot.leaving .spot-info { opacity: 0; }
+.spot-info > * { margin: 0; animation: spotUp .85s cubic-bezier(.2,.8,.25,1) backwards; animation-delay: calc(.3s + var(--n, 0) * 90ms); }
+.spot.still .spot-info > *, .spot.still .spot-floor { animation: none; }
+.spot.step .spot-info > * { animation-duration: .5s; animation-delay: calc(.08s + var(--n, 0) * 50ms); }
+.spot.step .spot-floor { animation-duration: .5s; animation-delay: .1s; }
+.spot-ui:focus { outline: none; }
+.spot-info .views { pointer-events: auto; margin-top: 14px; text-shadow: none; }
+@keyframes spotUp { from { opacity: 0; transform: translateY(22px); } }
+@keyframes spotFade { from { opacity: 0; } }
+.spot-eyebrow { display: flex; align-items: center; gap: .5rem; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; opacity: .9; }
+.spot-info h2 { font: 700 clamp(1.2rem, 2.4vw, 2.3rem)/1.2 var(--font-display); letter-spacing: .01em; margin: .45rem 0 0; overflow-wrap: anywhere; text-wrap: balance; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.spot-who { margin-top: .4rem !important; font-size: 1rem; opacity: .8; }
+
+
+/* the drawer: everything known about the game, right of the stage (on a phone held upright, a sheet below it) */
+.spot-drawer { --dwp: 26px; pointer-events: auto; position: absolute; top: 0; right: 0; bottom: 0; left: var(--stage-w, 60vw); display: flex; flex-direction: column;
+  background: var(--surface); border-left: 1px solid var(--line); box-shadow: -18px 0 48px rgba(0,0,0,.45);
+  transform: translateX(100%); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.spot-ui.sheet .spot-drawer { --dwp: 18px; left: 0; top: var(--stage-h, 50vh); border-left: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; box-shadow: 0 -18px 48px rgba(0,0,0,.45); transform: translateY(100%); }
+.spot-ui.open .spot-drawer { transform: none; }
+.dw-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding: 18px var(--dwp) calc(36px + env(safe-area-inset-bottom, 0px)); font-size: .92rem; line-height: 1.4; }
+.dw-body > :first-child { margin-right: 46px; }
+.dw-glance { container-type: inline-size; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 1px; margin-bottom: 16px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.dw-glance > div { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px; background: var(--surface-2); text-align: center; }
+.dw-glance b { font: 700 clamp(.78rem, 5.2cqi, 1.1rem)/1.1 var(--font-display); white-space: nowrap; }
+.dw-glance span { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; opacity: .55; }
+.dw-owner { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 14px; }
+.dw-owner button, .dw-owner a { padding: 5px 11px; border: 1px dashed var(--line-strong); border-radius: 99px; background: none; color: inherit; font: inherit; font-size: .74rem; text-decoration: none; cursor: pointer; opacity: .75; }
+.dw-owner [aria-pressed="true"] { border-style: solid; border-color: var(--gold); color: var(--gold); opacity: 1; }
+.dw-owner .side { border-style: solid; opacity: .9; }
+.dw-owner button:disabled { opacity: .4; cursor: progress; }
+@media (hover: hover) { .dw-owner button:hover, .dw-owner a:hover { opacity: 1; } }
+.dw-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.dw-sec .dw-tags { margin: 14px 0 0; }
+.dw-tags span { padding: 4px 10px; border: 1px solid var(--line-strong); border-radius: 99px; font-size: .74rem; }
+.dw-note { margin: 0 0 18px; padding-left: 12px; border-left: 2px solid var(--gold); font: italic 400 .98rem/1.45 var(--font-ui); opacity: .88; }
+.dw-sec { padding: 16px 0 18px; border-top: 1px solid var(--line); }
+.dw-sec:first-child { padding-top: 4px; border-top: 0; }
+.dw-sec h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font: 600 .72rem/1 var(--font-ui); letter-spacing: .12em; text-transform: uppercase; }
+.dw-sec h4 span { opacity: .6; }
+.dw-sec h4 svg { flex: none; width: 18px; height: 18px; }
+.dw-facts { display: grid; grid-template-columns: minmax(92px, max-content) 1fr; gap: 7px 18px; margin: 0; }
+.dw-facts dt { opacity: .55; }
+.dw-facts dd { margin: 0; overflow-wrap: anywhere; }
+.dw-meter { margin-top: 14px; }
+.dw-meter p { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 6px; }
+.dw-meter p span { opacity: .55; }
+.dw-meter b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.dw-meter small { font-size: .82em; font-weight: 400; opacity: .55; }
+.dw-meter i { position: relative; display: block; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.dw-meter i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--p); border-radius: inherit; background: var(--gold); }
+.dw-grades { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: .86rem; font-variant-numeric: tabular-nums; }
+.dw-grades span { display: inline-flex; align-items: baseline; }
+.dw-grades i { align-self: center; width: 10px; height: 10px; margin-right: 6px; border-radius: 50%; background: var(--c); }
+.dw-grades small { margin-left: 1px; opacity: .55; }
+.tg-platinum { --c: #b9d4ef; } .tg-gold { --c: #e2b33c; } .tg-silver { --c: #c4c8cf; } .tg-bronze { --c: #c07a45; }
+.dw-sub { margin: 16px 0 8px; font-size: .78rem; opacity: .55; }
+.dw-packs > div:first-child .dw-sub { margin-top: 0; }
+.dw-packs .dw-sub em { font-style: normal; opacity: .7; }
+.dw-packs ul { display: grid; gap: 1px; margin: 0; padding: 0; list-style: none; }
+.dw-packs li { display: flex; align-items: baseline; gap: 10px; }
+.dw-packs :is(button, li > span) { flex: 1; min-width: 0; padding: 3px 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; opacity: .72; }
+.dw-packs button { cursor: pointer; }
+.dw-packs button:hover, .dw-packs button:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.dw-packs li.on button { font-weight: 800; opacity: 1; cursor: default; text-decoration: none; }
+.dw-packs li small { flex: none; font-size: .72rem; opacity: .5; }
+.dw-packs .find li { opacity: .5; }
+.dw-unlocks { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.dw-unlocks li { display: grid; gap: 2px; padding: 8px 11px; border-radius: 8px; background: var(--surface-2); }
+.dw-unlocks span { font-size: .84rem; opacity: .75; }
+.dw-unlocks small { font-size: .74rem; opacity: .5; }
+.dw-about { margin: 0; line-height: 1.55; opacity: .85; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
+.dw-about.all { display: block; }
+.dw-more { margin-top: 6px; padding: 0; border: 0; background: none; color: var(--gold); font-size: .84rem; font-weight: 600; cursor: pointer; }
+.dw-shots { display: flex; gap: 8px; margin: 0 calc(var(--dwp) * -1) 18px; padding: 0 var(--dwp) 6px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--dwp); scrollbar-width: thin; }
+.dw-shots a { flex: 0 0 80%; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: var(--surface-2); scroll-snap-align: start; }
+.dw-shots img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dw-score { display: inline-grid; place-items: center; min-width: 2.3em; padding: 2px 6px; border-radius: 6px; background: var(--mc); color: #111; font-weight: 700; }
+.dw-link { display: block; padding: 5px 0; color: var(--gold); font-weight: 600; text-decoration: none; }
+.dw-link:hover { text-decoration: underline; }
+@media (max-width: 820px) {
+  .topbar { padding-left: 16px; padding-right: 16px; }
+  .hero { padding: calc(12px + var(--under-bar)) 16px 16px; }
+  .filters { position: relative; top: 0; }
+  .consoles-bar { padding: 0 16px 12px; }
+  .chip.all { padding: 4px 10px; }
+  /* one row: the search folded to a glass, the sort taking what is left, the views. Opening the search
+     stretches it across the row while the rest slides shut, as on the record site */
+  .filters-in { --control-h: 40px; --dur: .3s; padding: 10px 16px; gap: 8px; flex-wrap: nowrap; transition: column-gap var(--dur); }
+  .search { flex: 0 0 var(--control-h); max-width: none; overflow: hidden; }
+  .search-open { width: calc(var(--control-h) - 3px); color: var(--text); pointer-events: auto; }
+  .search input { font-size: 16px; visibility: hidden; transition: visibility 0s var(--dur); } /* 16px, or iOS zooms in */
+  .search:focus-within .search-open { color: var(--text); }
+  /* a search typed and the box closed over it: a dot on the glass */
+  .search.has-query .search-open::after { content: ""; position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+  .search.has-query .search-close { visibility: hidden; }
+  .filters.searching .filters-in { column-gap: 0; } /* the shut ones' gaps closing too, so the search runs to the edge */
+  .filters.searching .search { flex-grow: 1; }
+  .filters.searching .search-open { color: rgba(242,234,216,.6); cursor: text; }
+  .filters.searching .search-open::after { display: none; }
+  .filters.searching .search input, .filters.searching .search-close { visibility: visible; transition-delay: 0s; }
+  .filters-in > :not(.search) { transition: flex-grow var(--dur), max-width var(--dur), opacity .2s .08s, visibility 0s; }
+  .filters.searching .filters-in > :not(.search) { flex-grow: 0; max-width: 0; margin-left: 0; overflow: hidden; opacity: 0; visibility: hidden;
+    transition: flex-grow var(--dur), max-width var(--dur), opacity .12s, visibility 0s var(--dur); }
+  .filters .dd { flex: 1 1 0; min-width: 0; max-width: 100%; }
+  .dd-button { width: 100%; padding: 0 12px; gap: 8px; font-size: 13px; }
+  .dd-full { display: none; }
+  .dd-short { display: inline; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .filters .seg { max-width: 18rem; }
+  .seg button { padding: 0 9px; font-size: 13px; }
+  /* five views or more take a row of their own */
+  .filters-in:has(.seg > :nth-child(5)) { flex-wrap: wrap; }
+  .filters .seg:has(> :nth-child(5)) { order: 2; flex: 1 0 100%; max-width: none; margin-left: 0; }
+  .seg:has(> :nth-child(5)) button { flex: 1; }
+  .filters.searching .filters-in > .seg:has(> :nth-child(5)) { max-width: none; flex-basis: 100%; overflow: visible; opacity: 1; visibility: visible; }
+  .tools .count { grid-column: 1 / -1; justify-self: end; margin-top: -4px; }
+  /* the pills under the filter: a label, then a row that scrolls to the screen's edge */
+  .tools { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 12px; }
+  .tools .grp { display: contents; }
+  .pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; }
+  .pills::-webkit-scrollbar { display: none; }
+  .pills button { flex: none; }
+  .tools, .case-wrap { padding-left: 16px; padding-right: 16px; }
+  .rtrack { margin: 0 -16px; padding-left: 16px; padding-right: 16px; scroll-padding: 0 16px; }
+  .showcase { margin: 0 -16px; }
+  .sc-arrow { width: 40px; height: 40px; }
+  .sc-scrub small span:first-child { display: none; }
+  .bookcase { padding: 14px 10px 0; }
+  .board { margin: 0 -10px; }
+  .plates { inset: 0 10px; }
+  .bay { padding: 14px 6px 0; }
+  footer { padding: 0 16px 40px; }
+}
+@media (max-width: 380px) {
+  .seg button { padding: 0 7px; font-size: 12px; }
+  /* a collection's six views (its Checklist too): closer, so all six fit across */
+  .seg:has(> :nth-child(6)) button { padding: 0 2px; font-size: 11px; }
+  .gta .seg:has(> :nth-child(6)) button { padding: 0 2px; font-size: 10px; letter-spacing: 0; }
+  .dd-button { padding: 0 9px; font-size: 12px; }
+}
+@media (max-width: 820px) and (prefers-reduced-motion: reduce) {
+  .filters-in, .search, .filters-in > :not(.search) { transition: none !important; }
+}
+/* phones and small tablets: the burger, the name over its figures in the middle, the pages and add-me in its menu */
+@media (max-width: 820px) {
+  :root { --bar-h: 64px; }
+  .brandbox { gap: 5px; }
+  .figures { padding-left: 0; border-left: 0; gap: 10px; font-size: 9px; letter-spacing: .06em; justify-content: center; }
+  .figures b { font-size: 11px; letter-spacing: 0; }
+  /* the burger at the left, the name in the middle, bigger, with the figures under it; an empty column at the right
+     the burger's width keeps it in the middle of the screen. The name shrinks to fit (7cqi: Orbitron is about 14 em wide) */
+  .topbar { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; padding-left: 10px; padding-right: 10px; }
+  .brandbox { grid-column: 2; align-items: center; text-align: center; container-type: inline-size; }
+  .brand { font-size: min(23px, 7cqi); line-height: 1.15; white-space: nowrap; }
+  .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: none; color: inherit; cursor: pointer; }
+  .menu-toggle span, .menu-toggle span::before, .menu-toggle span::after { display: block; width: 22px; height: 2px; border-radius: 1px; background: currentColor; transition: transform .25s, background .25s; }
+  .menu-toggle span { position: relative; }
+  .menu-toggle span::before, .menu-toggle span::after { content: ""; position: absolute; left: 0; }
+  .menu-toggle span::before { transform: translateY(-6px); }
+  .menu-toggle span::after { transform: translateY(6px); }
+  .menu-open .menu-toggle span { background: transparent; }
+  .menu-open .menu-toggle span::before { transform: rotate(45deg); }
+  .menu-open .menu-toggle span::after { transform: rotate(-45deg); }
+  /* the menu: a panel under the bar, the pages one under the other, then the add-me buttons */
+  .topmenu { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 16px; padding: 14px 16px 18px;
+    background: rgb(12,12,13); border-bottom: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0,0,0,.5); /* solid: under the bar's blur a see-through one shows the page */
+    opacity: 1; transform: none; transition: opacity .2s, transform .2s; }
+  .menu-open .topmenu { display: flex; }
+  @starting-style { .menu-open .topmenu { opacity: 0; transform: translateY(-8px); } }
+  .topnav { margin: 0; flex-direction: column; gap: 4px; }
+  .topnav a { padding: 11px 14px; font-size: 15px; border-radius: 10px; }
+  .topbar .addme:not(.addme-strip) { display: none; }
+  .addme-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; }
+  .addme-strip > span { flex-basis: 100%; opacity: .55; }
+  .addme-strip :is(a, button) { height: 36px; padding: 0 12px; flex-direction: row-reverse; }
+  .addme-strip .lbl { margin: 0 2px 0 7px; font-size: 13px; }
+}
+@media (max-width: 640px) {
+  .grid { gap: 26px var(--gap); }
+  .cap { text-align: center; margin-top: 12px; }
+  .cap b { font-size: .86rem; }
+  .cap small { font-size: .7rem; }
+  .spot-who { font-size: .9rem; }
+}
+/* the smallest phones: the name keeps more room */
+@media (max-width: 400px) {
+  .brand { letter-spacing: 0; }
+}
+@media (max-width: 760px) {
+  .list { --cols: 56px minmax(0, 1fr) auto; padding: .3rem; }
+  .lrow { gap: 10px; padding: 6px 8px; }
+  .lrow .lyear, .lrow .lregion, .lrow .lpub, .lrow .lgenre, .lrow.lhead, .ltitle .kc { display: none; }
+  .ltitle small { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01s !important; animation-duration: .01s !important; }
+}
+
+/* the PC's libraries, centred on a line of their own above the rest, each with its logo (js/consoles.js) */
+#libWrap { flex-basis: 100%; justify-content: center; }
+#lib { grid-column: 1 / -1; justify-content: safe center; }
+/* on a wide screen the count shares their line, at its right, the libraries still centred */
+@media (min-width: 821px) {
+  .tools:has(#libWrap:not([hidden])) { display: grid; grid-template-columns: 1fr auto 1fr; }
+  .tools:has(#libWrap:not([hidden])) #libWrap { grid-column: 2; }
+  .tools:has(#libWrap:not([hidden])) .count { grid-column: 3; justify-self: end; }
+}
+#lib svg, .lib-glyph { flex: none; width: 16px; height: 16px; margin-left: -3px; }
+.lib-glyph { display: grid; place-items: center; border-radius: 4px; background: var(--lb); color: var(--lf); font: 800 8px/1 var(--font-ui); font-style: normal; }
+#lib em:empty { display: none; }
+/* on a solid face like the console chips, so they read over the shelf's backdrop */
+#lib button { background: #141416; border-color: var(--line-strong); opacity: 1; transition: background .2s, border-color .2s; }
+#lib button:hover { background: #1c1c1f; border-color: var(--text); }
+#lib button.on { background: var(--gold); border-color: var(--gold); }

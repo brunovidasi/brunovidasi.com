@@ -1,0 +1,65 @@
+{
+  "synced": "2026-10-12T03:49:54+00:00",
+  "source": "api/rockstar-exporter",
+  "totals": {
+    "games": 6,
+    "pc": 4
+  },
+  "games": {
+    "bully": {
+      "code": "bully",
+      "name": "Bully: Scholarship Edition",
+      "platforms": {
+        "pc": "2025-09-22T10:19:33.81"
+      },
+      "lastPlayed": "2025-09-22T10:19:33.81",
+      "achievements": null
+    },
+    "lan": {
+      "code": "lan",
+      "name": "L.A. Noire",
+      "platforms": {
+        "pc": "2025-09-17T02:34:25.62"
+      },
+      "lastPlayed": "2025-09-17T02:34:25.62",
+      "achievements": null
+    },
+    "gtav": {
+      "code": "gtav",
+      "name": "Grand Theft Auto V",
+      "platforms": {
+        "pc": "2025-09-07T07:42:18.99"
+      },
+      "lastPlayed": "2025-09-07T07:42:18.99",
+      "achievements": null
+    },
+    "gtaiv": {
+      "code": "gtaiv",
+      "name": "Grand Theft Auto IV",
+      "platforms": {
+        "pc": "2025-09-03T05:49:52.09"
+      },
+      "lastPlayed": "2025-09-03T05:49:52.09",
+      "achievements": null
+    },
+    "gta3unreal": {
+      "code": "gta3unreal",
+      "name": "Grand Theft Auto III – The Definitive Edition",
+      "platforms": {
+        "ps4": "2025-05-21T05:10:33.16"
+      },
+      "lastPlayed": "2025-05-21T05:10:33.16",
+      "achievements": null
+    },
+    "rdr2": {
+      "code": "rdr2",
+      "name": "Red Dead Redemption 2",
+      "platforms": {
+        "xboxone": "2019-04-25T09:55:29.59"
+      },
+      "lastPlayed": "2019-04-25T09:55:29.59",
+      "achievements": null
+    }
+  },
+  "unknown": []
+}

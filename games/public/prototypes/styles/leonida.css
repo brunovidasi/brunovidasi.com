@@ -1,0 +1,149 @@
+/* Style prototype 10 — Leonida.
+   Inspired by GTA VI's Vice City: a sunset over the water with palm trees in
+   silhouette, and the shelf laid out like the game's key art, a collage of
+   panels split by black gutters, each panel its own time of day.
+   Loaded after site.css and cases.css; it changes the look only.
+   Fonts: https://fonts.googleapis.com/css2?family=Anton&family=Yellowtail&family=Manrope:wght@500;600;700;800&display=swap
+   */
+
+:root {
+  --bg: #120b1f; --surface: #1c1230; --surface-2: #261840;
+  --text: #fff4ec; --ink: #1a0b1e;
+  --gold: #ff4f9a;           /* the accent: Vice pink */
+  --orange: #ff9a4d; --peach: #ffc59a; --violet: #7b3fd1; --teal: #19c9c0;
+  --sunset: linear-gradient(100deg, #ff4f9a, #ff9a4d 55%, #ffd36b);
+  --dusk: linear-gradient(100deg, #ff4f9a, #b44be0 60%, #6b5cff);
+  --line: rgba(255,228,240,.15); --line-strong: rgba(255,228,240,.35);
+  /* a palm tree in silhouette */
+  --palm: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 320'%3E%3Cg fill='%23120a1e'%3E%3Cpath d='M92 320 C 90 240 98 170 118 112 L126 115 C 108 172 102 240 106 320 Z'/%3E%3Cg transform='translate(122 110)'%3E%3Cellipse rx='52' ry='8' transform='rotate(-160) translate(46 0)'/%3E%3Cellipse rx='52' ry='8' transform='rotate(-125) translate(46 0)'/%3E%3Cellipse rx='50' ry='8' transform='rotate(-85) translate(44 0)'/%3E%3Cellipse rx='52' ry='8' transform='rotate(-45) translate(46 0)'/%3E%3Cellipse rx='54' ry='8' transform='rotate(-10) translate(48 0)'/%3E%3Cellipse rx='54' ry='8' transform='rotate(25) translate(48 0)'/%3E%3Cellipse rx='54' ry='8' transform='rotate(160) translate(48 0)'/%3E%3Cellipse rx='50' ry='8' transform='rotate(195) translate(44 0)'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --display: 'Anton', 'Impact', system-ui, sans-serif;
+  --script: 'Yellowtail', cursive;
+  --ui: 'Manrope', system-ui, sans-serif;
+}
+
+/* ---------- dusk over the water ---------- */
+body { font-family: var(--ui); background: none; }
+html {
+  background:
+    radial-gradient(ellipse 60% 30% at 70% 58%, rgba(255,154,77,.45), transparent 70%),
+    linear-gradient(#140a26 0%, #3a1650 28%, #a1306b 48%, #ff7a59 60%, #ffb36b 64%, #1d6f86 65%, #0f3a52 78%, #0b1022 100%);
+  background-attachment: fixed; background-color: var(--bg); }
+/* palms along the shore, in front of the sky and behind everything else */
+body::before { content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: 70vh; z-index: -1; pointer-events: none; opacity: .9;
+  background:
+    var(--palm) left -30px bottom -10px / 260px auto no-repeat,
+    var(--palm) left 140px bottom -40px / 180px auto no-repeat,
+    var(--palm) right -40px bottom -20px / 300px auto no-repeat,
+    var(--palm) right 190px bottom -50px / 170px auto no-repeat; }
+body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(rgba(18,11,31,.0) 40%, rgba(18,11,31,.65)); }
+
+/* ---------- type ---------- */
+.brand { font: 400 21px var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.brand span { background: var(--sunset); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero h1 { font: 400 clamp(56px, 9vw, 124px)/0.9 var(--display); letter-spacing: .005em; text-transform: uppercase;
+  background: linear-gradient(175deg, #ffd36b 5%, #ff9a4d 35%, #ff4f9a 62%, #a24bd9 95%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 6px 22px rgba(255,79,154,.35)); }
+/* a postcard greeting above the title */
+.eyebrow { font: 400 30px/1 var(--script); letter-spacing: 0; text-transform: none; color: #fff; margin-bottom: 4px;
+  text-shadow: 0 0 6px rgba(255,79,154,.9), 0 0 20px rgba(255,79,154,.6); transform: rotate(-4deg); transform-origin: 0 100%; }
+.eyebrow::before { content: "Greetings from "; }
+.hero p { font-size: 16px; font-weight: 600; opacity: .85; }
+.hero::before { background: linear-gradient(rgba(20,10,38,.75), rgba(20,10,38,.2) 75%, transparent); }
+.stats { gap: 6px; }
+.stats div { padding: 10px 16px 12px; background: rgba(13,8,22,.72); border-top: 3px solid; border-image: var(--sunset) 1; backdrop-filter: blur(6px); }
+.stats b { font: 400 38px/1 var(--display); background: var(--sunset); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stats span { font-weight: 800; letter-spacing: .14em; opacity: .75; }
+:is(.ghead b, .shead h2, .tr-head h3, .empty-msg b, .spot-info h2) { font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .01em; }
+:is(.cap b, .ltitle, #tip b, .meter .nums b, .want b) { font-family: var(--ui); font-weight: 800; }
+.spot-info h2 { font-size: clamp(2.2rem, 4.8vw, 4.4rem); line-height: .95; }
+.spot-note { font: 400 1.5rem/1.2 var(--script); color: var(--peach); }
+:is(.search input, select.sort, .seg button, .pills button, .packs h3, .tag, .ghostbox b, .ghostbox i, .kc, .plate) { font-family: var(--ui); }
+
+/* ---------- bars and controls: black with a sunset edge ---------- */
+.topbar { background: rgba(10,6,16,.88); border-bottom: 0; backdrop-filter: blur(10px); }
+.topbar::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--sunset); }
+.topnav a { font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; border-radius: 0; }
+.topnav a[aria-current="page"] { background: var(--sunset); color: var(--ink); }
+.topnav a:hover { background: rgba(255,79,154,.15); }
+.filters { background: rgba(10,6,16,.86); border-bottom: 1px solid rgba(255,79,154,.3); }
+.chip { border-radius: 0; border-color: var(--line-strong); background: rgba(13,8,22,.6); }
+.chip:hover { border-color: var(--gold); }
+.chip.on { background: var(--sunset); color: var(--ink); border-color: transparent; }
+.chip.on .lab i { opacity: .8; }
+.chip.all { background: #120a1c; box-shadow: 10px 0 12px -4px #120a1c; }
+.chip.all.on { background: var(--sunset); }
+.search, .pills button, select.sort, .seg, .series-nav a { border-radius: 0; }
+.search { background: rgba(13,8,22,.6); }
+.search:focus-within { border-color: var(--gold); }
+.pills button { font-weight: 700; background: rgba(13,8,22,.5); }
+.pills button.on, .seg button.on, .series-nav a.on { background: var(--sunset); color: var(--ink); border-color: transparent; }
+.seg button { font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 12px; }
+select.sort { background: var(--surface); }
+.count { font-weight: 700; }
+:focus-visible { outline-color: var(--teal); }
+
+/* ---------- the shelf: the key-art collage, every panel its own sky ---------- */
+.bookcase { border-radius: 0; background: #0a0710; box-shadow: 0 30px 70px rgba(0,0,0,.6); }
+.bookcase::before { height: 22px; border-radius: 0; background: #0a0710; box-shadow: none; }
+.bay { background: var(--palm) right 18px bottom -6px / 90px auto no-repeat, var(--panel, linear-gradient(#ff7a59, #ff4f9a 55%, #5b2a8c));
+  box-shadow: inset 0 0 0 2px #0a0710, inset 0 14px 22px -12px rgba(0,0,0,.6); }
+#case > div:nth-child(4n+2) .bay { --panel: linear-gradient(#1f9fb0, #1b6f8f 55%, #13324d); }
+#case > div:nth-child(4n+3) .bay { --panel: linear-gradient(#ffb36b, #ff7a59 45%, #b8336a); }
+#case > div:nth-child(4n+4) .bay { --panel: linear-gradient(#2a1650, #6b2c8f 60%, #d0457a); }
+/* the black gutter between panels */
+.board { height: 22px; background: #0a0710; box-shadow: none; }
+.plate { top: 3px; border-radius: 0; background: transparent; color: #fff; font: 400 13px/14px var(--display); letter-spacing: .08em; padding: 1px 2px; box-shadow: none; }
+.plate::before, .plate::after { display: none; }
+.plate:first-child { padding-left: 0; }
+.bookend { width: 6px; height: calc(100% + 26px); margin: -26px 10px 0; border-radius: 0; background: #0a0710; box-shadow: none; align-self: flex-start; }
+.item:hover, .item:focus-visible { filter: brightness(1.08) drop-shadow(0 10px 18px rgba(26,11,30,.7)); }
+.item:focus-visible > * { box-shadow: 0 0 0 3px #fff; }
+.item.loose::after { background: linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1)); border-color: rgba(255,255,255,.5); }
+
+/* ---------- grid and list ---------- */
+.ghead { border-bottom: 2px solid; border-image: var(--sunset) 1; }
+.ghead b { font-size: 1.7rem; line-height: 1; }
+.ghead i { font-weight: 700; }
+.stage::before { background: radial-gradient(closest-side, rgba(10,6,16,.7), rgba(10,6,16,0)); }
+@media (hover: hover) { .cell:hover .cap b { color: var(--peach); } }
+.cap small { opacity: .75; }
+.list { border-radius: 0; background: rgba(13,8,22,.85); border: 0; border-top: 3px solid; border-image: var(--sunset) 1; backdrop-filter: blur(8px); }
+.lrow:hover, .lrow:focus-visible { background: rgba(255,79,154,.1); }
+.lsort.on { color: var(--orange); }
+.ltitle .kc { color: var(--peach); border-color: rgba(255,154,77,.6); }
+
+/* ---------- the spotlight: the game against the sunset ---------- */
+.overlay { background: radial-gradient(ellipse 55% 60% at var(--spot-x, 50%) var(--spot-y, 50%), rgba(255,122,89,.35), rgba(58,22,80,.85) 60%, rgba(12,7,20,.96)); }
+.spot-floor { background: radial-gradient(closest-side, rgba(10,6,16,.75), rgba(10,6,16,0)); }
+.spot-close, .spot-nav, .views { border-radius: 0; background: rgba(10,6,16,.85); border-color: rgba(255,79,154,.4); }
+.spot-nav button, .views button { border-radius: 0; }
+.views button { font-weight: 800; text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
+.spot-close:hover, .views button.on, .spot-nav button:hover:not(:disabled) { background: #fff; color: var(--ink); }
+.views button.open-btn { background: var(--sunset); color: var(--ink); }
+.spot-eyebrow { color: var(--peach); font-weight: 700; }
+.stamp { border-radius: 0; border-color: var(--teal); color: var(--teal); background: rgba(10,6,16,.85); }
+.spot-find { color: var(--orange); }
+#tip { border-radius: 0; background: #0a0710; color: var(--text); border-left: 3px solid var(--gold); }
+#tip b { font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .02em; font-size: 17px; }
+
+/* ---------- the collection pages ---------- */
+.rack { border-radius: 0; background: var(--palm) right 14px bottom -6px / 80px auto no-repeat, linear-gradient(#ff7a59, #ff4f9a 55%, #5b2a8c); box-shadow: inset 0 0 0 2px #0a0710, 0 0 0 6px #0a0710; }
+.series:nth-of-type(even) .rack { background: var(--palm) right 14px bottom -6px / 80px auto no-repeat, linear-gradient(#1f9fb0, #1b6f8f 55%, #13324d); }
+.rack .cap, .rack .tags { text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.rack .tag.disc { color: #fff; border-color: rgba(255,255,255,.8); background: rgba(10,6,16,.35); }
+.packs h3 { color: var(--peach); font-weight: 800; }
+.meter .track { border-radius: 0; }
+.meter .track i { border-radius: 0; background: var(--sunset); }
+.want { border-radius: 0; background: rgba(13,8,22,.7); border-color: rgba(255,79,154,.45); }
+.want a { color: var(--orange); }
+.tag { border-radius: 0; }
+
+@media (max-width: 820px) { body::before { height: 45vh; opacity: .7; } }
+@media (max-width: 640px) {
+  .brand { font-size: 17px; white-space: nowrap; } .topnav a { white-space: nowrap; padding: 6px 8px; font-size: 11px; }
+  .eyebrow { font-size: 24px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; width: 100%; }
+  .stats div { padding: 8px 8px 10px; } .stats b { font-size: 26px; } .stats span { font-size: 9px; letter-spacing: .04em; }
+  .bay { background-size: 60px auto, auto; }
+}

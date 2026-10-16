@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Shelf — Shelf</title>
+<link rel="stylesheet" href="../assets/ui.css">
+<link rel="stylesheet" href="../assets/cases.css">
+<style>
+  /* A tall wooden bookcase: every case spine-out, favourites face-out like a shop. */
+  .tools { max-width: var(--page); margin: 18px auto 0; padding: 0 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+  .tools .pills button { font-size: 12px; }
+  .tools span { opacity: .55; }
+
+  .case-wrap { max-width: var(--page); margin: 14px auto 80px; padding: 0 20px; }
+  .bookcase { position: relative; padding: 22px 22px 0; border-radius: 6px;
+    background: linear-gradient(90deg, #4a2f19, #6b4425 3%, #5a3820 50%, #6b4425 97%, #4a2f19);
+    box-shadow: 0 30px 60px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,220,170,.15); }
+  .bookcase::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 22px; border-radius: 6px 6px 0 0;
+    background: linear-gradient(#7a4f2c, #5a3820); box-shadow: inset 0 2px 0 rgba(255,220,170,.25); }
+  .shelf { position: relative; }
+  .bay { position: relative; display: flex; align-items: flex-end; gap: 2px; padding: 26px 14px 0; height: var(--bay);
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(255,214,150,.22), transparent 60%),
+      linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.15) 30%, rgba(0,0,0,.25)),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 1px, transparent 1px 7px),
+      linear-gradient(90deg, #2a1a0e, #3a2414 50%, #2a1a0e);
+    box-shadow: inset 0 14px 18px -10px rgba(0,0,0,.8), inset 10px 0 14px -10px rgba(0,0,0,.7), inset -10px 0 14px -10px rgba(0,0,0,.7); }
+  .board { position: relative; height: 22px; margin: 0 -22px; z-index: 3;
+    background: linear-gradient(#8a5a31, #6b4425 40%, #4f3119);
+    box-shadow: 0 8px 14px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,220,170,.35); }
+  .board .plates { position: absolute; inset: 0 22px; }
+  .plate { position: absolute; top: 4px; transform: translateX(-2px); padding: 2px 8px; border-radius: 2px; white-space: nowrap;
+    background: linear-gradient(#e7c873, #b58a2e); color: #3a2608; font: 600 10px/12px 'Space Grotesk', sans-serif; letter-spacing: .12em; text-transform: uppercase;
+    box-shadow: 0 1px 2px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.5); }
+  .plate::before, .plate::after { content: ""; display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: #6b4a12; vertical-align: middle; margin: 0 5px 2px 0; }
+  .plate::after { margin: 0 0 2px 5px; }
+
+  .item { position: relative; flex: none; border: 0; padding: 0; background: none; cursor: pointer; transform-origin: 50% 100%;
+    transition: transform .28s cubic-bezier(.3,1.4,.5,1), filter .2s; }
+  .item:hover, .item:focus-visible { transform: translateY(-16px); z-index: 4; outline: none; filter: brightness(1.12); }
+  .item:focus-visible .sp, .item:focus-visible .cv { box-shadow: 0 0 0 2px var(--gold); }
+  .item .sp { box-shadow: inset 1px 0 0 rgba(255,255,255,.18), inset -2px 0 0 rgba(0,0,0,.28), 2px 0 3px rgba(0,0,0,.35); }
+  .item.face { margin: 0 6px; transform: perspective(600px) rotateY(-4deg); }
+  .item.face:hover { transform: perspective(600px) rotateY(0) translateY(-10px) scale(1.03); }
+  .item.face::after { content: ""; position: absolute; left: 4%; right: -4%; bottom: -3px; height: 8px; background: rgba(0,0,0,.5); filter: blur(4px); z-index: -1; }
+  .bookend { flex: none; width: 10px; height: 60%; align-self: flex-end; margin: 0 8px; border-radius: 2px 2px 0 0;
+    background: linear-gradient(90deg, #2a2a2a, #6a6a6a 40%, #1a1a1a); box-shadow: 2px 0 4px rgba(0,0,0,.5); }
+  .item.enter { animation: drop .5s cubic-bezier(.3,1.3,.5,1) backwards; }
+  @keyframes drop { from { transform: translateY(-40px); opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="shell"></div>
+<div class="tools">
+  <span>Show</span>
+  <div class="pills" id="mode">
+    <button data-m="fav" class="on">Favourites face-out</button>
+    <button data-m="spine">All spines</button>
+    <button data-m="front">All face-out</button>
+  </div>
+</div>
+<div class="case-wrap"><div class="bookcase" id="case"></div></div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/cases.js"></script>
+<script src="../assets/ui.js"></script>
+<script>
+  const host = document.getElementById('case');
+  let mode = 'fav';
+  let games = [];
+
+  const scale = () => innerWidth < 640 ? 0.78 : innerWidth < 1000 ? 0.95 : 1.12;
+
+  function render(animate) {
+    host.innerHTML = '';
+    if (!games.length) return UI.empty(host);
+    const s = scale();
+    const inner = host.clientWidth - 44 - 28;
+    const tallest = Math.max(...games.map(g => Case.dims(g, s).h));
+    host.style.setProperty('--bay', (tallest + 34) + 'px');
+
+    // lay the cases out left to right, a new shelf when one is full
+    const rows = [[]];
+    let x = 0, lastConsole = null;
+    const grouped = UI.state.sort === 'console';
+    games.forEach(g => {
+      const face = mode === 'front' || (mode === 'fav' && g.fav);
+      const d = Case.dims(g, s);
+      const newGroup = grouped && g.console !== lastConsole;
+      const w = (face ? d.w + 12 : d.d) + 2 + (newGroup && lastConsole ? 28 : 0);
+      if (x + w > inner && rows[rows.length - 1].length) { rows.push([]); x = 0; }
+      const row = rows[rows.length - 1];
+      if (newGroup && lastConsole && row.length) row.push({ end: true });
+      row.push({ g, face, newGroup, x: x + (newGroup && lastConsole && row.length > 1 ? 28 : 0) });
+      x += w;
+      lastConsole = g.console;
+    });
+
+    let n = 0;
+    const labels = [];
+    rows.forEach(row => {
+      const shelf = document.createElement('div');
+      shelf.className = 'shelf';
+      const bay = document.createElement('div');
+      bay.className = 'bay';
+      const board = document.createElement('div');
+      board.className = 'board';
+      const plates = document.createElement('div');
+      plates.className = 'plates';
+      board.append(plates);
+      let first = true;
+      row.forEach(it => {
+        if (it.end) { const b = document.createElement('div'); b.className = 'bookend'; bay.append(b); return; }
+        const { g, face } = it;
+        const btn = document.createElement('button');
+        btn.className = 'item' + (face ? ' face' : '') + (animate ? ' enter' : '');
+        btn.style.animationDelay = (n++ * 12) + 'ms';
+        btn.setAttribute('aria-label', `${g.title} — ${CONSOLE_BY_ID[g.console].name}`);
+        btn.append(face ? Case.front(g, s) : Case.spine(g, s));
+        btn.addEventListener('click', () => UI.open(g, btn.firstElementChild, face ? 'front' : 'spine', games));
+        UI.tip(btn, g);
+        bay.append(btn);
+        if (grouped && (it.newGroup || first)) labels.push([btn, g, plates]);
+        first = false;
+      });
+      shelf.append(bay, board);
+      host.append(shelf);
+    });
+
+    // a brass label under where each console starts, nudged so none overlap
+    let lastPlates = null, edge = 0;
+    labels.forEach(([btn, g, plates]) => {
+      if (plates !== lastPlates) { edge = -Infinity; lastPlates = plates; }
+      const p = document.createElement('div');
+      p.className = 'plate';
+      p.textContent = CONSOLE_BY_ID[g.console].short;
+      p.title = CONSOLE_BY_ID[g.console].name;
+      plates.append(p);
+      const left = Math.max(btn.offsetLeft - 14, edge + 4);
+      p.style.left = left + 'px';
+      edge = left + p.offsetWidth;
+    });
+  }
+
+  document.querySelectorAll('#mode button').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.m;
+    document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x === b));
+    render(true);
+  }));
+
+  UI.init({
+    title: 'The Game Shelf',
+    intro: 'Every boxed game spine-out on the bookcase, favourites face-out like a shop. Hover to pull one up, click to take it off the shelf.',
+    onChange: list => { games = list; render(true); },
+  });
+  games = UI.list();
+  render(true);
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => render(false), 150); });
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Shelf — Stacks</title>
+<link rel="stylesheet" href="../assets/ui.css">
+<link rel="stylesheet" href="../assets/cases.css">
+<style>
+  /* Cases lying flat in towers on the wooden floor, one tower per console, spines out. */
+  .tools { max-width: var(--page); margin: 18px auto 0; padding: 0 20px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+  .tools label { display: flex; align-items: center; gap: 8px; opacity: .8; }
+  .tools input[type=range] { accent-color: var(--gold); width: 120px; }
+  .floor { max-width: var(--page); margin: 10px auto 100px; padding: 30px 20px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 48px 34px; justify-content: center; }
+  .tower { position: relative; display: flex; flex-direction: column-reverse; align-items: center; padding-bottom: 34px; }
+  .tower::before { content: ""; position: absolute; left: -10%; right: -10%; bottom: 26px; height: 18px; background: radial-gradient(ellipse, rgba(0,0,0,.65), transparent 70%); filter: blur(3px); }
+  .tag { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotate(var(--tr, -2deg)); white-space: nowrap; background: #f4ecd6; color: #2a2116; padding: 4px 10px 3px; font: 600 11px 'Space Grotesk', sans-serif; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,.5); }
+  .tag::before { content: ""; position: absolute; top: -5px; left: 50%; width: 28px; height: 9px; transform: translateX(-50%) rotate(-3deg); background: rgba(255,240,200,.5); }
+  .tag em { font-style: normal; opacity: .5; margin-left: 4px; }
+
+  .lay { position: relative; flex: none; border: 0; padding: 0; background: none; cursor: pointer; width: var(--lw); height: var(--lh);
+    transform: translateX(var(--ox)) rotate(var(--rot)); transition: transform .3s cubic-bezier(.3,1.3,.5,1), filter .2s; margin-top: -1px; }
+  .lay .sp { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); box-shadow: 0 2px 2px rgba(0,0,0,.4); }
+  .lay:hover, .lay:focus-visible { transform: translateX(calc(var(--ox) + 26px)) rotate(0deg); filter: brightness(1.15); z-index: 5; outline: none; }
+  .lay:focus-visible .sp { box-shadow: 0 0 0 2px var(--gold); }
+  .lay.enter { animation: fall .5s cubic-bezier(.3,1.25,.5,1) backwards; }
+  @keyframes fall { from { opacity: 0; transform: translateY(-60px) rotate(calc(var(--rot) * 4)); } }
+</style>
+</head>
+<body>
+<div id="shell"></div>
+<div class="tools">
+  <label>Messiness <input type="range" id="mess" min="0" max="1" step="0.05" value="0.5"></label>
+  <label>Tower height <input type="range" id="height" min="4" max="20" step="1" value="11"></label>
+</div>
+<div class="floor" id="floor"></div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/cases.js"></script>
+<script src="../assets/ui.js"></script>
+<script>
+  const floor = document.getElementById('floor');
+  let games = [], mess = 0.5, maxH = 11;
+
+  function rnd(seed) { const x = Math.sin(seed * 999) * 10000; return x - Math.floor(x); }
+
+  function render(animate) {
+    floor.innerHTML = '';
+    if (!games.length) return UI.empty(floor);
+    const s = innerWidth < 640 ? 0.95 : 1.25;
+    const grouped = UI.state.sort === 'console';
+    const towers = [];
+    games.forEach(g => {
+      const key = grouped ? g.console : 'all';
+      let t = towers[towers.length - 1];
+      if (!t || t.key !== key || t.items.length >= maxH) towers.push(t = { key, items: [], part: t && t.key === key ? t.part + 1 : 1 });
+      t.items.push(g);
+    });
+    let n = 0;
+    towers.forEach((t, ti) => {
+      const el = document.createElement('div');
+      el.className = 'tower';
+      t.items.forEach((g, i) => {
+        const d = Case.dims(g, s);
+        const b = document.createElement('button');
+        b.className = 'lay' + (animate ? ' enter' : '');
+        b.dataset.id = g.id;
+        b.style.setProperty('--lw', d.h + 'px');
+        b.style.setProperty('--lh', d.d + 'px');
+        b.style.setProperty('--ox', ((rnd(g.id) - 0.5) * 22 * mess) + 'px');
+        b.style.setProperty('--rot', ((rnd(g.id + 7) - 0.5) * 5 * mess) + 'deg');
+        b.style.animationDelay = (ti * 40 + i * 35) + 'ms';
+        b.setAttribute('aria-label', `${g.title} — ${CONSOLE_BY_ID[g.console].name}`);
+        const sp = Case.spine(g, s);
+        b.append(sp);
+        b.addEventListener('click', () => UI.open(g, b, 'down', games));
+        UI.tip(b, g);
+        el.append(b);
+        n++;
+      });
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.style.setProperty('--tr', ((rnd(ti + 3) - 0.5) * 6) + 'deg');
+      tag.innerHTML = t.key === 'all' ? `Pile ${ti + 1}` : `${CONSOLE_BY_ID[t.key].short}${t.part > 1 ? ' <em>' + t.part + '</em>' : ''}`;
+      el.append(tag);
+      floor.append(el);
+    });
+  }
+
+  document.getElementById('mess').addEventListener('input', e => {
+    mess = +e.target.value;
+    floor.querySelectorAll('.lay').forEach(b => {
+      const id = +b.dataset.id;
+      b.style.setProperty('--ox', ((rnd(id) - 0.5) * 22 * mess) + 'px');
+      b.style.setProperty('--rot', ((rnd(id + 7) - 0.5) * 5 * mess) + 'deg');
+    });
+  });
+  document.getElementById('height').addEventListener('change', e => { maxH = +e.target.value; render(true); });
+
+  UI.init({
+    title: 'The Stacks',
+    intro: 'Cases lying flat in towers on the floor, one tower per console. Hover to slide one out of the pile, click to pick it up.',
+    onChange: list => { games = list; render(true); },
+  });
+  games = UI.list();
+  render(true);
+</script>
+</body>
+</html>

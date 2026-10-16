@@ -1,0 +1,144 @@
+/* Style prototype 7 — Game Mag.
+   A 90s games magazine: newsprint with halftone dots, thick black outlines,
+   hard shadows, sticker labels stuck on at an angle, a speech-bubble tooltip,
+   and a burst of rays behind the game you pick up.
+   Loaded after site.css and cases.css; it changes the look only.
+   Fonts: https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;600;700;800&family=Archivo+Narrow:wght@600;700&display=swap
+   */
+
+:root {
+  --bg: #fff6df; --surface: #ffffff; --surface-2: #fff9ea;
+  --text: #141414; --ink: #ffffff;
+  --gold: #e8262d;           /* the accent: magazine red */
+  --yellow: #ffd31a; --blue: #1f6fe0; --sky: #bfe0ff;
+  --fg-rgb: 20,20,20; --paper-rgb: 255,246,223;
+  --line: rgba(20,20,20,.16); --line-strong: #141414;
+  --outline: 3px solid #141414; --hard: 5px 5px 0 #141414;
+  --display: 'Bangers', 'Impact', system-ui, sans-serif;
+  --ui: 'Archivo', system-ui, sans-serif;
+  --narrow: 'Archivo Narrow', 'Archivo', system-ui, sans-serif;
+  color-scheme: light;
+}
+
+/* ---------- newsprint with halftone ---------- */
+body { font-family: var(--ui); background: none; }
+html {
+  background:
+    radial-gradient(circle, rgba(232,38,45,.16) 0 1.6px, transparent 2px) 0 0 / 9px 9px,
+    linear-gradient(#fff6df, #fff1cf);
+  background-attachment: fixed; background-color: var(--bg); }
+html { background-blend-mode: multiply; }
+
+/* ---------- type ---------- */
+.brand { font: 400 24px var(--display); letter-spacing: .04em; color: #fff; -webkit-text-stroke: 1px #141414; text-shadow: 2px 2px 0 #141414; }
+.brand span { color: var(--yellow); }
+.hero h1 { font: 400 clamp(54px, 9vw, 116px)/0.88 var(--display); letter-spacing: .02em; color: var(--yellow);
+  -webkit-text-stroke: 3px #141414; paint-order: stroke fill; text-shadow: 6px 6px 0 var(--gold), 9px 9px 0 #141414; transform: rotate(-2deg); transform-origin: 0 100%; }
+.eyebrow { display: inline-block; font: 700 12px var(--narrow); letter-spacing: .14em; color: #fff; background: var(--blue); padding: 4px 10px; border: 2px solid #141414; transform: rotate(-3deg); }
+.hero p { font-size: 16px; font-weight: 500; opacity: .85; }
+.hero::before { background: none; }
+.stats { gap: 12px; }
+.stats div { padding: 8px 14px; background: #fff; border: var(--outline); box-shadow: 4px 4px 0 #141414; }
+.stats div:nth-child(odd) { transform: rotate(-2deg); } .stats div:nth-child(even) { transform: rotate(1.5deg); background: var(--yellow); }
+.stats b { font: 400 34px/1 var(--display); letter-spacing: .03em; }
+.stats span { font: 700 10px var(--narrow); opacity: .8; }
+:is(.ghead b, .shead h2, .tr-head h3, .empty-msg b) { font-family: var(--display); font-weight: 400; letter-spacing: .04em; }
+:is(.cap b, .ltitle, #tip b, .meter .nums b, .want b) { font-family: var(--ui); font-weight: 800; }
+.spot-info h2 { font: 400 clamp(2rem, 4.4vw, 3.8rem)/1.02 var(--display); letter-spacing: .03em; color: #fff; -webkit-text-stroke: 2px #141414; paint-order: stroke fill; text-shadow: 4px 4px 0 #141414; }
+.spot-note { font: italic 600 1rem/1.4 var(--ui); }
+:is(.search input, select.sort, .seg button, .pills button, .packs h3, .tag, .ghostbox b, .ghostbox i, .kc) { font-family: var(--ui); font-weight: 700; }
+:is(.plate, .famname, .tools .lbl, .count, .spot-eyebrow) { font-family: var(--narrow); }
+
+/* ---------- light-page fixes for the site's dark-first colours ---------- */
+.search input::placeholder { color: rgba(var(--fg-rgb), .45); }
+.lcon .kc { color: color-mix(in srgb, var(--fc) 70%, #000); border-color: currentColor; }
+.ghost { color: rgba(var(--fg-rgb), .65); border-color: rgba(var(--fg-rgb), .5); }
+.ghost .stop { color: rgba(var(--fg-rgb), .55); }
+.cv.ghosted { outline-color: rgba(var(--fg-rgb), .5); }
+.lrow:hover, .lrow:focus-visible { background: rgba(255,211,26,.35); }
+.spot-info { text-shadow: none; }
+.spot-floor { background: radial-gradient(closest-side, rgba(20,20,20,.45), rgba(20,20,20,0)); }
+.meter .track { background: #fff; border: 2px solid #141414; height: 14px; }
+.tag.disc { color: var(--gold); border-color: var(--gold); }
+.tag.mac { border-color: #141414; }
+.tag.code { background: rgba(var(--fg-rgb), .08); }
+.want { border: 2px dashed #141414; background: #fff; }
+.want .ghostcase, .ghostbox { border-color: rgba(var(--fg-rgb), .5); color: rgba(var(--fg-rgb), .75); background: rgba(255,255,255,.6); }
+
+/* ---------- bars and buttons: black outlines, hard shadows ---------- */
+.topbar { background: var(--gold); border-bottom: var(--outline); backdrop-filter: none; }
+.topnav a { color: #fff; font: 400 18px var(--display); letter-spacing: .06em; opacity: 1; border-radius: 0; }
+.topnav a[aria-current="page"] { background: var(--yellow); color: #141414; border: 2px solid #141414; box-shadow: 3px 3px 0 #141414; transform: rotate(-2deg); }
+.topnav a:hover { background: rgba(0,0,0,.15); }
+.filters { background: #fffaf0; border-bottom: var(--outline); backdrop-filter: none; }
+.chip { border-radius: 4px; border: 2px solid #141414; background: #fff; box-shadow: 3px 3px 0 #141414; transition: transform .12s, box-shadow .12s; }
+.chip:hover { border-color: #141414; transform: translate(-2px, -2px) rotate(-1deg); box-shadow: 5px 5px 0 #141414; }
+.chip.on { background: var(--yellow); color: #141414; border-color: #141414; }
+.chip.all { background: var(--gold); color: #fff; box-shadow: 3px 3px 0 #141414; }
+.chip.all.on { background: #141414; color: var(--yellow); }
+.search, .pills button, select.sort, .seg, .series-nav a { border-radius: 4px; border: 2px solid #141414; background: #fff; }
+.search { box-shadow: 3px 3px 0 #141414; }
+.pills button { opacity: 1; }
+.pills button.on, .seg button.on, .series-nav a.on { background: var(--gold); color: #fff; border-color: #141414; }
+.seg { box-shadow: 3px 3px 0 #141414; }
+.seg button + button { border-left: 2px solid #141414; }
+:focus-visible { outline: 3px solid var(--blue); }
+
+/* ---------- the shelf: a comic panel, sky-blue halftone, yellow gutters, stickers ---------- */
+.bookcase { border-radius: 0; background: #fff; border: 4px solid #141414; box-shadow: 9px 9px 0 #141414; }
+.bookcase::before { display: none; }
+.bay { background:
+    radial-gradient(circle, rgba(31,111,224,.22) 0 2px, transparent 2.5px) 0 0 / 10px 10px,
+    linear-gradient(#a9d3ff, #e6f3ff);
+  box-shadow: inset 0 0 0 3px #141414; }
+.board { height: 22px; background: var(--yellow); border-top: 3px solid #141414; border-bottom: 3px solid #141414; box-shadow: none; }
+.plate { top: 1px; border-radius: 3px; background: #fff; color: var(--gold); font: 700 11px/13px var(--narrow); letter-spacing: .06em; padding: 2px 7px; border: 2px solid #141414; box-shadow: 2px 2px 0 #141414; transform: rotate(-4deg); }
+.plate:nth-child(even) { transform: rotate(3deg); background: var(--blue); color: #fff; }
+.plate::before, .plate::after { display: none; }
+.bookend { width: 10px; border-radius: 0; background: var(--gold); border: 2px solid #141414; box-shadow: 2px 2px 0 #141414; }
+.item:hover, .item:focus-visible { filter: drop-shadow(4px 4px 0 #141414); }
+.item.face:hover, .item.face:focus-visible { transform: rotate(-3deg) translateY(-12px) scale(1.04); }
+.item:focus-visible > * { box-shadow: 0 0 0 3px var(--blue); }
+.item.face::after { display: none; }
+.item.loose::after { border-radius: 0; background: #fff; border: 2px solid #141414; }
+
+/* ---------- grid and list ---------- */
+.ghead { border-bottom: 3px solid #141414; }
+.ghead b { font-size: 1.7rem; color: var(--gold); -webkit-text-stroke: 1px #141414; }
+.ghead i { font-family: var(--narrow); font-weight: 700; }
+.stage::before { background: rgba(20,20,20,.25); height: 6px; bottom: -6px; border-radius: 50%; }
+.gt .cv { box-shadow: 0 0 0 2px #141414, 5px 5px 0 #141414; }
+@media (hover: hover) { .cell:hover .gt { transform: translateY(-8px) rotate(-2deg); } .cell:hover .cap b { color: var(--gold); } }
+.list { border-radius: 0; background: #fff; border: 3px solid #141414; box-shadow: 7px 7px 0 #141414; }
+.lrow { border-bottom: 2px solid rgba(20,20,20,.12); }
+.lsort.on { color: var(--gold); }
+.ltitle .kc { color: var(--gold); border-color: var(--gold); }
+
+/* ---------- the spotlight: a burst of rays ---------- */
+.overlay { background: repeating-conic-gradient(from 0deg at var(--spot-x, 50%) var(--spot-y, 50%), #ffe169 0 9deg, #ffd31a 9deg 18deg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.overlay.open { opacity: .97; }
+.spot-close, .spot-nav, .views { background: #fff; border: 3px solid #141414; border-radius: 6px; box-shadow: 4px 4px 0 #141414; color: #141414; }
+.spot-nav button, .views button { border-radius: 4px; color: #141414; }
+.spot-close:hover, .views button.on, .spot-nav button:hover:not(:disabled) { background: #141414; color: var(--yellow); border-color: #141414; }
+.views button.open-btn { background: var(--gold); color: #fff; }
+.spot-eyebrow { font-weight: 700; }
+.spot-rest { opacity: .8; }
+.stamp { border-color: #141414; color: #fff; background: var(--gold); box-shadow: 3px 3px 0 #141414; font-family: var(--display); font-size: 20px; letter-spacing: .08em; }
+.spot-find { color: var(--blue); }
+/* the tooltip is a speech bubble */
+#tip { border-radius: 16px; background: #fff; color: #141414; border: 3px solid #141414; box-shadow: 4px 4px 0 #141414; }
+#tip span { opacity: .7; font-weight: 600; }
+
+/* ---------- the collection pages ---------- */
+.rack { border-radius: 0; background: radial-gradient(circle, rgba(31,111,224,.2) 0 2px, transparent 2.5px) 0 0 / 10px 10px, #d6ebff; border: 3px solid #141414; box-shadow: 0 6px 0 var(--yellow), 0 9px 0 #141414; }
+.packs h3 { color: var(--gold); font-weight: 800; }
+.meter .track i { border-radius: 0; background: repeating-linear-gradient(-45deg, var(--acc) 0 6px, var(--acc-dk) 6px 12px); box-shadow: none; }
+.want { border-radius: 4px; }
+.want a { color: var(--blue); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .brand { font-size: 19px; white-space: nowrap; } .topnav a { white-space: nowrap; padding: 4px 7px; font-size: 15px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; }
+  .stats div { padding: 6px 8px; } .stats b { font-size: 24px; } .stats span { font-size: 9px; letter-spacing: .02em; }
+  .hero h1 { -webkit-text-stroke-width: 2px; text-shadow: 4px 4px 0 var(--gold), 6px 6px 0 #141414; }
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruno's Game Shelf</title>
+<link rel="stylesheet" href="../assets/ui.css">
+<link rel="stylesheet" href="../assets/cases.css">
+<style>
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 72px 20px 80px; }
+  .hero { display: block; padding: 20px 0 30px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; }
+  .card { display: flex; flex-direction: column; text-decoration: none; color: var(--text); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: rgba(20,17,13,.75); transition: transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s; }
+  .card:hover { transform: translateY(-4px); border-color: var(--gold); }
+  .pv { height: 210px; display: flex; align-items: flex-end; justify-content: center; gap: 2px; padding: 18px; overflow: hidden; position: relative; perspective: 700px; }
+  .pv.shelf { background: linear-gradient(rgba(0,0,0,.4), transparent), linear-gradient(90deg, #2a1a0e, #3a2414 50%, #2a1a0e); border-bottom: 14px solid #6b4425; padding-bottom: 0; }
+  .pv.wall { background: #17130f; gap: 12px; align-items: center; }
+  .pv.show { background: radial-gradient(ellipse at 50% 40%, #3a2a1a, #0d0b09 75%); }
+  .pv.show .cv { position: absolute; bottom: 30px; }
+  .pv.stacks { flex-direction: row; gap: 22px; align-items: flex-end; }
+  .pv .col { display: flex; flex-direction: column-reverse; }
+  .pv .col .l { position: relative; }
+  .pv .col .l .sp { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) rotate(-90deg); }
+  .txt { padding: 16px 18px 20px; }
+  .txt b { display: block; font: 600 22px 'Fraunces', serif; margin-bottom: 6px; }
+  .txt b i { font-style: normal; color: var(--gold); margin-right: 6px; }
+  .txt p { margin: 0; font-size: 13px; opacity: .7; line-height: 1.5; }
+  .notes { margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; font-size: 13px; line-height: 1.55; opacity: .8; }
+  .notes h4 { font: 600 16px 'Fraunces', serif; margin: 0 0 6px; color: var(--gold); opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Bruno's Games · design prototypes</div>
+    <h1>Pick a shelf</h1>
+    <p>Four ways to show the collection, all running on the same mock data. The console filter, search and sort carry over when you switch between them, so you can compare like for like.</p>
+  </header>
+  <div class="cards" id="cards"></div>
+  <div class="notes">
+    <div><h4>Real cases, real sizes</h4>Each platform has its own case: PS2's black DVD case, the blue PS4 Blu-ray, the red Switch case, the white 3DS case, the SNES cardboard box, and so on. Everything is drawn at its true relative size.</div>
+    <div><h4>PC launchers</h4>PC games show where they activate (Steam, Origin, EA app, Rockstar, Battle.net, GOG, Ubisoft) as a strip on the cover, a badge on the spine and a filter that appears when you pick PC.</div>
+    <div><h4>Pick it up</h4>Click any game and it flies off the shelf in 3D. Drag to turn it round, see the spine and back, and open it to find the disc, cartridge or manual.</div>
+  </div>
+</div>
+<script src="../assets/data.js"></script>
+<script src="../assets/cases.js"></script>
+<script>
+  const bar = document.createElement('div');
+  bar.className = 'topbar';
+  bar.innerHTML = `<nav class="protonav"><a href="index.html" aria-current="page">Prototypes</a><a href="1-shelf.html">1 · Shelf</a><a href="2-wall.html">2 · Display wall</a><a href="3-showcase.html">3 · Showcase</a><a href="4-stacks.html">4 · Stacks</a></nav>`;
+  document.body.prepend(bar);
+
+  const pick = ids => ids.map(t => GAMES.find(g => g.title === t[0] && (!t[1] || g.console === t[1])));
+  const cards = [
+    ['1-shelf.html', 'Shelf', 'shelf', 'A wooden bookcase with every game spine-out, grouped by console with brass labels, and favourites face-out like a shop.'],
+    ['2-wall.html', 'Display wall', 'wall', 'Every cover face-out on its own stand, true to size, grouped by console. Covers tilt and catch the light as you move.'],
+    ['3-showcase.html', 'Showcase', 'show', 'A 3D carousel, one game at a time on a glossy stage, with a timeline of consoles to scrub through.'],
+    ['4-stacks.html', 'Stacks', 'stacks', 'Towers of cases lying on the wooden floor, one per console, a little messy, like the music site\'s crate.'],
+  ];
+  const host = document.getElementById('cards');
+  cards.forEach(([href, name, kind, desc], i) => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = href;
+    const pv = document.createElement('div');
+    pv.className = 'pv ' + kind;
+    if (kind === 'shelf') {
+      GAMES.filter(g => ['ps2', 'switch', 'snes', 'ps4', 'wii'].includes(g.console)).slice(0, 22).forEach((g, j) => pv.append(j === 8 ? Case.front(g, .8) : Case.spine(g, .8)));
+    } else if (kind === 'wall') {
+      pick([['Bloodborne'], ['Super Metroid'], ['Mario Kart World'], ['Pokémon Emerald']]).forEach(g => pv.append(Case.front(g, .62)));
+    } else if (kind === 'show') {
+      pick([['Halo 3'], ['Okami'], ['Astro Bot'], ['Persona 5'], ['Red Dead Redemption 2']]).forEach((g, j) => {
+        const cv = Case.front(g, j === 2 ? .82 : .6);
+        const o = j - 2;
+        cv.style.transform = `translateX(${o * 52}px) translateZ(${-Math.abs(o) * 60}px) rotateY(${-Math.sign(o) * 55}deg)`;
+        cv.style.zIndex = 10 - Math.abs(o);
+        cv.style.left = `calc(50% - ${Case.dims(g, j === 2 ? .82 : .6).w / 2}px)`;
+        pv.append(cv);
+      });
+    } else {
+      ['ps2', 'gba', 'switch', 'ds'].forEach(c => {
+        const col = document.createElement('div');
+        col.className = 'col';
+        GAMES.filter(g => g.console === c).slice(0, 5).forEach((g, j) => {
+          const d = Case.dims(g, .7);
+          const l = document.createElement('div');
+          l.className = 'l';
+          l.style.cssText = `width:${d.h}px;height:${d.d}px;transform:translateX(${(j % 2 ? 3 : -2)}px) rotate(${(j % 3 - 1) * .8}deg)`;
+          l.append(Case.spine(g, .7));
+          col.append(l);
+        });
+        pv.append(col);
+      });
+    }
+    a.append(pv);
+    a.insertAdjacentHTML('beforeend', `<div class="txt"><b><i>${i + 1}</i>${name}</b><p>${desc}</p></div>`);
+    host.append(a);
+  });
+</script>
+</body>
+</html>
