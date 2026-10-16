@@ -48,7 +48,7 @@ const FIELDS = [
     'publisher'  => ['label' => 'Publisher', 'group' => 'basics', 'type' => 'text', 'col' => 'publisher', 'always' => true, 'sync' => ['steam', 'ea', 'rockstar']],
     'developer'  => ['label' => 'Developer', 'group' => 'basics', 'type' => 'text', 'col' => 'developer', 'always' => true, 'sync' => ['steam', 'ea']],
     'genre'      => ['label' => 'Genre', 'group' => 'basics', 'type' => 'text', 'col' => 'genre', 'always' => true, 'sync' => ['steam', 'ea']],
-    'series'     => ['label' => 'Series', 'group' => 'basics', 'type' => 'text', 'col' => 'series', 'help' => 'Puts the copy in The Sims collection when it is one of its series.', 'sync' => ['ea']],
+    'series'     => ['label' => 'Series', 'group' => 'basics', 'type' => 'text', 'col' => 'series', 'help' => 'Puts the copy in The Sims collection when it is one of its series; any other series (Toy Story) lists its games together in each one\'s drawer.', 'sync' => ['ea']],
     'pack'       => ['label' => 'Pack', 'group' => 'basics', 'type' => 'select', 'col' => 'pack', 'options' => 'pack_options', 'sync' => ['ea']],
     'packCode'   => ['label' => 'Pack code', 'group' => 'basics', 'type' => 'text', 'col' => 'pack_code', 'help' => 'EP08, SP12…'],
     'note'       => ['label' => 'Note', 'group' => 'notes', 'type' => 'textarea', 'col' => 'note', 'help' => 'Shown in the game\'s details.'],

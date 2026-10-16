@@ -42,22 +42,21 @@
     onDisc: games.filter(g => g.format === 'boxed' || g.format === 'cartridge-only').length,
   });
 
-  function hero(games) {
-    const { inApp, onDisc } = countOf(games);
+  // the intro (PAGE.intro) is left out for now, to keep the header short
+  function hero() {
     return `
       <header class="hero">
         <div>
           <div class="eyebrow">${esc(PAGE.eyebrow)}</div>
           <h1>${esc(PAGE.heading)} <em>${esc(PAGE.accent)}</em><img class="bob" src="${window.SITE?.base || ''}assets/plumbob.svg" alt="" width="30" height="60"></h1>
-          <p>${esc(PAGE.intro)}</p>
-        </div>
-        <div class="stats">
-          <div><b>${games.length}</b><span>In the collection</span></div>
-          <div><b>${onDisc}</b><span>On disc</span></div>
-          <div><b>${inApp}</b><span>In the EA app</span></div>
-          <div><b>${wants.length}</b><span>Still to find</span></div>
         </div>
       </header>`;
+  }
+
+  // the figures in the top bar, beside the site's name (js/app.js)
+  function figures(games) {
+    const { inApp, onDisc } = countOf(games);
+    return [[games.length, 'In the collection', 'Games'], [onDisc, 'On disc'], [inApp, 'In the EA app', 'EA app'], [wants.length, 'Still to find', 'To find']];
   }
 
   function checklist(root, games) {
@@ -130,13 +129,15 @@
     icon: (window.SITE?.base || '') + 'favicon-sims.svg',
     about: PAGE.description,
     data: ['data/sims-wants.json'],
-    games(db, w) { wants = w.wants; return db.games.filter(g => g.series); },
+    // its own series only: other games have a series too (Toy Story)
+    games(db, w) { wants = w.wants; return db.games.filter(g => SERIES.some(s => s.key === g.series)); },
     group(g) {
       const i = SERIES.findIndex(s => s.key === g.series);
       return { key: SERIES[i].id, label: SERIES[i].name, name: SERIES[i].name, order: i };
     },
     groupNoun: 'game',
     hero,
+    figures,
     checklist,
     drawer,
   };

@@ -32,6 +32,20 @@ function current_user(): ?array
     return $user;
 }
 
+/**
+ * Whether the owner is signed in, for the public pages: they only open the
+ * session when its cookie came along, so a visitor never gets one.
+ */
+function signed_in(): bool
+{
+    if (empty($_COOKIE['GAMES_SESSION'])) {
+        return false;
+    }
+    start_app_session();
+
+    return current_user() !== null;
+}
+
 function require_login(): array
 {
     $user = current_user();

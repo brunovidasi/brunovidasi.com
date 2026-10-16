@@ -98,6 +98,7 @@ function friend_settings(): array
 function site_script_config(): array
 {
     $views = views_settings();
+    $admin = signed_in();
 
     return [
         'views'       => $views['enabled'],
@@ -106,6 +107,8 @@ function site_script_config(): array
         'version'     => data_version(),
         'api'         => url('api/'),
         'base'        => url(''),
+        'admin'       => $admin, // the owner's own links: "Look for it" on what's still to find, a game's marks in its drawer
+        'csrf'        => $admin ? csrf_token() : null,
     ];
 }
 

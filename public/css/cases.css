@@ -66,7 +66,8 @@
     linear-gradient(90deg, rgba(255,255,255,.5) 0 5%, transparent 5% 55%, rgba(255,255,255,.4) 55% 60%, transparent 60% 90%, rgba(255,255,255,.35) 90% 94%, rgba(0,0,0,.2) 94%),
     repeating-linear-gradient(transparent 0 3px, rgba(255,255,255,.12) 3px 4px),
     linear-gradient(90deg, rgba(225,232,238,.75), rgba(175,184,194,.6) 50%, rgba(215,222,230,.7)); }
-.k-pc.kind-jewel.bk .ins { left: var(--iy); width: calc(var(--w) - 2 * var(--iy)); }
+/* any jewel case's back insert (a PlayStation one's too) runs edge to edge behind the tray, with no hinge gap */
+.kind-jewel.bk .ins { left: var(--iy); width: calc(var(--w) - 2 * var(--iy)); }
 .k-pc.kind-jewel.bk .scan { object-fit: fill; }
 /* the hinge ridge on keep cases */
 .kind-keep.cv::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--w) * .045); z-index: 3;

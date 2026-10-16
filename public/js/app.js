@@ -16,6 +16,7 @@
      group(g)    { key, label, name, order } — the game a copy belongs to
      groupNoun   what a group is called ("game")
      hero(games) the header's HTML
+     figures(games)     the figures in the top bar beside the site's name: [count, label, a shorter label for phones?]
      checklist(el, games)   draws the checklist view into el
      drawer(g, games)       optional: { title, html } of a section for a game's drawer, or null
                             (shown wherever the game is opened, the whole shelf too) */
@@ -136,15 +137,15 @@
     (!state.lib || !pcOnly() || inLib(g, state.lib))), state.sort);
 
   /* ---------- the header and controls ---------- */
-  // the header: on the shelf only room above the consoles, its figures small in the top bar beside its name;
-  // a collection's own header, with its figures in it
+  // the header: on the shelf only room above the consoles, a collection's own title and words; the figures,
+  // the shelf's or the collection's, small in the top bar beside the name ([count, label, a shorter one for phones])
   function hero() {
     const figures = $('#figures');
     if (figures) {
       const consoles = CONSOLES.filter(c => !c.hidden && DB.some(g => g.console === c.id));
-      const years = DB.map(g => g.released).filter(Boolean).map(r => +r.slice(0, 4));
-      figures.innerHTML = `<span><b>${consoles.length}</b> Consoles</span><span><b>${tally(DB)}</b> Games</span>`;
-      figures.hidden = !!CFG;
+      const figs = CFG ? CFG.figures(ALL) : [[consoles.length, 'Consoles'], [tally(DB), 'Games']];
+      figures.innerHTML = figs.map(([n, label, short]) => `<span><b>${n}</b> ${short
+        ? `<span class="fig-long">${esc(label)}</span><span class="fig-short">${esc(short)}</span>` : esc(label)}</span>`).join('');
     }
     $('#hero').innerHTML = CFG ? CFG.hero(ALL) : `<header class="hero hero-figures"><h1 class="sr-only">${esc(SITE.pages?.shelf?.title || document.title)}</h1></header>`;
   }
@@ -351,8 +352,16 @@
   tipEl.id = 'tip';
   document.body.append(tipEl);
   const host = $('#case');
+  const warmed = new Set();
+  function warm(g) {
+    if (!g?.cover || warmed.has(g)) return;
+    warmed.add(g);
+    Object.values(g.cover).forEach(f => { if (typeof f === 'string' && /\.(jpe?g|png|webp|avif|gif)$/i.test(f)) new Image().src = f; });
+  }
   host.addEventListener('pointerover', e => {
     const item = e.target.closest('[data-id]');
+    // a game pointed at fetches its pictures, so it is ready to come out the moment it is clicked (Detail.show)
+    if (item) warm(byId.get(item.dataset.id));
     if (!item || e.pointerType === 'touch' || !host.contains(item) || state.view !== 'shelf') return;
     const g = byId.get(item.dataset.id);
     tipEl.innerHTML = `<b>${esc(g.title)}</b><span>${CONSOLE_BY_ID[g.console].short}${g.platinum ? ' Platinum' : ''} · ${Case.year(g)} · ${esc(REGIONS[g.region]?.name || g.region)}${g.format !== 'boxed' ? ' · ' + FORMATS[g.format] : ''}</span>`;
@@ -1175,6 +1184,8 @@
       const more = e.target.closest('[data-more]');
       const go = e.target.closest('[data-go]');
       if (go) jump(byId.get(go.dataset.go));
+      const fl = e.target.closest('[data-flag]');
+      if (fl && cur) flag(cur.g, fl.dataset.flag, fl);
       if (more) { more.previousElementSibling.classList.toggle('all'); more.textContent = more.previousElementSibling.classList.contains('all') ? 'Show less' : 'Read more'; }
     });
 
@@ -1408,7 +1419,18 @@
     const related = g => Object.entries(COLLECTIONS).map(([k, c]) => {
       const r = c.drawer && LISTS[k] && c.drawer(g, LISTS[k]);
       return r ? section(r.title, r.html) : '';
-    }).join('') || packsHtml(g);
+    }).join('') || seriesHtml(g) || packsHtml(g);
+
+    // the other games of a series no collection takes in (Toy Story): one line each, oldest first, the packs left out
+    function seriesHtml(g) {
+      if (!g.series || g.pack) return '';
+      const fam = DB.filter(x => x.series === g.series && !x.twinOf && !x.pack);
+      if (fam.length < 2) return '';
+      const own = byId.get(g.twinOf) || g;
+      fam.sort((a, b) => (a.released || '').localeCompare(b.released || '') || ORDER[a.console] - ORDER[b.console]);
+      const item = x => `<li${x === own ? ' class="on" aria-current="true"' : ''}><button type="button" data-go="${esc(x === own ? g.id : x.id)}">${esc(x.title)}</button><small>${esc([CONSOLE_BY_ID[x.console].short, Case.year(x)].filter(Boolean).join(' · '))}</small></li>`;
+      return section(`The ${g.series} games`, `<div class="dw-packs"><ul>${fam.map(item).join('')}</ul></div>`);
+    }
 
     // a game and its packs: the copies titled as the game, and the ones with a pack (data/games.json) titled
     // "Game: Pack" or filed under it (sortAs) — Spore with Galactic Adventures, Age of Empires III with The WarChiefs
@@ -1456,9 +1478,39 @@
       return g.bundle ? section('Came in', list([g.bundle])) : '';
     }
 
+    // signed in, the copy's Favourite and Faces out marks, changed where it stands (admin/flags), and a link to edit it
+    function ownerHtml(g) {
+      if (!SITE.admin) return '';
+      const face = g.faceOut === true ? 'Faces out' : g.faceOut === false ? 'On its side' : 'Faces out: auto';
+      return `<div class="dw-owner">
+        <button type="button" data-flag="fav" aria-pressed="${!!g.fav}">★ Favourite</button>
+        <button type="button" data-flag="faceOut" aria-pressed="${g.faceOut === true}"${g.faceOut === false ? ' class="side"' : ''}>${face}</button>
+        <a href="${esc(BASE + 'admin/game?id=' + encodeURIComponent(g.id))}" target="_blank" rel="noopener">Edit ↗</a></div>`;
+    }
+    async function flag(g, field, button) {
+      button.disabled = true;
+      try {
+        const form = new FormData();
+        form.append('toggle', `${field}:${g.id}`);
+        form.append('csrf_token', SITE.csrf);
+        const r = await fetch(BASE + 'admin/flags', { method: 'POST', body: form, credentials: 'same-origin', headers: { Accept: 'application/json' } });
+        const json = await r.json().catch(() => null);
+        if (!r.ok || !json) throw new Error(json?.error || `The server answered ${r.status} without saying why.`);
+        const now = json.games[g.id];
+        g.fav = now.fav || undefined;
+        g.faceOut = now.faceOut ?? undefined;
+      } catch (err) {
+        alert(err.message);
+      }
+      // the drawer and the shelf behind it, as they are now (a game facing out stands differently)
+      if (body._g === g) { body._g = null; const top = body.scrollTop; fill(g); body.scrollTop = top; }
+      games = list();
+      render(false);
+    }
+
     function details(g) {
       const marks = [g.fav && '★ Favourite', g.platinum && 'Platinum', g.steelbook && 'SteelBook', g.kinect && 'Kinect', g.psn?.trophies?.platinum && 'Platinum trophy'].filter(Boolean);
-      return glance(g) + tags(marks)
+      return ownerHtml(g) + glance(g) + tags(marks)
         + (g.note ? `<p class="dw-note">${esc(g.note)}</p>` : '')
         + section('The copy', copyHtml(g))
         + elsewhereHtml(g)
@@ -1708,6 +1760,15 @@
         const turnFrom = back && back.turn !== 'none' ? back.turn : rot(from && !side ? fromPose(a.source) : [restPose[0], restPose[1] + (side || -1) * 40]);
         turn.animate([{ transform: turnFrom }, { transform: rot(restPose) }],
           { duration: side ? 620 : 820, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
+      }
+      // its pictures are only fetched now: it waits where it stands (a moment at most) until they can be drawn,
+      // so it comes out drawn and flying, not blank or in a jump, as it goes back
+      const pics = $$('img', turn).filter(im => { im.loading = 'eager'; return !im.complete; });
+      if (pics.length) {
+        const flying = piece.getAnimations({ subtree: true }).filter(x => x.constructor === Animation);
+        flying.forEach(x => x.pause());
+        const ready = Promise.all(pics.map(im => im.decode().catch(() => {})));
+        Promise.race([ready, new Promise(r => setTimeout(r, 400))]).then(() => { if (cur === a) flying.forEach(x => x.play()); });
       }
     }
 
@@ -2022,10 +2083,11 @@
 
   /* ---------- the collections: the whole shelf, or one series in its own look ---------- */
   // /sims or /gta in the address picks one; the top bar's links pick one in place
-  const SHELF = { title: document.title, icon: $('link[rel="icon"]')?.getAttribute('href'), about: $('meta[name="description"]')?.content };
+  // the shelf's own, from Settings: the page may have come dressed as a collection (index.php)
+  const SHELF = { title: SITE.pages?.shelf?.title || document.title, icon: BASE + 'favicon.svg', about: SITE.pages?.shelf?.description || '' };
   function setCollection(col) {
     const root = document.documentElement;
-    if (COL) root.classList.remove('collection', COL);
+    root.classList.remove('collection', ...Object.keys(COLLECTIONS)); // and the one index.php dressed it as
     COL = COLLECTIONS[col] ? col : '';
     CFG = COLLECTIONS[COL] || null;
     if (COL) root.classList.add('collection', COL);
@@ -2048,20 +2110,31 @@
     $$('.topnav [data-col]').forEach(a => a.dataset.col === COL ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     hero();
   }
+  // what a top bar's link opens on, every console showing: a collection in the grid, newest first,
+  // the whole shelf on its bookcase by console (remembered, so the site's name reloads it the same way)
+  function openFresh() {
+    state.sel = new Set();
+    state.view = CFG ? (VIEWS.includes('grid') ? 'grid' : DEFAULT_VIEW) : (VIEWS.includes('shelf') ? 'shelf' : DEFAULT_VIEW);
+    state.sort = validSort(CFG ? MENU.newest : MENU.console);
+    store.set('view', state.view);
+    store.set('sort', state.sort);
+  }
   // a click on the top bar's links changes the collection where it stands, fading from one look to the other;
-  // the collection showing goes back to the top of it with no console picked (/sims from /sims/pc).
+  // the collection showing goes back to the top of it (/sims from /sims/pc). Either way it opens fresh (openFresh).
   // The site's name is a plain link: it loads the whole shelf afresh
   $$('.topnav [data-col]').forEach(a => a.addEventListener('click', e => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button || !DB.length) return; // a new tab or window
     e.preventDefault();
     const col = a.dataset.col || '';
     if (col === COL) {
-      if (state.sel.size) { state.sel = new Set(); changed(); }
+      openFresh();
+      changed();
       scrollTo(0, 0);
       return;
     }
     const go = () => {
       setCollection(col);
+      openFresh();
       changed(); // a step in the history: /sims
       showPicked();
       scrollTo(0, 0);

@@ -21,41 +21,43 @@
   };
   const platform = id => CONSOLE_BY_ID[id] || OTHER[id];
 
-  /** An outline where a version still to find would stand, at that case's real size. */
+  /** An outline where a version still to find would stand, at that case's real size
+      (signed in, a search for it: "Look for it"). */
   function missing(title, id) {
     const p = platform(id);
     const s = Collection.stageH() / 190;
-    const a = document.createElement('a');
+    const look = !!window.SITE?.admin;
+    const a = document.createElement(look ? 'a' : 'div');
     a.className = 'cell missing';
-    a.href = `https://www.google.com/search?q=${encodeURIComponent(`${title} ${p.name}`)}`;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.setAttribute('aria-label', `${title} on ${p.name}: still to find. Look for it`);
+    if (look) {
+      a.href = `https://www.google.com/search?q=${encodeURIComponent(`${title} ${p.name}`)}`;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.setAttribute('aria-label', `${title} on ${p.name}: still to find. Look for it`);
+    }
     a.innerHTML = `<span class="stage"><span class="gt"><span class="ghostbox" style="width:${(p.w * s).toFixed(1)}px;height:${(p.h * s).toFixed(1)}px"><b>${esc(p.short)}</b><i>Still to find</i></span></span></span>
-      <span class="cap"><b>${esc(p.name)}</b><small>Look for it ↗</small></span>`;
+      <span class="cap"><b>${esc(p.name)}</b>${look ? '<small>Look for it ↗</small>' : ''}</span>`;
     return a;
   }
 
   let data, byId, all, wants;
   const gameOf = new Map(); // a copy's id → its game in data/gta.json
 
-  function hero(copies) {
-    const platforms = new Set(copies.map(g => g.console));
-    const years = all.map(g => +g.released.slice(0, 4));
+  // the intro (PAGE.intro) is left out for now, to keep the header short
+  function hero() {
     return `
       <header class="hero">
         <div>
           <div class="eyebrow">${esc(PAGE.eyebrow)}</div>
           <h1>${esc(PAGE.heading)} <em>${esc(PAGE.accent)}</em></h1>
-          <p>${esc(PAGE.intro).replace(/\{firstYear\}/g, Math.min(...years))}</p>
-        </div>
-        <div class="stats">
-          <div><b>${all.length}</b><span>Games</span></div>
-          <div><b>${copies.length}</b><span>Copies</span></div>
-          <div><b>${platforms.size}</b><span>Platforms</span></div>
-          <div><b>${wants.length}</b><span>Still to find</span></div>
         </div>
       </header>`;
+  }
+
+  // the figures in the top bar, beside the site's name (js/app.js)
+  function figures(copies) {
+    const platforms = new Set(copies.map(g => g.console));
+    return [[all.length, 'Games'], [copies.length, 'Copies'], [platforms.size, 'Platforms'], [wants.length, 'Still to find', 'To find']];
   }
 
   function checklist(root, copies) {
@@ -122,6 +124,7 @@
     },
     groupNoun: 'game',
     hero,
+    figures,
     checklist,
   };
 })();

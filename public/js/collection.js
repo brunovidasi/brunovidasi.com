@@ -83,7 +83,7 @@
       <span><b>${esc(w.title)}</b>
         <small>${[w.pack, Case.date(w.released), w.platform].filter(x => x && x !== 'Unknown').map(esc).join(' · ')}</small>
         ${w.note ? `<small class="note">${esc(w.note)}</small>` : ''}
-        <a href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Look for it ↗</a></span>
+        ${window.SITE?.admin ? `<a href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Look for it ↗</a>` : ''}</span>
     </div>`;
   }
 
