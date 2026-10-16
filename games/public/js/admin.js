@@ -260,6 +260,25 @@
   const board = $('#syncBoard');
   if (board) {
     const endpoint = board.dataset.endpoint;
+    // once a sync is over, its tile (status, Last synced, Result, Last try) and the figures are drawn again
+    // from the dashboard as the server has it now; offline or failing, the tile stays as it was
+    async function redraw(tile) {
+      try {
+        const r = await fetch(location.pathname + location.search, { credentials: 'same-origin', headers: { Accept: 'text/html' } });
+        if (!r.ok) return tile;
+        const page = new DOMParser().parseFromString(await r.text(), 'text/html');
+        const fresh = $(`.sync-tile[data-platform="${CSS.escape(tile.dataset.platform)}"]`, page);
+        if (fresh) {
+          tile.replaceWith(fresh);
+          tile = fresh;
+        }
+        $$('[data-refresh]').forEach(el => {
+          const now = $(`[data-refresh="${CSS.escape(el.dataset.refresh)}"]`, page);
+          if (now) el.replaceWith(now);
+        });
+      } catch (e) { /* the message under the tile still says how it went */ }
+      return tile;
+    }
     async function sync(tile) {
       const button = $('[data-sync]', tile), out = $('[data-out]', tile);
       const platform = tile.dataset.platform;
@@ -267,20 +286,27 @@
       tile.classList.add('busy');
       tile.classList.remove('failed', 'done');
       out.innerHTML = '<span class="spinner" aria-hidden="true"></span> Syncing… this takes up to a couple of minutes.';
+      let state, message;
       try {
         const res = await post(endpoint, { platform });
         if (res.status === 'error') throw Object.assign(new Error(res.message), { res });
-        tile.classList.add('done');
-        out.innerHTML = `${esc(res.message)}${res.run_url ? ` <a href="${esc(res.run_url)}">What changed</a>` : ''}`;
-        if (res.last) $('[data-last]', tile).textContent = res.last;
+        state = 'done';
+        message = `${esc(res.message)}${res.run_url ? ` <a href="${esc(res.run_url)}">What changed</a>` : ''}`;
       } catch (err) {
-        tile.classList.add('failed');
-        out.innerHTML = `<span class="error-text">${esc(err.message)}</span>${err.res?.run_url ? ` <a href="${esc(err.res.run_url)}">Log</a>` : ''}`;
+        state = 'failed';
+        message = `<span class="error-text">${esc(err.message)}</span>${err.res?.run_url ? ` <a href="${esc(err.res.run_url)}">Log</a>` : ''}`;
       }
+      tile = await redraw(tile);
       tile.classList.remove('busy');
-      button.disabled = false;
+      tile.classList.add(state);
+      $('[data-out]', tile).innerHTML = message;
+      $('[data-sync]', tile).disabled = false;
     }
-    $$('[data-sync]', board).forEach(b => b.addEventListener('click', () => sync(b.closest('.sync-tile'))));
+    // on the board, not on each button: a tile drawn again after its sync has buttons of its own
+    board.addEventListener('click', e => {
+      const button = e.target.closest('[data-sync]');
+      if (button && !button.disabled) sync(button.closest('.sync-tile'));
+    });
     $('[data-sync-all]', board)?.addEventListener('click', async e => {
       const all = e.currentTarget;
       all.disabled = true;
