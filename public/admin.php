@@ -32,14 +32,14 @@ if (is_file($head)) {
 }
 $cronToken = credential('cron', 'token');
 $cronUrl = $cronToken ? base_url() . '/cron_sync.php?token=' . rawurlencode($cronToken) : null;
-$lastCron = db()->query("SELECT * FROM sync_runs WHERE trigger_source = 'cron' ORDER BY id DESC LIMIT 1")->fetch() ?: null;
+$lastCron = db()->query("SELECT * FROM sync_runs WHERE trigger_source IN ('cron', 'cli') ORDER BY id DESC LIMIT 1")->fetch() ?: null;
 
 $familyNames = ['playstation' => 'PlayStation', 'nintendo' => 'Nintendo', 'pc' => 'PC', 'xbox' => 'Xbox'];
 
 admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
 ?>
 
-<section class="stats" aria-label="The collection in figures">
+<section class="stats" aria-label="The collection in figures" data-refresh="stats">
   <a class="stat big" href="<?= e(url('admin/games?flag=onsite')) ?>"><b><?= number_format($fig['games']) ?></b><span>Games</span></a>
   <a class="stat" href="<?= e(url('admin/games?format=physical&flag=onsite')) ?>"><b><?= number_format($fig['physical']) ?></b><span>Physical</span></a>
   <a class="stat" href="<?= e(url('admin/games?format=digital&flag=onsite')) ?>"><b><?= number_format($fig['digital']) ?></b><span>Digital</span></a>
@@ -185,7 +185,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
 </section>
 
 <div class="grid-2">
-  <section class="card" id="byConsole">
+  <section class="card" id="byConsole" data-refresh="consoles">
     <h2>By console</h2>
     <ul class="bars">
       <?php $max = max($fig['consoles'] ?: [1]); ?>
@@ -199,7 +199,7 @@ admin_header('Dashboard', 'Everything on the shelf, as the site counts it.');
     </ul>
   </section>
 
-  <section class="card">
+  <section class="card" data-refresh="launchers">
     <h2>PC launchers</h2>
     <ul class="bars">
       <?php $max = max($fig['launchers'] ?: [1]); ?>
