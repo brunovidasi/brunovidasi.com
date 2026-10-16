@@ -37,9 +37,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /domains/brunovidasi.com/public_html/
+          dry-run: true
+          # games/ is deployed by its own repo (brunovidasi/games-collection): excluded, it is
+          # never uploaded or deleted from here.
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             **/.github/**
             scripts/**
+            games/**

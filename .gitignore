@@ -9,3 +9,6 @@ projects/landing-pages/flowparty.com.au/Archive.zip
 
 # Generated at deploy time by scripts/fetch-github.mjs (needs a token).
 /json/github.json
+
+# Deployed from its own repo (brunovidasi/games-collection) to public_html/games.
+/games/

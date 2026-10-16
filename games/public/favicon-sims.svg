@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- the plumbob, in the Sims page's greens (css/sims.css) -->
-  <path d="M16 2 L7 16 L16 16 Z" fill="#b6f58e"/>
-  <path d="M16 2 L25 16 L16 16 Z" fill="#6fd64a"/>
-  <path d="M7 16 L16 30 L16 16 Z" fill="#2f8a1d"/>
-  <path d="M25 16 L16 30 L16 16 Z" fill="#1d5c12"/>
-</svg>
