@@ -216,7 +216,7 @@ export function renderMiniGameCard(project, sameYearAsPrevious, category){
         <button class="game-fullscreen-btn"${act('game-fullscreen', project.id)} title="Fullscreen">${ICON_FULLSCREEN_SVG}</button>
       </div>
       <div class="game-frame-wrap" id="gameFrame-${project.id}">
-        <iframe src="${escapeHtml(project.path)}" title="${title}" scrolling="no"></iframe>
+        <iframe data-src="${escapeHtml(project.path)}" title="${title}" scrolling="no"></iframe>
         ${GAME_DESKTOP_LOCK_HTML}
       </div>
       <div class="website-body">

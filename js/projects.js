@@ -77,6 +77,18 @@ function renderGrid(grid, items){
   }).join('');
 }
 
+/**
+ * Renders the grids one per task rather than all in one go: together they are
+ * well over a thousand elements, and building them in a single task froze the
+ * page for a noticeable moment on slower phones.
+ */
+async function renderGrids(grids, byCategory){
+  for(const grid of grids){
+    renderGrid(grid, byCategory[categoryOf(grid)]);
+    await new Promise(resolve => setTimeout(resolve));
+  }
+}
+
 /** Fills the `<n>` in headings like `<mini-tools count="12" />`. */
 function updateToolCounts(byCategory){
   document.querySelectorAll('.tool-count').forEach(el => {
@@ -208,10 +220,10 @@ export function initProjects(){
   const projectGrids = document.querySelectorAll('[id^="toolsGrid-"]');
   const categories = [...new Set(Array.from(projectGrids).map(categoryOf))];
 
-  return Promise.all(categories.map(loadCategory)).then(results => {
+  return Promise.all(categories.map(loadCategory)).then(async results => {
     const byCategory = Object.fromEntries(results);
 
-    projectGrids.forEach(grid => renderGrid(grid, byCategory[categoryOf(grid)]));
+    await renderGrids(projectGrids, byCategory);
     updateToolCounts(byCategory);
     updateCategoryMeta(byCategory);
     setupWebsiteHoverGifs();

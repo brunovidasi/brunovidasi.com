@@ -11,16 +11,20 @@ import { actSelector, registerActions } from './actions.js';
 import { updateDocumentTitle } from './router.js';
 import { updateToolTabFrames, loadFrameWithoutHistory } from './tool-tabs.js';
 import { renderWebsiteDetail } from './websites.js';
-import { fitGameFrame } from './games.js';
+import { fitGameFrame, loadGameFrames } from './games.js';
 import { startBioTyping } from './boot.js';
-import { startEmailReveal } from './contact.js';
+import { startEmailReveal, loadCaptcha } from './contact.js';
+import { renderGithubPanel } from './github.js';
+
+let lastShownPanelId = null;
 
 /**
  * Reveals the panel for the active tab and runs its one-off entrance effects.
  * Tool tabs have no panel of their own — their iframe is shown instead.
  */
 export function showActivePanel(){
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  // `no-fade` only covers the very first paint; from here on panels fade in.
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active', 'no-fade'));
   const empty = document.getElementById('emptyState');
   const isToolTab = state.activeId && files[state.activeId] && files[state.activeId].isToolTab;
 
@@ -39,12 +43,27 @@ export function showActivePanel(){
   if(!panel) return;
   panel.classList.add('active');
 
+  // Every panel shares one scrolling editor, so without this a page opened
+  // from far down another one would open part-way down too. Only on an actual
+  // switch: this also runs to re-render the panel that's already showing.
+  if(state.activeId !== lastShownPanelId){
+    document.getElementById('editorArea').scrollTop = 0;
+    lastShownPanelId = state.activeId;
+  }
+
   const sect = panel.querySelector('h2.sect');
   if(sect) humanTypeSect(sect);
   if(state.activeId === 'about') startBioTyping();
-  if(state.activeId === 'contact') startEmailReveal();
+  if(state.activeId === 'contact'){
+    startEmailReveal();
+    loadCaptcha();
+  }
+  if(state.activeId === 'github') renderGithubPanel();
   if(WEBSITE_STYLE_CATEGORIES.includes(state.activeId)) renderWebsiteDetail(state.activeId);
-  if(state.activeId === 'mini-games') fitGameFrame();
+  if(state.activeId === 'mini-games'){
+    loadGameFrames();
+    fitGameFrame();
+  }
 }
 
 // ---- Document embeds ------------------------------------------------------

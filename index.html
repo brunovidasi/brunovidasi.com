@@ -3,23 +3,25 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YE931YLK10"></script>
+<!-- Google tag (gtag.js). Calls queue in dataLayer straight away; the library
+     itself is fetched once the page has loaded and gone idle, so it never
+     competes with the first paint. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-YE931YLK10');
-</script>
 
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MPX7KT');</script>
-<!-- End Google Tag Manager -->
+  addEventListener('load', function(){
+    (window.requestIdleCallback || setTimeout)(function(){
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YE931YLK10';
+      document.head.appendChild(s);
+    }, { timeout: 3000 });
+  });
+</script>
 
 <meta name="google-site-verification" content="0n1i6yENIhCmFAn8gLPTdebr-a__Yv87JZLwsTPsAdQ" />
 <meta name="google-site-verification" content="4yZ1b2NMRtxMHCE4Z_wYrv0dqA6MPCBSpJlgfOoTv-M" />
@@ -40,18 +42,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/JetBrainsMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
 </head> 
 <body>
 
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MPX7KT"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
 <canvas id="bgRain"></canvas>
 <div class="bg-overlay">
-  <img class="bg-overlay-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
+  <img class="bg-overlay-logo" src="assets/bv-logo.svg" width="116" height="40" alt="Bruno Vieira logo">
   <div class="bg-overlay-note">
     <p class="bg-overlay-text" id="bgOverlayText">This website itself is hand-coded by me from scratch — a small showcase of my work in its own right :-)</p>
     <div class="bg-overlay-sign" id="bgOverlaySign">— Bruno Vieira</div>
@@ -61,7 +60,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <div id="rain"></div>
-<div id="boot"><pre id="bootText"></pre></div>
+<div id="boot"><div id="bootText"></div></div>
 
 <div id="app">
 
@@ -72,7 +71,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="dot g" id="dotGreen" title="Toggle sidebar"></button>
     <span class="path">bruno-vieira — dev-portfolio</span>
     <button class="titlebar-logo-btn" id="titlebarLogoBtn" title="Go to intro.js">
-      <img class="titlebar-logo" src="assets/bv-logo.svg" alt="Bruno Vieira logo">
+      <img class="titlebar-logo" src="assets/bv-logo.svg" width="46" height="16" alt="Bruno Vieira logo">
     </button>
     <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu">
       <svg viewBox="0 0 24 24"><use href="img/icons/sprite.svg#icon-menu"></use></svg>
@@ -124,7 +123,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="empty-state" id="emptyState">No file is open — select one from the explorer to continue.</div>
 
         <!-- INTRO -->
-        <div class="panel" id="panel-intro">
+        <div class="panel active no-fade" id="panel-intro">
           <h1 class="hero"><span class="fixed-part">Hi, I'm Bruno. <span class="wave-emoji">👋</span></span><span id="heroVariable"></span><span class="cursor-caret">|</span></h1>
 
           <code class="block">
@@ -202,9 +201,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="about-header">
             <div class="avatar-wrap">
               <div class="avatar-ring"></div>
-              <div class="avatar-circle-bg"><img src="img/bg.jpeg" alt=""></div>
+              <div class="avatar-circle-bg"><img src="img/bg.jpeg" alt="" loading="lazy"></div>
               <div class="avatar-photo-mask">
-                <img class="avatar-photo" src="img/avatar.png" alt="Bruno Vieira">
+                <img class="avatar-photo" src="img/avatar.webp" alt="Bruno Vieira" loading="lazy">
               </div>
               <div class="speech-bubble">hello world! 👋</div>
             </div>
@@ -245,7 +244,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <span class="stack-pill">Tailwind CSS</span><span class="stack-pill">REST APIs</span><span class="stack-pill">Contentful</span>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/dijitally.png" alt="Dijitally logo">
+            <img class="commit-logo" src="img/clients/dijitally.webp" alt="Dijitally logo" loading="lazy">
           </div>
 
           <div class="commit" data-company="Dentsu">
@@ -270,7 +269,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/dentsu.png" alt="Dentsu logo">
+            <img class="commit-logo" src="img/clients/dentsu.webp" alt="Dentsu logo" loading="lazy">
           </div>
 
           <div class="commit" data-company="General Pants Co.">
@@ -294,7 +293,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/generalpants.png" alt="General Pants Co. logo">
+            <img class="commit-logo" src="img/clients/generalpants.webp" alt="General Pants Co. logo" loading="lazy">
           </div>
 
           <div class="commit" data-company="The Hallway">
@@ -319,7 +318,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/thehallway.png" alt="The Hallway logo">
+            <img class="commit-logo" src="img/clients/thehallway.webp" alt="The Hallway logo" loading="lazy">
           </div>
 
           <div class="commit" data-company="SCE Sistemas">
@@ -342,7 +341,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/scesistemas.png" alt="SCE Sistemas logo">
+            <img class="commit-logo" src="img/clients/scesistemas.webp" alt="SCE Sistemas logo" loading="lazy">
           </div>
 
           <div class="commit" data-company="AM4">
@@ -363,7 +362,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/am4.png" alt="AM4 logo">
+            <img class="commit-logo" src="img/clients/am4.webp" alt="AM4 logo" loading="lazy">
           </div>
 
           <div class="commit" data-company="Imaginatto">
@@ -385,7 +384,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </ul>
               </div>
             </div>
-            <img class="commit-logo" src="img/clients/imaginatto.png" alt="Imaginatto logo">
+            <img class="commit-logo" src="img/clients/imaginatto.webp" alt="Imaginatto logo" loading="lazy">
           </div>
         </div>
 
@@ -439,7 +438,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                   </div>
                   <div class="case-body">
                     <div class="case-head">
-                      <img class="case-logo" src="projects/programmertime/ptime_logo.png" alt="ProgrammerTime logo">
+                      <img class="case-logo" src="projects/programmertime/ptime_logo.png" alt="ProgrammerTime logo" loading="lazy">
                       <span class="case-badge">🎓 Final Thesis (TCC) · Estácio de Sá · 2015</span>
                     </div>
                     <div class="stack-row">
@@ -911,13 +910,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="skill-label mt-26">Some of my clients</div>
           <div class="client-logos">
             <a href="https://www.brazilianculturalcentre.com/" target="_blank" rel="noopener" title="Brazilian Cultural Centre">
-              <img src="img/clients/brazilian-cultural-centre.png" alt="Brazilian Cultural Centre">
+              <img src="img/clients/brazilian-cultural-centre.webp" alt="Brazilian Cultural Centre" loading="lazy">
             </a>
             <a href="https://www.darualab.com/" target="_blank" rel="noopener" title="Darua Lab">
-              <img src="img/clients/darua-lab.png" alt="Darua Lab">
+              <img src="img/clients/darua-lab.webp" alt="Darua Lab" loading="lazy">
             </a>
             <a href="https://flowpartysyd.com/" target="_blank" rel="noopener" title="FLOW Party Sydney">
-              <img src="img/clients/flow.webp" alt="FLOW Party Sydney">
+              <img src="img/clients/flow.webp" alt="FLOW Party Sydney" loading="lazy">
             </a>
           </div>
 
@@ -1179,7 +1178,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="bottom-panel-resize-hit" id="bottomPanelResizeHit" hidden></div>
 
 <script type="module" src="js/main.js"></script>
-<script src="https://js.hcaptcha.com/1/api.js?recaptchacompat=off" async defer></script>
 
 </body>
 </html>

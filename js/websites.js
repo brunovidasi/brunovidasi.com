@@ -151,7 +151,7 @@ function websiteViewModel(project, category){
     urlHtml: escapeHtml(project.url),
     yearHtml: project.year ? `<span class="website-year">${escapeHtml(String(project.year))}</span> ` : '',
     roleHtml: project.role ? `<div class="website-role">${escapeHtml(project.role)}</div>` : '',
-    logoHtml: project.logo ? `<img class="website-logo" src="${escapeHtml(project.logo)}" alt="${title} logo">` : '',
+    logoHtml: project.logo ? `<img class="website-logo" src="${escapeHtml(project.logo)}" alt="${title} logo" loading="lazy">` : '',
     techHtml: techList.length
       ? `<div class="website-tech">${techList.map(t => `<span class="kw-pill">${escapeHtml(t)}</span>`).join('')}</div>`
       : '',

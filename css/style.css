@@ -61,7 +61,7 @@
 
 @font-face {
   font-family: 'seti';
-  src: url('../fonts/seti.woff') format('woff');
+  src: url('../fonts/seti.woff2') format('woff2'), url('../fonts/seti.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -262,7 +262,10 @@ h2.sect .brk {
   transition: opacity .6s ease;
 }
 
-#boot pre {
+/* One element per line, not one growing block: the browser times "page
+   loaded" (LCP) by its largest element, and a block that keeps growing
+   until the boot ends would push that to the end of the animation. */
+#bootText {
   margin: 0;
   white-space: pre-wrap;
   padding: 0 20px;
@@ -430,13 +433,10 @@ h2.sect .brk {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  opacity: 0;
+  /* Painted from the start, underneath the opaque boot screen, so the
+     content counts as loaded while the intro plays over it. */
   transition: opacity .8s ease, transform .35s ease;
   transform-origin: 130px calc(100% - 34px);
-}
-
-#app.show {
-  opacity: 1;
 }
 
 #app.minimized {
@@ -585,6 +585,13 @@ h2.sect .brk {
 .panel.active {
   display: block;
   animation: fadein .25s ease;
+}
+
+/* The panel that's in the HTML already open skips the fade: it's under the
+   boot screen anyway, and an element at opacity 0 doesn't count as painted,
+   so fading it would delay the "page loaded" (LCP) time. */
+.panel.active.no-fade {
+  animation: none;
 }
 
 @keyframes fadein {
@@ -900,6 +907,9 @@ h2.sect .brk {
 .tabs {
   flex: 0 0 auto;
   display: flex;
+  /* A tab's height plus the border: holds the space before JS adds the tabs,
+     so the editor doesn't jump down when they appear. */
+  min-height: 36px;
   background: var(--panel);
   border-bottom: 1px solid var(--line);
   overflow-x: auto;

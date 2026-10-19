@@ -33,6 +33,17 @@ export function fitGameFrame(){
   wraps.forEach(wrap => { wrap.style.height = sharedHeight; });
 }
 
+/**
+ * The games are live pages with their own animation loops, so they only load
+ * once the panel is first opened, not in the background on every visit.
+ */
+export function loadGameFrames(){
+  document.querySelectorAll('.game-frame-wrap iframe[data-src]').forEach(iframe => {
+    iframe.src = iframe.dataset.src;
+    iframe.removeAttribute('data-src');
+  });
+}
+
 /** Re-measures once each freshly rendered game frame has loaded. */
 export function watchGameFrames(){
   document.querySelectorAll('.game-frame-wrap iframe').forEach(iframe => {
@@ -40,6 +51,8 @@ export function watchGameFrames(){
     iframe.dataset.fitWired = '1';
     iframe.addEventListener('load', fitGameFrame);
   });
+  // Rendered while the panel was already open (a direct visit to it).
+  if(document.querySelector('#panel-mini-games.active')) loadGameFrames();
 }
 
 function openGameFullscreen(id){

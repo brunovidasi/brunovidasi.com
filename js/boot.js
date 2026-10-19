@@ -18,24 +18,29 @@ import { isDevMode, isLocalhost } from './router.js';
 const BOOT_CHAR_MS = 18;
 const BOOT_LINE_PAUSE_MS = 120;
 
+/** Types each line into its own element (see the #bootText note in style.css). */
 function typeBootLines(){
   const bootEl = document.getElementById('bootText');
   let lineIndex = 0;
 
   function typeLine(){
     if(lineIndex >= bootLines.length){
-      bootEl.innerHTML = bootEl.innerHTML.replace(/_\n$/, '<span class="boot-cursor">_</span>\n');
+      const lastLine = bootEl.lastElementChild;
+      if(lastLine && lastLine.textContent.endsWith('_')){
+        lastLine.textContent = lastLine.textContent.slice(0, -1);
+        lastLine.insertAdjacentHTML('beforeend', '<span class="boot-cursor">_</span>');
+      }
       setTimeout(showRain, 250);
       return;
     }
     const line = bootLines[lineIndex];
+    const lineEl = bootEl.appendChild(document.createElement('div'));
     let charIndex = 0;
     const interval = setInterval(()=>{
-      bootEl.textContent = bootEl.textContent.replace(/▍$/, '') + line[charIndex];
+      lineEl.textContent += line[charIndex];
       charIndex++;
       if(charIndex < line.length) return;
       clearInterval(interval);
-      bootEl.textContent += '\n';
       lineIndex++;
       setTimeout(typeLine, BOOT_LINE_PAUSE_MS);
     }, BOOT_CHAR_MS);
@@ -81,8 +86,8 @@ function showRain(){
   }, 45);
 }
 
+/** The app is already painted under the boot screen; this just starts it moving. */
 function revealApp(){
-  document.getElementById('app').classList.add('show');
   startCyclingTagline();
 }
 

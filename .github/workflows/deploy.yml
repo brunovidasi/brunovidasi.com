@@ -29,6 +29,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_STATS_TOKEN || github.token }}
 
+      # Bundles the JS, minifies the CSS and fingerprints both (see the script).
+      # Unlike the snapshot above, a failure here stops the deploy.
+      - name: Build assets
+        run: |
+          npm install --no-save --no-package-lock esbuild@0.28.1
+          node scripts/build-assets.mjs
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

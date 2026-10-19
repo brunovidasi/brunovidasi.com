@@ -60,6 +60,31 @@ function copyEmail(){
   });
 }
 
+// ---- Captcha --------------------------------------------------------------
+
+// hCaptcha is close to 1 MB of script and iframes, so it is only fetched once
+// the contact panel is opened (or the form is touched), not on every visit.
+const HCAPTCHA_SRC = 'https://js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&onload=';
+const HCAPTCHA_ONLOAD = 'onHcaptchaLoad';
+
+let captchaRequested = false;
+
+export function loadCaptcha(){
+  if(captchaRequested) return;
+  const el = document.querySelector('#contactForm .h-captcha');
+  if(!el) return;
+  captchaRequested = true;
+
+  window[HCAPTCHA_ONLOAD] = ()=> window.hcaptcha.render(el, {
+    sitekey: el.dataset.sitekey,
+    theme: el.dataset.theme
+  });
+  const script = document.createElement('script');
+  script.src = HCAPTCHA_SRC + HCAPTCHA_ONLOAD;
+  script.async = true;
+  document.head.appendChild(script);
+}
+
 // ---- Form -----------------------------------------------------------------
 
 const FORM_ENDPOINT = 'https://api.web3forms.com/submit';
@@ -116,6 +141,7 @@ export function initContact(){
   }
 
   document.getElementById('contactForm').addEventListener('submit', submitContactForm);
+  document.getElementById('contactForm').addEventListener('focusin', loadCaptcha);
   document.getElementById('contactFormReset').addEventListener('click', (e)=>{
     e.preventDefault();
     document.getElementById('contactFormSuccess').hidden = true;

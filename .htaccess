@@ -11,6 +11,12 @@ RewriteEngine on
   <FilesMatch "\.(png|jpe?g|gif|webp|avif|svg|ico|woff2?|ttf|otf|eot|mp3|mp4|webm)$">
     Header set Cache-Control "public, max-age=604800"
   </FilesMatch>
+  # The bundle and stylesheet the deploy build fingerprints (main.<hash>.js,
+  # style.<hash>.css): a new version always gets a new name, so they never
+  # need revalidating. Comes after the no-cache rule above so it wins.
+  <FilesMatch "^(main|style)\.[0-9a-f]{10}\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
 </IfModule>
 
 ErrorDocument 400 /400.shtml

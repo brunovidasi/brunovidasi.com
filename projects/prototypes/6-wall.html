@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FLOW — The Wall</title>
+<link rel="icon" href="../assets/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* palette from the rainbow W of the FLOW logo */
+  :root {
+    --bg: #17123a;
+    --bg-2: #211a4d;
+    --ink: #f7f3ec;
+    --muted: #b3acd0;
+    --purple: #602a73;
+    --red: #ce2127;
+    --orange: #f06a22;
+    --yellow: #f0cc12;
+    --green: #7cbf42;
+    --blue: #2261a2;
+    --navy: #2e235f;
+    --line: rgba(255,255,255,.14);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; overflow: hidden; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; }
+  .display { font-family: Unbounded, sans-serif; font-weight: 800; letter-spacing: -.02em; }
+
+  .proto-badge { position: fixed; left: 12px; bottom: 12px; z-index: 60; font: 700 11px/1 Inter; letter-spacing: .06em; text-transform: uppercase; padding: 9px 12px; border-radius: 99px; background: rgba(0,0,0,.4); backdrop-filter: blur(8px); border: 1px solid var(--line); color: var(--muted); text-decoration: none; }
+
+  /* THE WALL */
+  .wall { position: fixed; inset: 0; overflow: hidden; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+    background-image: radial-gradient(rgba(255,255,255,.07) 1.2px, transparent 1.2px); background-size: 28px 28px; }
+  .wall.grabbing { cursor: grabbing; }
+  .tile { position: absolute; left: 0; top: 0; will-change: transform; }
+  .tile .in { width: var(--w); height: var(--h); rotate: var(--r); border-radius: 16px; overflow: hidden; box-shadow: 0 18px 40px rgba(5,3,20,.5); transition: scale .3s cubic-bezier(.2,.8,.2,1), rotate .3s, opacity .4s, filter .4s; background: var(--bg-2); }
+  .tile:hover .in { scale: 1.06; rotate: 0deg; }
+  .tile:hover { z-index: 5; }
+  .tile.dim .in { opacity: .1; filter: grayscale(1); scale: .9; }
+  .tile.dim { pointer-events: none; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .tile.placard .in { border: 5px solid #fff; border-radius: 12px; }
+  .card { width: 100%; height: 100%; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; background: var(--c); color: var(--fg, #fff); }
+  .card .lg { flex: 1; display: grid; place-items: center; padding: 8px 6px; min-height: 0; }
+  .card .lg img { max-height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
+  .card .no { font: 800 13px Unbounded; opacity: .75; }
+  .card h3 { font: 800 clamp(15px, 1.4vw, 19px)/1.1 Unbounded; letter-spacing: -.01em; text-transform: uppercase; }
+  .card small { font-size: 12px; font-weight: 500; opacity: .85; }
+  .card .big { font: 800 64px/1 Unbounded; letter-spacing: -.04em; opacity: .9; }
+  .card.words { justify-content: center; }
+  .card.words p { font: 800 clamp(20px, 2vw, 28px)/1.1 Unbounded; letter-spacing: -.02em; text-transform: uppercase; }
+  .card.words span { font-size: 13px; margin-top: 10px; opacity: .85; display: block; }
+
+  /* CHROME */
+  header.top { position: fixed; inset: 0 0 auto; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 14px clamp(14px, 3vw, 32px); pointer-events: none; }
+  header.top > * { pointer-events: auto; }
+  header.top .mark { height: 48px; filter: drop-shadow(0 4px 10px rgba(0,0,0,.4)); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; border-radius: 99px; font-weight: 700; font-size: 14px; text-decoration: none; border: 0; cursor: pointer; background: var(--ink); color: var(--bg); white-space: nowrap; transition: transform .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.ghost { background: rgba(255,255,255,.1); color: var(--ink); backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px var(--line); }
+
+  .filters { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 30; display: flex; gap: 6px; padding: 6px; border-radius: 99px; background: rgba(23,18,58,.75); backdrop-filter: blur(14px); border: 1px solid var(--line); max-width: calc(100vw - 24px); overflow-x: auto; scrollbar-width: none; }
+  .filters button { padding: 10px 16px; border-radius: 99px; border: 0; background: transparent; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap; color: var(--muted); }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .filters button i { font-style: normal; opacity: .6; margin-left: 4px; font-weight: 500; }
+
+  .nextcard { position: fixed; right: 18px; bottom: 18px; z-index: 30; width: 250px; border-radius: 20px; overflow: hidden; background: rgba(23,18,58,.8); backdrop-filter: blur(14px); border: 1px solid var(--line); }
+  .nextcard .stripe { height: 6px; background: linear-gradient(90deg, var(--purple) 0 16.6%, var(--red) 0 33.3%, var(--orange) 0 50%, var(--yellow) 0 66.6%, var(--green) 0 83.3%, var(--blue) 0); }
+  .nextcard div.b { padding: 14px 16px 16px; }
+  .nextcard small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .nextcard b { display: block; font: 800 16px/1.2 Unbounded; margin: 4px 0 12px; }
+  .nextcard .btn { width: 100%; padding: 11px; }
+
+  /* intro */
+  .intro { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at center, rgba(23,18,58,.9) 25%, rgba(23,18,58,.45) 75%); transition: opacity .6s, visibility .6s; pointer-events: none; }
+  .intro.gone { opacity: 0; visibility: hidden; }
+  .intro-card { pointer-events: none; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .intro-card img { height: min(40vh, 360px); width: auto; filter: drop-shadow(0 20px 40px rgba(0,0,0,.5)); }
+  .intro-card h1 { font-size: clamp(22px, 3vw, 40px); line-height: 1.1; margin-top: 22px; max-width: 700px; text-transform: uppercase; }
+  .intro-card p { color: var(--ink); opacity: .85; margin-top: 12px; font-size: 16px; }
+  .intro-card .ctas { pointer-events: auto; display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; justify-content: center; }
+  .drag-hint { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .drag-hint span { display: inline-block; animation: nudge 1.6s ease-in-out infinite; font-size: 18px; }
+  @keyframes nudge { 50% { transform: translateX(10px); } }
+
+  /* lightbox */
+  dialog { margin: auto; border: 0; padding: 0; background: transparent; color: var(--ink); max-width: min(92vw, 900px); max-height: 92vh; overflow: visible; }
+  dialog::backdrop { background: rgba(10,8,28,.88); backdrop-filter: blur(6px); }
+  dialog .lb { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  dialog .lb img { max-width: 92vw; max-height: 78vh; border-radius: 14px; }
+  dialog .lb .card { width: min(88vw, 460px); height: auto; min-height: 460px; border-radius: 22px; }
+  dialog .lb .card .lg { min-height: 180px; }
+  dialog .lb .card .lg img { max-height: 180px; }
+  dialog .lb .card p.story { font-size: 16px; line-height: 1.5; margin-top: 10px; }
+  dialog .cap { font-size: 14px; color: var(--muted); }
+  dialog .x { position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--ink); color: var(--bg); font-size: 18px; cursor: pointer; }
+
+  @media (max-width: 760px) {
+    .nextcard { display: none; }
+    .filters { bottom: 54px; }
+    .card { padding: 12px; }
+    .card .big { font-size: 40px; }
+    .card h3 { font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="proto-badge" href="index.html">← Prototype 6 · The Wall</a>
+
+<div class="wall" id="wall" tabindex="0" aria-label="Wall of FLOW placards, flyers, photos and past editions. Drag or use arrow keys to explore."></div>
+
+<header class="top">
+  <button class="btn ghost" id="aboutBtn" aria-label="Show intro" style="padding:0;background:none;box-shadow:none"><img class="mark" src="img/flow-logo.webp" alt="FLOW"></button>
+  <a class="btn" href="#">Tickets</a>
+</header>
+
+<div class="intro" id="intro">
+  <div class="intro-card">
+    <img src="img/flow-logo.webp" alt="FLOW">
+    <h1 class="display">Sydney's biggest Brazilian queer party</h1>
+    <p>Three years, eleven parties, one very full wall.</p>
+    <div class="ctas">
+      <button class="btn" id="explore">Explore the wall</button>
+      <a class="btn ghost" href="#">Next party: 31 Oct →</a>
+    </div>
+    <div class="drag-hint"><span>✋</span> Drag anywhere</div>
+  </div>
+</div>
+
+<nav class="filters" id="filters" aria-label="Filter the wall"></nav>
+
+<aside class="nextcard">
+  <div class="stripe"></div>
+  <div class="b"><small>Next party · sample data</small><b>Halloween III<br>Sat 31 Oct · Kinselas</b><a class="btn" href="#">Get tickets</a></div>
+</aside>
+
+<dialog id="lb"><button class="x" aria-label="Close" onclick="lb.close()">✕</button><div class="lb" id="lbBody"></div></dialog>
+
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = s => document.querySelector(s);
+
+/* ---------- CONTENT ---------- */
+const STRIPE = [["--purple", "#fff"], ["--red", "#fff"], ["--orange", "#fff"], ["--yellow", "#17123a"], ["--green", "#17123a"], ["--blue", "#fff"]];
+const EDS = [
+  ["Flow Exclusive", "Apr 2021", null, "The launch party, for friends only. Where it all started: about 100 people."],
+  ["Flow Carnaval", "Dec 2021", "carnaflow", "The end of lockdown, celebrated carnaval-style. Our first night with live bands. ~300 people."],
+  ["Flow Mardi Gras", "Mar 2022", "flowmardigras", "Our biggest night at the time. We had to stop selling tickets at venue capacity. ~400 people."],
+  ["Flow Glow", "May 2022", "flowglowok", "A VIVID-season special: UV lights, neon face paint, lasers and projections. ~250 people."],
+  ["Flow Pankadão", "Jul 2022", "pankadao", "Favela-inspired baile funk. Our fastest sell-out. ~350 people."],
+  ["Flow Wonderland", "Oct 2022", "halloween", "Alice in Wonderland meets Halloween: two rooms, live shows and a record 500-person crowd."],
+  ["Flow Carnaval", "Dec 2022", "carnaflow", "A free day party packed with the best Brazilian carnaval hits. ~400 people."],
+  ["Flow World Pride", "Mar 2023", "mardigays", "World Pride at the Oxford Art Factory: 7.5 hours, live performances and five DJs. ~400 people."],
+  ["Pankadão II", "Jul 2023", "pankadao2", "By popular demand, one of our best-received parties came back bigger and louder."],
+  ["Flow Halloween", "Oct 2023", "halloween", "Halloween at Kinselas: 7.5 hours of partying, shows and five DJs. ~500 people."],
+  ["metAMORphosis", "Feb 2024", null, "Our first night at Arq Sydney: circus artists and an after-party, almost 12 hours. ~400 people."],
+];
+const WORDS = [
+  ["Be whoever you are", "The only dress code that matters"],
+  ["500", "Our record crowd, one night"],
+  ["Vem pra FLOW", "Come to FLOW"],
+  ["Since 2021", "11 parties and counting"],
+  ["Funk · Pop · Carnaval", "Three flavours, one dancefloor"],
+];
+const items = [];
+for (let i = 1; i <= 16; i++) items.push({ type: "placards", src: `img/wall/banners-${String(i).padStart(2, "0")}.webp`, big: `img/wall/banners-${String(i).padStart(2, "0")}.webp`, ar: .83, cap: "A FLOW party placard" });
+[["flyers-3-edition", "../assets/img/flyers/3-edition.jpg", .7, "Flow Mardi Gras flyer, 2022"], ["flyers-6-edition", "../assets/img/flyers/6-edition.jpg", .7, "Halloween in Wonderland flyer, 2022"], ["flyers-7-edition", "../assets/img/flyers/7-edition.png", 1.4, "Carnaval day party flyer, 2022"], ["logo-fw", "../assets/img/logos/fw.png", .56, "Flow at Freekin Weekends, Dec 2022"]]
+  .forEach(([f, big, ar, cap]) => items.push({ type: "flyers", src: `img/wall/${f}.webp`, big, ar, cap }));
+[["img-header-bg", "../assets/img/header-bg.jpg"], ["img-image-2", "../assets/img/image-2.jpg"]]
+  .forEach(([f, big]) => items.push({ type: "photos", src: `img/wall/${f}.webp`, big, ar: 1.5, cap: "On the dancefloor at FLOW" }));
+EDS.forEach((e, i) => items.push({ type: "parties", ed: e, no: i + 1, ar: .8 }));
+WORDS.forEach((w, i) => items.push({ type: "words", words: w, ar: 1, k: i }));
+
+// deterministic shuffle so the wall looks the same on every visit
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const order = items.map((it, i) => [rnd(), it]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+
+/* ---------- FILTERS ---------- */
+const FILTERS = [["all", "Everything"], ["parties", "Parties"], ["placards", "Placards"], ["flyers", "Flyers"], ["photos", "Photos"], ["words", "Words"]];
+const counts = items.reduce((m, it) => (m[it.type] = (m[it.type] || 0) + 1, m), {});
+$("#filters").innerHTML = FILTERS.map(([k, n]) => `<button data-f="${k}" aria-pressed="${k === "all"}">${n}${k !== "all" ? `<i>${counts[k]}</i>` : ""}</button>`).join("");
+let filter = "all";
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  filter = b.dataset.f;
+  $("#filters").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  tiles.forEach(t => t.el.classList.toggle("dim", filter !== "all" && t.item.type !== filter));
+  dismissIntro();
+});
+
+/* ---------- BUILD THE GRID ---------- */
+const wall = $("#wall");
+let tiles = [], CW, CH, COLS, ROWS, WW, WH;
+function tileHTML(it) {
+  if (it.type === "parties") {
+    const [n, d, logo] = it.ed, [c, fg] = STRIPE[it.no % STRIPE.length];
+    return `<div class="card" style="--c:var(${c});--fg:${fg}"><span class="no">#${String(it.no).padStart(2, "0")}</span>
+      <div class="lg">${logo ? `<img src="img/wall/logo-${logo}.webp" alt="">` : `<span class="big">${String(it.no).padStart(2, "0")}</span>`}</div>
+      <div><h3>${n}</h3><small>${d}</small></div></div>`;
+  }
+  if (it.type === "words") {
+    const [c, fg] = STRIPE[(it.k * 2 + 1) % STRIPE.length];
+    return `<div class="card words" style="--c:var(${c});--fg:${fg}"><p>${it.words[0]}</p><span>${it.words[1]}</span></div>`;
+  }
+  return `<img src="${it.src}" alt="${it.cap}" loading="lazy" draggable="false">`;
+}
+function build() {
+  const small = innerWidth < 760;
+  CW = small ? 180 : 290; CH = small ? 230 : 360;
+  COLS = Math.ceil(innerWidth / CW) + 3; ROWS = Math.ceil(innerHeight / CH) + 3;
+  WW = COLS * CW; WH = ROWS * CH;
+  wall.innerHTML = ""; tiles = [];
+  let k = 0;
+  for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) {
+    const it = order[k++ % order.length];
+    const maxW = CW - (small ? 26 : 44), maxH = CH - (small ? 26 : 44);
+    let w = maxW, h = w / it.ar;
+    if (h > maxH) { h = maxH; w = h * it.ar; }
+    const el = document.createElement("div");
+    el.className = `tile ${it.type === "placards" ? "placard" : ""}`;
+    el.style.setProperty("--w", w + "px"); el.style.setProperty("--h", h + "px");
+    el.style.setProperty("--r", ((rnd() - .5) * 7).toFixed(1) + "deg");
+    el.innerHTML = `<div class="in">${tileHTML(it)}</div>`;
+    if (filter !== "all" && it.type !== filter) el.classList.add("dim");
+    wall.appendChild(el);
+    tiles.push({ el, item: it, bx: c * CW + (CW - w) / 2 + (rnd() - .5) * 20, by: r * CH + (CH - h) / 2 + (c % 2 ? CH / 2 : 0) + (rnd() - .5) * 20 });
+  }
+}
+build();
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 150); });
+
+/* ---------- PAN: drag, flick, wheel, keys, idle drift ---------- */
+let ox = 0, oy = 0, vx = 0, vy = 0, dragging = false, moved = 0, lastMove = 0, last = { x: 0, y: 0, t: 0 }, idleSince = performance.now();
+wall.addEventListener("pointerdown", e => {
+  dragging = true; moved = 0; wall.setPointerCapture(e.pointerId); wall.classList.add("grabbing");
+  last = { x: e.clientX, y: e.clientY, t: performance.now() }; vx = vy = 0;
+  downTarget = e.target.closest(".tile");
+});
+wall.addEventListener("pointermove", e => {
+  if (!dragging) return;
+  const now = performance.now(), dx = e.clientX - last.x, dy = e.clientY - last.y, dt = Math.max(1, now - last.t);
+  ox += dx; oy += dy; moved += Math.abs(dx) + Math.abs(dy);
+  vx = dx / dt * 1000; vy = dy / dt * 1000;
+  last = { x: e.clientX, y: e.clientY, t: now }; idleSince = now;
+  if (moved > 8) dismissIntro();
+});
+let downTarget = null;
+function endDrag() {
+  if (!dragging) return;
+  dragging = false; wall.classList.remove("grabbing"); idleSince = performance.now();
+  if (performance.now() - last.t > 80) vx = vy = 0; // held still before release: no flick
+  if (moved < 6 && downTarget) openTile(downTarget);
+}
+wall.addEventListener("pointerup", endDrag);
+wall.addEventListener("pointercancel", endDrag);
+wall.addEventListener("wheel", e => { e.preventDefault(); ox -= e.deltaX; oy -= e.deltaY; vx = vy = 0; idleSince = performance.now(); dismissIntro(); }, { passive: false });
+wall.addEventListener("keydown", e => {
+  const k = { ArrowLeft: [1, 0], ArrowRight: [-1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key];
+  if (k) { e.preventDefault(); vx = k[0] * 900; vy = k[1] * 900; idleSince = performance.now(); dismissIntro(); }
+});
+
+const mod = (a, n) => ((a % n) + n) % n;
+let prev = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - prev) / 1000); prev = now;
+  if (!dragging) {
+    const f = Math.pow(.04, dt); // friction
+    vx *= f; vy *= f;
+    // idle drift so the wall is alive out of the box
+    if (!reduce && now - idleSince > 2500) { vx += (-26 - vx) * .02; vy += (-10 - vy) * .02; }
+    ox += vx * dt; oy += vy * dt;
+  }
+  for (const t of tiles) {
+    const x = mod(t.bx + ox, WW) - CW, y = mod(t.by + oy, WH) - CH;
+    t.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ---------- INTRO ---------- */
+const intro = $("#intro");
+function dismissIntro() { intro.classList.add("gone"); }
+$("#explore").onclick = () => { dismissIntro(); vx = -600; vy = -160; wall.focus(); };
+$("#aboutBtn").onclick = () => intro.classList.toggle("gone");
+
+/* ---------- LIGHTBOX ---------- */
+const lb = $("#lb"), lbBody = $("#lbBody");
+function openTile(el) {
+  const it = tiles.find(t => t.el === el)?.item; if (!it) return;
+  if (it.type === "parties") {
+    const [n, d, logo, story] = it.ed, [c, fg] = STRIPE[it.no % STRIPE.length];
+    lbBody.innerHTML = `<div class="card" style="--c:var(${c});--fg:${fg}"><span class="no">Edition #${String(it.no).padStart(2, "0")} · ${d}</span>
+      <div class="lg">${logo ? `<img src="img/wall/logo-${logo}.webp" alt="">` : `<span class="big">${String(it.no).padStart(2, "0")}</span>`}</div>
+      <div><h3 style="font-size:26px">${n}</h3><p class="story">${story}</p></div></div>`;
+  } else if (it.type === "words") {
+    lbBody.innerHTML = el.querySelector(".in").innerHTML;
+    lbBody.firstElementChild.style.cssText += "width:min(88vw,460px);min-height:360px;border-radius:22px";
+  } else {
+    lbBody.innerHTML = `<img src="${it.big}" alt="${it.cap}"><p class="cap">${it.cap}</p>`;
+  }
+  lb.showModal();
+}
+lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+</script>
+</body>
+</html>

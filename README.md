@@ -12,7 +12,8 @@ Sections are deep-linkable via clean URL paths (e.g. `brunovida.si/experience`, 
 
 ## How it was built
 
-- **Vanilla HTML/CSS/JS** — no framework, no build step, no bundler. The whole app is `index.html`, `css/style.css`, and a set of native ES modules under `js/`, loaded straight from `js/main.js`.
+- **Vanilla HTML/CSS/JS** — no framework, and no build step to develop it. The whole app is `index.html`, `css/style.css`, and a set of native ES modules under `js/`, loaded straight from `js/main.js`.
+- **Deploy-time bundle** — the one build step lives in the deploy workflow: `scripts/build-assets.mjs` bundles and minifies the JS into one file, minifies the CSS, and names both by content hash so `.htaccess` can cache them for a year. It rewrites `index.html` to match, so it only runs in CI; locally the site is served as-is.
 - **Data-driven content** — project listings (landing pages, mini tools, eDM work/tools, site history, taglines) live in JSON files under `json/`, which `js/projects.js` fetches and renders into the matching panel. Adding a project is a JSON edit, not a markup edit.
 - **GitHub panel** — `.gitconfig` shows my profile, repos, languages and contribution calendar. `scripts/fetch-github.mjs` snapshots them into `json/github.json` via the GraphQL API during the deploy workflow (on push and daily), using the `GH_STATS_TOKEN` repo secret so no token ever reaches the browser. Without that file the panel falls back to the public REST API. Locally: `GH_TOKEN=$(gh auth token) node scripts/fetch-github.mjs`.
 - **Custom "editor" UI** — the file tree, tab bar, active-file state, and folder expand/collapse are hand-rolled in JS, mimicking VS Code's explorer/tabs behavior rather than using a UI library.

@@ -240,10 +240,24 @@ function keepCalendarOnLatestWeeks(container){
 
 // ---- Wiring ---------------------------------------------------------------
 
+let githubData = null;
+let rendered = false;
+
+/** Starts the fetch early, so the data is usually in hand by the time it's wanted. */
 export function initGithub(){
+  if(!githubData) githubData = loadGithubData();
+}
+
+/**
+ * Builds the panel the first time it's shown. The contribution calendar alone
+ * is ~370 elements, so it isn't put in the page for visitors who never look.
+ */
+export function renderGithubPanel(){
   const container = document.getElementById('githubContent');
-  if(!container) return;
-  loadGithubData()
+  if(rendered || !container) return;
+  rendered = true;
+  initGithub();
+  githubData
     .then(data => render(container, data))
     .catch(err => {
       console.error('Could not load GitHub data', err);
