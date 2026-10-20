@@ -44,7 +44,7 @@ function log_deletion_event(?string $notificationId, ?string $username, ?int $ma
 {
     try {
         db()->prepare('
-            INSERT OR IGNORE INTO ebay_deletion_log (notification_id, ebay_username, matched_user_id, action)
+            INSERT IGNORE INTO ebay_deletion_log (notification_id, ebay_username, matched_user_id, action)
             VALUES (?, ?, ?, ?)
         ')->execute([$notificationId, $username, $matchedUserId, $action]);
     } catch (Throwable $e) {

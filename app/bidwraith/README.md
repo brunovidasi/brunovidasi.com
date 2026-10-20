@@ -7,8 +7,8 @@ with up to 5 scheduled bids each (e.g. a moderate bid at 10s before the end, a
 higher one at 3s, your real ceiling at the last second), and a cron job fires them
 at the exact right moment — even if your browser is closed.
 
-Built as plain PHP + SQLite on purpose: no framework, no build step, no Composer
-install required. Copy the files to any PHP host and it runs.
+Built as plain PHP + MySQL (MariaDB) on purpose: no framework, no build step, no
+Composer install required. Copy the files to any PHP host with a database and it runs.
 
 ## How it works
 
@@ -27,8 +27,9 @@ install required. Copy the files to any PHP host and it runs.
 
 ## Requirements
 
-- PHP 8.0+ with `pdo_sqlite` and `curl` extensions (both are on by default on
-  virtually every host, including DirectAdmin/cPanel shared hosting).
+- PHP 8.0+ with `pdo_mysql` and `curl` extensions (both are on by default on
+  virtually every host, including cPanel shared hosting).
+- A MySQL or MariaDB database (`brew install mariadb@11.4` locally, as the server runs 11.4).
 - A cron job that can run a PHP script once a minute.
 - An eBay Developer account with API keys (Sandbox keys work for testing).
 
@@ -36,15 +37,17 @@ install required. Copy the files to any PHP host and it runs.
 
 ```bash
 cp config/config.example.php config/config.php
-# edit config/config.php with your eBay Sandbox keys
+# edit config/config.php with your eBay Sandbox keys and the development database ('db')
+mysql -e 'CREATE DATABASE bidwraith_development'
 
 php -S localhost:8000 -t public
 ```
 
-Visit `http://localhost:8000`, create an account, and log in. The SQLite database is
-created automatically on first request — no migration step.
+Visit `http://localhost:8000`, create an account, and log in. The tables are created
+automatically on the first request, and again whenever `sql/schema.sql` changes — no
+migration step.
 
-`config/config.php` and `data/*.sqlite` are gitignored. **This matters more than
+`config/config.php` and `data/` are gitignored. **This matters more than
 usual here:** the app is deployed as a subfolder of a public repository, so the
 `.gitignore` in this folder is what keeps your eBay keys and the token database out
 of it. Don't remove those rules.
@@ -81,7 +84,7 @@ brunovidasi.com website repo, which pushes to the server over FTP via GitHub Act
 
 ### The instance directory
 
-The real config and the database must live **outside** the deployed tree, because the
+The real config (with the database password) must live **outside** the deployed tree, because the
 repo is public and `public_html` is web-reachable. Create this once, by hand, above
 `public_html`:
 
@@ -89,7 +92,7 @@ repo is public and `public_html` is web-reachable. Create this once, by hand, ab
 /home/<user>/domains/brunovidasi.com/
 ├── bidwraith-instance/          <- create manually, never deployed
 │   ├── config.php               <- from config/config.example.php, with 'env' => 'production'
-│   └── data/                    <- database, cron log (created automatically)
+│   └── data/                    <- cron log, heartbeat (created automatically)
 └── public_html/
     └── app/bidwraith/           <- deployed by GitHub Actions
 ```
@@ -101,8 +104,10 @@ Set `BIDWRAITH_INSTANCE` to override the location.
 ### First deploy
 
 1. Push to `main`; the existing workflow uploads `app/bidwraith/` with the rest of the site.
-2. Create `bidwraith-instance/config.php` via DirectAdmin's File Manager (copy
-   `config.example.php`, set `'env' => 'production'` and fill in the eBay keys).
+2. Create a MySQL database and user in cPanel (Manage My Databases), then
+   `bidwraith-instance/config.php` (copy `config.example.php`, set
+   `'env' => 'production'`, the database under `production` → `db`, and the eBay
+   keys). The tables are created on the first request; phpMyAdmin shows them.
 3. Open `/bidwraith/preflight.php`. While no account exists it's open to anyone; it
    reports PHP version, extensions, resolved paths, and prints the exact cron line.
 4. Create your admin account at `/bidwraith/setup_admin.php`. It disables itself
@@ -240,9 +245,9 @@ config/     config.example.php; your real config.php locally (gitignored)
 includes/   db, auth, csrf, config, runtime, EbayClient, StripeClient, billing, Mailer + email templates, layout partials
 public/     Web root — every page users load, plus preflight.php and setup_admin.php
 cron/       snipe.php, run once a minute by the host's cron
-sql/        schema.sql, applied automatically on first run
-data/       SQLite database locally (gitignored); on the server this lives in the
-            instance directory instead
+sql/        schema.sql, applied automatically whenever it changes
+data/       logs locally (gitignored); on the server this lives in the instance
+            directory instead
 .htaccess   Maps every request into public/ so the rest of the project isn't web-reachable
 ```
 
@@ -251,8 +256,8 @@ __DIR__ . '/../includes/bootstrap.php'`, and use `require_login()`, `db()`, etc.
 
 ## Environments
 
-`config.php` has one `env` key selecting a block that controls the base URL, database
-file, data directory, eBay API side, error display and whether public registration is
+`config.php` has one `env` key selecting a block that controls the base URL, database,
+data directory, eBay API side, error display and whether public registration is
 open. Only that one line differs between a laptop and the server.
 
 eBay credentials are keyed by API side (`ebay_keys.sandbox` / `ebay_keys.production`)
@@ -260,8 +265,8 @@ rather than by environment, so both environments can share sandbox keys during r
 
 ## Security notes
 
-- The real `config.php` and the database live outside the repo and outside the web
-  root. Neither is committable; neither is downloadable.
+- The real `config.php` lives outside the repo and outside the web root, and the
+  database is MySQL, not a file. Neither is committable; neither is downloadable.
 - `.htaccess` maps all requests into `public/`, so `config/`, `includes/`, `cron/`,
   `sql/` and `data/` return 403/404. Each also carries its own deny-all `.htaccess`.
 - Session cookies are scoped to `/bidwraith/`, `HttpOnly`, and `Secure` in production.

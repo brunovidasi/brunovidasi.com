@@ -12,7 +12,7 @@ function admin_page_number(string $param): int
 
 /**
  * Auctions are "current" until their end time passes. Compared against PHP's clock
- * rather than SQLite's datetime('now') because end_time is written in app-local
+ * rather than the database's UTC_TIMESTAMP() because end_time is written in app-local
  * time (see add_auction.php), which is what the sniping cron compares against too.
  */
 $now = date('Y-m-d H:i:s');
@@ -34,7 +34,7 @@ $pastTotal = (int) ($auctionTotals['past'] ?? 0);
 
 $search = trim(get_param('q'));
 $userSortColumns = [
-    'email'    => 'u.email COLLATE NOCASE',
+    'email'    => 'LOWER(u.email)',
     'id'       => 'u.id',
     'joined'   => 'u.created_at',
     'ebay'     => 'ebay_env',
@@ -46,7 +46,8 @@ $userSortColumns = [
 $userWhere = '';
 $userArgs = [];
 if ($search !== '') {
-    $userWhere = 'WHERE u.email LIKE ?';
+    // case-insensitive, as SQLite's LIKE was (the column itself compares exactly)
+    $userWhere = 'WHERE u.email LIKE ? COLLATE utf8mb4_unicode_ci';
     $userArgs[] = '%' . $search . '%';
 }
 

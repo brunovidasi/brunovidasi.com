@@ -9,7 +9,7 @@
  * Instead, create a directory named 'bidwraith-instance' ABOVE public_html:
  *
  *   /home/<user>/domains/<domain>/bidwraith-instance/config.php   <- this file's contents
- *   /home/<user>/domains/<domain>/bidwraith-instance/data/        <- SQLite database
+ *   /home/<user>/domains/<domain>/bidwraith-instance/data/        <- logs
  *
  * The app walks up the directory tree to find it, so no absolute server path is
  * ever hardcoded in the repo. public/preflight.php reports which one it found.
@@ -120,7 +120,9 @@ return [
 
             // null => the project's own data/ folder.
             'data_dir' => null,
-            'db_file'  => 'app.development.sqlite',
+            // The MySQL / MariaDB database (sql/schema.sql creates its tables on
+            // the first request).
+            'db'       => ['host' => '127.0.0.1', 'port' => 3306, 'name' => 'bidwraith_development', 'user' => 'root', 'pass' => ''],
 
             'ebay_api'           => 'sandbox',
             'debug'              => true,
@@ -131,9 +133,9 @@ return [
             'base_url' => 'https://example.com/bidwraith',
 
             // Relative paths resolve against the instance directory, keeping the
-            // database outside the web root and safe from deploys.
+            // logs outside the web root and safe from deploys.
             'data_dir' => 'data',
-            'db_file'  => 'app.production.sqlite',
+            'db'       => ['host' => 'localhost', 'name' => '', 'user' => '', 'pass' => ''],
 
             // Can stay 'sandbox' while production eBay keys are still being issued,
             // which lets a live deployment be verified end to end with harmless bids.

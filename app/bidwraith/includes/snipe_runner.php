@@ -65,7 +65,7 @@ function rotate_log_if_large(): void
 function update_auction_status_after_step(int $auctionId, bool $success, string $message): void
 {
     if ($success) {
-        db()->prepare("UPDATE watched_auctions SET status = 'bid_placed', result_message = ?, last_checked_at = datetime('now') WHERE id = ?")
+        db()->prepare("UPDATE watched_auctions SET status = 'bid_placed', result_message = ?, last_checked_at = UTC_TIMESTAMP() WHERE id = ?")
             ->execute([$message, $auctionId]);
         return;
     }
@@ -74,10 +74,10 @@ function update_auction_status_after_step(int $auctionId, bool $success, string 
     $current->execute([$auctionId]);
 
     if ($current->fetchColumn() !== 'bid_placed') {
-        db()->prepare("UPDATE watched_auctions SET status = 'failed', result_message = ?, last_checked_at = datetime('now') WHERE id = ?")
+        db()->prepare("UPDATE watched_auctions SET status = 'failed', result_message = ?, last_checked_at = UTC_TIMESTAMP() WHERE id = ?")
             ->execute([$message, $auctionId]);
     } else {
-        db()->prepare("UPDATE watched_auctions SET last_checked_at = datetime('now') WHERE id = ?")->execute([$auctionId]);
+        db()->prepare("UPDATE watched_auctions SET last_checked_at = UTC_TIMESTAMP() WHERE id = ?")->execute([$auctionId]);
     }
 }
 
@@ -144,9 +144,9 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
         WHERE bid_steps.status = 'pending'
           AND watched_auctions.end_time IS NOT NULL
           AND watched_auctions.status NOT IN ('won', 'lost')
-          AND datetime(watched_auctions.end_time, '-' || bid_steps.seconds_before || ' seconds') <= ?
-          AND datetime(watched_auctions.end_time, '-' || bid_steps.seconds_before || ' seconds') > ?
-        ORDER BY datetime(watched_auctions.end_time, '-' || bid_steps.seconds_before || ' seconds') ASC
+          AND watched_auctions.end_time - INTERVAL bid_steps.seconds_before SECOND <= ?
+          AND watched_auctions.end_time - INTERVAL bid_steps.seconds_before SECOND > ?
+        ORDER BY watched_auctions.end_time - INTERVAL bid_steps.seconds_before SECOND ASC
     ");
     $stmt->execute([$horizon, $now]);
     $due = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -208,7 +208,7 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
         if (!$authToken) {
             $msg = "No eBay account connected for this user in the $ebayEnvironment environment; cannot bid.";
             $log("FAILED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
-            db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+            db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = UTC_TIMESTAMP() WHERE id = ?")
                 ->execute([$msg, $step['id']]);
             update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
             $record($step, false, $bidAmount, $msg);
@@ -229,7 +229,7 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
             if ($currentPrice === null) {
                 $msg = "Could not determine the item's current price; bid not placed.";
                 $log("FAILED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
-                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = UTC_TIMESTAMP() WHERE id = ?")
                     ->execute([$msg, $step['id']]);
                 update_auction_status_after_step((int) $step['watched_auction_id'], false, $msg);
                 $record($step, false, $bidAmount, $msg);
@@ -240,7 +240,7 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
             if ($cap !== null && $currentPrice >= $cap) {
                 $msg = "Current price ($currentPrice) is already at or above the max value ($cap); bid not placed.";
                 $log("SKIPPED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
-                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = UTC_TIMESTAMP() WHERE id = ?")
                     ->execute([$msg, $step['id']]);
                 db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
                     ->execute([$step['id'], $msg]);
@@ -262,7 +262,7 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
             if ($currentPrice !== null && $currentPrice >= $bidAmount) {
                 $msg = "Current price ({$currentPrice}) is already at or above the max bid ({$bidAmount}); bid not placed.";
                 $log("SKIPPED step #{$step['id']} (item {$step['auction_item_id']}): $msg");
-                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = datetime('now') WHERE id = ?")
+                db()->prepare("UPDATE bid_steps SET status = 'failed', result_message = ?, fired_at = UTC_TIMESTAMP() WHERE id = ?")
                     ->execute([$msg, $step['id']]);
                 db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, 0, ?)')
                     ->execute([$step['id'], $msg]);
@@ -284,7 +284,7 @@ function fire_due_bids(callable $log, array &$outcomes, callable $sendMail): voi
         // max_bid is overwritten here with the amount actually attempted — for a
         // fixed step this just rewrites the same value, but for an 'anyway' step
         // this is the only record of what the dynamic formula above resolved to.
-        db()->prepare("UPDATE bid_steps SET status = ?, max_bid = ?, result_message = ?, fired_at = datetime('now') WHERE id = ?")
+        db()->prepare("UPDATE bid_steps SET status = ?, max_bid = ?, result_message = ?, fired_at = UTC_TIMESTAMP() WHERE id = ?")
             ->execute([$status, $bidAmount, $result['message'], $step['id']]);
 
         db()->prepare('INSERT INTO bid_log (bid_step_id, success, response_summary) VALUES (?, ?, ?)')

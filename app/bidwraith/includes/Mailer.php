@@ -373,7 +373,7 @@ final class SmtpSession
 function queue_email(string $to, array $template, string $kind, ?int $userId = null, ?string $dedupeKey = null): bool
 {
     $stmt = db()->prepare('
-        INSERT OR IGNORE INTO email_outbox (user_id, kind, to_email, subject, body_text, body_html, dedupe_key)
+        INSERT IGNORE INTO email_outbox (user_id, kind, to_email, subject, body_text, body_html, dedupe_key)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ');
     $stmt->execute([$userId, $kind, $to, $template['subject'], $template['text'], $template['html'] ?? null, $dedupeKey]);
@@ -407,9 +407,9 @@ function flush_outbox(int $limit = 25): array
         WHERE sent_at IS NULL AND attempts < 6
           AND (next_attempt_at IS NULL OR next_attempt_at <= ?)
           AND (claimed_at IS NULL OR claimed_at < ?)
-        ORDER BY id ASC LIMIT ?
+        ORDER BY id ASC LIMIT ' . max(0, $limit) . '
     ');
-    $stmt->execute([$now, $staleClaim, $limit]);
+    $stmt->execute([$now, $staleClaim]);
 
     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
         // Two overlapping passes (they legitimately overlap) must not both send it.

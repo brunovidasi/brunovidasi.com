@@ -2,16 +2,17 @@
 
 /**
  * Locates the "instance directory" — the folder holding this deployment's real
- * config.php and its SQLite database. It deliberately lives OUTSIDE the deployed
- * tree, for three independent reasons:
+ * config.php (with the database password) and its logs. It deliberately lives
+ * OUTSIDE the deployed tree, for three independent reasons:
  *
- *  1. This app ships inside a PUBLIC repo. eBay credentials and a database holding
- *     auth tokens that can place real bids must not sit in a committable folder.
- *  2. The deployed tree is under public_html, i.e. web-reachable. A .sqlite file
- *     served over HTTP is a complete credential dump in one request.
- *  3. Deploys are an FTP sync that tracks its own state and removes what it no
- *     longer ships. It won't usually touch an unknown file, but a production
- *     database is not something to bet on that behaviour.
+ *  1. This app ships inside a PUBLIC repo. eBay credentials and the password to a
+ *     database holding auth tokens that can place real bids must not sit in a
+ *     committable folder.
+ *  2. The deployed tree is under public_html, i.e. web-reachable. A config file or
+ *     a log served over HTTP gives those away in one request.
+ *  3. Deploys are a sync that removes what it no longer ships. It won't usually
+ *     touch an unknown file, but production config is not something to bet on
+ *     that behaviour.
  *
  * Found by walking up from this file looking for a directory named
  * 'bidwraith-instance', so no absolute server path is ever hardcoded in the repo.
@@ -169,7 +170,7 @@ function owner_email(): ?string
     return $email !== '' ? $email : null;
 }
 
-/** Absolute path to the directory holding the SQLite database and logs. */
+/** Absolute path to the directory holding the logs. */
 function data_dir(): string
 {
     static $path = null;
@@ -193,11 +194,21 @@ function data_dir(): string
     return $path;
 }
 
-/** Absolute path to this environment's SQLite file. Separate per environment so */
-/** development's test data can never be mistaken for production's real data. */
-function db_path(): string
+/**
+ * This environment's MySQL database. Separate per environment so development's
+ * test data can never be mistaken for production's real data.
+ */
+function db_config(): array
 {
-    return data_dir() . '/' . (env_config()['db_file'] ?? 'app.' . app_env() . '.sqlite');
+    $db = env_config()['db'] ?? [];
+
+    return [
+        'host' => (string) ($db['host'] ?? 'localhost'),
+        'port' => (int) ($db['port'] ?? 3306),
+        'name' => (string) ($db['name'] ?? ''),
+        'user' => (string) ($db['user'] ?? ''),
+        'pass' => (string) ($db['pass'] ?? ''),
+    ];
 }
 
 /** Which eBay API side this environment talks to: 'sandbox' or 'production'. */

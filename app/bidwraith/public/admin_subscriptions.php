@@ -27,7 +27,7 @@ $view = in_array($view, SUBSCRIPTION_VIEWS, true) ? $view : 'all';
 $search = trim(get_param('q'));
 
 $sortColumns = [
-    'email'  => 'u.email COLLATE NOCASE',
+    'email'  => 'LOWER(u.email)',
     'plan'   => $groupSql,
     'trial'  => 'u.trial_ends_at IS NULL, u.trial_ends_at',
     'renews' => 'u.current_period_end IS NULL, u.current_period_end',
@@ -49,7 +49,7 @@ if ($view !== 'all') {
     $args[] = $view;
 }
 if ($search !== '') {
-    $where[] = 'u.email LIKE ?';
+    $where[] = 'u.email LIKE ? COLLATE utf8mb4_unicode_ci'; // case-insensitive, as SQLite's LIKE was
     $args[] = '%' . $search . '%';
 }
 $whereSql = 'WHERE ' . implode(' AND ', $where);

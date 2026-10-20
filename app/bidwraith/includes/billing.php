@@ -148,7 +148,7 @@ function billing_group_badge(string $group): string
     return '<span class="status-' . htmlspecialchars($group) . '">' . htmlspecialchars(billing_group_label($group)) . '</span>';
 }
 
-/** Storage format for a Stripe unix timestamp: UTC, like every datetime('now') column. */
+/** Storage format for a Stripe unix timestamp: UTC, like every UTC_TIMESTAMP() column. */
 function billing_db_time($timestamp): ?string
 {
     return is_numeric($timestamp) ? gmdate('Y-m-d H:i:s', (int) $timestamp) : null;

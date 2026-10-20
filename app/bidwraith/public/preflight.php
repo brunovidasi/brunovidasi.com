@@ -42,7 +42,7 @@ $checks['PHP version'] = check(
     PHP_VERSION,
     PHP_VERSION . ' — this app needs PHP 8.0 or newer'
 );
-$checks['pdo_sqlite extension'] = check(extension_loaded('pdo_sqlite'), 'loaded', 'MISSING — the app cannot store anything');
+$checks['pdo_mysql extension'] = check(extension_loaded('pdo_mysql'), 'loaded', 'MISSING — the app cannot store anything');
 $checks['curl extension'] = check(extension_loaded('curl'), 'loaded', 'MISSING — the app cannot reach eBay');
 
 $checks['Instance directory'] = check(
@@ -96,13 +96,13 @@ $checks['Data directory owner'] = check(
 $checks['Data directory mode'] = check(true, substr(sprintf('%o', fileperms($dataDir) ?: 0), -4), '');
 $checks['Database'] = $dbError !== null
     ? [false, 'could not open: ' . $dbError]
-    : check(file_exists(db_path()), db_path() . '  (' . number_format(filesize(db_path()) / 1024, 1) . ' KB)', 'not created yet');
+    : [true, db_config()['name'] . ' on ' . db_config()['host'] . '  (' . number_format((float) db()->query('SELECT SUM(data_length + index_length) FROM information_schema.tables WHERE table_schema = DATABASE()')->fetchColumn() / 1024, 1) . ' KB)'];
 
 $underWebRoot = str_starts_with(realpath($dataDir) ?: $dataDir, realpath($projectRoot) ?: $projectRoot);
-$checks['Database outside web root'] = check(
+$checks['Data directory outside web root'] = check(
     !$underWebRoot,
     'yes — not reachable over HTTP',
-    'NO: the data directory is inside the deployed folder. Anyone who can defeat the .htaccess rules could download the database, which holds eBay auth tokens.'
+    'NO: the data directory is inside the deployed folder. Anyone who can defeat the .htaccess rules could download its logs.'
 );
 
 // SCRIPT_NAME points at the real file on disk, REQUEST_URI at what was asked for.

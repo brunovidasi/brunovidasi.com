@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->beginTransaction();
         $stmt = db()->prepare('
             INSERT INTO watched_auctions (user_id, item_id, title, end_time, current_price, shipping_cost, item_country, image_url, price_checked_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime(\'now\'))
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())
         ');
         $stmt->execute([
             $user['id'], $itemId, $title, $endTime,

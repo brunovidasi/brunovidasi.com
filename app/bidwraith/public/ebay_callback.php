@@ -27,13 +27,13 @@ try {
 
     db()->prepare('
         INSERT INTO ebay_accounts (user_id, environment, auth_token, token_expires_at, ebay_username, connected_at)
-        VALUES (?, ?, ?, ?, ?, datetime(\'now\'))
-        ON CONFLICT(user_id) DO UPDATE SET
-            environment = excluded.environment,
-            auth_token = excluded.auth_token,
-            token_expires_at = excluded.token_expires_at,
-            ebay_username = excluded.ebay_username,
-            connected_at = excluded.connected_at
+        VALUES (?, ?, ?, ?, ?, UTC_TIMESTAMP())
+        ON DUPLICATE KEY UPDATE
+            environment = VALUES(environment),
+            auth_token = VALUES(auth_token),
+            token_expires_at = VALUES(token_expires_at),
+            ebay_username = VALUES(ebay_username),
+            connected_at = VALUES(connected_at)
     ')->execute([$user['id'], $environment, $result['token'], $result['expires_at'], $accountInfo['username']]);
 
     // Only fills in a currency the user has never set (including never having it

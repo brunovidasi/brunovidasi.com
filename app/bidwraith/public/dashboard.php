@@ -39,7 +39,7 @@ foreach ($auctions as &$a) {
             $imageUrl = $lookup['image_url'] ?? $a['image_url'];
             db()->prepare('
                 UPDATE watched_auctions
-                SET current_price = ?, shipping_cost = ?, item_country = ?, image_url = ?, price_checked_at = datetime(\'now\')
+                SET current_price = ?, shipping_cost = ?, item_country = ?, image_url = ?, price_checked_at = UTC_TIMESTAMP()
                 WHERE id = ?
             ')->execute([$lookup['current_price'], $lookup['shipping_cost'], $lookup['item_country'], $imageUrl, $a['id']]);
             $a['current_price'] = $lookup['current_price'];

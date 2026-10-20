@@ -19,7 +19,7 @@ function user_email_verified(array $user): bool
 
 function mark_email_verified(int $userId): void
 {
-    db()->prepare("UPDATE users SET email_verified_at = COALESCE(email_verified_at, datetime('now')) WHERE id = ?")
+    db()->prepare("UPDATE users SET email_verified_at = COALESCE(email_verified_at, UTC_TIMESTAMP()) WHERE id = ?")
         ->execute([$userId]);
 }
 
@@ -58,7 +58,7 @@ function consume_user_token(string $token, string $purpose): ?int
     }
 
     // Guarded on used_at so two simultaneous clicks can't both succeed.
-    $stmt = db()->prepare("UPDATE user_tokens SET used_at = datetime('now') WHERE token_hash = ? AND purpose = ? AND used_at IS NULL");
+    $stmt = db()->prepare("UPDATE user_tokens SET used_at = UTC_TIMESTAMP() WHERE token_hash = ? AND purpose = ? AND used_at IS NULL");
     $stmt->execute([hash('sha256', $token), $purpose]);
 
     return $stmt->rowCount() === 1 ? $userId : null;
@@ -72,11 +72,11 @@ function email_rate_limited(int $userId, string $kind, int $cooldownSeconds = 60
 {
     $stmt = db()->prepare("
         SELECT COUNT(*) AS hour_count,
-               SUM(CASE WHEN created_at > datetime('now', ?) THEN 1 ELSE 0 END) AS recent
+               SUM(CASE WHEN created_at > UTC_TIMESTAMP() - INTERVAL ? SECOND THEN 1 ELSE 0 END) AS recent
         FROM email_outbox
-        WHERE user_id = ? AND kind = ? AND created_at > datetime('now', '-1 hour')
+        WHERE user_id = ? AND kind = ? AND created_at > UTC_TIMESTAMP() - INTERVAL 1 HOUR
     ");
-    $stmt->execute(['-' . $cooldownSeconds . ' seconds', $userId, $kind]);
+    $stmt->execute([$cooldownSeconds, $userId, $kind]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     return (int) $row['recent'] > 0 || (int) $row['hour_count'] >= $perHour;
@@ -143,7 +143,7 @@ function reset_password_with_token(string $token, string $password): ?string
         ->execute([password_hash($password, PASSWORD_DEFAULT), $userId]);
     // Reading the link proves they control the address.
     mark_email_verified($userId);
-    db()->prepare("UPDATE user_tokens SET used_at = datetime('now') WHERE user_id = ? AND used_at IS NULL")->execute([$userId]);
+    db()->prepare("UPDATE user_tokens SET used_at = UTC_TIMESTAMP() WHERE user_id = ? AND used_at IS NULL")->execute([$userId]);
 
     $email = db()->prepare('SELECT email FROM users WHERE id = ?');
     $email->execute([$userId]);

@@ -137,8 +137,8 @@ function watched_auction_order_sql(string $key, string $dir): string
     $result = "CASE WHEN wa.status IN ('won', 'lost') THEN wa.status ELSE 'unknown' END";
 
     return match ($key) {
-        'item'   => "wa.title COLLATE NOCASE $dir",
-        'owner'  => "u.email COLLATE NOCASE $dir",
+        'item'   => "LOWER(wa.title) $dir",
+        'owner'  => "LOWER(u.email) $dir",
         'status' => "wa.status $dir",
         'result' => "$result $dir",
         'price'  => "wa.current_price IS NULL, wa.current_price $dir",
@@ -570,8 +570,8 @@ function estimate_landed_cost(float $price, ?float $shippingCost, ?string $itemC
 }
 
 /**
- * Shifts a timestamp written by SQLite into the app's timezone. The two clocks in
- * this database disagree: columns filled by datetime('now') (created_at, fired_at,
+ * Shifts a timestamp written by the database into the app's timezone. The two clocks in
+ * this database disagree: columns filled by UTC_TIMESTAMP() (created_at, fired_at,
  * attempted_at, last_checked_at, price_checked_at) are UTC, while end_time is
  * written by PHP in the configured app timezone — which is what cron/snipe.php
  * compares against, so end_time is the one that must stay as it is. Anything shown
@@ -592,7 +592,7 @@ function db_time_local(?string $timestamp): ?string
     return $dt->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('Y-m-d H:i:s');
 }
 
-/** Unix timestamp for a value written by SQLite's datetime('now') (UTC, no offset). */
+/** Unix timestamp for a value written by UTC_TIMESTAMP() (UTC, no offset). */
 function db_time_epoch(?string $timestamp): ?int
 {
     if ($timestamp === null || $timestamp === '') {

@@ -140,7 +140,7 @@ class EbayClient
         $expiresAt = date('Y-m-d H:i:s', time() + (int) $data['expires_in']);
         db()->prepare('
             INSERT INTO app_tokens (environment, access_token, expires_at) VALUES (?, ?, ?)
-            ON CONFLICT(environment) DO UPDATE SET access_token = excluded.access_token, expires_at = excluded.expires_at
+            ON DUPLICATE KEY UPDATE access_token = VALUES(access_token), expires_at = VALUES(expires_at)
         ')->execute([$this->environment, $data['access_token'], $expiresAt]);
 
         return $data['access_token'];
