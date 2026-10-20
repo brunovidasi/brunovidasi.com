@@ -78,13 +78,13 @@ jobs:
           rsync -rlz --checksum --delete --itemize-changes $DRY_RUN \
             --exclude='.git*' --exclude='/.github/' --exclude='node_modules/' \
             --exclude='/scripts/' \
-            --filter='P /games/' \
-            --filter='P /music/' \
-            --filter='P /dev/' \
-            --filter='P /app/programmertime/application/logs/' \
-            --filter='P /app/programmertime/assets/images/temp/' \
-            --filter='P /.well-known/' \
-            --filter='P /cgi-bin/' \
+            --filter='P /games/***' \
+            --filter='P /music/***' \
+            --filter='P /dev/***' \
+            --filter='P /app/programmertime/application/logs/***' \
+            --filter='P /app/programmertime/assets/images/temp/***' \
+            --filter='P /.well-known/***' \
+            --filter='P /cgi-bin/***' \
             --filter='P /.user.ini' \
             --filter='P error_log' \
             -e "ssh -i $HOME/.ssh/deploy_key -p $SSH_PORT -o IdentitiesOnly=yes -o BatchMode=yes" \
