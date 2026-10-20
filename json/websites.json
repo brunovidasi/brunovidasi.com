@@ -2,9 +2,9 @@
   {
     "id": "gamecollection",
     "title": "Game Collection",
-    "url": "brunovida.si/games",
+    "url": "games.brunovidasi.com",
     "year": 2026,
-    "live": "https://brunovida.si/games",
+    "live": "https://games.brunovidasi.com",
     "status": "live",
     "icon": "🕹️",
     "role": "Freelance — Full-Stack Design & Development",
@@ -38,9 +38,9 @@
   {
     "id": "vinylcollection",
     "title": "Vinyl Collection",
-    "url": "brunovida.si/music",
+    "url": "music.brunovidasi.com",
     "year": 2026,
-    "live": "https://brunovida.si/music",
+    "live": "https://music.brunovidasi.com",
     "status": "live",
     "icon": "💿",
     "role": "Freelance — Full-Stack Design & Development",

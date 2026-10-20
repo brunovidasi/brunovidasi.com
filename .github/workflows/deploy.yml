@@ -1,18 +1,36 @@
-name: Deploy to Server via FTP
+name: Deploy to Namecheap over SSH
+
+# Deploys the site to /home/brunovidasi/public_html, the document root of
+# brunovida.si (and its aliases brunovidasi.com and comunidadeadventista.com).
+# app/ and social/ are also the roots of app.* and follow.* on both domains.
+# rsync compares contents and only sends what changed.
+#
+# A file deleted from the repo is deleted on the server too, except what only
+# lives there, protected below. games and music are separate sites with their own
+# folders and repos (brunovidasi/games-collection, brunovidasi/music-collection);
+# /games and /music here only redirect to them (.htaccess).
+#
+# Run by hand from the Actions tab, it only lists what it would change, unless
+# "Dry run" is unticked.
 
 on:
   push:
     branches:
       - main
   # Daily redeploy so json/github.json (repos, stars, contributions) stays fresh.
-  # Only the changed file is uploaded.
+  # Only the changed file is sent.
   schedule:
     - cron: '0 18 * * *'   # 04:00/05:00 Sydney time
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Dry run (list what would change, change nothing)
+        type: boolean
+        default: true
 
 jobs:
-  ftp-deploy:
-    name: FTP Deploy
+  deploy:
+    name: Deploy over SSH
     runs-on: ubuntu-latest
 
     steps:
@@ -36,21 +54,34 @@ jobs:
           npm install --no-save --no-package-lock esbuild@0.28.1
           node scripts/build-assets.mjs
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /domains/brunovidasi.com/public_html/
-          # games/ and music/ are deployed by their own repos (brunovidasi/games-collection,
-          # brunovidasi/music-collection): excluded, they are never uploaded or deleted from here.
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            scripts/**
-            games/**
-            music/**
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # SSH_TARGET_DIR (a repository variable) points a deploy at another folder,
+      # relative to the account's home, such as a test copy.
+      - name: Deploy with rsync
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          TARGET: ${{ vars.SSH_TARGET_DIR || 'public_html' }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          rsync -rlz --checksum --delete --itemize-changes $DRY_RUN \
+            --exclude='.git*' --exclude='/.github/' --exclude='node_modules/' \
+            --exclude='/scripts/' \
+            --filter='P /games/' \
+            --filter='P /music/' \
+            --filter='P /.well-known/' \
+            --filter='P /cgi-bin/' \
+            --filter='P /.user.ini' \
+            --filter='P error_log' \
+            -e "ssh -i $HOME/.ssh/deploy_key -p $SSH_PORT -o IdentitiesOnly=yes -o BatchMode=yes" \
+            ./ "$SSH_USER@$SSH_HOST:$TARGET/"

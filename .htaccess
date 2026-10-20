@@ -34,6 +34,12 @@ RewriteCond %{HTTP_HOST} ^flowparty\.com\.au$ [OR]
 RewriteCond %{HTTP_HOST} ^www\.flowparty\.com\.au$
 RewriteRule ^/?$ "https\:\/\/flowparty\.com\.au\/sydney" [R=301,L]
 
+# The game and record collections moved to their own subdomains (their own repos,
+# brunovidasi/games-collection and brunovidasi/music-collection). Their old
+# addresses keep working: /games/ps2 -> https://games.brunovidasi.com/ps2.
+RewriteRule ^games(/.*)?$ https://games.brunovidasi.com$1 [R=301,L,NE]
+RewriteRule ^music(/.*)?$ https://music.brunovidasi.com$1 [R=301,L,NE]
+
 # brunovida.si tab deep-links (e.g. /about, /experience): serve the SPA shell
 # for a direct visit/refresh so client-side JS can render the right tab.
 RewriteCond %{REQUEST_FILENAME} !-f
