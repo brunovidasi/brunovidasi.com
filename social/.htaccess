@@ -1,0 +1,8 @@
+# The document root of follow.brunovidasi.com. follow.brunovida.si is the same
+# folder and redirects there, path and all, so the page has one address.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^(www\.follow\.brunovidasi\.com|(www\.)?follow\.brunovida\.si)$ [NC]
+    RewriteRule ^ https://follow.brunovidasi.com%{REQUEST_URI} [L,R=301,NE]
+</IfModule>

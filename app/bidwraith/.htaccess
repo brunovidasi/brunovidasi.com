@@ -21,6 +21,11 @@ DirectoryIndex index.php index.html
     # Must match the URL path this app is mounted at.
     RewriteBase /bidwraith/
 
+    # One address: app.brunovida.si (the same folder) goes to app.brunovidasi.com,
+    # as app/.htaccess does for the rest of the folder.
+    RewriteCond %{HTTP_HOST} ^(www\.app\.brunovidasi\.com|(www\.)?app\.brunovida\.si)$ [NC]
+    RewriteRule ^ https://app.brunovidasi.com%{REQUEST_URI} [L,R=301,NE]
+
     # Force HTTPS. The second condition covers a proxy terminating TLS upstream,
     # which would otherwise leave %{HTTPS} off and cause a redirect loop.
     RewriteCond %{HTTPS} !=on

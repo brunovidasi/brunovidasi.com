@@ -1,0 +1,10 @@
+# The document root of app.brunovidasi.com. app.brunovida.si is the same folder
+# and redirects there, path and all, so the apps have one address (their
+# base_url). bidwraith/ and programmertime/ turn their own RewriteEngine on, so
+# they repeat this rule: rewrite rules here don't reach into them.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^(www\.app\.brunovidasi\.com|(www\.)?app\.brunovida\.si)$ [NC]
+    RewriteRule ^ https://app.brunovidasi.com%{REQUEST_URI} [L,R=301,NE]
+</IfModule>
