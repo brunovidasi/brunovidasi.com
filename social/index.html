@@ -3,20 +3,25 @@
 <head>
   <meta charset="UTF-8">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8QK8CM38BZ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-8QK8CM38BZ');
-  </script>
+    dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
 
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-KB5LXRP');</script>
+    // Analytics queue up above but only download once the page has painted,
+    // so they don't hold back the first render.
+    window.addEventListener('load', function () {
+      ['https://www.googletagmanager.com/gtag/js?id=G-8QK8CM38BZ',
+       'https://www.googletagmanager.com/gtm.js?id=GTM-KB5LXRP'].forEach(function (src) {
+        var j = document.createElement('script');
+        j.async = true;
+        j.src = src;
+        document.head.appendChild(j);
+      });
+    });
+  </script>
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,9 +32,15 @@
   <meta property="og:site_name" content="Contact - Bruno Vieira" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Contact - Bruno Vieira" />
-  <meta property="og:url" content="http://follow.brunovidasi.com" />
-  <meta property="og:image" content="http://brunovida.si/img/website.png" />
-  <link rel="image_src" href="../img/website.png" />
+  <meta property="og:url" content="https://follow.brunovidasi.com/" />
+  <meta property="og:image" content="https://brunovidasi.com/img/website.png" />
+  <link rel="image_src" href="https://brunovidasi.com/img/website.png" />
+
+  <meta name="description" content="Find Bruno Vieira (@brunovidasi) online: social, professional, chat, gaming and music links.">
+
+  <link rel="preload" href="avatar.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/JetBrainsMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
   <link rel="icon" href="favicon.ico" sizes="any">
 
@@ -38,7 +49,7 @@
   <style>
     @font-face {
       font-family: 'JetBrains Mono';
-      src: url('../fonts/JetBrainsMono-Variable.woff2') format('woff2');
+      src: url('fonts/JetBrainsMono-Variable.woff2') format('woff2');
       font-weight: 100 800;
       font-style: normal;
       font-display: swap;
@@ -46,7 +57,7 @@
 
     @font-face {
       font-family: 'Inter';
-      src: url('../fonts/Inter-Variable.woff2') format('woff2');
+      src: url('fonts/Inter-Variable.woff2') format('woff2');
       font-weight: 100 900;
       font-style: normal;
       font-display: swap;
@@ -57,12 +68,13 @@
       --panel-2: #171c18;
       --line: #23291f;
       --text: #c8d1c4;
-      --muted: #6f7a68;
+      --muted: #7f8a78;
       --accent: #ffb454;
       --accent-dim: #a67638;
       --mono: 'JetBrains Mono', monospace;
       --sans: 'Inter', sans-serif;
       --button-text: #FFFFFF;
+      --button-default: #90652f;
       --button-ring: rgba(255, 255, 255, 0.12);
     }
 
@@ -183,11 +195,38 @@
       50% { opacity: 0; }
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor-caret { animation: none; }
+      .link-item, .category-arrow { transition: none; }
+    }
+
     .category-links {
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    .category-links[hidden] {
+      display: none;
+    }
+
+    .category-heading {
+      width: 100%;
+      margin: 0;
+      font-size: inherit;
     }
 
     .links {
@@ -200,12 +239,29 @@
 
     .category-header {
       width: 100%;
+      margin: 0;
+      padding: 15px 0 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
       user-select: none;
-      padding-top: 15px;
+    }
+
+    .category-header:focus-visible,
+    .link-item:focus-visible,
+    footer a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    .link-item:focus-visible {
+      border-radius: 14px;
     }
 
     .category-arrow {
@@ -225,6 +281,7 @@
     .category-title {
       width: 100%;
       text-align: left;
+      font-weight: 700;
       font-family: var(--mono);
       font-size: 0.75rem;
       letter-spacing: 2px;
@@ -384,7 +441,7 @@
 
   </svg>
 
-  <div class="page">
+  <main class="page">
 
     <div class="avatar-wrap" id="avatarWrap">
       <div class="avatar-ring"></div>
@@ -392,23 +449,26 @@
       <div class="avatar-photo-mask">
         <img
           class="avatar-photo"
-          src="avatar.png"
+          src="avatar.webp"
+          width="400"
+          height="400"
           alt="Bruno Vieira"
+          fetchpriority="high"
           onerror="document.getElementById('avatarWrap').replaceWith(Object.assign(document.createElement('div'), {className:'avatar-fallback', id:'avatarWrap', textContent:'BV'}))"
         >
       </div>
     </div>
 
     <h1>Bruno Vieira</h1>
-    <p class="subtitle"><span id="subtitleTyped"></span><span class="cursor-caret" id="subtitleCaret">|</span></p>
+    <p class="subtitle"><span class="sr-only">Follow, add or contact me</span><span id="subtitleTyped" aria-hidden="true"></span><span class="cursor-caret" id="subtitleCaret" aria-hidden="true">|</span></p>
 
-    <nav class="links" id="links"></nav>
+    <nav class="links" id="links" aria-label="Links"></nav>
 
     <footer>
       @brunovidasi &middot; <a href="https://brunovida.si/">brunovida.si</a>
     </footer>
 
-  </div>
+  </main>
 
   <script>
     const SUBTITLE_PHRASES = [
@@ -456,20 +516,25 @@
       }
     }
 
-    tickSubtitle();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.getElementById('subtitleTyped').textContent = SUBTITLE_PHRASES[SUBTITLE_PHRASES.length - 1];
+      document.getElementById('subtitleCaret').remove();
+    } else {
+      tickSubtitle();
+    }
   </script>
 
   <script>
-    const DEFAULT_COLOR = 'var(--accent-dim)';
+    const DEFAULT_COLOR = 'var(--button-default)';
 
     const links = [
       
       { category: 'Social', name: 'Instagram', url: 'https://instagram.com/brunovidasi', icon: 'instagram', color: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)' },
-      { category: 'Social', name: 'Facebook', url: 'https://facebook.com/brunovidasi', icon: 'facebook', color: '#1877F2' },
+      { category: 'Social', name: 'Facebook', url: 'https://facebook.com/brunovidasi', icon: 'facebook', color: '#166FE5' },
       { category: 'Social', name: 'TikTok', url: 'https://tiktok.com/@brunovidasi', icon: 'tiktok', color: '#000000' },
       { category: 'Social', name: 'X', url: 'https://x.com/brunovidasi', icon: 'x', color: '#000000' },
       { category: 'Social', name: 'Pinterest', url: 'https://pinterest.com.au/brunovidasi', icon: 'pinterest', color: '#E60023' },
-      { category: 'Social', name: 'Youtube', url: 'https://youtube.com/brunices', icon: 'youtube', color: '#FF0000' },
+      { category: 'Social', name: 'Youtube', url: 'https://youtube.com/brunices', icon: 'youtube', color: '#CC0000' },
 
       { category: 'Professional', name: 'Website / Dev Portfolio', url: 'https://brunovida.si/', icon: 'website', color: DEFAULT_COLOR },
       { category: 'Professional', name: 'Email me', url: 'mailto:contact@brunovidasi.com', icon: 'email', color: DEFAULT_COLOR },
@@ -477,9 +542,9 @@
       { category: 'Professional', name: 'GitHub', url: 'https://github.com/brunovidasi', icon: 'github', color: '#181717' },
       { category: 'Professional', name: 'CodePen', url: 'https://codepen.io/brunovidasi', icon: 'codepen', color: '#000000' },
 
-      { category: 'Chat', name: 'Whatsapp', url: 'https://wa.me/61473216970', icon: 'whatsapp', color: '#25D366' },
-      { category: 'Chat', name: 'Telegram', url: 'https://t.me/brunovidasi', icon: 'telegram', color: '#26A5E4' },
-      { category: 'Chat', name: 'Messenger', url: 'https://messenger.com/t/brunovidasi', icon: 'messenger', color: 'linear-gradient(135deg, #00B2FF, #006AFF, #B620E0)' },
+      { category: 'Chat', name: 'Whatsapp', url: 'https://wa.me/61473216970', icon: 'whatsapp', color: '#0F7F72' },
+      { category: 'Chat', name: 'Telegram', url: 'https://t.me/brunovidasi', icon: 'telegram', color: '#1A7DB5' },
+      { category: 'Chat', name: 'Messenger', url: 'https://messenger.com/t/brunovidasi', icon: 'messenger', color: 'linear-gradient(135deg, #0078E8, #006AFF, #B620E0)' },
 
 
       { category: 'Gaming', name: 'Game Collection', url: 'https://games.brunovidasi.com', icon: 'gamepad', color: DEFAULT_COLOR },
@@ -500,32 +565,42 @@
       if (link.category !== currentCategory) {
         currentCategory = link.category;
 
-        const header = document.createElement('div');
-        header.className = 'category-header';
+        const sectionId = 'links-' + currentCategory.toLowerCase();
 
-        const title = document.createElement('h2');
-        title.className = 'category-title';
-        title.textContent = currentCategory;
+        const heading = document.createElement('h2');
+        heading.className = 'category-heading';
+
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'category-header';
+        header.setAttribute('aria-expanded', 'true');
+        header.setAttribute('aria-controls', sectionId);
 
         const arrow = document.createElement('span');
         arrow.className = 'category-arrow';
+        arrow.setAttribute('aria-hidden', 'true');
         arrow.textContent = '▼';
+
+        const title = document.createElement('span');
+        title.className = 'category-title';
+        title.textContent = currentCategory;
 
         header.appendChild(arrow);
         header.appendChild(title);
-        
+        heading.appendChild(header);
 
         const section = document.createElement('div');
         section.className = 'category-links';
+        section.id = sectionId;
 
         header.onclick = () => {
-          const closed = section.style.display === 'none';
-          section.style.display = closed ? 'flex' : 'none';
-          arrow.textContent = '▶';
+          const closed = section.hidden;
+          section.hidden = !closed;
+          header.setAttribute('aria-expanded', String(closed));
           arrow.textContent = closed ? '▼' : '▶';
         };
 
-        container.appendChild(header);
+        container.appendChild(heading);
         container.appendChild(section);
       }
 
@@ -537,6 +612,7 @@
       if (!link.url.startsWith('mailto:')) {
         a.target = '_blank';
         a.rel = 'noopener';
+        a.setAttribute('aria-label', link.name + ' (opens in a new tab)');
       }
 
       a.innerHTML = `
