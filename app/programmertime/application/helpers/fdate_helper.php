@@ -8,6 +8,11 @@ if (!function_exists('fdate')) {
 	// Converts a date between dd/mm/yyyy ("/") and yyyy-mm-dd ("-").
     function fdate($date, $separator = "") {
 
+		// MySQL's "no date" (a form that left the field out stores 0) shows as nothing
+		if(is_string($date) && strncmp($date, '0000-00-00', 10) === 0){
+			return '';
+		}
+
 		if(!empty($date)){
 			if ($separator == "-") {
 				$part = explode("/", $date);

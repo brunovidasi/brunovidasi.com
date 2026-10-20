@@ -24,6 +24,7 @@ if ($pt_db['driver'] === 'sqlite') {
 	$db['default']['password'] = $pt_db['password'];
 	$db['default']['database'] = $pt_db['database'];
 	$db['default']['dbdriver'] = 'mysqli';
+	$db['default']['port']     = isset($pt_db['port']) ? $pt_db['port'] : '';
 }
 
 
@@ -33,8 +34,9 @@ $db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = ENVIRONMENT !== 'production';
 $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = '';
-$db['default']['char_set'] = 'utf8';
-$db['default']['dbcollat'] = 'utf8_general_ci';
+# utf8mb4, as schema.sql's tables are: MySQL's 'utf8' can't hold emoji
+$db['default']['char_set'] = 'utf8mb4';
+$db['default']['dbcollat'] = 'utf8mb4_unicode_ci';
 $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;

@@ -39,6 +39,7 @@ return array(
 	// 'db' => array(
 	// 	'driver'   => 'mysql',
 	// 	'hostname' => 'localhost',
+	// 	'port'     => 3306,      // optional
 	// 	'username' => '',
 	// 	'password' => '',
 	// 	'database' => '',

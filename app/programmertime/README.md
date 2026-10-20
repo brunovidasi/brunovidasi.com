@@ -107,8 +107,11 @@ password, database) live in one file, never in the repo. See
 (default `Australia/Sydney`); change it in the config file.
 
 **MySQL instead of SQLite.** Set `'db' => array('driver' => 'mysql', ...)` with
-credentials and load `schema.sql` yourself (`mysql -u root < schema.sql`). Its
-seeded admin has no usable password; set one with
+credentials (and `'port'` if it isn't 3306) and load `schema.sql` yourself
+(`mysql -u root < schema.sql`; it creates a database named `programmertime`, so
+for one with another name, such as cPanel's prefixed ones, drop its
+`CREATE DATABASE` and `USE` lines and load it into that). Its seeded admin has no
+usable password; set one with
 `UPDATE user SET password = MD5(CONCAT('<encryption_key>', '<password>')) WHERE login = 'admin';`
 (stored passwords are `md5(encryption_key . password)`).
 
@@ -144,7 +147,7 @@ once, by hand, above `public_html`:
 /home/<user>/domains/brunovidasi.com/
 ├── programmertime-instance/     <- create manually, never deployed
 │   ├── config.php               <- from config.example.php, with 'env' => 'production'
-│   ├── data/                    <- SQLite database (created automatically)
+│   ├── data/                    <- SQLite database, when the config uses SQLite (created automatically)
 │   └── logs/                    <- CodeIgniter error logs (created automatically)
 └── public_html/
     └── app/programmertime/      <- deployed by GitHub Actions
@@ -172,8 +175,10 @@ is shorter than 8; the reason goes to PHP's error log.
 5. Make `assets/images/{users,projects,company,temp}` writable by PHP (755,
    or 775 if uploads fail).
 
-**Backups:** the whole database is `programmertime-instance/data/programmertime.sqlite`.
-Download that file. Never change `encryption_key` afterwards: it salts every
+**Backups:** on app.brunovidasi.com the database is MySQL,
+`brunovidasi_programmertime` (cPanel → Manage My Databases; export it from
+phpMyAdmin). With SQLite it is the whole file
+`programmertime-instance/data/programmertime.sqlite`. Never change `encryption_key` afterwards: it salts every
 stored password.
 
 Production hides PHP errors, logs errors only (to the instance `logs/`), and
